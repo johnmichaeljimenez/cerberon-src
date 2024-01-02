@@ -24,3 +24,8 @@ void CameraSetTarget(Vector2 pos, bool jump)
 	if (jump)
 		GameCamera.target = pos;
 }
+
+Vector2 CameraGetMousePosition()
+{
+	return GetScreenToWorld2D(GetMousePosition(), GameCamera);
+}

@@ -22,3 +22,5 @@ void PlayerUpdate(PlayerCharacter* p);
 void PlayerLateUpdate(PlayerCharacter* p);
 void PlayerDraw(PlayerCharacter* p);
 void PlayerDrawHUD(PlayerCharacter* p);
+
+void PlayerRotate(PlayerCharacter* p, float dir);
