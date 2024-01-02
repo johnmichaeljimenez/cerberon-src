@@ -28,7 +28,7 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 
 	start = *arrayCount;
 	*arrayCount += c;
-	*texArray = malloc(sizeof(TextureResource) * *arrayCount);
+	*texArray = realloc(*texArray, sizeof(TextureResource) * *arrayCount);
 
 	for (int i = start; i < start+c; i++)
 	{
