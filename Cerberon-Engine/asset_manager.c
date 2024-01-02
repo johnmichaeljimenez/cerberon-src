@@ -28,7 +28,7 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 	*arrayCount += c;
 	*texArray = malloc(sizeof(TextureResource) * *arrayCount);
 
-	for (int i = 0; i < *arrayCount; i++)
+	for (int i = 0; i < c; i++)
 	{
 		char* texName[32];
 		fread(texName, sizeof(char), 32, file);

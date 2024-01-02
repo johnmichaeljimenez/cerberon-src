@@ -34,6 +34,9 @@ void IngameOnUpdate()
 
 	CameraSetTarget(PlayerEntity.Position, false);
 	CameraUpdate();
+
+	if (IsKeyPressed(KEY_F1))
+		SetGameState(&GameStateMainMenu);
 }
 
 void IngameOnDraw()
