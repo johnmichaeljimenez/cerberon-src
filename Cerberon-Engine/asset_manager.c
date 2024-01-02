@@ -20,6 +20,19 @@ void UnloadResources()
 
 void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray, TextureType type)
 {
+	/*
+	* FORMAT:
+	* texture count
+	* 
+	* - texture 1
+	* -- name [32]
+	* -- tex data length
+	* -- tex data
+	* 
+	* - texture 2
+	* -- ...
+	*/
+
 	FILE* file = fopen(filename, "rb");
 
 	int c = 0;
