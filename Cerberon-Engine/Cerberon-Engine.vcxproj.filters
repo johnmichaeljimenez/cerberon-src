@@ -13,18 +13,45 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\core">
+      <UniqueIdentifier>{40ad37a0-3345-4291-8f59-ba555a43f009}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data">
+      <UniqueIdentifier>{e7aa98b9-a88e-46b5-a3c0-894966ba7d34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\misc">
+      <UniqueIdentifier>{5cdc4405-f6d7-4a5c-9567-167e51a3013b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="game.c">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
     <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="gamestate_mainmenu.c">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="gamestate_ingame.c">
+      <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="utils.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="gamestate_mainmenu.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="gamestate_ingame.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
