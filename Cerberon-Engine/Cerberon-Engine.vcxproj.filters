@@ -25,9 +25,6 @@
     <Filter Include="Source Files\gameplay">
       <UniqueIdentifier>{0c833c3f-d655-48c5-b4c0-492c755d198a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\player">
-      <UniqueIdentifier>{022be294-a054-44dc-9095-2a5df3952fc3}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.c">
@@ -49,7 +46,10 @@
       <Filter>Source Files\data</Filter>
     </ClCompile>
     <ClCompile Include="player.c">
-      <Filter>Source Files\player</Filter>
+      <Filter>Source Files\gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.c">
+      <Filter>Source Files\gameplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +69,10 @@
       <Filter>Source Files\data</Filter>
     </ClInclude>
     <ClInclude Include="player.h">
-      <Filter>Source Files\player</Filter>
+      <Filter>Source Files\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Source Files\gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
