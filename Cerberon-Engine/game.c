@@ -9,7 +9,7 @@ void GameInit()
 	IngameInit();
 
 	CurrentGameState = NULL;
-	SetGameState(&GameStateIngame);
+	SetGameState(&GameStateMainMenu);
 }
 
 void GameUnload()
@@ -20,14 +20,6 @@ void GameUnload()
 void GameUpdate()
 {
 	CurrentGameState->OnUpdate();
-
-	if (IsKeyPressed(KEY_F1))
-	{
-		if (CurrentGameState == &GameStateIngame)
-			SetGameState(&GameStateMainMenu);
-		else
-			SetGameState(&GameStateIngame);
-	}
 }
 
 void GameDraw()

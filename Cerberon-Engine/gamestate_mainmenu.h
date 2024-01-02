@@ -3,7 +3,6 @@
 #include "game.h"
 #include "gamestate_mainmenu.h"
 
-GameState GameStateMainMenu;
 
 void MainMenuInit();
 void MainMenuOnLoad();

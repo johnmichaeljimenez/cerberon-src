@@ -23,10 +23,12 @@ void MainMenuOnUnload()
 
 void MainMenuOnUpdate()
 {
-
+	if (IsKeyPressed(KEY_SPACE))
+		SetGameState(&GameStateIngame);
 }
 
 void MainMenuOnDraw()
 {
-	ClearBackground(RED);
+	ClearBackground(DARKGRAY);
+	DrawText("[SPACE] to start", 2, 20, 25, WHITE);
 }

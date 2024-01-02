@@ -37,7 +37,7 @@
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="utils.c">
-      <Filter>Source Files\core</Filter>
+      <Filter>Source Files\misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,7 +51,7 @@
       <Filter>Source Files\core</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>Source Files\core</Filter>
+      <Filter>Source Files\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

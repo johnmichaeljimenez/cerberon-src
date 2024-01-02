@@ -9,6 +9,8 @@ typedef struct GameState
 
 } GameState;
 
+GameState GameStateMainMenu;
+GameState GameStateIngame;
 GameState* CurrentGameState;
 
 void GameInit();
