@@ -137,6 +137,7 @@
     <ClCompile Include="gamestate_ingame.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="gamestate_mainmenu.c" />
+    <ClCompile Include="player.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +145,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gamestate_ingame.h" />
     <ClInclude Include="gamestate_mainmenu.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
