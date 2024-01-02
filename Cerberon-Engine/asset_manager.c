@@ -23,12 +23,14 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 	FILE* file = fopen(filename, "rb");
 
 	int c = 0;
+	int start;
 	fread(&c, sizeof(int), 1, file);
 
+	start = *arrayCount;
 	*arrayCount += c;
 	*texArray = malloc(sizeof(TextureResource) * *arrayCount);
 
-	for (int i = 0; i < c; i++)
+	for (int i = start; i < start+c; i++)
 	{
 		char* texName[32];
 		fread(texName, sizeof(char), 32, file);
@@ -40,9 +42,12 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 
 		strcpy((*texArray)[i].Name, texName);
 		(*texArray)[i].Texture = LoadTextureFromImage(img);
+		(*texArray)[i].TextureType = type;
 
 		free(texData);
 		UnloadImage(img);
+
+		TraceLog(LOG_INFO, "Set texture index %d/%d %s", i, *arrayCount, texName);
 	};
 
 	fclose(file);
@@ -60,11 +65,14 @@ void UnloadTexturePack(int* arrayCount, TextureResource** texArray)
 
 TextureResource* GetTextureResource(char* name)
 {
-	for (int i = 0; i < TextureResourceCount; i++)
+	int* arrayCount = &TextureResourceCount;
+	TextureResource** texArray = &TextureResourceList;
+
+	for (int i = 0; i < *arrayCount; i++)
 	{
-		if (strcmp(name, TextureResourceList[i]->Name) == 0)
+		if (strcmp((*texArray)[i].Name, name) == 0)
 		{
-			return &TextureResourceList[i];
+			return &(*texArray)[i];
 		}
 	}
 

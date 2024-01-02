@@ -15,7 +15,7 @@ typedef struct TextureResource
 } TextureResource;
 
 int TextureResourceCount;
-TextureResource** TextureResourceList;
+TextureResource* TextureResourceList;
 
 void LoadResources();
 void UnloadResources();
