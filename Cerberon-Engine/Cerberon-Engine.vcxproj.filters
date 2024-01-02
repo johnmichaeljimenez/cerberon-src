@@ -22,6 +22,9 @@
     <Filter Include="Source Files\misc">
       <UniqueIdentifier>{5cdc4405-f6d7-4a5c-9567-167e51a3013b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gameplay">
+      <UniqueIdentifier>{0c833c3f-d655-48c5-b4c0-492c755d198a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.c">
@@ -39,6 +42,9 @@
     <ClCompile Include="utils.c">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
+    <ClCompile Include="asset_manager.c">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -52,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>Source Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="asset_manager.h">
+      <Filter>Source Files\data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

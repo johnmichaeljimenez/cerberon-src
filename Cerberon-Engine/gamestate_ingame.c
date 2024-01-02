@@ -27,5 +27,5 @@ void IngameOnUpdate()
 
 void IngameOnDraw()
 {
-	ClearBackground(BLUE);
+	ClearBackground(BLACK);
 }

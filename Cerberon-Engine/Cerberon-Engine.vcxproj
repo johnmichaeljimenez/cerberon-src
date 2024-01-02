@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="asset_manager.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="gamestate_ingame.c" />
     <ClCompile Include="main.c" />
@@ -139,6 +140,7 @@
     <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="asset_manager.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamestate_ingame.h" />
     <ClInclude Include="gamestate_mainmenu.h" />
