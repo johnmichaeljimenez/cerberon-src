@@ -136,6 +136,7 @@
     <ClCompile Include="camera.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="gamestate_ingame.c" />
+    <ClCompile Include="input_handler.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="gamestate_mainmenu.c" />
     <ClCompile Include="player.c" />
@@ -147,6 +148,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gamestate_ingame.h" />
     <ClInclude Include="gamestate_mainmenu.h" />
+    <ClInclude Include="input_handler.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

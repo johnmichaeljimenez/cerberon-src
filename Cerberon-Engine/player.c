@@ -2,6 +2,7 @@
 #include <raymath.h>
 #include "asset_manager.h"
 #include "player.h"
+#include "input_handler.h"
 
 void PlayerInit(PlayerCharacter* p)
 {
@@ -19,7 +20,10 @@ void PlayerUnload(PlayerCharacter* p)
 
 void PlayerUpdate(PlayerCharacter* p)
 {
+	Vector2 vel = Vector2Scale(GetInputMovement(), p->MovementSpeed);
+	vel = Vector2Scale(vel, GetFrameTime());
 
+	p->Position = Vector2Add(p->Position, vel);
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)

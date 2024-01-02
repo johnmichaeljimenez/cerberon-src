@@ -25,18 +25,15 @@
     <Filter Include="Source Files\gameplay">
       <UniqueIdentifier>{0c833c3f-d655-48c5-b4c0-492c755d198a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\menu">
+      <UniqueIdentifier>{75c5c5e6-e564-4721-ad5c-c9beef1c1dec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.c">
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="main.c">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="gamestate_mainmenu.c">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="gamestate_ingame.c">
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="utils.c">
@@ -51,15 +48,18 @@
     <ClCompile Include="camera.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="input_handler.c">
+      <Filter>Source Files\gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="gamestate_ingame.c">
+      <Filter>Source Files\gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="gamestate_mainmenu.c">
+      <Filter>Source Files\menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
-      <Filter>Source Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="gamestate_mainmenu.h">
-      <Filter>Source Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="gamestate_ingame.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
@@ -73,6 +73,15 @@
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>Source Files\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="input_handler.h">
+      <Filter>Source Files\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="gamestate_ingame.h">
+      <Filter>Source Files\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="gamestate_mainmenu.h">
+      <Filter>Source Files\menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
