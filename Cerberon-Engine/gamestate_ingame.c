@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include "game.h"
 #include "gamestate_ingame.h"
+#include "asset_manager.h"
 
 void IngameInit()
 {
@@ -12,12 +13,12 @@ void IngameInit()
 
 void IngameOnLoad()
 {
-
+	LoadResources();
 }
 
 void IngameOnUnload()
 {
-
+	UnloadResources();
 }
 
 void IngameOnUpdate()
