@@ -9,6 +9,7 @@
 #include "collision.h"
 
 static unsigned long hash;
+static LinecastHit lineHit;
 
 void PlayerInit(PlayerCharacter* p)
 {
@@ -39,6 +40,8 @@ void PlayerUpdate(PlayerCharacter* p)
 	diff = Vector2Subtract(diff, p->Position);
 	float newDir = atan2f(diff.y, diff.x);
 
+	Linecast(p->Position, Vector2Add(p->Position, Vector2Scale(p->Direction, 1300)), &lineHit);
+
 	PlayerRotate(p, newDir);
 }
 
@@ -54,6 +57,12 @@ void PlayerDraw(PlayerCharacter* p)
 	if (t != NULL)
 	{
 		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 });
+	}
+
+	if (lineHit.WallHit != NULL)
+	{
+		DrawLineV(lineHit.From, lineHit.To, RED);
+		DrawCircleV(lineHit.To, 3, RED);
 	}
 
 	DrawCircleLines(p->Position.x, p->Position.y, p->CollisionRadius, GREEN);

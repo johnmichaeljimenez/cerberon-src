@@ -2,6 +2,7 @@
 #include <raymath.h>
 #include "collision.h"
 #include "mapdata_manager.h"
+#include <float.h>
 
 bool GetLineIntersection(float p0_x, float p0_y, float p1_x, float p1_y,
 	float p2_x, float p2_y, float p3_x, float p3_y, Vector2* hit)
@@ -68,4 +69,46 @@ void MoveBody(Vector2* pos, float radius)
 			*pos = Vector2Add(*pos, Vector2Multiply(Vector2Normalize(cv), (Vector2) { rd, rd }));
 		}
 	}
+}
+
+bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
+{
+	bool hit = false;
+	float lastHit = FLT_MAX;
+
+	result->From = from;
+	result->To = to;
+	result->WallHit = NULL;
+
+	for (int i = 0; i < CurrentMapData->WallCount; i++)
+	{
+		Wall* w = &CurrentMapData->Walls[i];
+
+		Vector2 d = Vector2Subtract(from, w->Midpoint);
+
+		bool visible = Vector2DotProduct(w->Normal, d) > 0;
+
+		if (!visible)
+			continue;
+
+		Vector2 hitPos;
+		bool hasHit = GetLineIntersection(from.x, from.y, to.x, to.y, w->From.x, w->From.y, w->To.x, w->To.y, &hitPos);
+		//CheckCollisionLines(from, to, w->From, w->To, &hitPos);
+
+		if (hasHit)
+		{
+			float diff = Vector2Distance(hitPos, from);
+
+			if (diff < lastHit)
+			{
+				hit = true;
+				result->To = hitPos;
+				result->Length = diff;
+				result->WallHit = w;
+				lastHit = diff;
+			}
+		}
+	}
+
+	return hit;
 }
