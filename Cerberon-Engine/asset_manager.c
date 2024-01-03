@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "utils.h"
 
 void LoadResources()
 {
@@ -23,12 +24,12 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 	/*
 	* FORMAT:
 	* texture count
-	* 
+	*
 	* - texture 1
 	* -- name [32]
 	* -- tex data length
 	* -- tex data
-	* 
+	*
 	* - texture 2
 	* -- ...
 	*/
@@ -43,7 +44,7 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 	*arrayCount += c;
 	*texArray = realloc(*texArray, sizeof(TextureResource) * *arrayCount);
 
-	for (int i = start; i < start+c; i++)
+	for (int i = start; i < start + c; i++)
 	{
 		char* texName[32];
 		fread(texName, sizeof(char), 32, file);
@@ -56,6 +57,7 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 		strcpy((*texArray)[i].Name, texName);
 		(*texArray)[i].Texture = LoadTextureFromImage(img);
 		(*texArray)[i].TextureType = type;
+		(*texArray)[i].Hash = ToHash(texName);
 
 		free(texData);
 		UnloadImage(img);
@@ -76,17 +78,15 @@ void UnloadTexturePack(int* arrayCount, TextureResource** texArray)
 	free(*texArray);
 }
 
-TextureResource* GetTextureResource(char* name)
+TextureResource* GetTextureResource(unsigned long hash)
 {
 	int* arrayCount = &TextureResourceCount;
 	TextureResource** texArray = &TextureResourceList;
 
 	for (int i = 0; i < *arrayCount; i++)
 	{
-		if (strcmp((*texArray)[i].Name, name) == 0)
-		{
+		if ((*texArray)[i].Hash == hash)
 			return &(*texArray)[i];
-		}
 	}
 
 	return NULL;

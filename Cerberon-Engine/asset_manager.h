@@ -10,6 +10,7 @@ typedef enum TextureType
 typedef struct TextureResource
 {
 	char* Name[32];
+	unsigned long Hash;
 	Texture2D Texture;
 	TextureType TextureType;
 } TextureResource;
@@ -18,6 +19,7 @@ typedef struct AnimationClip
 {
 	char* Name[32];
 	int FrameCount;
+	unsigned long Hash;
 	unsigned long* Frames;
 	bool Loop;
 } AnimationClip;
@@ -32,9 +34,9 @@ void LoadResources();
 void UnloadResources();
 void LoadTexturePack(char* filename, int* arrayCount, TextureResource** array);
 void UnloadTexturePack(int* arrayCount, TextureResource** array);
-TextureResource* GetTextureResource(char* name);
+TextureResource* GetTextureResource(unsigned long hash);
 
 void LoadAnimationPack(char* filename, int* arrayCount, AnimationClip** array);
 void UnloadAnimationPack(int* arrayCount, AnimationClip** array);
-AnimationClip* GetAnimationResource(char* name);
+AnimationClip* GetAnimationResource(unsigned long hash);
 AnimationClip* LoadAnimationClip();
