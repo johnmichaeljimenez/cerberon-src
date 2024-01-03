@@ -91,3 +91,35 @@ TextureResource* GetTextureResource(char* name)
 
 	return NULL;
 }
+
+
+void LoadAnimationPack(char* filename, int* arrayCount, AnimationClip** array)
+{
+
+}
+
+void UnloadAnimationPack(int* arrayCount, AnimationClip** array)
+{
+
+}
+
+AnimationClip* GetAnimationResource(char* name)
+{
+
+}
+
+AnimationClip* LoadAnimationClip()
+{
+	/*
+	* FORMAT:
+	* clip count
+	*
+	* - clip 1
+	* -- name [32]
+	* -- clip frame length
+	* -- clip frames
+	*
+	* - clip 2
+	* -- ...
+	*/
+}

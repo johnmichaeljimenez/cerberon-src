@@ -57,7 +57,7 @@
     <ClCompile Include="gamestate_mainmenu.c">
       <Filter>Source Files\menu</Filter>
     </ClCompile>
-    <ClCompile Include="map_manager.c">
+    <ClCompile Include="mapdata_manager.c">
       <Filter>Source Files\data</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,7 +86,7 @@
     <ClInclude Include="gamestate_mainmenu.h">
       <Filter>Source Files\menu</Filter>
     </ClInclude>
-    <ClInclude Include="map_manager.h">
+    <ClInclude Include="mapdata_manager.h">
       <Filter>Source Files\data</Filter>
     </ClInclude>
   </ItemGroup>
