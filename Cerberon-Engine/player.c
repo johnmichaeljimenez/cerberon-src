@@ -16,7 +16,7 @@ void PlayerInit(PlayerCharacter* p)
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
 	p->Direction = (Vector2){ 1, 0 };
-	p->CollisionRadius = 28;
+	p->CollisionRadius = 32;
 	p->MovementSpeed = 200;
 }
 
@@ -51,7 +51,7 @@ void PlayerDraw(PlayerCharacter* p)
 
 	if (t != NULL)
 	{
-		DrawSprite(t, p->Position, p->Rotation, 0.6);
+		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 });
 	}
 
 	DrawCircleLines(p->Position.x, p->Position.y, p->CollisionRadius, GREEN);
