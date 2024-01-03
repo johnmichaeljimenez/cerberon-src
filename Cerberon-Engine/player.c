@@ -6,6 +6,7 @@
 #include "input_handler.h"
 #include "utils.h"
 #include "mapdata_manager.h"
+#include "collision.h"
 
 static unsigned long hash;
 
@@ -32,6 +33,7 @@ void PlayerUpdate(PlayerCharacter* p)
 	p->Position = Vector2Add(p->Position, vel);
 
 	//collision here
+	MoveBody(&p->Position, p->CollisionRadius);
 
 	Vector2 diff = CameraGetMousePosition();
 	diff = Vector2Subtract(diff, p->Position);
