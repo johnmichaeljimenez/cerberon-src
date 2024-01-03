@@ -139,6 +139,7 @@
     <ClCompile Include="input_handler.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="gamestate_mainmenu.c" />
+    <ClCompile Include="map_manager.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
@@ -149,6 +150,7 @@
     <ClInclude Include="gamestate_ingame.h" />
     <ClInclude Include="gamestate_mainmenu.h" />
     <ClInclude Include="input_handler.h" />
+    <ClInclude Include="map_manager.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
