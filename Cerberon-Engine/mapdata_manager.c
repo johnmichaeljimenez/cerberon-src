@@ -76,6 +76,8 @@ Wall CreateWall(Vector2 from, Vector2 to)
 	w.From = from;
 	w.To = to;
 
+	UpdateWall(&w);
+
 	return w;
 }
 
@@ -87,4 +89,14 @@ void DrawMap(MapData* map)
 
 		DrawLineV(w.From, w.To, WHITE);
 	}
+}
+
+void UpdateWall(Wall* w)
+{
+	Vector2 diff = Vector2Subtract(w->To, w->From);
+	w->Normal = Vector2Normalize((Vector2) { -diff.y, diff.x });
+	w->Length = Vector2Length(diff);
+	w->Midpoint = Vector2Add(w->From, w->To);
+	w->Midpoint.x /= 2;
+	w->Midpoint.y /= 2;
 }

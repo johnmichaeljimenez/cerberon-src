@@ -60,6 +60,9 @@
     <ClCompile Include="mapdata_manager.c">
       <Filter>Source Files\data</Filter>
     </ClCompile>
+    <ClCompile Include="collision.c">
+      <Filter>Source Files\gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -88,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="mapdata_manager.h">
       <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="collision.h">
+      <Filter>Source Files\gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

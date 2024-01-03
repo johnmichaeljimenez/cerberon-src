@@ -27,3 +27,4 @@ void UnloadMap();
 void LoadMap(char* filename, MapData* map);
 void DrawMap(MapData* map);
 Wall CreateWall(Vector2 from, Vector2 to);
+void UpdateWall(Wall* w);
