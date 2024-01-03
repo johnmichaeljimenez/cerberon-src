@@ -78,3 +78,13 @@ Wall CreateWall(Vector2 from, Vector2 to)
 
 	return w;
 }
+
+void DrawMap(MapData* map)
+{
+	for (int i = 0; i < map->WallCount; i++)
+	{
+		Wall w = map->Walls[i];
+
+		DrawLineV(w.From, w.To, WHITE);
+	}
+}

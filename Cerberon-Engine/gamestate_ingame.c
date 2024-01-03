@@ -49,6 +49,7 @@ void IngameOnDraw()
 	BeginMode2D(GameCamera);
 
 	PlayerDraw(&PlayerEntity);
+	DrawMap(CurrentMapData);
 
 	EndMode2D();
 
