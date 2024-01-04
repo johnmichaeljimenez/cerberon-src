@@ -17,6 +17,9 @@ void UnloadMap()
 	if (CurrentMapData->WallCount > 0)
 		MFree(CurrentMapData->Walls, CurrentMapData->WallCount, sizeof(Wall), "Wall List");
 
+	if (CurrentMapData->DoorCount > 0)
+		MFree(CurrentMapData->Doors, CurrentMapData->DoorCount, sizeof(Door), "Door List");
+
 	MFree(CurrentMapData, 1, sizeof(MapData), "Map Data");
 }
 
@@ -40,12 +43,22 @@ void LoadMap(char* filename, MapData* map)
 	 *
 	 * - wall 2
 	 * -- ...
+	 * 
+	 * door count
+	 * - door 1
+	 * -- pos x
+	 * -- pos y
+	 * -- rotation
+	 * -- key id
+	 * 
+	 * - door 2
+	 * -- ...
 	 *
 	 */
 
 	FILE* file = fopen(filename, "rb");
 
-	int n = 0;
+	int n = 0, id = 0;
 	float x1, y1, r, x2, y2;
 
 	fread(&x1, sizeof(float), 1, file);
@@ -73,6 +86,25 @@ void LoadMap(char* filename, MapData* map)
 		}
 	}
 
+
+	fread(&n, sizeof(int), 1, file);
+	map->DoorCount = n;
+
+	if (map->DoorCount > 0)
+	{
+		map->Doors = MCalloc(n, sizeof(Door), "Door List");
+
+		for (int i = 0; i < n; i++)
+		{
+			fread(&x1, sizeof(float), 1, file);
+			fread(&y1, sizeof(float), 1, file);
+			fread(&r, sizeof(float), 1, file);
+			fread(&id, sizeof(int), 1, file);
+
+			map->Doors[i] = CreateDoor((Vector2) { x1, y1 }, r, id);
+		}
+	}
+
 	fclose(file);
 }
 
@@ -85,6 +117,13 @@ Wall CreateWall(Vector2 from, Vector2 to)
 	UpdateWall(&w);
 
 	return w;
+}
+
+Door CreateDoor(Vector2 pos, float rot, int id)
+{
+	Door d = { 0 };
+
+	return d;
 }
 
 void DrawMap(MapData* map)
