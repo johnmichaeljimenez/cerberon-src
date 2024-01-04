@@ -14,7 +14,7 @@ void CameraInit()
 
 void CameraUpdate()
 {
-	GameCamera.target = Vector2Lerp(GameCamera.target, CameraTargetPosition, GetFrameTime());
+	GameCamera.target = Vector2Lerp(GameCamera.target, CameraTargetPosition, GetFrameTime() * 2);
 }
 
 void CameraSetTarget(Vector2 pos, bool jump)

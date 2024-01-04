@@ -35,7 +35,7 @@ void IngameOnUpdate()
 	PlayerUpdate(&PlayerEntity);
 	PlayerLateUpdate(&PlayerEntity);
 
-	CameraSetTarget(PlayerEntity.Position, false);
+	CameraSetTarget(PlayerGetForward(&PlayerEntity, PlayerEntity.CameraOffset), false);
 	CameraUpdate();
 
 	if (IsKeyPressed(KEY_F1))

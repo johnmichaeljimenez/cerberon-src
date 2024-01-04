@@ -6,10 +6,21 @@
 #include "utils.h"
 #include "memory.h"
 
+//TODO: investigate memory leakage from logfile report
 void LoadResources()
 {
 	TextureResourceList = MCalloc(1, sizeof(TextureResource), "Texture List");
 	TextureResourceCount = 1;
+
+	Image checkImg = GenImageChecked(128, 128, 16, 16, MAGENTA, BLACK);
+	TextureResourceList[0] = (TextureResource){
+		.Name = "NULL",
+		.Hash = 0,
+		.Texture = LoadTextureFromImage(checkImg),
+		.TextureType = TEXTURETYPE_Tile
+	};
+
+	UnloadImage(checkImg);
 
 	LoadTexturePack("res/tiles.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Tile);
 	LoadTexturePack("res/sprites.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Sprite);

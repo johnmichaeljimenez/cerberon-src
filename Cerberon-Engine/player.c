@@ -20,11 +20,17 @@ void PlayerInit(PlayerCharacter* p)
 	p->Direction = (Vector2){ 1, 0 };
 	p->CollisionRadius = 32;
 	p->MovementSpeed = 200;
+	p->CameraOffset = 300;
 }
 
 void PlayerUnload(PlayerCharacter* p)
 {
 
+}
+
+Vector2 PlayerGetForward(PlayerCharacter* p, float length)
+{
+	return Vector2Add(p->Position, Vector2Scale(p->Direction, length));
 }
 
 void PlayerUpdate(PlayerCharacter* p)
@@ -40,7 +46,7 @@ void PlayerUpdate(PlayerCharacter* p)
 	diff = Vector2Subtract(diff, p->Position);
 	float newDir = atan2f(diff.y, diff.x);
 
-	Linecast(p->Position, Vector2Add(p->Position, Vector2Scale(p->Direction, 1300)), &lineHit);
+	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit);
 
 	PlayerRotate(p, newDir);
 }
@@ -66,7 +72,7 @@ void PlayerDraw(PlayerCharacter* p)
 	}
 
 	DrawCircleLines(p->Position.x, p->Position.y, p->CollisionRadius, GREEN);
-	DrawLineV(p->Position, Vector2Add(p->Position, Vector2Scale(p->Direction, p->CollisionRadius)), GREEN);
+	DrawLineV(p->Position, PlayerGetForward(p, p->CollisionRadius), GREEN);
 }
 
 void PlayerDrawHUD(PlayerCharacter* p)
