@@ -2,20 +2,22 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include "mapdata_manager.h"
+#include "memory.h"
 
 
 void InitMap()
 {
-	CurrentMapData = calloc(1, sizeof(MapData));
+	CurrentMapData = MCalloc(1, sizeof(MapData), "Map Data");
 	LoadMap("maps/test.map", CurrentMapData);
 }
 
 void UnloadMap()
 {
-	free(CurrentMapData->Walls);
-	free(CurrentMapData);
+	if (CurrentMapData->WallCount > 0)
+		MFree(CurrentMapData->Walls, CurrentMapData->WallCount, sizeof(Wall), "Wall List");
+
+	MFree(CurrentMapData, 1, sizeof(MapData), "Map Data");
 }
 
 void LoadMap(char* filename, MapData* map)
@@ -54,17 +56,21 @@ void LoadMap(char* filename, MapData* map)
 	map->PlayerRotation = r;
 
 	fread(&n, sizeof(int), 1, file);
-	map->WallCount = n;
-	map->Walls = calloc(n * 4, sizeof(Wall));
+	map->WallCount = n * 4;
 
-	for (int i = 0; i < n; i++)
+	if (map->WallCount > 0)
 	{
-		fread(&x1, sizeof(float), 1, file);
-		fread(&y1, sizeof(float), 1, file);
-		fread(&x2, sizeof(float), 1, file);
-		fread(&y2, sizeof(float), 1, file);
+		map->Walls = MCalloc(n * 4, sizeof(Wall), "Wall List");
 
-		map->Walls[i] = CreateWall((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
+		for (int i = 0; i < n; i++)
+		{
+			fread(&x1, sizeof(float), 1, file);
+			fread(&y1, sizeof(float), 1, file);
+			fread(&x2, sizeof(float), 1, file);
+			fread(&y2, sizeof(float), 1, file);
+
+			map->Walls[i] = CreateWall((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
+		}
 	}
 
 	fclose(file);
@@ -72,7 +78,7 @@ void LoadMap(char* filename, MapData* map)
 
 Wall CreateWall(Vector2 from, Vector2 to)
 {
-	Wall w = {0};
+	Wall w = { 0 };
 	w.From = from;
 	w.To = to;
 

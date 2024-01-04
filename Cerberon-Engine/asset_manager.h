@@ -36,7 +36,6 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** array);
 void UnloadTexturePack(int* arrayCount, TextureResource** array);
 TextureResource* GetTextureResource(unsigned long hash);
 
-void LoadAnimationPack(char* filename, int* arrayCount, AnimationClip** array);
-void UnloadAnimationPack(int* arrayCount, AnimationClip** array);
+void LoadAnimationPack(char* filename, int* arrayCount, AnimationClip** clipArray);
+void UnloadAnimationPack(int* arrayCount, AnimationClip** clipA);
 AnimationClip* GetAnimationResource(unsigned long hash);
-AnimationClip* LoadAnimationClip();

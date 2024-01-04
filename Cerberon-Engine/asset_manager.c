@@ -3,12 +3,13 @@
 #include "asset_manager.h"
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include "utils.h"
+#include "memory.h"
 
 void LoadResources()
 {
-	TextureResourceList = calloc(1, sizeof(TextureResource));
+	TextureResourceList = MCalloc(1, sizeof(TextureResource), "Texture List");
+	TextureResourceCount = 1;
 
 	LoadTexturePack("res/tiles.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Tile);
 	LoadTexturePack("res/sprites.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Sprite);
@@ -37,12 +38,13 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 	FILE* file = fopen(filename, "rb");
 
 	int c = 0;
-	int start;
+	size_t start;
 	fread(&c, sizeof(int), 1, file);
 
 	start = *arrayCount;
+
 	*arrayCount += c;
-	*texArray = realloc(*texArray, sizeof(TextureResource) * *arrayCount);
+	*texArray = MRealloc(*texArray, *arrayCount, sizeof(TextureResource), start, "Texture List");
 
 	for (int i = start; i < start + c; i++)
 	{
@@ -50,7 +52,7 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 		fread(texName, sizeof(char), 32, file);
 		int texSize;
 		fread(&texSize, sizeof(int), 1, file);
-		char* texData = calloc(texSize, sizeof(char));
+		char* texData = MCalloc(texSize, sizeof(char), "Temp image data");
 		fread(texData, sizeof(char), texSize, file);
 		Image img = LoadImageFromMemory(".png", texData, texSize);
 
@@ -59,7 +61,7 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 		(*texArray)[i].TextureType = type;
 		(*texArray)[i].Hash = ToHash(texName);
 
-		free(texData);
+		MFree(texData, texSize, sizeof(char), "Temp image data");
 		UnloadImage(img);
 
 		TraceLog(LOG_INFO, "Set texture index %d/%d %s", i, *arrayCount, texName);
@@ -75,7 +77,7 @@ void UnloadTexturePack(int* arrayCount, TextureResource** texArray)
 		UnloadTexture((*texArray)[i].Texture);
 	}
 
-	free(*texArray);
+	MFree(*texArray, *arrayCount, sizeof(TextureResource), "Texture List");
 }
 
 TextureResource* GetTextureResource(unsigned long hash)
@@ -93,22 +95,7 @@ TextureResource* GetTextureResource(unsigned long hash)
 }
 
 
-void LoadAnimationPack(char* filename, int* arrayCount, AnimationClip** array)
-{
-
-}
-
-void UnloadAnimationPack(int* arrayCount, AnimationClip** array)
-{
-
-}
-
-AnimationClip* GetAnimationResource(char* name)
-{
-
-}
-
-AnimationClip* LoadAnimationClip()
+void LoadAnimationPack(char* filename, int* arrayCount, AnimationClip** clipArray)
 {
 	/*
 	* FORMAT:
@@ -122,4 +109,47 @@ AnimationClip* LoadAnimationClip()
 	* - clip 2
 	* -- ...
 	*/
+
+
+	FILE* file = fopen(filename, "rb");
+
+	int c = 0;
+	int start;
+	fread(&c, sizeof(int), 1, file);
+
+	start = *arrayCount;
+	*arrayCount += c;
+	*clipArray = realloc(*clipArray, sizeof(AnimationClip) * *arrayCount);
+
+	for (int i = start; i < start + c; i++)
+	{
+		//char* clipName[32];
+		//fread(texName, sizeof(char), 32, file);
+		//int texSize;
+		//fread(&texSize, sizeof(int), 1, file);
+		//char* texData = calloc(texSize, sizeof(char));
+		//fread(texData, sizeof(char), texSize, file);
+
+		//strcpy((*texArray)[i].Name, texName);
+		//(*texArray)[i].Texture = LoadTextureFromImage(img);
+		//(*texArray)[i].TextureType = type;
+		//(*texArray)[i].Hash = ToHash(texName);
+
+		//free(texData);
+		//UnloadImage(img);
+
+		//TraceLog(LOG_INFO, "Set animation clip index %d/%d %s", i, *arrayCount, texName);
+	};
+
+	fclose(file);
+}
+
+void UnloadAnimationPack(int* arrayCount, AnimationClip** array)
+{
+
+}
+
+AnimationClip* GetAnimationResource(char* name)
+{
+
 }
