@@ -53,7 +53,10 @@ void PlayerUpdate(PlayerCharacter* p)
 
 void PlayerLateUpdate(PlayerCharacter* p)
 {
+	Vector2 targPos = Vector2Subtract(CameraGetMousePosition(), p->Position);
+	targPos = Vector2Add(p->Position, Vector2ClampValue(targPos, 0, 300));
 
+	CameraSetTarget(targPos, false);
 }
 
 void PlayerDraw(PlayerCharacter* p)
