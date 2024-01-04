@@ -63,6 +63,9 @@
     <ClCompile Include="collision.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="memory.c">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="collision.h">
       <Filter>Source Files\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="memory.h">
+      <Filter>Source Files\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
