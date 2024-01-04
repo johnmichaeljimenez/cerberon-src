@@ -28,6 +28,9 @@
     <Filter Include="Source Files\menu">
       <UniqueIdentifier>{75c5c5e6-e564-4721-ad5c-c9beef1c1dec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gameplay\interaction">
+      <UniqueIdentifier>{45458dc6-8fd1-4fc4-be87-f860cc42840d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.c">
@@ -69,6 +72,12 @@
     <ClCompile Include="log.c">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="i_door.c">
+      <Filter>Source Files\gameplay\interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="interaction.c">
+      <Filter>Source Files\gameplay\interaction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -106,6 +115,12 @@
     </ClInclude>
     <ClInclude Include="log.h">
       <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="i_door.h">
+      <Filter>Source Files\gameplay\interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="interaction.h">
+      <Filter>Source Files\gameplay\interaction</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
