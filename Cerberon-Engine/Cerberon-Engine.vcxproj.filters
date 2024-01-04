@@ -66,6 +66,9 @@
     <ClCompile Include="memory.c">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="log.c">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -99,6 +102,9 @@
       <Filter>Source Files\gameplay</Filter>
     </ClInclude>
     <ClInclude Include="memory.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="log.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
   </ItemGroup>
