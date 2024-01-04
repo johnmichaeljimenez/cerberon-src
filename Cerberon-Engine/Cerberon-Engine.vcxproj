@@ -134,23 +134,27 @@
   <ItemGroup>
     <ClCompile Include="asset_manager.c" />
     <ClCompile Include="camera.c" />
+    <ClCompile Include="collision.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="gamestate_ingame.c" />
     <ClCompile Include="input_handler.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="gamestate_mainmenu.c" />
     <ClCompile Include="mapdata_manager.c" />
+    <ClCompile Include="memory.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="asset_manager.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="collision.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamestate_ingame.h" />
     <ClInclude Include="gamestate_mainmenu.h" />
     <ClInclude Include="input_handler.h" />
     <ClInclude Include="mapdata_manager.h" />
+    <ClInclude Include="memory.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

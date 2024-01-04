@@ -5,6 +5,19 @@
 #include <stdlib.h>
 #include "mapdata_manager.h"
 
+
+void InitMap()
+{
+	CurrentMapData = calloc(1, sizeof(MapData));
+	LoadMap("maps/test.map", CurrentMapData);
+}
+
+void UnloadMap()
+{
+	free(CurrentMapData->Walls);
+	free(CurrentMapData);
+}
+
 void LoadMap(char* filename, MapData* map)
 {
 	/*
@@ -16,27 +29,28 @@ void LoadMap(char* filename, MapData* map)
 	 * player pos y
 	 * rotation
 	 *
-	 * wall block count
-	 * - wall block 1
-	 * -- position x
-	 * -- position y
-	 * -- size x
-	 * -- size y
+	 * wall count
+	 * - wall 1
+	 * -- from x
+	 * -- from y
+	 * -- to x
+	 * -- to y
 	 *
-	 * - wall block 2
+	 * - wall 2
 	 * -- ...
 	 *
 	 */
 
 	FILE* file = fopen(filename, "rb");
 
-	float x, y, r, w, h, n;
+	int n = 0;
+	float x1, y1, r, x2, y2;
 
-	fread(&x, sizeof(float), 1, file);
-	fread(&y, sizeof(float), 1, file);
+	fread(&x1, sizeof(float), 1, file);
+	fread(&y1, sizeof(float), 1, file);
 	fread(&r, sizeof(float), 1, file);
 
-	map->PlayerPosition = (Vector2){ x, y };
+	map->PlayerPosition = (Vector2){ x1, y1 };
 	map->PlayerRotation = r;
 
 	fread(&n, sizeof(int), 1, file);
@@ -45,14 +59,44 @@ void LoadMap(char* filename, MapData* map)
 
 	for (int i = 0; i < n; i++)
 	{
-		fread(&x, sizeof(float), 1, file);
-		fread(&y, sizeof(float), 1, file);
-		fread(&w, sizeof(float), 1, file);
-		fread(&h, sizeof(float), 1, file);
+		fread(&x1, sizeof(float), 1, file);
+		fread(&y1, sizeof(float), 1, file);
+		fread(&x2, sizeof(float), 1, file);
+		fread(&y2, sizeof(float), 1, file);
 
-		//map->Walls[i].From = (Vector2){ x, y };
-		//map->Walls[i].To = (Vector2){ x, y };
+		map->Walls[i] = CreateWall((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
 	}
 
 	fclose(file);
+}
+
+Wall CreateWall(Vector2 from, Vector2 to)
+{
+	Wall w = {0};
+	w.From = from;
+	w.To = to;
+
+	UpdateWall(&w);
+
+	return w;
+}
+
+void DrawMap(MapData* map)
+{
+	for (int i = 0; i < map->WallCount; i++)
+	{
+		Wall w = map->Walls[i];
+
+		DrawLineV(w.From, w.To, WHITE);
+	}
+}
+
+void UpdateWall(Wall* w)
+{
+	Vector2 diff = Vector2Subtract(w->To, w->From);
+	w->Normal = Vector2Normalize((Vector2) { -diff.y, diff.x });
+	w->Length = Vector2Length(diff);
+	w->Midpoint = Vector2Add(w->From, w->To);
+	w->Midpoint.x /= 2;
+	w->Midpoint.y /= 2;
 }

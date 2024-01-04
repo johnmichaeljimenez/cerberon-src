@@ -2,6 +2,7 @@
 #include "game.h"
 #include "gamestate_ingame.h"
 #include "asset_manager.h"
+#include "mapdata_manager.h"
 #include "camera.h"
 #include "player.h"
 
@@ -17,6 +18,7 @@ void IngameOnLoad()
 {
 	LoadResources();
 	CameraInit();
+	InitMap();
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
 }
@@ -24,6 +26,7 @@ void IngameOnLoad()
 void IngameOnUnload()
 {
 	PlayerUnload(&PlayerEntity);
+	UnloadMap();
 	UnloadResources();
 }
 
@@ -46,6 +49,7 @@ void IngameOnDraw()
 	BeginMode2D(GameCamera);
 
 	PlayerDraw(&PlayerEntity);
+	DrawMap(CurrentMapData);
 
 	EndMode2D();
 
