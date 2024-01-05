@@ -1,5 +1,5 @@
 #pragma warning(disable:4996)
-#include<raylib.h>
+#include <raylib.h>
 #include "asset_manager.h"
 #include <string.h>
 #include <stdio.h>
@@ -24,6 +24,9 @@ void LoadResources()
 
 	LoadTexturePack("res/tiles.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Tile);
 	LoadTexturePack("res/sprites.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Sprite);
+
+	WallTexture = GetTextureResource(ToHash("misc-wall"));
+	WallNPatch = (NPatchInfo){ (Rectangle) { 0.0f, 0.0f, WallTexture->Texture.width, WallTexture->Texture.height }, 24, 24, 24, 24, NPATCH_NINE_PATCH };
 }
 
 void UnloadResources()

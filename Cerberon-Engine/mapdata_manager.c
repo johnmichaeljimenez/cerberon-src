@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include "mapdata_manager.h"
 #include "memory.h"
+#include "utils.h"
+#include "asset_manager.h"
 
 
 void InitMap()
@@ -104,9 +106,6 @@ void LoadMap(char* filename, MapData* map)
 
 			Vector2 a = (Vector2){ x1, y1 }; //upper left
 			Vector2 b = (Vector2){ x1, y1 + y2 }; //lower left
-
-			Vector2 a = (Vector2){ x1 - x2, y1 - y2 }; //upper left
-			Vector2 b = (Vector2){ x1 - x2, y1 + y2 }; //lower left
 			Vector2 c = (Vector2){ x1 + x2, y1 + y2 }; //lower right
 			Vector2 d = (Vector2){ x1 + x2, y1 }; //upper right
 
@@ -169,6 +168,17 @@ Door CreateDoor(Vector2 pos, float rot, int id)
 
 void DrawMap(MapData* map)
 {
+	for (int i = 0; i < map->BlockColliderCount; i++)
+	{
+		BlockCollider* b = &map->BlockColliders[i];
+
+		Rectangle rect = { b->Position.x, b->Position.y, b->Size.x, b->Size.y };
+
+		Vector2 origin = { 0, 0 };
+
+		DrawTextureNPatch(WallTexture->Texture, WallNPatch, rect, origin, 0, WHITE);
+	}
+
 	for (int i = 0; i < map->WallCount; i++)
 	{
 		Wall w = map->Walls[i];

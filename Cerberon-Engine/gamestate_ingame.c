@@ -42,7 +42,7 @@ void IngameOnUpdate()
 
 void IngameOnDraw()
 {
-	ClearBackground(BLACK);
+	ClearBackground(DARKGRAY);
 
 	BeginMode2D(GameCamera);
 

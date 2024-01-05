@@ -24,6 +24,9 @@ typedef struct AnimationClip
 	bool Loop;
 } AnimationClip;
 
+NPatchInfo WallNPatch;
+TextureResource* WallTexture;
+
 int TextureResourceCount;
 TextureResource* TextureResourceList;
 
