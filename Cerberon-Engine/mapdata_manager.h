@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <raymath.h>
+#include "lighting.h"
 #include "i_door.h"
 
 typedef struct BlockCollider
@@ -31,6 +32,9 @@ typedef struct MapData
 
 	int DoorCount;
 	Door* Doors;
+
+	int LightCount;
+	Light* Lights;
 } MapData;
 
 MapData* CurrentMapData;
@@ -38,6 +42,7 @@ MapData* CurrentMapData;
 void InitMap();
 void UnloadMap();
 void LoadMap(char* filename, MapData* map);
+void UpdateMap(MapData* map);
 void DrawMap(MapData* map);
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size);

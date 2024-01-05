@@ -30,5 +30,5 @@ void MainMenuOnUpdate()
 void MainMenuOnDraw()
 {
 	ClearBackground(DARKGRAY);
-	DrawText("[SPACE] to start", 2, 20, 25, WHITE);
+	DrawText("[SPACE] to start", GetScreenWidth()/2, GetScreenHeight()-100, 25, WHITE);
 }

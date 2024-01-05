@@ -32,6 +32,7 @@ void IngameOnUnload()
 
 void IngameOnUpdate()
 {
+	UpdateMap(CurrentMapData);
 	PlayerUpdate(&PlayerEntity);
 	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();

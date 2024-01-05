@@ -16,6 +16,16 @@ void InitMap()
 
 void UnloadMap()
 {
+	if (CurrentMapData->LightCount > 0)
+	{
+		for (int i = 0; i < CurrentMapData->LightCount; i++)
+		{
+			UnloadRenderTexture(CurrentMapData->Lights[i]._RenderTexture);
+		}
+
+		MFree(CurrentMapData->Lights, CurrentMapData->Lights, sizeof(Light), "Light List");
+	}
+
 	if (CurrentMapData->BlockColliderCount > 0)
 		MFree(CurrentMapData->BlockColliders, CurrentMapData->BlockColliderCount, sizeof(BlockCollider), "BC List");
 
@@ -136,6 +146,13 @@ void LoadMap(char* filename, MapData* map)
 	//}
 
 	fclose(file);
+
+
+	//TEMPORARY
+	map->Lights = MCalloc(1, sizeof(Light), "Light List");
+	map->LightCount = 1;
+
+	map->Lights[0] = CreateLight((Vector2){ 300, 100 }, 0, 1024, 1, WHITE, true);
 }
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
@@ -166,6 +183,13 @@ Door CreateDoor(Vector2 pos, float rot, int id)
 	return d;
 }
 
+void UpdateMap(MapData* map)
+{
+	//map->Lights->Position = PlayerEntity.Position; //TEMPORARY
+
+	UpdateLights(map->LightCount, map->Lights);
+}
+
 void DrawMap(MapData* map)
 {
 	for (int i = 0; i < map->BlockColliderCount; i++)
@@ -185,6 +209,8 @@ void DrawMap(MapData* map)
 
 		DrawLineV(w.From, w.To, WHITE);
 	}
+
+	DrawLights(map->LightCount, map->Lights);
 }
 
 void UpdateWall(Wall* w)
