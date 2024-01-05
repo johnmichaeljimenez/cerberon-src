@@ -27,6 +27,8 @@ typedef struct AnimationClip
 NPatchInfo WallNPatch;
 TextureResource* WallTexture;
 
+TextureResource* LightTexture;
+
 int TextureResourceCount;
 TextureResource* TextureResourceList;
 

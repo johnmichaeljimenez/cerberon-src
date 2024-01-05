@@ -21,7 +21,7 @@ void LoadResources()
 	};
 	UnloadImage(img);
 
-	img = GenImageGradientRadial(128, 128, 0, WHITE, BLACK);
+	img = GenImageGradientRadial(512, 512, 0, WHITE, BLACK);
 	TextureResourceList[1] = (TextureResource){
 		.Name = "misc-light",
 		.Hash = ToHash("misc-light"),
@@ -35,6 +35,8 @@ void LoadResources()
 
 	WallTexture = GetTextureResource(ToHash("misc-wall"));
 	WallNPatch = (NPatchInfo){ (Rectangle) { 0.0f, 0.0f, WallTexture->Texture.width, WallTexture->Texture.height }, 24, 24, 24, 24, NPATCH_NINE_PATCH };
+
+	LightTexture = GetTextureResource(ToHash("misc-light"));
 }
 
 void UnloadResources()
