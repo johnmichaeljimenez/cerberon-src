@@ -26,8 +26,6 @@ public class MapExporter : MonoBehaviour
         public float Y;
         public float Width;
         public float Height;
-
-        public WallSegmentData[] WallSegmentData;
     }
 
     struct WallSegmentData
@@ -82,14 +80,7 @@ public class MapExporter : MonoBehaviour
                 X = b.center.x * MAP_SCALE,
                 Y = b.center.y * MAP_SCALE_Y,
                 Width = b.size.x * MAP_SCALE,
-                Height = b.size.y * MAP_SCALE,
-                WallSegmentData = new WallSegmentData[]
-                {
-                   new WallSegmentData(){ X1 = b.min.x * MAP_SCALE, Y1 = b.max.y * MAP_SCALE_Y, X2 = b.max.x * MAP_SCALE, Y2 = b.max.y * MAP_SCALE_Y },
-                   new WallSegmentData(){ X1 = b.max.x * MAP_SCALE, Y1 = b.max.y * MAP_SCALE_Y, X2 = b.max.x * MAP_SCALE, Y2 = b.min.y * MAP_SCALE_Y },
-                   new WallSegmentData(){ X1 = b.max.x * MAP_SCALE, Y1 = b.min.y * MAP_SCALE_Y, X2 = b.min.x * MAP_SCALE, Y2 = b.min.y * MAP_SCALE_Y },
-                   new WallSegmentData(){ X1 = b.min.x * MAP_SCALE, Y1 = b.min.y * MAP_SCALE_Y, X2 = b.min.x * MAP_SCALE, Y2 = b.max.y * MAP_SCALE_Y },
-                }
+                Height = b.size.y * MAP_SCALE
             };
 
             n++;
@@ -113,15 +104,6 @@ public class MapExporter : MonoBehaviour
             data.AddRange(BitConverter.GetBytes(item.Y));
             data.AddRange(BitConverter.GetBytes(item.Width));
             data.AddRange(BitConverter.GetBytes(item.Height));
-
-            for (int i = 0; i < 4; i++)
-            {
-                var w = item.WallSegmentData[i];
-                data.AddRange(BitConverter.GetBytes(w.X1));
-                data.AddRange(BitConverter.GetBytes(w.Y1));
-                data.AddRange(BitConverter.GetBytes(w.X2));
-                data.AddRange(BitConverter.GetBytes(w.Y2));
-            }
         }
 
         File.WriteAllBytes(mapPath, data.ToArray());
