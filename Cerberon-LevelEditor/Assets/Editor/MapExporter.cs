@@ -106,8 +106,25 @@ public class MapExporter : MonoBehaviour
         data.AddRange(BitConverter.GetBytes(mapData.PlayerPosY));
         data.AddRange(BitConverter.GetBytes(mapData.PlayerRot));
 
-        File.WriteAllBytes(mapPath, data.ToArray());
+        data.AddRange(BitConverter.GetBytes(mapData.WallData.Length));
+        foreach (var item in mapData.WallData)
+        {
+            data.AddRange(BitConverter.GetBytes(item.X));
+            data.AddRange(BitConverter.GetBytes(item.Y));
+            data.AddRange(BitConverter.GetBytes(item.Width));
+            data.AddRange(BitConverter.GetBytes(item.Height));
 
-        print($"Map {mapPath}");
+            for (int i = 0; i < 4; i++)
+            {
+                var w = item.WallSegmentData[i];
+                data.AddRange(BitConverter.GetBytes(w.X1));
+                data.AddRange(BitConverter.GetBytes(w.Y1));
+                data.AddRange(BitConverter.GetBytes(w.X2));
+                data.AddRange(BitConverter.GetBytes(w.Y2));
+            }
+        }
+
+        File.WriteAllBytes(mapPath, data.ToArray());
+        EditorUtility.DisplayDialog("Success!", $"Map exported to {mapPath}", "OK");
     }
 }
