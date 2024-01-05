@@ -87,6 +87,9 @@ void LoadMap(char* filename, MapData* map)
 			fread(&x2, sizeof(float), 1, file);
 			fread(&y2, sizeof(float), 1, file);
 
+			x1 -= x2 / 2;
+			y1 -= y2 / 2;
+
 			map->BlockColliders[i] = CreateBlockCollider((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
 
 		}
@@ -99,13 +102,13 @@ void LoadMap(char* filename, MapData* map)
 			x2 = block->Size.x;
 			y2 = block->Size.y;
 
-			x2 /= 2;
-			y2 /= 2;
+			Vector2 a = (Vector2){ x1, y1 }; //upper left
+			Vector2 b = (Vector2){ x1, y1 + y2 }; //lower left
 
 			Vector2 a = (Vector2){ x1 - x2, y1 - y2 }; //upper left
 			Vector2 b = (Vector2){ x1 - x2, y1 + y2 }; //lower left
 			Vector2 c = (Vector2){ x1 + x2, y1 + y2 }; //lower right
-			Vector2 d = (Vector2){ x1 + x2, y1 - y2 }; //upper right
+			Vector2 d = (Vector2){ x1 + x2, y1 }; //upper right
 
 			map->Walls[i] = CreateWall(a, b);
 			map->Walls[i + 1] = CreateWall(b, c);
