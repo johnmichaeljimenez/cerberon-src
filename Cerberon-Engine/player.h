@@ -11,6 +11,7 @@ typedef struct PlayerCharacter
 
 	float MovementSpeed;
 	float CollisionRadius;
+	float CameraOffset;
 
 } PlayerCharacter;
 
@@ -24,3 +25,4 @@ void PlayerDraw(PlayerCharacter* p);
 void PlayerDrawHUD(PlayerCharacter* p);
 
 void PlayerRotate(PlayerCharacter* p, float dir);
+Vector2 PlayerGetForward(PlayerCharacter* p, float length);

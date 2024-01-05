@@ -138,6 +138,9 @@
     <ClCompile Include="game.c" />
     <ClCompile Include="gamestate_ingame.c" />
     <ClCompile Include="input_handler.c" />
+    <ClCompile Include="interaction.c" />
+    <ClCompile Include="i_door.c" />
+    <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="gamestate_mainmenu.c" />
     <ClCompile Include="mapdata_manager.c" />
@@ -153,6 +156,9 @@
     <ClInclude Include="gamestate_ingame.h" />
     <ClInclude Include="gamestate_mainmenu.h" />
     <ClInclude Include="input_handler.h" />
+    <ClInclude Include="interaction.h" />
+    <ClInclude Include="i_door.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="mapdata_manager.h" />
     <ClInclude Include="memory.h" />
     <ClInclude Include="player.h" />
