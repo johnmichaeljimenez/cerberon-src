@@ -89,6 +89,16 @@ void LoadMap(char* filename, MapData* map)
 
 			map->BlockColliders[i] = CreateBlockCollider((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
 
+		}
+
+		for (int i = 0; i < map->WallCount; i += 4)
+		{
+			BlockCollider* block = &map->BlockColliders[i / 4];
+			x1 = block->Position.x;
+			y1 = block->Position.y;
+			x2 = block->Size.x;
+			y2 = block->Size.y;
+
 			x2 /= 2;
 			y2 /= 2;
 
