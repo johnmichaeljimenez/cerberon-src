@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using System.IO;
+using System;
 
 public class MapExporter : MonoBehaviour
 {
@@ -94,5 +96,18 @@ public class MapExporter : MonoBehaviour
         }
 
         //save to file
+        var scenePath = Path.Combine(Application.dataPath, scene.path.Replace("Assets/", ""));
+        var sceneDir = Path.GetDirectoryName(scenePath);
+        var mapPath = Path.Combine(sceneDir, $"{scene.name}.map");
+
+        var data = new List<byte>();
+
+        data.AddRange(BitConverter.GetBytes(mapData.PlayerPosX));
+        data.AddRange(BitConverter.GetBytes(mapData.PlayerPosY));
+        data.AddRange(BitConverter.GetBytes(mapData.PlayerRot));
+
+        File.WriteAllBytes(mapPath, data.ToArray());
+
+        print($"Map {mapPath}");
     }
 }
