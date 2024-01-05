@@ -14,6 +14,9 @@ void InitMap()
 
 void UnloadMap()
 {
+	if (CurrentMapData->BlockColliderCount > 0)
+		MFree(CurrentMapData->BlockColliders, CurrentMapData->BlockColliderCount, sizeof(BlockCollider), "BC List");
+
 	if (CurrentMapData->WallCount > 0)
 		MFree(CurrentMapData->Walls, CurrentMapData->WallCount, sizeof(Wall), "Wall List");
 
@@ -36,21 +39,21 @@ void LoadMap(char* filename, MapData* map)
 	 *
 	 * wall count
 	 * - wall 1
-	 * -- from x
-	 * -- from y
-	 * -- to x
-	 * -- to y
+	 * -- center x
+	 * -- center y
+	 * -- width
+	 * -- height
 	 *
 	 * - wall 2
 	 * -- ...
-	 * 
+	 *
 	 * door count
 	 * - door 1
 	 * -- pos x
 	 * -- pos y
 	 * -- rotation
 	 * -- key id
-	 * 
+	 *
 	 * - door 2
 	 * -- ...
 	 *
@@ -69,43 +72,68 @@ void LoadMap(char* filename, MapData* map)
 	map->PlayerRotation = r;
 
 	fread(&n, sizeof(int), 1, file);
+	map->BlockColliderCount = n;
 	map->WallCount = n * 4;
 
 	if (map->WallCount > 0)
 	{
-		map->Walls = MCalloc(n * 4, sizeof(Wall), "Wall List");
+		map->BlockColliders = MCalloc(map->BlockColliderCount, sizeof(Wall), "BC List");
+		map->Walls = MCalloc(map->WallCount, sizeof(Wall), "Wall List");
 
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < map->BlockColliderCount; i++)
 		{
 			fread(&x1, sizeof(float), 1, file);
 			fread(&y1, sizeof(float), 1, file);
 			fread(&x2, sizeof(float), 1, file);
 			fread(&y2, sizeof(float), 1, file);
 
-			map->Walls[i] = CreateWall((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
+			map->BlockColliders[i] = CreateBlockCollider((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
+
+			x2 /= 2;
+			y2 /= 2;
+
+			Vector2 a = (Vector2){ x1 - x2, y1 - y2 }; //upper left
+			Vector2 b = (Vector2){ x1 - x2, y1 + y2 }; //lower left
+			Vector2 c = (Vector2){ x1 + x2, y1 + y2 }; //lower right
+			Vector2 d = (Vector2){ x1 + x2, y1 - y2 }; //upper right
+
+			map->Walls[i] = CreateWall(a, b);
+			map->Walls[i + 1] = CreateWall(b, c);
+			map->Walls[i + 2] = CreateWall(c, d);
+			map->Walls[i + 3] = CreateWall(d, a);
 		}
 	}
 
 
-	fread(&n, sizeof(int), 1, file);
-	map->DoorCount = n;
+	//fread(&n, sizeof(int), 1, file);
+	//map->DoorCount = n;
 
-	if (map->DoorCount > 0)
-	{
-		map->Doors = MCalloc(n, sizeof(Door), "Door List");
+	//if (map->DoorCount > 0)
+	//{
+	//	map->Doors = MCalloc(n, sizeof(Door), "Door List");
 
-		for (int i = 0; i < n; i++)
-		{
-			fread(&x1, sizeof(float), 1, file);
-			fread(&y1, sizeof(float), 1, file);
-			fread(&r, sizeof(float), 1, file);
-			fread(&id, sizeof(int), 1, file);
+	//	for (int i = 0; i < n; i++)
+	//	{
+	//		fread(&x1, sizeof(float), 1, file);
+	//		fread(&y1, sizeof(float), 1, file);
+	//		fread(&r, sizeof(float), 1, file);
+	//		fread(&id, sizeof(int), 1, file);
 
-			map->Doors[i] = CreateDoor((Vector2) { x1, y1 }, r, id);
-		}
-	}
+	//		map->Doors[i] = CreateDoor((Vector2) { x1, y1 }, r, id);
+	//	}
+	//}
 
 	fclose(file);
+}
+
+BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
+{
+	BlockCollider bc = { 0 };
+
+	bc.Position = pos;
+	bc.Size = size;
+
+	return bc;
 }
 
 Wall CreateWall(Vector2 from, Vector2 to)
