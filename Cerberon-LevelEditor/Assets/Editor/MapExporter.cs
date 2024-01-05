@@ -87,9 +87,14 @@ public class MapExporter : MonoBehaviour
         }
 
         //save to file
-        var scenePath = Path.Combine(Application.dataPath, scene.path.Replace("Assets/", ""));
-        var sceneDir = Path.GetDirectoryName(scenePath);
-        var mapPath = Path.Combine(sceneDir, $"{scene.name}.map");
+        var fname = EditorUtility.SaveFilePanel("Export to", "", $"{scene.name}.map", "map");
+
+        if (string.IsNullOrEmpty(fname))
+            return;
+
+        //var scenePath = Path.Combine(Application.dataPath, scene.path.Replace("Assets/", ""));
+        //var sceneDir = Path.GetDirectoryName(scenePath);
+        //var mapPath = Path.Combine(sceneDir, $"{scene.name}.map");
 
         var data = new List<byte>();
 
@@ -106,7 +111,7 @@ public class MapExporter : MonoBehaviour
             data.AddRange(BitConverter.GetBytes(item.Height));
         }
 
-        File.WriteAllBytes(mapPath, data.ToArray());
-        EditorUtility.DisplayDialog("Success!", $"Map exported to {mapPath}", "OK");
+        File.WriteAllBytes(fname, data.ToArray());
+        EditorUtility.DisplayDialog("Success!", $"Map exported to {fname}", "OK");
     }
 }
