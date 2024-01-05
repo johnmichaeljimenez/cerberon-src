@@ -31,6 +31,9 @@
     <Filter Include="Source Files\gameplay\interaction">
       <UniqueIdentifier>{45458dc6-8fd1-4fc4-be87-f860cc42840d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\rendering">
+      <UniqueIdentifier>{3b1ba834-cc95-4831-b043-f16047772c74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.c">
@@ -78,6 +81,9 @@
     <ClCompile Include="interaction.c">
       <Filter>Source Files\gameplay\interaction</Filter>
     </ClCompile>
+    <ClCompile Include="lighting.c">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -121,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="interaction.h">
       <Filter>Source Files\gameplay\interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="lighting.h">
+      <Filter>Source Files\rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
