@@ -9,18 +9,26 @@
 //TODO: investigate memory leakage from logfile report
 void LoadResources()
 {
-	TextureResourceList = MCalloc(1, sizeof(TextureResource), "Texture List");
-	TextureResourceCount = 1;
+	TextureResourceList = MCalloc(2, sizeof(TextureResource), "Texture List");
+	TextureResourceCount = 2;
 
-	Image checkImg = GenImageChecked(128, 128, 16, 16, MAGENTA, BLACK);
+	Image img = GenImageChecked(128, 128, 16, 16, MAGENTA, BLACK);
 	TextureResourceList[0] = (TextureResource){
 		.Name = "NULL",
 		.Hash = 0,
-		.Texture = LoadTextureFromImage(checkImg),
+		.Texture = LoadTextureFromImage(img),
 		.TextureType = TEXTURETYPE_Tile
 	};
+	UnloadImage(img);
 
-	UnloadImage(checkImg);
+	img = GenImageGradientRadial(128, 128, 0, WHITE, BLACK);
+	TextureResourceList[1] = (TextureResource){
+		.Name = "misc-light",
+		.Hash = ToHash("misc-light"),
+		.Texture = LoadTextureFromImage(img),
+		.TextureType = TEXTURETYPE_Sprite
+	};
+	UnloadImage(img);
 
 	LoadTexturePack("res/tiles.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Tile);
 	LoadTexturePack("res/sprites.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Sprite);
