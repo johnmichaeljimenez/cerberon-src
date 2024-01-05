@@ -7,6 +7,7 @@ using UnityEditor.SceneManagement;
 public class MapExporter : MonoBehaviour
 {
     public const float MAP_SCALE = 64.0f;
+    public const float MAP_SCALE_Y = -64.0f;
 
     struct MapData
     {
@@ -48,7 +49,7 @@ public class MapExporter : MonoBehaviour
         var root = rootObjects[0].transform;
 
         var player = root.Find("Player Character");
-        if (player != null)
+        if (player == null)
         {
             EditorUtility.DisplayDialog("Error!", "'Player Character' object is missing!", "OK");
             return;
@@ -56,11 +57,11 @@ public class MapExporter : MonoBehaviour
 
         //save player data
         mapData.PlayerPosX = player.position.x * MAP_SCALE;
-        mapData.PlayerPosY = player.position.y * MAP_SCALE;
+        mapData.PlayerPosY = player.position.y * MAP_SCALE_Y;
         mapData.PlayerRot = player.eulerAngles.z;
 
         var wallContainer = root.Find("Walls");
-        if (wallContainer != null)
+        if (wallContainer == null)
         {
             EditorUtility.DisplayDialog("Error!", "'Walls' object is missing!", "OK");
             return;
@@ -76,16 +77,16 @@ public class MapExporter : MonoBehaviour
             var b = i.bounds;
             mapData.WallData[n] = new WallData()
             {
-                X = b.center.x,
-                Y = b.center.y,
-                Width = b.size.x,
-                Height = b.size.y,
+                X = b.center.x * MAP_SCALE,
+                Y = b.center.y * MAP_SCALE_Y,
+                Width = b.size.x * MAP_SCALE,
+                Height = b.size.y * MAP_SCALE,
                 WallSegmentData = new WallSegmentData[]
                 {
-                   new WallSegmentData(){ X1 = b.min.x, Y1 = b.max.y, X2 = b.max.x, Y2 = b.max.y },
-                   new WallSegmentData(){ X1 = b.max.x, Y1 = b.max.y, X2 = b.max.x, Y2 = b.min.y },
-                   new WallSegmentData(){ X1 = b.max.x, Y1 = b.min.y, X2 = b.min.x, Y2 = b.min.y },
-                   new WallSegmentData(){ X1 = b.min.x, Y1 = b.min.y, X2 = b.min.x, Y2 = b.max.y },
+                   new WallSegmentData(){ X1 = b.min.x * MAP_SCALE, Y1 = b.max.y * MAP_SCALE_Y, X2 = b.max.x * MAP_SCALE, Y2 = b.max.y * MAP_SCALE_Y },
+                   new WallSegmentData(){ X1 = b.max.x * MAP_SCALE, Y1 = b.max.y * MAP_SCALE_Y, X2 = b.max.x * MAP_SCALE, Y2 = b.min.y * MAP_SCALE_Y },
+                   new WallSegmentData(){ X1 = b.max.x * MAP_SCALE, Y1 = b.min.y * MAP_SCALE_Y, X2 = b.min.x * MAP_SCALE, Y2 = b.min.y * MAP_SCALE_Y },
+                   new WallSegmentData(){ X1 = b.min.x * MAP_SCALE, Y1 = b.min.y * MAP_SCALE_Y, X2 = b.min.x * MAP_SCALE, Y2 = b.max.y * MAP_SCALE_Y },
                 }
             };
 
