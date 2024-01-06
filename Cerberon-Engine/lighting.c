@@ -6,6 +6,7 @@
 #include "asset_manager.h"
 #include "mapdata_manager.h"
 
+//TODO: Fix all render texture downscaling for optimization
 static RenderTexture2D LightRenderTexture;
 static bool isLightingEnabled;
 

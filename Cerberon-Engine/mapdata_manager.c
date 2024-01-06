@@ -23,7 +23,7 @@ void UnloadMap()
 			UnloadRenderTexture(CurrentMapData->Lights[i]._RenderTexture);
 		}
 
-		MFree(CurrentMapData->Lights, CurrentMapData->Lights, sizeof(Light), "Light List");
+		MFree(CurrentMapData->Lights, CurrentMapData->LightCount, sizeof(Light), "Light List");
 	}
 
 	if (CurrentMapData->BlockColliderCount > 0)
@@ -89,7 +89,7 @@ void LoadMap(char* filename, MapData* map)
 
 	if (map->WallCount > 0)
 	{
-		map->BlockColliders = MCalloc(map->BlockColliderCount, sizeof(Wall), "BC List");
+		map->BlockColliders = MCalloc(map->BlockColliderCount, sizeof(BlockCollider), "BC List");
 		map->Walls = MCalloc(map->WallCount, sizeof(Wall), "Wall List");
 
 		for (int i = 0; i < map->BlockColliderCount; i++)
