@@ -84,6 +84,9 @@
     <ClCompile Include="lighting.c">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="i_item.c">
+      <Filter>Source Files\gameplay\interaction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -130,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="lighting.h">
       <Filter>Source Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="i_item.h">
+      <Filter>Source Files\gameplay\interaction</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
