@@ -61,7 +61,8 @@ void UpdateLights()
 		ClearBackground(BLACK);
 		BeginMode2D(l->_RenderCamera);
 
-		DrawSprite(LightTexture, l->Position, l->Rotation, l->Scale/512, Vector2Zero());//  (l->Position, l->Scale / 2, l->Color);
+		Color color = ColorBrightness01(l->Color, l->Intensity);
+		DrawSprite(LightTexture, l->Position, l->Rotation, l->Scale/512, Vector2Zero(), color);//  (l->Position, l->Scale / 2, l->Color);
 		DrawShadows(l);
 
 		EndMode2D();
@@ -72,7 +73,7 @@ void UpdateLights()
 	BeginTextureMode(LightRenderTexture);
 	BeginMode2D(GameCamera);
 
-	ClearBackground(BLACK);
+	ClearBackground(ColorBrightness01(WHITE, 0.05));
 
 	BeginBlendMode(BLEND_ADDITIVE);
 	for (int i = 0; i < CurrentMapData->LightCount; i++)

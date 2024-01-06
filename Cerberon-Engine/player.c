@@ -65,7 +65,7 @@ void PlayerDraw(PlayerCharacter* p)
 
 	if (t != NULL)
 	{
-		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 });
+		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 	}
 
 	if (lineHit.WallHit != NULL)

@@ -13,7 +13,7 @@ unsigned long ToHash(unsigned char* str) {
 	return hash;
 }
 
-void DrawSprite(TextureResource* t, Vector2 pos, float rotation, float scale, Vector2 offset)
+void DrawSprite(TextureResource* t, Vector2 pos, float rotation, float scale, Vector2 offset, Color color)
 {
 	Rectangle src = (Rectangle){ 0, 0, t->Texture.width, t->Texture.height };
 	Rectangle dest = (Rectangle){ pos.x, pos.y, t->Texture.width * scale, t->Texture.height * scale };
@@ -21,10 +21,15 @@ void DrawSprite(TextureResource* t, Vector2 pos, float rotation, float scale, Ve
 
 	origin = Vector2Add(origin, (Vector2) { dest.width * offset.x, dest.height * offset.y });
 
-	DrawTexturePro(t->Texture, src, dest, origin, rotation * RAD2DEG, WHITE);
+	DrawTexturePro(t->Texture, src, dest, origin, rotation * RAD2DEG, color);
 }
 
 bool HasFlag(int from, int to)
 {
 	return from & to;
+}
+
+Color ColorBrightness01(Color color, float amt)
+{
+	return ColorBrightness(color, Remap(amt, 0, 1, -1, 0));
 }
