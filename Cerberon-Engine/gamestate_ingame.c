@@ -32,6 +32,7 @@ void IngameOnUnload()
 
 void IngameOnUpdate()
 {
+	UpdateMap(CurrentMapData);
 	PlayerUpdate(&PlayerEntity);
 	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
@@ -42,7 +43,7 @@ void IngameOnUpdate()
 
 void IngameOnDraw()
 {
-	ClearBackground(BLACK);
+	ClearBackground(DARKGRAY);
 
 	BeginMode2D(GameCamera);
 
