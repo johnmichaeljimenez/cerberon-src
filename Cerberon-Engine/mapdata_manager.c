@@ -149,10 +149,11 @@ void LoadMap(char* filename, MapData* map)
 
 
 	//TEMPORARY
-	map->Lights = MCalloc(1, sizeof(Light), "Light List");
-	map->LightCount = 1;
+	map->Lights = MCalloc(3, sizeof(Light), "Light List");
+	map->LightCount = 2;
 
-	map->Lights[0] = CreateLight((Vector2){ 300, 100 }, 0, 1024, 1, WHITE, true);
+	map->Lights[0] = CreateLight((Vector2) { 300, 0 }, 0, 1024, 1, WHITE, true);
+	map->Lights[1] = CreateLight((Vector2) { 800, 200 }, 0, 1024, 1, WHITE, true);
 }
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
@@ -185,9 +186,7 @@ Door CreateDoor(Vector2 pos, float rot, int id)
 
 void UpdateMap(MapData* map)
 {
-	//map->Lights->Position = PlayerEntity.Position; //TEMPORARY
-
-	UpdateLights(map->LightCount, map->Lights);
+	UpdateLights();
 }
 
 void DrawMap(MapData* map)
@@ -205,12 +204,16 @@ void DrawMap(MapData* map)
 
 	for (int i = 0; i < map->WallCount; i++)
 	{
-		Wall w = map->Walls[i];
+		Wall w = map->Walls[i]; 
 
 		DrawLineV(w.From, w.To, WHITE);
 	}
 
-	DrawLights(map->LightCount, map->Lights);
+}
+
+void DrawMapHUD(MapData* map)
+{
+	DrawLights();
 }
 
 void UpdateWall(Wall* w)

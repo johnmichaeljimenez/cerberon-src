@@ -44,6 +44,7 @@ void UnloadMap();
 void LoadMap(char* filename, MapData* map);
 void UpdateMap(MapData* map);
 void DrawMap(MapData* map);
+void DrawMapHUD(MapData* map);
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size);
 

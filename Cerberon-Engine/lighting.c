@@ -4,6 +4,21 @@
 #include "camera.h"
 #include "utils.h"
 #include "asset_manager.h"
+#include "mapdata_manager.h"
+
+static RenderTexture2D LightRenderTexture;
+static bool isLightingEnabled;
+
+void InitLight()
+{
+	LightRenderTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+	isLightingEnabled = true;
+}
+
+void UnloadLight()
+{
+	UnloadRenderTexture(LightRenderTexture);
+}
 
 Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color, bool cs)
 {
@@ -27,11 +42,19 @@ Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color
 	return light;
 }
 
-void UpdateLights(int lightCount, Light** lightArray)
+void UpdateLights()
 {
-	for (int i = 0; i < lightCount; i++)
+	if (IsKeyPressed(KEY_F3))
+		isLightingEnabled = !isLightingEnabled;
+
+	if (!isLightingEnabled)
+		return;
+
+	//DRAW LIGHT RENDER TEXTURES
+	//TODO: filter all static or non-shadow lights to render only once at initialization
+	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{
-		Light* l = &lightArray[i];
+		Light* l = &CurrentMapData->Lights[i];
 		l->_RenderCamera.target = l->Position;
 
 		BeginTextureMode(l->_RenderTexture);
@@ -44,16 +67,16 @@ void UpdateLights(int lightCount, Light** lightArray)
 		EndTextureMode();
 	}
 
-}
+	//DRAW AND BLEND LIGHTS
+	BeginTextureMode(LightRenderTexture);
+	BeginMode2D(GameCamera);
 
-void DrawLights(int lightCount, Light** lightArray)
-{
-	BeginBlendMode(BLEND_MULTIPLIED);
+	ClearBackground(BLACK);
 
-	for (int i = 0; i < lightCount; i++)
+	BeginBlendMode(BLEND_ADDITIVE);
+	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{
-		BeginBlendMode(BLEND_MULTIPLIED);
-		Light* l = &lightArray[i];
+		Light* l = &CurrentMapData->Lights[i];
 		Vector2 pos = l->Position;
 		pos.x -= l->Scale / 2;
 		pos.y -= l->Scale / 2;
@@ -63,10 +86,29 @@ void DrawLights(int lightCount, Light** lightArray)
 		Vector2 origin = { l->_RenderTexture.texture.width / 2, l->_RenderTexture.texture.height / 2 };
 
 		DrawTexturePro(l->_RenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
-
-		BeginBlendMode(BLEND_ADDITIVE);
-		DrawTexturePro(l->_RenderTexture.texture, srcRec, destRect, origin, 0, GRAY);
-
 	}
+	EndBlendMode();
+
+	EndMode2D();
+	EndTextureMode();
+}
+
+void DrawLights()
+{
+	if (!isLightingEnabled)
+		return;
+
+	Texture2D* rt = &LightRenderTexture.texture;
+
+	//DRAW ENTIRE LIGHT SCREEN QUAD
+	BeginBlendMode(BLEND_MULTIPLIED);
+	Rectangle srcRec = { 0, 0, rt->width, -(float)rt->height };
+	Rectangle destRect = (Rectangle){ 0, 0, rt->width, rt->height };
+	Vector2 origin = { 0,0 };
+	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
+	
+	//FAKE VOLUME EFFECT
+	BeginBlendMode(BLEND_ADDITIVE);
+	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, DARKGRAY);
 	EndBlendMode();
 }

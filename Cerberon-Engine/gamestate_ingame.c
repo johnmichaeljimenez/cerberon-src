@@ -18,6 +18,7 @@ void IngameOnLoad()
 {
 	LoadResources();
 	CameraInit();
+	InitLight();
 	InitMap();
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
@@ -25,6 +26,7 @@ void IngameOnLoad()
 
 void IngameOnUnload()
 {
+	UnloadLight();
 	PlayerUnload(&PlayerEntity);
 	UnloadMap();
 	UnloadResources();
@@ -53,4 +55,5 @@ void IngameOnDraw()
 	EndMode2D();
 
 	PlayerDrawHUD(&PlayerEntity);
+	DrawMapHUD(CurrentMapData);
 }
