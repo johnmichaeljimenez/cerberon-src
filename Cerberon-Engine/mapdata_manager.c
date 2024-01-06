@@ -119,10 +119,12 @@ void LoadMap(char* filename, MapData* map)
 			Vector2 c = (Vector2){ x1 + x2, y1 + y2 }; //lower right
 			Vector2 d = (Vector2){ x1 + x2, y1 }; //upper right
 
-			map->Walls[i] = CreateWall(a, b);
-			map->Walls[i + 1] = CreateWall(b, c);
-			map->Walls[i + 2] = CreateWall(c, d);
-			map->Walls[i + 3] = CreateWall(d, a);
+			WallFlag flags = WALLFLAG_CAST_SHADOW;
+
+			map->Walls[i] = CreateWall(a, b, flags);
+			map->Walls[i + 1] = CreateWall(b, c, flags);
+			map->Walls[i + 2] = CreateWall(c, d, flags);
+			map->Walls[i + 3] = CreateWall(d, a, flags);
 		}
 	}
 
@@ -166,11 +168,12 @@ BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
 	return bc;
 }
 
-Wall CreateWall(Vector2 from, Vector2 to)
+Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
 {
 	Wall w = { 0 };
 	w.From = from;
 	w.To = to;
+	w.WallFlags = flags;
 
 	UpdateWall(&w);
 

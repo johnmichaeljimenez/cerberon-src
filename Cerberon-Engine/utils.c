@@ -23,3 +23,8 @@ void DrawSprite(TextureResource* t, Vector2 pos, float rotation, float scale, Ve
 
 	DrawTexturePro(t->Texture, src, dest, origin, rotation * RAD2DEG, WHITE);
 }
+
+bool HasFlag(int from, int to)
+{
+	return from & to;
+}

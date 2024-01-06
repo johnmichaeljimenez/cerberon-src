@@ -62,6 +62,7 @@ void UpdateLights()
 		BeginMode2D(l->_RenderCamera);
 
 		DrawSprite(LightTexture, l->Position, l->Rotation, l->Scale/512, Vector2Zero());//  (l->Position, l->Scale / 2, l->Color);
+		DrawShadows(l);
 
 		EndMode2D();
 		EndTextureMode();
@@ -108,7 +109,42 @@ void DrawLights()
 	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
 	
 	//FAKE VOLUME EFFECT
-	BeginBlendMode(BLEND_ADDITIVE);
-	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, DARKGRAY);
+	//BeginBlendMode(BLEND_ADDITIVE);
+	//DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, DARKGRAY);
 	EndBlendMode();
+}
+
+void DrawShadows(Light* light)
+{
+	if (!light->CastShadows)
+		return;
+
+	for (int i = 0; i < CurrentMapData->WallCount; i++)
+	{
+		Wall* w = &CurrentMapData->Walls[i];
+		if (!HasFlag(w->WallFlags, WALLFLAG_CAST_SHADOW))
+			continue;
+
+		Vector2 d = Vector2Subtract(light->Position, w->Midpoint);
+		bool visible = Vector2DotProduct(w->Normal, d) > 0;
+		if (!visible)
+			continue;
+
+		w->sFrom = Vector2Add(w->From, Vector2Scale(Vector2Normalize(Vector2Subtract(w->From, light->Position)), 800));
+		w->sTo = Vector2Add(w->To, Vector2Scale(Vector2Normalize(Vector2Subtract(w->To, light->Position)), 800));
+
+		w->sFrom2 = Vector2Subtract(w->sFrom, Vector2Scale(w->Normal, 800));
+		w->sTo2 = Vector2Subtract(w->sTo, Vector2Scale(w->Normal, 800));
+
+		Vector2 points[6] = {
+			w->From,
+			w->To,
+			w->sFrom,
+			w->sTo,
+			w->sFrom2,
+			w->sTo2
+		};
+
+		DrawTriangleStrip(points, 6, BLACK);
+	}
 }

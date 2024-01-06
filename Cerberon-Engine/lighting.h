@@ -22,3 +22,4 @@ void UnloadLight();
 Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color, bool cs);
 void UpdateLights();
 void DrawLights();
+void DrawShadows(Light* light);

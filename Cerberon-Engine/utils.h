@@ -4,3 +4,4 @@
 
 unsigned long ToHash(unsigned char* str);
 void DrawSprite(TextureResource* t, Vector2 pos, float rotation, float scale, Vector2 offset);
+bool HasFlag(int from, int to);

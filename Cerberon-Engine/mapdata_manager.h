@@ -10,6 +10,13 @@ typedef struct BlockCollider
 	Vector2 Size;
 } BlockCollider;
 
+typedef enum WallFlag
+{
+	WALLFLAG_NONE = 1 << 0,
+	WALLFLAG_CAST_SHADOW = 1 << 1,
+	WALLFLAG_IGNORE_RAYCAST = 1 << 2,
+} WallFlag;
+
 typedef struct Wall
 {
 	Vector2 From;
@@ -17,6 +24,9 @@ typedef struct Wall
 	float Length;
 	Vector2 Normal;
 	Vector2 Midpoint;
+	WallFlag WallFlags;
+
+	Vector2 sFrom, sTo, sFrom2, sTo2;
 } Wall;
 
 typedef struct MapData
