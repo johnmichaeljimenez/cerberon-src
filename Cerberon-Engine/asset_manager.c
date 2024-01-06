@@ -34,7 +34,7 @@ void LoadResources()
 	LoadTexturePack("res/sprites.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Sprite);
 
 	WallTexture = GetTextureResource(ToHash("misc-wall"));
-	WallNPatch = (NPatchInfo){ (Rectangle) { 0.0f, 0.0f, WallTexture->Texture.width, WallTexture->Texture.height }, 24, 24, 24, 24, NPATCH_NINE_PATCH };
+	WallNPatch = (NPatchInfo){ (Rectangle) { 0.0f, 0.0f, WallTexture->Texture.width, WallTexture->Texture.height }, 36, 36, 36, 36, NPATCH_NINE_PATCH };
 
 	LightTexture = GetTextureResource(ToHash("misc-light"));
 }

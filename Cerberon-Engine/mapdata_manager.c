@@ -99,11 +99,10 @@ void LoadMap(char* filename, MapData* map)
 			fread(&x2, sizeof(float), 1, file);
 			fread(&y2, sizeof(float), 1, file);
 
-			x1 -= x2 / 2;
-			y1 -= y2 / 2;
+			//x1 -= x2 / 2;
+			//y1 -= y2 / 2;
 
 			map->BlockColliders[i] = CreateBlockCollider((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
-
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
@@ -114,10 +113,13 @@ void LoadMap(char* filename, MapData* map)
 			x2 = block->Size.x;
 			y2 = block->Size.y;
 
-			Vector2 a = (Vector2){ x1, y1 }; //upper left
-			Vector2 b = (Vector2){ x1, y1 + y2 }; //lower left
+			x2 /= 2;
+			y2 /= 2;
+
+			Vector2 a = (Vector2){ x1 - x2, y1 - y2 }; //upper left
+			Vector2 b = (Vector2){ x1 - x2, y1 + y2 }; //lower left
 			Vector2 c = (Vector2){ x1 + x2, y1 + y2 }; //lower right
-			Vector2 d = (Vector2){ x1 + x2, y1 }; //upper right
+			Vector2 d = (Vector2){ x1 + x2, y1 - y2 }; //upper right
 
 			WallFlag flags = WALLFLAG_CAST_SHADOW;
 
@@ -152,10 +154,11 @@ void LoadMap(char* filename, MapData* map)
 
 	//TEMPORARY
 	map->Lights = MCalloc(3, sizeof(Light), "Light List");
-	map->LightCount = 2;
+	map->LightCount = 3;
 
 	map->Lights[0] = CreateLight((Vector2) { 300, 0 }, 0, 1024, 1, WHITE, true);
 	map->Lights[1] = CreateLight((Vector2) { 800, 200 }, 0, 1024, 1, WHITE, true);
+	map->Lights[2] = CreateLight((Vector2) { 800, 200 }, 0, 300, 0.2f, WHITE, true);
 }
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
@@ -189,6 +192,8 @@ Door CreateDoor(Vector2 pos, float rot, int id)
 
 void UpdateMap(MapData* map)
 {
+	map->Lights[2].Position = PlayerEntity.Position;
+
 	UpdateLights();
 }
 
@@ -197,20 +202,24 @@ void DrawMap(MapData* map)
 	for (int i = 0; i < map->BlockColliderCount; i++)
 	{
 		BlockCollider* b = &map->BlockColliders[i];
+		Vector2 size = b->Size;
+		size.x += 36;
+		size.y += 36;
 
-		Rectangle rect = { b->Position.x, b->Position.y, b->Size.x, b->Size.y };
+		Vector2 halfSize = Vector2Scale(size, 0.5);
+		Rectangle rect = { b->Position.x - halfSize.x, b->Position.y - halfSize.y, size.x, size.y };
 
 		Vector2 origin = { 0, 0 };
 
 		DrawTextureNPatch(WallTexture->Texture, WallNPatch, rect, origin, 0, WHITE);
 	}
 
-	for (int i = 0; i < map->WallCount; i++)
+	/*for (int i = 0; i < map->WallCount; i++)
 	{
 		Wall w = map->Walls[i]; 
 
 		DrawLineV(w.From, w.To, WHITE);
-	}
+	}*/
 
 }
 
