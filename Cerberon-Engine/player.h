@@ -11,6 +11,7 @@ typedef struct PlayerCharacter
 
 	float MovementSpeed;
 	float CollisionRadius;
+	float InteractionRadius;
 	float CameraOffset;
 
 } PlayerCharacter;

@@ -4,6 +4,7 @@
 #include "i_door.h"
 #include "mapdata_manager.h"
 #include "camera.h"
+#include "collision.h"
 
 void SetInteractableFunctions(Interactable* i)
 {
@@ -32,10 +33,29 @@ void CheckInteraction()
 	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
 	{
 		Interactable* a = &CurrentMapData->Interactables[i];
+		a->Hovered = false;
+
+		if (a->OneShot && a->Activated)
+			continue;
+
 		if (!a->IsActive)
 			continue;
 
+		if (Vector2DistanceSqr(a->Position, PlayerEntity.Position) > (PlayerEntity.InteractionRadius * PlayerEntity.InteractionRadius))
+			continue;
+
 		a->Hovered = CheckCollisionCircles(a->Position, a->Radius, CameraGetMousePosition(), 32);
+
+		if (a->Hovered)
+		{
+			LinecastHit hit;
+			if (Linecast(PlayerEntity.Position, a->Position, &hit) && hit.Length > 8)
+			{
+				a->Hovered = false;
+				continue;
+			}
+		}
+
 		if (!a->Hovered)
 			continue;
 

@@ -19,6 +19,7 @@ void PlayerInit(PlayerCharacter* p)
 	p->Rotation = CurrentMapData->PlayerRotation;
 	p->Direction = (Vector2){ 1, 0 };
 	p->CollisionRadius = 32;
+	p->InteractionRadius = 128;
 	p->MovementSpeed = 200;
 	p->CameraOffset = 300;
 }
