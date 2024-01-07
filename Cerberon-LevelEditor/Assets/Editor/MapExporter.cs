@@ -43,6 +43,7 @@ public class MapExporter : MonoBehaviour
         data.AddRange(BitConverter.GetBytes(player.eulerAngles.z));
 
         Export<WallObject>(root, data);
+        Export<BaseInteractable>(root, data);
 
         File.WriteAllBytes(fname, data.ToArray());
         EditorUtility.DisplayDialog("Success!", $"Map exported to {fname}", "OK");
