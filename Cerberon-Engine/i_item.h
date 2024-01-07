@@ -8,37 +8,23 @@ typedef enum ItemType
 	ITEMTYPE_MEDKIT,
 	ITEMTYPE_FLASHLIGHT,
 	ITEMTYPE_CASH
-};
+} ItemType;
 
 typedef struct ItemPickup
 {
 	Vector2 Position;
 	float Rotation;
 	ItemType ItemType;
+	int Index;
 
 	bool IsActive;
 	int Count;
-	bool(*OnUse)(ItemPickup* i, PlayerCharacter* p);
+	bool (*OnUse)(struct ItemPickup* i);
 
 } ItemPickup;
 
-ItemPickup CreateItem(Vector2 pos, float rot, ItemType type)
-{
-	ItemPickup item = { 0 };
-	item.Position = pos;
-	item.Rotation = rot;
-	item.ItemType = type;
-	item.Count = 1;
+int NextItemSlotIndex;
 
-	switch (type)
-	{
-	case ITEMTYPE_MEDKIT:
-		break;
-	case ITEMTYPE_FLASHLIGHT:
-		break;
-	case ITEMTYPE_CASH:
-		break;
-	}
-
-	return item;
-}
+ItemPickup CreateItem(Vector2 pos, float rot, ItemType type, int index);
+bool Pickup(ItemPickup* i);
+bool OnMedkitPickup(ItemPickup* i);

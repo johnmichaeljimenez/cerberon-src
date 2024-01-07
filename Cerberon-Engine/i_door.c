@@ -12,29 +12,29 @@ void UnloadDoors()
 
 }
 
-Door* DoorCreate(Door* d)
+void DoorInit(Interactable* d)
 {
 
 }
 
-void DoorInit(Door* d)
+void DoorUnload(Interactable* d)
 {
 
 }
 
-void DoorUnload(Door* d)
+void DoorUpdate(Interactable* d)
 {
 
 }
 
-void DoorUpdate(Door* d)
+void DoorLateUpdate(Interactable* d)
 {
 
 }
 
-void DoorDraw(Door* d)
+void DoorDraw(Interactable* d)
 {
-
+	DrawCircleV(d->Position, 64, WHITE);
 }
 
 void DoorInteract(Door* d, PlayerCharacter* p)

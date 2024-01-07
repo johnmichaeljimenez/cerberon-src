@@ -2,7 +2,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "lighting.h"
-#include "i_door.h"
+#include "interaction.h"
 
 typedef struct BlockCollider
 {
@@ -40,8 +40,8 @@ typedef struct MapData
 	int WallCount;
 	Wall* Walls;
 
-	int DoorCount;
-	Door* Doors;
+	int InteractableCount;
+	Interactable* Interactables;
 
 	int LightCount;
 	Light* Lights;
@@ -58,7 +58,7 @@ void DrawMapHUD(MapData* map);
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size);
 
-Wall CreateWall(Vector2 from, Vector2 to);
+Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags);
 void UpdateWall(Wall* w);
 
-Door CreateDoor(Vector2 pos, float rot, int id);
+Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, int flags);

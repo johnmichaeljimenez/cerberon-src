@@ -6,7 +6,7 @@
 #include "memory.h"
 #include "utils.h"
 #include "asset_manager.h"
-
+#include <string.h>
 
 void InitMap()
 {
@@ -32,8 +32,15 @@ void UnloadMap()
 	if (CurrentMapData->WallCount > 0)
 		MFree(CurrentMapData->Walls, CurrentMapData->WallCount, sizeof(Wall), "Wall List");
 
-	if (CurrentMapData->DoorCount > 0)
-		MFree(CurrentMapData->Doors, CurrentMapData->DoorCount, sizeof(Door), "Door List");
+	if (CurrentMapData->InteractableCount > 0)
+	{
+		for (int i = 0; i < CurrentMapData->InteractableCount; i++)
+		{
+			CurrentMapData->Interactables[i].OnUnload(&CurrentMapData->Interactables[i]);
+		}
+
+		MFree(CurrentMapData->Interactables, CurrentMapData->InteractableCount, sizeof(Interactable), "Interactable List");
+	}
 
 	MFree(CurrentMapData, 1, sizeof(MapData), "Map Data");
 }
@@ -157,8 +164,13 @@ void LoadMap(char* filename, MapData* map)
 	map->LightCount = 3;
 
 	map->Lights[0] = CreateLight((Vector2) { 300, 0 }, 0, 1024, 1, WHITE, true);
-	map->Lights[1] = CreateLight((Vector2) { 800, 200 }, 0, 1024, 1, WHITE, true);
-	map->Lights[2] = CreateLight((Vector2) { 800, 200 }, 0, 300, 0.2f, WHITE, true);
+	map->Lights[1] = CreateLight((Vector2) { 2000, 200 }, 0, 1024, 1, (Color) { 255, 0, 0, 255 }, true);
+	map->Lights[2] = CreateLight((Vector2) { 800, 200 }, 0, 512, 1, WHITE, true);
+
+	map->Interactables = MCalloc(1, sizeof(Interactable), "Interactable List");
+	map->InteractableCount = 1;
+
+	map->Interactables[0] = CreateInteractable((Vector2) { 100, 100 }, 0, "", "", INTERACTABLE_Door, 0);
 }
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
@@ -183,16 +195,27 @@ Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
 	return w;
 }
 
-Door CreateDoor(Vector2 pos, float rot, int id)
-{
-	Door d = { 0 };
-
-	return d;
-}
-
 void UpdateMap(MapData* map)
 {
 	map->Lights[2].Position = PlayerEntity.Position;
+
+	for (int i = 0; i < map->InteractableCount; i++)
+	{
+		Interactable* a = &map->Interactables[i];
+		if (!a->IsActive)
+			continue;
+
+		a->OnUpdate(a);
+	}
+
+	for (int i = 0; i < map->InteractableCount; i++)
+	{
+		Interactable* a = &map->Interactables[i];
+		if (!a->IsActive)
+			continue;
+
+		a->OnLateUpdate(a);
+	}
 
 	UpdateLights();
 }
@@ -214,9 +237,18 @@ void DrawMap(MapData* map)
 		DrawTextureNPatch(WallTexture->Texture, WallNPatch, rect, origin, 0, WHITE);
 	}
 
+	for (int i = 0; i < map->InteractableCount; i++)
+	{
+		Interactable* a = &map->Interactables[i];
+		if (!a->IsActive)
+			continue;
+
+		a->OnDraw(a);
+	}
+
 	/*for (int i = 0; i < map->WallCount; i++)
 	{
-		Wall w = map->Walls[i]; 
+		Wall w = map->Walls[i];
 
 		DrawLineV(w.From, w.To, WHITE);
 	}*/
@@ -236,4 +268,22 @@ void UpdateWall(Wall* w)
 	w->Midpoint = Vector2Add(w->From, w->To);
 	w->Midpoint.x /= 2;
 	w->Midpoint.y /= 2;
+}
+
+Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, int flags)
+{
+	Interactable i = { 0 };
+	i.Activated = false;
+	i.Flags = flags;
+	i.IsActive = true;
+	i.Position = pos;
+	i.Rotation = rot;
+	strcpy_s(i.Target, 32, target);
+	strcpy_s(i.TargetName, 32, targetname);
+
+	SetInteractableFunctions(&i);
+
+	i.OnInit(&i);
+
+	return i;
 }
