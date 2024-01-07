@@ -25,8 +25,6 @@ typedef struct Wall
 	Vector2 Normal;
 	Vector2 Midpoint;
 	WallFlag WallFlags;
-
-	Vector2 sFrom, sTo, sFrom2, sTo2;
 } Wall;
 
 typedef struct MapData

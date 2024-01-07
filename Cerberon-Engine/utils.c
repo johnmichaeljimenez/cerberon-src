@@ -33,3 +33,9 @@ Color ColorBrightness01(Color color, float amt)
 {
 	return ColorBrightness(color, Remap(amt, 0, 1, -1, 0));
 }
+
+Vector2 GetNormalVector(Vector2 from, Vector2 to)
+{
+	Vector2 diff = Vector2Subtract(to, from);
+	return Vector2Normalize((Vector2) { -diff.y, diff.x });
+}

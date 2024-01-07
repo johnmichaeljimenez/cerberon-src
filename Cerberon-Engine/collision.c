@@ -2,6 +2,7 @@
 #include <raymath.h>
 #include "collision.h"
 #include "mapdata_manager.h"
+#include "i_door.h"
 #include <float.h>
 
 bool GetLineIntersection(float p0_x, float p0_y, float p1_x, float p1_y,
@@ -66,6 +67,30 @@ void MoveBody(Vector2* pos, float radius)
 		if (cd <= radius)
 		{
 			float rd = cd - radius;
+			*pos = Vector2Add(*pos, Vector2Multiply(Vector2Normalize(cv), (Vector2) { rd, rd }));
+		}
+	}
+
+	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
+	{
+		Interactable *in = &CurrentMapData->Interactables[i];
+		if (in->InteractableType != INTERACTABLE_Door)
+			continue;
+
+		Door* door = &DoorList[in->DataIndex];
+
+		if (Vector2DistanceSqr(in->Position, *pos) > door->Length * door->Length)
+			continue;
+
+		Vector2 c = WallGetClosestPoint(door->From, door->To, *pos);
+		Vector2 cv = Vector2Subtract(c, *pos);
+		float cd = Vector2Length(cv);
+
+		float rad = radius + (door->Width/3);
+
+		if (cd <= rad)
+		{
+			float rd = cd - rad;
 			*pos = Vector2Add(*pos, Vector2Multiply(Vector2Normalize(cv), (Vector2) { rd, rd }));
 		}
 	}

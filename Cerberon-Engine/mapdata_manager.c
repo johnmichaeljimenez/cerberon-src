@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "utils.h"
 #include "asset_manager.h"
+#include "i_door.h"
 #include <string.h>
 
 void InitMap()
@@ -160,6 +161,9 @@ void LoadMap(char* filename, MapData* map)
 			fread(&target, sizeof(char), 32, file);
 			fread(&targetName, sizeof(char), 32, file);
 
+			if (intType == INTERACTABLE_Door)
+				DoorCount++;
+
 			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, flags);
 		}
 	}
@@ -220,6 +224,7 @@ void UpdateMap(MapData* map)
 {
 	map->Lights[2].Position = PlayerEntity.Position;
 
+	CheckInteraction();
 	for (int i = 0; i < map->InteractableCount; i++)
 	{
 		Interactable* a = &map->Interactables[i];
@@ -284,7 +289,7 @@ void DrawMapHUD(MapData* map)
 void UpdateWall(Wall* w)
 {
 	Vector2 diff = Vector2Subtract(w->To, w->From);
-	w->Normal = Vector2Normalize((Vector2) { -diff.y, diff.x });
+	w->Normal = GetNormalVector(w->From, w->To);
 	w->Length = Vector2Length(diff);
 	w->Midpoint = Vector2Add(w->From, w->To);
 	w->Midpoint.x /= 2;

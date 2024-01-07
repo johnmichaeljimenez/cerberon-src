@@ -20,12 +20,14 @@ void IngameOnLoad()
 	CameraInit();
 	InitLight();
 	InitMap();
+	InteractionInit();
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
 }
 
 void IngameOnUnload()
 {
+	InteractionUnload();
 	UnloadLight();
 	PlayerUnload(&PlayerEntity);
 	UnloadMap();

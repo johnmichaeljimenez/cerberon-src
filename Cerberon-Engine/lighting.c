@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "asset_manager.h"
 #include "mapdata_manager.h"
+#include "i_door.h"
 
 //TODO: Fix all render texture downscaling for optimization
 static RenderTexture2D LightRenderTexture;
@@ -63,7 +64,8 @@ void UpdateLights()
 		BeginMode2D(l->_RenderCamera);
 
 		Color color = ColorBrightness01(l->Color, l->Intensity);
-		DrawSprite(LightTexture, l->Position, l->Rotation, l->Scale/512, Vector2Zero(), color);//  (l->Position, l->Scale / 2, l->Color);
+		//DrawSprite(LightTexture, l->Position, l->Rotation, l->Scale/512, Vector2Zero(), color);//  (l->Position, l->Scale / 2, l->Color);
+		DrawCircleGradient(l->Position.x, l->Position.y, l->Scale / 2, color, BLACK);
 		DrawShadows(l);
 
 		EndMode2D();
@@ -109,7 +111,7 @@ void DrawLights()
 	Rectangle destRect = (Rectangle){ 0, 0, rt->width, rt->height };
 	Vector2 origin = { 0,0 };
 	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
-	
+
 	//FAKE VOLUME EFFECT
 	//BeginBlendMode(BLEND_ADDITIVE);
 	//DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, DARKGRAY);
@@ -132,21 +134,47 @@ void DrawShadows(Light* light)
 		if (!visible)
 			continue;
 
-		w->sFrom = Vector2Add(w->From, Vector2Scale(Vector2Normalize(Vector2Subtract(w->From, light->Position)), 800));
-		w->sTo = Vector2Add(w->To, Vector2Scale(Vector2Normalize(Vector2Subtract(w->To, light->Position)), 800));
-
-		w->sFrom2 = Vector2Subtract(w->sFrom, Vector2Scale(w->Normal, 800));
-		w->sTo2 = Vector2Subtract(w->sTo, Vector2Scale(w->Normal, 800));
-
-		Vector2 points[6] = {
-			w->From,
-			w->To,
-			w->sFrom,
-			w->sTo,
-			w->sFrom2,
-			w->sTo2
-		};
-
-		DrawTriangleStrip(points, 6, BLACK);
+		DrawShadowsEx(w->From, w->To, w->Normal, light->Position);
 	}
+
+	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
+	{
+		Interactable* in = &CurrentMapData->Interactables[i];
+		if (in->InteractableType != INTERACTABLE_Door)
+			continue;
+
+		Door* door = &DoorList[in->DataIndex];
+
+		//Paper-thin 2 line segments (2nd line is just inverted normal)
+		//TODO: improve this dirty hack, use polygons next time
+		Vector2 normal = GetNormalVector(door->From, door->To);
+		Vector2 normal2 = GetNormalVector(door->To, door->From);
+
+		Vector2 d = Vector2Subtract(light->Position, door->DoorPosition);
+		bool visible = Vector2DotProduct(normal, d) > 0;
+		if (!visible)
+			DrawShadowsEx(door->To, door->From, normal2, light->Position);
+		else
+			DrawShadowsEx(door->From, door->To, normal, light->Position);
+	}
+}
+
+void DrawShadowsEx(Vector2 from, Vector2 to, Vector2 normal, Vector2 lightPos)
+{
+	Vector2 sFrom = Vector2Add(from, Vector2Scale(Vector2Normalize(Vector2Subtract(from, lightPos)), 800));
+	Vector2 sTo = Vector2Add(to, Vector2Scale(Vector2Normalize(Vector2Subtract(to, lightPos)), 800));
+
+	Vector2 sFrom2 = Vector2Subtract(sFrom, Vector2Scale(normal, 800));
+	Vector2 sTo2 = Vector2Subtract(sTo, Vector2Scale(normal, 800));
+
+	Vector2 points[6] = {
+		from,
+		to,
+		sFrom,
+		sTo,
+		sFrom2,
+		sTo2
+	};
+
+	DrawTriangleStrip(points, 6, BLACK);
 }
