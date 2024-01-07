@@ -25,10 +25,10 @@ public class BaseInteractable : BaseObject
     {
         array.AddRange(BitConverter.GetBytes((int)InteractableType));
         array.AddRange(BitConverter.GetBytes(Flags));
-        array.AddRange(BitConverter.GetBytes(transform.position.x));
-        array.AddRange(BitConverter.GetBytes(transform.position.y));
+        array.AddRange(BitConverter.GetBytes(transform.position.x * MAP_SCALE));
+        array.AddRange(BitConverter.GetBytes(transform.position.y * MAP_SCALE_Y));
         array.AddRange(BitConverter.GetBytes(transform.eulerAngles.z));
-        array.AddRange(Encoding.ASCII.GetBytes(Target.ToFixedLength(31)));
-        array.AddRange(Encoding.ASCII.GetBytes(TargetName.ToFixedLength(31)));
+        array.AddRange(Encoding.ASCII.GetBytes(Target.ToFixedLength(32)));
+        array.AddRange(Encoding.ASCII.GetBytes(TargetName.ToFixedLength(32)));
     }
 }
