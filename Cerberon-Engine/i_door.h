@@ -13,9 +13,12 @@ typedef struct Door
 
 	bool IsOpen;
 	float _timer;
+	Vector2 From;
+	Vector2 To;
 } Door;
 
 int DoorCount;
+Door* DoorList;
 
 void LoadDoors();
 void UnloadDoors();

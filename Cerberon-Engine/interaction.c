@@ -44,7 +44,7 @@ void CheckInteraction()
 		if (Vector2DistanceSqr(a->Position, PlayerEntity.Position) > (PlayerEntity.InteractionRadius * PlayerEntity.InteractionRadius))
 			continue;
 
-		a->Hovered = CheckCollisionCircles(a->Position, a->Radius, CameraGetMousePosition(), 32);
+		a->Hovered = CheckCollisionCircles(a->Position, a->Radius, CameraGetMousePosition(), 64);
 
 		if (a->Hovered)
 		{
