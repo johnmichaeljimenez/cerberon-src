@@ -23,3 +23,4 @@ Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color
 void UpdateLights();
 void DrawLights();
 void DrawShadows(Light* light);
+void DrawShadowsEx(Vector2 from, Vector2 to, Vector2 normal, Vector2 lightPos);
