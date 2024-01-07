@@ -160,6 +160,9 @@ void LoadMap(char* filename, MapData* map)
 			fread(&target, sizeof(char), 32, file);
 			fread(&targetName, sizeof(char), 32, file);
 
+			if (intType == INTERACTABLE_Door)
+				DoorCount++;
+
 			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, flags);
 		}
 	}

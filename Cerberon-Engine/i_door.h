@@ -3,8 +3,8 @@
 
 typedef struct Door
 {
-	Vector2 Position;
-	float Rotation;
+	bool IsActive;
+	Interactable* Interactable;
 
 	float Duration;
 
@@ -12,6 +12,7 @@ typedef struct Door
 	float _timer;
 } Door;
 
+int DoorCount;
 
 void LoadDoors();
 void UnloadDoors();
