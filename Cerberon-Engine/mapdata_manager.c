@@ -289,7 +289,7 @@ void DrawMapHUD(MapData* map)
 void UpdateWall(Wall* w)
 {
 	Vector2 diff = Vector2Subtract(w->To, w->From);
-	w->Normal = Vector2Normalize((Vector2) { -diff.y, diff.x });
+	w->Normal = GetNormalVector(w->From, w->To);
 	w->Length = Vector2Length(diff);
 	w->Midpoint = Vector2Add(w->From, w->To);
 	w->Midpoint.x /= 2;
