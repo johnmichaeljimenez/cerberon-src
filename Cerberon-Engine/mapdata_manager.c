@@ -6,7 +6,7 @@
 #include "memory.h"
 #include "utils.h"
 #include "asset_manager.h"
-
+#include <string.h>
 
 void InitMap()
 {
@@ -23,7 +23,7 @@ void UnloadMap()
 			UnloadRenderTexture(CurrentMapData->Lights[i]._RenderTexture);
 		}
 
-		MFree(CurrentMapData->Lights, CurrentMapData->Lights, sizeof(Light), "Light List");
+		MFree(CurrentMapData->Lights, CurrentMapData->LightCount, sizeof(Light), "Light List");
 	}
 
 	if (CurrentMapData->BlockColliderCount > 0)
@@ -32,8 +32,15 @@ void UnloadMap()
 	if (CurrentMapData->WallCount > 0)
 		MFree(CurrentMapData->Walls, CurrentMapData->WallCount, sizeof(Wall), "Wall List");
 
-	if (CurrentMapData->DoorCount > 0)
-		MFree(CurrentMapData->Doors, CurrentMapData->DoorCount, sizeof(Door), "Door List");
+	if (CurrentMapData->InteractableCount > 0)
+	{
+		for (int i = 0; i < CurrentMapData->InteractableCount; i++)
+		{
+			CurrentMapData->Interactables[i].OnUnload(&CurrentMapData->Interactables[i]);
+		}
+
+		MFree(CurrentMapData->Interactables, CurrentMapData->InteractableCount, sizeof(Interactable), "Interactable List");
+	}
 
 	MFree(CurrentMapData, 1, sizeof(MapData), "Map Data");
 }
@@ -89,7 +96,7 @@ void LoadMap(char* filename, MapData* map)
 
 	if (map->WallCount > 0)
 	{
-		map->BlockColliders = MCalloc(map->BlockColliderCount, sizeof(Wall), "BC List");
+		map->BlockColliders = MCalloc(map->BlockColliderCount, sizeof(BlockCollider), "BC List");
 		map->Walls = MCalloc(map->WallCount, sizeof(Wall), "Wall List");
 
 		for (int i = 0; i < map->BlockColliderCount; i++)
@@ -99,11 +106,10 @@ void LoadMap(char* filename, MapData* map)
 			fread(&x2, sizeof(float), 1, file);
 			fread(&y2, sizeof(float), 1, file);
 
-			x1 -= x2 / 2;
-			y1 -= y2 / 2;
+			//x1 -= x2 / 2;
+			//y1 -= y2 / 2;
 
 			map->BlockColliders[i] = CreateBlockCollider((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
-
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
@@ -114,18 +120,49 @@ void LoadMap(char* filename, MapData* map)
 			x2 = block->Size.x;
 			y2 = block->Size.y;
 
-			Vector2 a = (Vector2){ x1, y1 }; //upper left
-			Vector2 b = (Vector2){ x1, y1 + y2 }; //lower left
-			Vector2 c = (Vector2){ x1 + x2, y1 + y2 }; //lower right
-			Vector2 d = (Vector2){ x1 + x2, y1 }; //upper right
+			x2 /= 2;
+			y2 /= 2;
 
-			map->Walls[i] = CreateWall(a, b);
-			map->Walls[i + 1] = CreateWall(b, c);
-			map->Walls[i + 2] = CreateWall(c, d);
-			map->Walls[i + 3] = CreateWall(d, a);
+			Vector2 a = (Vector2){ x1 - x2, y1 - y2 }; //upper left
+			Vector2 b = (Vector2){ x1 - x2, y1 + y2 }; //lower left
+			Vector2 c = (Vector2){ x1 + x2, y1 + y2 }; //lower right
+			Vector2 d = (Vector2){ x1 + x2, y1 - y2 }; //upper right
+
+			WallFlag flags = WALLFLAG_CAST_SHADOW;
+
+			map->Walls[i] = CreateWall(a, b, flags);
+			map->Walls[i + 1] = CreateWall(b, c, flags);
+			map->Walls[i + 2] = CreateWall(c, d, flags);
+			map->Walls[i + 3] = CreateWall(d, a, flags);
 		}
 	}
 
+
+	fread(&n, sizeof(int), 1, file);
+	map->InteractableCount = n;
+	map->Interactables = n;
+
+	if (map->InteractableCount > 0)
+	{
+		int intType;
+		int flags;
+		char* target[32];
+		char* targetName[32];
+
+		map->Interactables = MCalloc(map->InteractableCount, sizeof(Interactable), "Interactable List");
+		for (int i = 0; i < map->InteractableCount; i += 1)
+		{
+			fread(&intType, sizeof(int), 1, file);
+			fread(&flags, sizeof(int), 1, file);
+			fread(&x1, sizeof(float), 1, file);
+			fread(&y1, sizeof(float), 1, file);
+			fread(&r, sizeof(float), 1, file);
+			fread(&target, sizeof(char), 32, file);
+			fread(&targetName, sizeof(char), 32, file);
+
+			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, flags);
+		}
+	}
 
 	//fread(&n, sizeof(int), 1, file);
 	//map->DoorCount = n;
@@ -149,10 +186,12 @@ void LoadMap(char* filename, MapData* map)
 
 
 	//TEMPORARY
-	map->Lights = MCalloc(1, sizeof(Light), "Light List");
-	map->LightCount = 1;
+	map->Lights = MCalloc(3, sizeof(Light), "Light List");
+	map->LightCount = 3;
 
-	map->Lights[0] = CreateLight((Vector2){ 300, 100 }, 0, 1024, 1, WHITE, true);
+	map->Lights[0] = CreateLight((Vector2) { 300, 0 }, 0, 1024, 1, WHITE, true);
+	map->Lights[1] = CreateLight((Vector2) { 2000, 200 }, 0, 1024, 1, (Color) { 255, 0, 0, 255 }, true);
+	map->Lights[2] = CreateLight((Vector2) { 800, 200 }, 0, 512, 1, WHITE, true);
 }
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
@@ -165,52 +204,81 @@ BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
 	return bc;
 }
 
-Wall CreateWall(Vector2 from, Vector2 to)
+Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
 {
 	Wall w = { 0 };
 	w.From = from;
 	w.To = to;
+	w.WallFlags = flags;
 
 	UpdateWall(&w);
 
 	return w;
 }
 
-Door CreateDoor(Vector2 pos, float rot, int id)
-{
-	Door d = { 0 };
-
-	return d;
-}
-
 void UpdateMap(MapData* map)
 {
-	//map->Lights->Position = PlayerEntity.Position; //TEMPORARY
+	map->Lights[2].Position = PlayerEntity.Position;
 
-	UpdateLights(map->LightCount, map->Lights);
+	for (int i = 0; i < map->InteractableCount; i++)
+	{
+		Interactable* a = &map->Interactables[i];
+		if (!a->IsActive)
+			continue;
+
+		a->OnUpdate(a);
+	}
+
+	for (int i = 0; i < map->InteractableCount; i++)
+	{
+		Interactable* a = &map->Interactables[i];
+		if (!a->IsActive)
+			continue;
+
+		a->OnLateUpdate(a);
+	}
+
+	UpdateLights();
 }
 
 void DrawMap(MapData* map)
 {
+	for (int i = 0; i < map->InteractableCount; i++)
+	{
+		Interactable* a = &map->Interactables[i];
+		if (!a->IsActive)
+			continue;
+
+		a->OnDraw(a);
+	}
+
 	for (int i = 0; i < map->BlockColliderCount; i++)
 	{
 		BlockCollider* b = &map->BlockColliders[i];
+		Vector2 size = b->Size;
+		size.x += 36;
+		size.y += 36;
 
-		Rectangle rect = { b->Position.x, b->Position.y, b->Size.x, b->Size.y };
+		Vector2 halfSize = Vector2Scale(size, 0.5);
+		Rectangle rect = { b->Position.x - halfSize.x, b->Position.y - halfSize.y, size.x, size.y };
 
 		Vector2 origin = { 0, 0 };
 
 		DrawTextureNPatch(WallTexture->Texture, WallNPatch, rect, origin, 0, WHITE);
 	}
 
-	for (int i = 0; i < map->WallCount; i++)
+	/*for (int i = 0; i < map->WallCount; i++)
 	{
 		Wall w = map->Walls[i];
 
 		DrawLineV(w.From, w.To, WHITE);
-	}
+	}*/
 
-	DrawLights(map->LightCount, map->Lights);
+}
+
+void DrawMapHUD(MapData* map)
+{
+	DrawLights();
 }
 
 void UpdateWall(Wall* w)
@@ -221,4 +289,22 @@ void UpdateWall(Wall* w)
 	w->Midpoint = Vector2Add(w->From, w->To);
 	w->Midpoint.x /= 2;
 	w->Midpoint.y /= 2;
+}
+
+Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, int flags)
+{
+	Interactable i = { 0 };
+	i.Activated = false;
+	i.Flags = flags;
+	i.IsActive = true;
+	i.Position = pos;
+	i.Rotation = rot;
+	strcpy_s(i.Target, 32, target);
+	strcpy_s(i.TargetName, 32, targetname);
+
+	SetInteractableFunctions(&i);
+
+	i.OnInit(&i);
+
+	return i;
 }

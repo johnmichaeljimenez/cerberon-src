@@ -140,6 +140,7 @@
     <ClCompile Include="input_handler.c" />
     <ClCompile Include="interaction.c" />
     <ClCompile Include="i_door.c" />
+    <ClCompile Include="i_item.c" />
     <ClCompile Include="lighting.c" />
     <ClCompile Include="log.c" />
     <ClCompile Include="main.c" />
@@ -159,6 +160,7 @@
     <ClInclude Include="input_handler.h" />
     <ClInclude Include="interaction.h" />
     <ClInclude Include="i_door.h" />
+    <ClInclude Include="i_item.h" />
     <ClInclude Include="lighting.h" />
     <ClInclude Include="log.h" />
     <ClInclude Include="mapdata_manager.h" />

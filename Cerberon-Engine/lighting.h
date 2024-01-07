@@ -17,6 +17,9 @@ typedef struct Light
 
 } Light;
 
+void InitLight();
+void UnloadLight();
 Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color, bool cs);
-void UpdateLights(int lightCount, Light** lightArray);
-void DrawLights(int lightCount, Light** lightArray);
+void UpdateLights();
+void DrawLights();
+void DrawShadows(Light* light);

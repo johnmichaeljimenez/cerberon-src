@@ -15,10 +15,10 @@ typedef struct Door
 
 void LoadDoors();
 void UnloadDoors();
-Door* DoorCreate(Door* d);
-void DoorInit(Door* d);
-void DoorUnload(Door* d);
-void DoorUpdate(Door* d);
-void DoorDraw(Door* d);
+void DoorInit(Interactable* d);
+void DoorUnload(Interactable* d);
+void DoorUpdate(Interactable* d);
+void DoorLateUpdate(Interactable* d);
+void DoorDraw(Interactable* d);
 
 void DoorInteract(Door* d, PlayerCharacter* p);

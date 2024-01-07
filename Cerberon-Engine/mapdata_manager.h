@@ -2,13 +2,20 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "lighting.h"
-#include "i_door.h"
+#include "interaction.h"
 
 typedef struct BlockCollider
 {
 	Vector2 Position;
 	Vector2 Size;
 } BlockCollider;
+
+typedef enum WallFlag
+{
+	WALLFLAG_NONE = 1 << 0,
+	WALLFLAG_CAST_SHADOW = 1 << 1,
+	WALLFLAG_IGNORE_RAYCAST = 1 << 2,
+} WallFlag;
 
 typedef struct Wall
 {
@@ -17,6 +24,9 @@ typedef struct Wall
 	float Length;
 	Vector2 Normal;
 	Vector2 Midpoint;
+	WallFlag WallFlags;
+
+	Vector2 sFrom, sTo, sFrom2, sTo2;
 } Wall;
 
 typedef struct MapData
@@ -30,8 +40,8 @@ typedef struct MapData
 	int WallCount;
 	Wall* Walls;
 
-	int DoorCount;
-	Door* Doors;
+	int InteractableCount;
+	Interactable* Interactables;
 
 	int LightCount;
 	Light* Lights;
@@ -44,10 +54,11 @@ void UnloadMap();
 void LoadMap(char* filename, MapData* map);
 void UpdateMap(MapData* map);
 void DrawMap(MapData* map);
+void DrawMapHUD(MapData* map);
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size);
 
-Wall CreateWall(Vector2 from, Vector2 to);
+Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags);
 void UpdateWall(Wall* w);
 
-Door CreateDoor(Vector2 pos, float rot, int id);
+Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, int flags);
