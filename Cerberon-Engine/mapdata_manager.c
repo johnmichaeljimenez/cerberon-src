@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "utils.h"
 #include "asset_manager.h"
+#include "i_door.h"
 #include <string.h>
 
 void InitMap()
@@ -223,6 +224,7 @@ void UpdateMap(MapData* map)
 {
 	map->Lights[2].Position = PlayerEntity.Position;
 
+	CheckInteraction();
 	for (int i = 0; i < map->InteractableCount; i++)
 	{
 		Interactable* a = &map->Interactables[i];

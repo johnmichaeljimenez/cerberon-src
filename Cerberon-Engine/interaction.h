@@ -15,12 +15,15 @@ typedef struct Interactable
 	char* Target[32];
 	char* TargetName[32];
 	int Flags;
+	bool OneShot;
 
 	float Radius;
 	InteractableType InteractableType;
 
 	bool IsActive;
 	bool Activated;
+	bool Hovered;
+	int DataIndex;
 
 	void (*OnInit)(struct Interactable* i);
 	void (*OnUnload)(struct Interactable* i);
@@ -31,4 +34,7 @@ typedef struct Interactable
 
 } Interactable;
 
+void InteractionInit();
+void InteractionUnload();
+void CheckInteraction();
 void SetInteractableFunctions(Interactable* i);

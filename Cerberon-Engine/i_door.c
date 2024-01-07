@@ -55,10 +55,20 @@ void DoorLateUpdate(Interactable* d)
 
 void DoorDraw(Interactable* d)
 {
-	DrawCircleV(d->Position, 64, WHITE);
+	//Temporary (use sprite later)
+	Vector2 from = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (d->Rotation - 90)* DEG2RAD), 32);
+	Vector2 to = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (d->Rotation + 90)* DEG2RAD), 32);
+
+	from = Vector2Add(from, d->Position);
+	to = Vector2Add(to, d->Position);
+
+	DrawLineEx(from, to, 8, BLACK);
+
+	if (d->Hovered)
+		DrawCircleV(d->Position, 4, WHITE);
 }
 
-void DoorInteract(Door* d, PlayerCharacter* p)
+void DoorInteract(Interactable* i, PlayerCharacter* p)
 {
-
+	TraceLog(LOG_INFO, "Door #%d", i->DataIndex);
 }
