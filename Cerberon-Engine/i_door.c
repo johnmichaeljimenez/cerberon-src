@@ -22,7 +22,10 @@ void LoadDoors()
 		DoorList[i].IsActive = true;
 		DoorList[i].IsOpen = false;
 
+		DoorList[i].Width = 32;
+		DoorList[i].Length = 128;
 		DoorList[i].Duration = 0.3;
+
 		DoorList[i]._timer = 0;
 
 		in->DataIndex = i;
@@ -54,7 +57,7 @@ void DoorUpdate(Interactable* i)
 	if (d->_timer <= 0)
 		d->_timer = 0;
 
-	Vector2 openPos = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (i->Rotation + 90)* DEG2RAD), 64);
+	Vector2 openPos = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (i->Rotation + 90)* DEG2RAD), d->Length/1.25);
 	openPos = Vector2Add(i->Position, openPos);
 
 	Vector2 from = d->IsOpen ? openPos : i->Position;
@@ -73,13 +76,13 @@ void DoorDraw(Interactable* i)
 	Door* d = &DoorList[i->DataIndex];
 
 	//Temporary (use sprite later)
-	Vector2 from = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (i->Rotation - 90)* DEG2RAD), 32);
-	Vector2 to = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (i->Rotation + 90)* DEG2RAD), 32);
+	Vector2 from = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (i->Rotation - 90)* DEG2RAD), d->Length/2);
+	Vector2 to = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (i->Rotation + 90)* DEG2RAD), d->Length/2);
 
 	from = Vector2Add(from, d->DoorPosition);
 	to = Vector2Add(to, d->DoorPosition);
 
-	DrawLineEx(from, to, 8, BLACK);
+	DrawLineEx(from, to, d->Width, BLACK);
 
 	if (i->Hovered)
 		DrawCircleV(i->Position, 4, WHITE);

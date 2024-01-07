@@ -8,6 +8,8 @@ typedef struct Door
 	Interactable* Interactable;
 
 	float Duration;
+	float Width;
+	float Length;
 
 	bool IsOpen;
 	float _timer;
