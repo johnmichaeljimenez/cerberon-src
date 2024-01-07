@@ -138,6 +138,32 @@ void LoadMap(char* filename, MapData* map)
 	}
 
 
+	fread(&n, sizeof(int), 1, file);
+	map->InteractableCount = n;
+	map->Interactables = n;
+
+	if (map->InteractableCount > 0)
+	{
+		int intType;
+		int flags;
+		char* target[32];
+		char* targetName[32];
+
+		map->Interactables = MCalloc(map->InteractableCount, sizeof(Interactable), "Interactable List");
+		for (int i = 0; i < map->InteractableCount; i += 1)
+		{
+			fread(&intType, sizeof(int), 1, file);
+			fread(&flags, sizeof(int), 1, file);
+			fread(&x1, sizeof(float), 1, file);
+			fread(&y1, sizeof(float), 1, file);
+			fread(&r, sizeof(float), 1, file);
+			fread(&target, sizeof(char), 32, file);
+			fread(&targetName, sizeof(char), 32, file);
+
+			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, flags);
+		}
+	}
+
 	//fread(&n, sizeof(int), 1, file);
 	//map->DoorCount = n;
 
@@ -166,11 +192,6 @@ void LoadMap(char* filename, MapData* map)
 	map->Lights[0] = CreateLight((Vector2) { 300, 0 }, 0, 1024, 1, WHITE, true);
 	map->Lights[1] = CreateLight((Vector2) { 2000, 200 }, 0, 1024, 1, (Color) { 255, 0, 0, 255 }, true);
 	map->Lights[2] = CreateLight((Vector2) { 800, 200 }, 0, 512, 1, WHITE, true);
-
-	map->Interactables = MCalloc(1, sizeof(Interactable), "Interactable List");
-	map->InteractableCount = 1;
-
-	map->Interactables[0] = CreateInteractable((Vector2) { 100, 100 }, 0, "", "", INTERACTABLE_Door, 0);
 }
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
@@ -222,6 +243,15 @@ void UpdateMap(MapData* map)
 
 void DrawMap(MapData* map)
 {
+	for (int i = 0; i < map->InteractableCount; i++)
+	{
+		Interactable* a = &map->Interactables[i];
+		if (!a->IsActive)
+			continue;
+
+		a->OnDraw(a);
+	}
+
 	for (int i = 0; i < map->BlockColliderCount; i++)
 	{
 		BlockCollider* b = &map->BlockColliders[i];
@@ -235,15 +265,6 @@ void DrawMap(MapData* map)
 		Vector2 origin = { 0, 0 };
 
 		DrawTextureNPatch(WallTexture->Texture, WallNPatch, rect, origin, 0, WHITE);
-	}
-
-	for (int i = 0; i < map->InteractableCount; i++)
-	{
-		Interactable* a = &map->Interactables[i];
-		if (!a->IsActive)
-			continue;
-
-		a->OnDraw(a);
 	}
 
 	/*for (int i = 0; i < map->WallCount; i++)

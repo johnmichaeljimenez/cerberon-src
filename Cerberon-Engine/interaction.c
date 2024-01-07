@@ -8,6 +8,7 @@ void SetInteractableFunctions(Interactable* i)
 	switch (i->InteractableType)
 	{
 	case INTERACTABLE_Door:
+		i->Radius = 128;
 		i->OnInit = DoorInit;
 		i->OnUpdate = DoorUpdate;
 		i->OnLateUpdate = DoorLateUpdate;
