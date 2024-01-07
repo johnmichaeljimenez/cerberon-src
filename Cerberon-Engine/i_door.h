@@ -3,6 +3,7 @@
 
 typedef struct Door
 {
+	Vector2 DoorPosition;
 	bool IsActive;
 	Interactable* Interactable;
 
@@ -16,10 +17,10 @@ int DoorCount;
 
 void LoadDoors();
 void UnloadDoors();
-void DoorInit(Interactable* d);
-void DoorUnload(Interactable* d);
-void DoorUpdate(Interactable* d);
-void DoorLateUpdate(Interactable* d);
-void DoorDraw(Interactable* d);
+void DoorInit(Interactable* i);
+void DoorUnload(Interactable* i);
+void DoorUpdate(Interactable* i);
+void DoorLateUpdate(Interactable* i);
+void DoorDraw(Interactable* i);
 
 void DoorInteract(Interactable* i, PlayerCharacter* p);
