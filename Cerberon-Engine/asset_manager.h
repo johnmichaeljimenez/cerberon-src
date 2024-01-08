@@ -28,6 +28,7 @@ NPatchInfo WallNPatch;
 TextureResource* WallTexture;
 
 TextureResource* LightTexture;
+TextureResource* FlashlightTexture;
 
 int TextureResourceCount;
 TextureResource* TextureResourceList;

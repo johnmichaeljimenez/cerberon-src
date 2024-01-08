@@ -17,6 +17,7 @@ typedef struct PlayerCharacter
 } PlayerCharacter;
 
 PlayerCharacter PlayerEntity;
+struct Light* PlayerFlashlight;
 
 void PlayerInit(PlayerCharacter* p);
 void PlayerUnload(PlayerCharacter* p);
@@ -27,3 +28,4 @@ void PlayerDrawHUD(PlayerCharacter* p);
 
 void PlayerRotate(PlayerCharacter* p, float dir);
 Vector2 PlayerGetForward(PlayerCharacter* p, float length);
+void DrawPlayerFlashlight(struct Light* l);

@@ -49,7 +49,8 @@ void CheckInteraction()
 		if (a->Hovered)
 		{
 			LinecastHit hit;
-			if (Linecast(PlayerEntity.Position, a->Position, &hit) && hit.Length > 8)
+			Linecast(PlayerEntity.Position, a->Position, &hit);
+			if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 32)
 			{
 				a->Hovered = false;
 				continue;

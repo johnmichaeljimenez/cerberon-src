@@ -9,6 +9,7 @@ typedef struct LinecastHit
 	Vector2 To;
 	float Length;
 	Wall* WallHit;
+	bool Hit;
 } LinecastHit;
 
 void MoveBody(Vector2* pos, float radius);

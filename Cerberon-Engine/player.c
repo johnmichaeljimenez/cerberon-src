@@ -50,6 +50,7 @@ void PlayerUpdate(PlayerCharacter* p)
 	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit);
 
 	PlayerRotate(p, newDir);
+	PlayerFlashlight->Position = PlayerEntity.Position;
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)
@@ -69,7 +70,7 @@ void PlayerDraw(PlayerCharacter* p)
 		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 	}
 
-	if (lineHit.WallHit != NULL)
+	if (lineHit.Hit)
 	{
 		DrawLineV(lineHit.From, lineHit.To, RED);
 		DrawCircleV(lineHit.To, 3, RED);
@@ -90,4 +91,16 @@ void PlayerRotate(PlayerCharacter* p, float dir)
 	p->Rotation = dir;
 	p->Direction.x = cosf(p->Rotation);
 	p->Direction.y = sinf(p->Rotation);
+}
+
+void DrawPlayerFlashlight(Light* l)
+{
+	BeginBlendMode(BLEND_ADDITIVE);
+
+	Color color = ColorBrightness01(l->Color, l->Intensity);
+	DrawCircleGradient(l->Position.x, l->Position.y, 80, color, BLACK);
+	DrawSprite(FlashlightTexture, l->Position, PlayerEntity.Rotation + (90 * DEG2RAD), 2, (Vector2) { 0, 0.5 }, WHITE);
+
+	EndBlendMode();
+
 }

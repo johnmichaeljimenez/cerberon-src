@@ -4,6 +4,7 @@
 #include "mapdata_manager.h"
 #include "i_door.h"
 #include <float.h>
+#include "utils.h"
 
 bool GetLineIntersection(float p0_x, float p0_y, float p1_x, float p1_y,
 	float p2_x, float p2_y, float p3_x, float p3_y, Vector2* hit)
@@ -104,6 +105,35 @@ bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
 	result->From = from;
 	result->To = to;
 	result->WallHit = NULL;
+	result->Hit = false;
+
+	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
+	{
+		Interactable* in = &CurrentMapData->Interactables[i];
+		if (in->InteractableType != INTERACTABLE_Door)
+			continue;
+
+		Door* door = &DoorList[in->DataIndex];
+
+		Vector2 hitPos;
+		bool hasHit = GetLineIntersection(from.x, from.y, to.x, to.y, door->From.x, door->From.y, door->To.x, door->To.y, &hitPos);
+		//CheckCollisionLines(from, to, w->From, w->To, &hitPos);
+
+		if (hasHit)
+		{
+			float diff = Vector2Distance(hitPos, from);
+
+			if (diff < lastHit)
+			{
+				hit = true;
+				result->To = hitPos;
+				result->Length = diff;
+				result->WallHit = NULL;
+				result->Hit = true;
+				lastHit = diff;
+			}
+		}
+	}
 
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
@@ -130,6 +160,7 @@ bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
 				result->To = hitPos;
 				result->Length = diff;
 				result->WallHit = w;
+				result->Hit = true;
 				lastHit = diff;
 			}
 		}
