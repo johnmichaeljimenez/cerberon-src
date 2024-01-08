@@ -10,6 +10,7 @@
 //TODO: Fix all render texture downscaling for optimization
 static RenderTexture2D LightRenderTexture;
 static bool isLightingEnabled;
+static float lightScale = 4;
 
 void InitLight()
 {
@@ -34,9 +35,9 @@ Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color
 	};
 
 	light._RenderCamera = (Camera2D){
-		.zoom = 1,
+		.zoom = 1 / lightScale,
 		.target = pos,
-		.offset = (Vector2){ sc / 2, sc / 2 }
+		.offset = (Vector2){ sc / 2 / lightScale, sc / 2 / lightScale }
 	};
 
 	light._RenderTexture = LoadRenderTexture(sc, sc);
@@ -67,6 +68,7 @@ void UpdateLights()
 		//DrawSprite(LightTexture, l->Position, l->Rotation, l->Scale/512, Vector2Zero(), color);//  (l->Position, l->Scale / 2, l->Color);
 		DrawCircleGradient(l->Position.x, l->Position.y, l->Scale / 2, color, BLACK);
 		DrawShadows(l);
+		//DrawCircleLines(l->Position.x, l->Position.y, l->Scale / 2, RED);
 
 		EndMode2D();
 		EndTextureMode();
@@ -87,7 +89,7 @@ void UpdateLights()
 		pos.y -= l->Scale / 2;
 
 		Rectangle srcRec = { 0, 0, l->_RenderTexture.texture.width, -(float)l->_RenderTexture.texture.height };
-		Rectangle destRect = (Rectangle){ l->Position.x, l->Position.y, l->_RenderTexture.texture.width, l->_RenderTexture.texture.height };
+		Rectangle destRect = (Rectangle){ l->Position.x, l->Position.y, l->_RenderTexture.texture.width * lightScale, l->_RenderTexture.texture.height * lightScale };
 		Vector2 origin = { l->_RenderTexture.texture.width / 2, l->_RenderTexture.texture.height / 2 };
 
 		DrawTexturePro(l->_RenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
