@@ -173,7 +173,7 @@ void LoadMap(char* filename, MapData* map)
 	map->LightCount = n;
 	map->Lights = MCalloc(map->LightCount, sizeof(Light), "Light List");
 
-	map->Lights[0] = CreateLight(Vector2Zero(), 0, 180, 0.4, WHITE, false);
+	map->Lights[0] = CreateLight(Vector2Zero(), 0, 300, 0.4, WHITE, true, DrawLightDefault);
 
 	float _r, _g, _b, s, cs, in;
 
@@ -193,7 +193,7 @@ void LoadMap(char* filename, MapData* map)
 		_g *= 255;
 		_b *= 255;
 
-		map->Lights[i] = CreateLight((Vector2) { x1, y1 }, r, s, in, (Color) { _r, _g, _b, 255 }, cs);
+		map->Lights[i] = CreateLight((Vector2) { x1, y1 }, r, s, in, (Color) { _r, _g, _b, 255 }, cs, DrawLightDefault);
 	}
 
 	fclose(file);

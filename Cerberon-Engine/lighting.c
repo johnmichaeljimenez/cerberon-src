@@ -23,7 +23,7 @@ void UnloadLight()
 	UnloadRenderTexture(LightRenderTexture);
 }
 
-Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color, bool cs)
+Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color, bool cs, void* drawCommand)
 {
 	Light light = (Light){
 		.Position = pos,
@@ -41,6 +41,7 @@ Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color
 	};
 
 	light._RenderTexture = LoadRenderTexture(sc, sc);
+	light.OnDrawLight = drawCommand;
 
 	return light;
 }
@@ -63,12 +64,8 @@ void UpdateLights()
 		BeginTextureMode(l->_RenderTexture);
 		ClearBackground(BLACK);
 		BeginMode2D(l->_RenderCamera);
-
-		Color color = ColorBrightness01(l->Color, l->Intensity);
-		//DrawSprite(LightTexture, l->Position, l->Rotation, l->Scale/512, Vector2Zero(), color);//  (l->Position, l->Scale / 2, l->Color);
-		DrawCircleGradient(l->Position.x, l->Position.y, l->Scale / 2, color, BLACK);
+		l->OnDrawLight(l);
 		DrawShadows(l);
-		//DrawCircleLines(l->Position.x, l->Position.y, l->Scale / 2, RED);
 
 		EndMode2D();
 		EndTextureMode();
@@ -179,4 +176,10 @@ void DrawShadowsEx(Vector2 from, Vector2 to, Vector2 normal, Vector2 lightPos)
 	};
 
 	DrawTriangleStrip(points, 6, BLACK);
+}
+
+void DrawLightDefault(Light* l)
+{
+	Color color = ColorBrightness01(l->Color, l->Intensity);
+	DrawCircleGradient(l->Position.x, l->Position.y, l->Scale / 2, color, BLACK);
 }
