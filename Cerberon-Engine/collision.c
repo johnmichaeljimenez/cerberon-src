@@ -114,13 +114,6 @@ bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
 			continue;
 
 		Door* door = &DoorList[in->DataIndex];
-		Vector2 d = Vector2Subtract(from, in->Position);
-		Vector2 normal = GetNormalVector(door->From, door->To);
-
-		bool visible = Vector2DotProduct(normal, d) > 0;
-
-		if (!visible)
-			continue;
 
 		Vector2 hitPos;
 		bool hasHit = GetLineIntersection(from.x, from.y, to.x, to.y, door->From.x, door->From.y, door->To.x, door->To.y, &hitPos);
