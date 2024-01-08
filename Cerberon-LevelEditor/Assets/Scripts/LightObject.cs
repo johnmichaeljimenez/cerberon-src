@@ -11,7 +11,7 @@ public class LightObject : BaseObject
     public override void Export(List<byte> array)
     {
         var spriteRenderer = GetComponent<SpriteRenderer>();
-        var scale = (transform.localScale.x + transform.localScale.y) / 2;
+        var scale = Mathf.Max(transform.localScale.x, transform.localScale.y);
         scale = scale * MAP_SCALE;
 
         array.AddRange(BitConverter.GetBytes(transform.position.x * MAP_SCALE));
@@ -24,5 +24,12 @@ public class LightObject : BaseObject
         array.AddRange(BitConverter.GetBytes(spriteRenderer.color.g));
         array.AddRange(BitConverter.GetBytes(spriteRenderer.color.b));
         array.AddRange(BitConverter.GetBytes(intensity));
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        var scale = Mathf.Max(transform.localScale.x, transform.localScale.y) / 2;
+
+        Gizmos.DrawWireSphere(transform.position, scale);
     }
 }
