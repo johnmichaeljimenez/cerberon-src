@@ -141,7 +141,6 @@ void LoadMap(char* filename, MapData* map)
 
 	fread(&n, sizeof(int), 1, file);
 	map->InteractableCount = n;
-	map->Interactables = n;
 
 	if (map->InteractableCount > 0)
 	{
@@ -168,34 +167,36 @@ void LoadMap(char* filename, MapData* map)
 		}
 	}
 
-	//fread(&n, sizeof(int), 1, file);
-	//map->DoorCount = n;
 
-	//if (map->DoorCount > 0)
-	//{
-	//	map->Doors = MCalloc(n, sizeof(Door), "Door List");
+	fread(&n, sizeof(int), 1, file);
+	n += 1;
+	map->LightCount = n;
+	map->Lights = MCalloc(map->LightCount, sizeof(Light), "Light List");
 
-	//	for (int i = 0; i < n; i++)
-	//	{
-	//		fread(&x1, sizeof(float), 1, file);
-	//		fread(&y1, sizeof(float), 1, file);
-	//		fread(&r, sizeof(float), 1, file);
-	//		fread(&id, sizeof(int), 1, file);
+	map->Lights[0] = CreateLight(Vector2Zero(), 0, 180, 0.4, WHITE, false);
 
-	//		map->Doors[i] = CreateDoor((Vector2) { x1, y1 }, r, id);
-	//	}
-	//}
+	float _r, _g, _b, s, cs, in;
+
+	for (int i = 1; i < map->LightCount; i += 1)
+	{
+		fread(&x1, sizeof(float), 1, file);
+		fread(&y1, sizeof(float), 1, file);
+		fread(&r, sizeof(float), 1, file);
+		fread(&s, sizeof(float), 1, file);
+		fread(&cs, sizeof(bool), 1, file);
+		fread(&_r, sizeof(float), 1, file);
+		fread(&_g, sizeof(float), 1, file);
+		fread(&_b, sizeof(float), 1, file);
+		fread(&in, sizeof(float), 1, file);
+
+		_r *= 255;
+		_g *= 255;
+		_b *= 255;
+
+		map->Lights[i] = CreateLight((Vector2) { x1, y1 }, r, s, in, (Color) { _r, _g, _b, 255 }, cs);
+	}
 
 	fclose(file);
-
-
-	//TEMPORARY
-	map->Lights = MCalloc(3, sizeof(Light), "Light List");
-	map->LightCount = 3;
-
-	map->Lights[0] = CreateLight((Vector2) { 300, 0 }, 0, 1024, 1, WHITE, true);
-	map->Lights[1] = CreateLight((Vector2) { 2000, 200 }, 0, 1024, 1, (Color) { 255, 0, 0, 255 }, true);
-	map->Lights[2] = CreateLight((Vector2) { 800, 200 }, 0, 512, 1, WHITE, true);
 }
 
 BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
@@ -222,7 +223,7 @@ Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
 
 void UpdateMap(MapData* map)
 {
-	map->Lights[2].Position = PlayerEntity.Position;
+	map->Lights[0].Position = PlayerEntity.Position;
 
 	CheckInteraction();
 	for (int i = 0; i < map->InteractableCount; i++)
