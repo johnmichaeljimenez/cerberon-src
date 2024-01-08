@@ -37,6 +37,7 @@ void LoadResources()
 	WallNPatch = (NPatchInfo){ (Rectangle) { 0.0f, 0.0f, WallTexture->Texture.width, WallTexture->Texture.height }, 36, 36, 36, 36, NPATCH_NINE_PATCH };
 
 	LightTexture = GetTextureResource(ToHash("misc-light"));
+	FlashlightTexture = GetTextureResource(ToHash("vfx-flashlight"));
 }
 
 void UnloadResources()
