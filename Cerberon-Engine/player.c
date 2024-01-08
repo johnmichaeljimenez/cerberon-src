@@ -69,7 +69,7 @@ void PlayerDraw(PlayerCharacter* p)
 		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 	}
 
-	if (lineHit.WallHit != NULL)
+	if (lineHit.Hit)
 	{
 		DrawLineV(lineHit.From, lineHit.To, RED);
 		DrawCircleV(lineHit.To, 3, RED);
