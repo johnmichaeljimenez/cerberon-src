@@ -173,7 +173,8 @@ void LoadMap(char* filename, MapData* map)
 	map->LightCount = n;
 	map->Lights = MCalloc(map->LightCount, sizeof(Light), "Light List");
 
-	map->Lights[0] = CreateLight(Vector2Zero(), 0, 300, 0.4, WHITE, true, DrawLightDefault);
+	map->Lights[0] = CreateLight(Vector2Zero(), 0, 1024, 1, WHITE, true, DrawPlayerFlashlight);
+	PlayerFlashlight = &map->Lights[0];
 
 	float _r, _g, _b, s, cs, in;
 
@@ -223,8 +224,6 @@ Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
 
 void UpdateMap(MapData* map)
 {
-	map->Lights[0].Position = PlayerEntity.Position;
-
 	CheckInteraction();
 	for (int i = 0; i < map->InteractableCount; i++)
 	{
