@@ -5,6 +5,7 @@
 #include "mapdata_manager.h"
 #include "camera.h"
 #include "player.h"
+#include "renderer.h"
 
 void IngameInit()
 {
@@ -17,6 +18,7 @@ void IngameInit()
 void IngameOnLoad()
 {
 	LoadResources();
+	RendererInit();
 	CameraInit();
 	InitLight();
 	InitMap();
@@ -31,6 +33,7 @@ void IngameOnUnload()
 	UnloadLight();
 	PlayerUnload(&PlayerEntity);
 	UnloadMap();
+	RendererUnload();
 	UnloadResources();
 }
 
@@ -47,6 +50,7 @@ void IngameOnUpdate()
 
 void IngameOnDraw()
 {
+	BeginTextureMode(RendererScreenTexture);
 	ClearBackground(DARKGRAY);
 
 	BeginMode2D(GameCamera);
@@ -55,6 +59,7 @@ void IngameOnDraw()
 	DrawMap(CurrentMapData);
 
 	EndMode2D();
+	EndTextureMode();
 
 	PlayerDrawHUD(&PlayerEntity);
 	DrawMapHUD(CurrentMapData);

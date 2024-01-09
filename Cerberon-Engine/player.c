@@ -97,9 +97,10 @@ void DrawPlayerFlashlight(Light* l)
 {
 	BeginBlendMode(BLEND_ADDITIVE);
 
-	Color color = ColorBrightness01(l->Color, l->Intensity);
+	Color color = ColorBrightness01(l->Color, l->Intensity * 0.5f);
+	Color color2 = ColorBrightness01(l->Color, l->Intensity);
 	DrawCircleGradient(l->Position.x, l->Position.y, 80, color, BLACK);
-	DrawSprite(FlashlightTexture, l->Position, PlayerEntity.Rotation + (90 * DEG2RAD), 2, (Vector2) { 0, 0.5 }, WHITE);
+	DrawSprite(FlashlightTexture, l->Position, PlayerEntity.Rotation + (90 * DEG2RAD), 2, (Vector2) { 0, 0.5 }, color2);
 
 	EndBlendMode();
 

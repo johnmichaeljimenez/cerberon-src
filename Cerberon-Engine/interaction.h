@@ -8,6 +8,14 @@ typedef enum InteractableType
 	INTERACTABLE_Item,
 } InteractableType;
 
+typedef enum InteractableSubType
+{
+	INTERACTABLESUB_Door,
+	INTERACTABLESUB_ItemMedkit,
+	INTERACTABLESUB_ItemFlashlight,
+	INTERACTABLESUB_ItemCash,
+} InteractableSubType;
+
 typedef struct Interactable
 {
 	Vector2 Position;
@@ -19,6 +27,7 @@ typedef struct Interactable
 
 	float Radius;
 	InteractableType InteractableType;
+	int InteractableSubType;
 
 	bool IsActive;
 	bool Activated;
