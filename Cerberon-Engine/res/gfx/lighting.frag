@@ -15,6 +15,8 @@ const mat4 dither_table = mat4(
      3.0, -1.0, 2.0, -2.0
 );
 
+const float depth = 24;
+
 float quantize(float value, float levels)
 {
     return floor(value * levels) / (levels - 1.0);
@@ -39,9 +41,9 @@ void main()
     ivec2 fragCoordInt = ivec2(fragCoord);
     vec2 scaledCoord = fragCoord.xy * 1;
     texelColor.rgb += dither_table[int(scaledCoord.x) % 4][int(scaledCoord.y) % 4] * 0.05;
-    texelColor.r = quantize(texelColor.r, 16.0);
-    texelColor.g = quantize(texelColor.g, 16.0);
-    texelColor.b = quantize(texelColor.b, 16.0);
+    texelColor.r = quantize(texelColor.r, depth);
+    texelColor.g = quantize(texelColor.g, depth);
+    texelColor.b = quantize(texelColor.b, depth);
 
     finalColor = vec4(texelColor, 1);
 }
