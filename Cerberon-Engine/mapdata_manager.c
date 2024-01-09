@@ -145,6 +145,7 @@ void LoadMap(char* filename, MapData* map)
 	if (map->InteractableCount > 0)
 	{
 		int intType;
+		int intSubType;
 		int flags;
 		char* target[32];
 		char* targetName[32];
@@ -153,6 +154,7 @@ void LoadMap(char* filename, MapData* map)
 		for (int i = 0; i < map->InteractableCount; i += 1)
 		{
 			fread(&intType, sizeof(int), 1, file);
+			fread(&intSubType, sizeof(int), 1, file);
 			fread(&flags, sizeof(int), 1, file);
 			fread(&x1, sizeof(float), 1, file);
 			fread(&y1, sizeof(float), 1, file);
@@ -163,7 +165,7 @@ void LoadMap(char* filename, MapData* map)
 			if (intType == INTERACTABLE_Door)
 				DoorCount++;
 
-			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, flags);
+			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags);
 		}
 	}
 
@@ -296,9 +298,12 @@ void UpdateWall(Wall* w)
 	w->Midpoint.y /= 2;
 }
 
-Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, int flags)
+Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags)
 {
 	Interactable i = { 0 };
+
+	i.InteractableType = intType;
+	i.InteractableSubType = intSubType;
 	i.Activated = false;
 	i.Flags = flags;
 	i.IsActive = true;
