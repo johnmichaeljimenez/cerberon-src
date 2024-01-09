@@ -6,31 +6,36 @@
 #include "asset_manager.h"
 #include "mapdata_manager.h"
 #include "i_door.h"
+#include "renderer.h"
 
 static RenderTexture2D LightRenderTexture;
 static bool isLightingEnabled;
 static float lightScale = 4;
-static float screenLightScale = 4;
+static float screenLightScale = 2;
 static Camera2D screenLightCamera;
 
-static Shader blurShader;
+static Shader lightShader;
+static int screenTexParam;
 
 void InitLight()
 {
-	blurShader = LoadShader(0, "res/gfx/lighting.frag");
+	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
+
+	lightShader = LoadShader(0, "res/gfx/lighting.frag");
+	screenTexParam = GetShaderLocation(lightShader, "screenTex");
+	SetShaderValueTexture(lightShader, screenTexParam, RendererScreenTexture.texture);
 
 	screenLightCamera = (Camera2D){
 		.zoom = 1 / screenLightScale,
 		.offset = (Vector2){ GetScreenWidth() / 2 / screenLightScale, GetScreenHeight() / 2 / screenLightScale }
 	};
 
-	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
 	isLightingEnabled = true;
 }
 
 void UnloadLight()
 {
-	UnloadShader(blurShader);
+	UnloadShader(lightShader);
 	UnloadRenderTexture(LightRenderTexture);
 }
 
@@ -119,15 +124,14 @@ void DrawLights()
 	//DRAW ENTIRE LIGHT SCREEN QUAD
 	Texture2D* rt = &LightRenderTexture.texture;
 
-	BeginShaderMode(blurShader);
-	//BeginBlendMode(BLEND_MULTIPLIED);
 	Rectangle srcRec = { 0, 0, rt->width, -(float)rt->height };
 	Rectangle destRect = (Rectangle){ 0, 0, rt->width * screenLightScale , rt->height * screenLightScale };
 	Vector2 origin = { 0,0 };
+
+	BeginShaderMode(lightShader);
+	SetShaderValueTexture(lightShader, screenTexParam, RendererScreenTexture.texture);
 	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
 	EndShaderMode();
-
-	//EndBlendMode();
 }
 
 void DrawShadows(Light* light)
