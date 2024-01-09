@@ -13,8 +13,12 @@ static float lightScale = 4;
 static float screenLightScale = 4;
 static Camera2D screenLightCamera;
 
+static Shader blurShader;
+
 void InitLight()
 {
+	blurShader = LoadShader(0, "res/gfx/lighting.frag");
+
 	screenLightCamera = (Camera2D){
 		.zoom = 1 / screenLightScale,
 		.offset = (Vector2){ GetScreenWidth() / 2 / screenLightScale, GetScreenHeight() / 2 / screenLightScale }
@@ -26,6 +30,7 @@ void InitLight()
 
 void UnloadLight()
 {
+	UnloadShader(blurShader);
 	UnloadRenderTexture(LightRenderTexture);
 }
 
@@ -111,19 +116,18 @@ void DrawLights()
 	if (!isLightingEnabled)
 		return;
 
+	//DRAW ENTIRE LIGHT SCREEN QUAD
 	Texture2D* rt = &LightRenderTexture.texture;
 
-	//DRAW ENTIRE LIGHT SCREEN QUAD
-	BeginBlendMode(BLEND_MULTIPLIED);
+	BeginShaderMode(blurShader);
+	//BeginBlendMode(BLEND_MULTIPLIED);
 	Rectangle srcRec = { 0, 0, rt->width, -(float)rt->height };
 	Rectangle destRect = (Rectangle){ 0, 0, rt->width * screenLightScale , rt->height * screenLightScale };
 	Vector2 origin = { 0,0 };
 	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
+	EndShaderMode();
 
-	//FAKE VOLUME EFFECT
-	//BeginBlendMode(BLEND_ADDITIVE);
-	//DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, DARKGRAY);
-	EndBlendMode();
+	//EndBlendMode();
 }
 
 void DrawShadows(Light* light)
