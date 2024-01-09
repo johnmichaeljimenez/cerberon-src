@@ -175,7 +175,7 @@ void LoadMap(char* filename, MapData* map)
 	map->LightCount = n;
 	map->Lights = MCalloc(map->LightCount, sizeof(Light), "Light List");
 
-	map->Lights[0] = CreateLight(Vector2Zero(), 0, 1024, 1, WHITE, true, DrawPlayerFlashlight);
+	map->Lights[0] = CreateLight(Vector2Zero(), 0, 1024, 0.6, WHITE, true, DrawPlayerFlashlight);
 	PlayerFlashlight = &map->Lights[0];
 
 	float _r, _g, _b, s, cs, in;
