@@ -7,14 +7,20 @@
 #include "mapdata_manager.h"
 #include "i_door.h"
 
-//TODO: Fix all render texture downscaling for optimization
 static RenderTexture2D LightRenderTexture;
 static bool isLightingEnabled;
 static float lightScale = 4;
+static float screenLightScale = 4;
+static Camera2D screenLightCamera;
 
 void InitLight()
 {
-	LightRenderTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+	screenLightCamera = (Camera2D){
+		.zoom = 1 / screenLightScale,
+		.offset = (Vector2){ GetScreenWidth() / 2 / screenLightScale, GetScreenHeight() / 2 / screenLightScale }
+	};
+
+	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
 	isLightingEnabled = true;
 }
 
@@ -72,8 +78,11 @@ void UpdateLights()
 	}
 
 	//DRAW AND BLEND LIGHTS
+
+	screenLightCamera.target = GameCamera.target;
+
 	BeginTextureMode(LightRenderTexture);
-	BeginMode2D(GameCamera);
+	BeginMode2D(screenLightCamera);
 
 	ClearBackground(ColorBrightness01(WHITE, 0.05));
 
@@ -107,7 +116,7 @@ void DrawLights()
 	//DRAW ENTIRE LIGHT SCREEN QUAD
 	BeginBlendMode(BLEND_MULTIPLIED);
 	Rectangle srcRec = { 0, 0, rt->width, -(float)rt->height };
-	Rectangle destRect = (Rectangle){ 0, 0, rt->width, rt->height };
+	Rectangle destRect = (Rectangle){ 0, 0, rt->width * screenLightScale , rt->height * screenLightScale };
 	Vector2 origin = { 0,0 };
 	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
 
