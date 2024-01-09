@@ -3,15 +3,10 @@
 
 void RendererInit()
 {
-
+	RendererScreenTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 }
 
-void RendererDraw()
+void RendererUnload()
 {
-
-}
-
-void RendererDrawLight()
-{
-
+	UnloadRenderTexture(RendererScreenTexture);
 }
