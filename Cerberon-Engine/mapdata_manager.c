@@ -259,9 +259,21 @@ void DrawMap(MapData* map)
 		a->OnDraw(a);
 	}
 
-	for (int i = 0; i < map->BlockColliderCount; i++)
+	/*for (int i = 0; i < map->WallCount; i++)
 	{
-		BlockCollider* b = &map->BlockColliders[i];
+		Wall w = map->Walls[i];
+
+		DrawLineV(w.From, w.To, WHITE);
+	}*/
+
+}
+
+void DrawWalls()
+{
+	//TODO: Merge this on drawing future overlay function (walls, roof sprites, etc)
+	for (int i = 0; i < CurrentMapData->BlockColliderCount; i++)
+	{
+		BlockCollider* b = &CurrentMapData->BlockColliders[i];
 		Vector2 size = b->Size;
 		size.x += 36;
 		size.y += 36;
@@ -273,14 +285,6 @@ void DrawMap(MapData* map)
 
 		DrawTextureNPatch(WallTexture->Texture, WallNPatch, rect, origin, 0, WHITE);
 	}
-
-	/*for (int i = 0; i < map->WallCount; i++)
-	{
-		Wall w = map->Walls[i];
-
-		DrawLineV(w.From, w.To, WHITE);
-	}*/
-
 }
 
 void DrawMapHUD(MapData* map)

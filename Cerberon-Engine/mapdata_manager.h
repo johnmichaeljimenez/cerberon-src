@@ -58,5 +58,6 @@ BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size);
 
 Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags);
 void UpdateWall(Wall* w);
+void DrawWalls();
 
 Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, int flags);

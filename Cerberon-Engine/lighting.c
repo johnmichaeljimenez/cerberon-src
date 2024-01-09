@@ -112,6 +112,7 @@ void UpdateLights()
 	}
 	EndBlendMode();
 
+	DrawWalls();
 	EndMode2D();
 	EndTextureMode();
 }
