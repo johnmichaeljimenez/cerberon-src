@@ -87,6 +87,9 @@
     <ClCompile Include="i_item.c">
       <Filter>Source Files\gameplay\interaction</Filter>
     </ClCompile>
+    <ClCompile Include="renderer.c">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="i_item.h">
       <Filter>Source Files\gameplay\interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.h">
+      <Filter>Source Files\rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
