@@ -6,6 +6,7 @@ using UnityEngine;
 public class DoorObject : BaseInteractable
 {
     public override InteractableType InteractableType => InteractableType.Door;
+    public override InteractableSubType InteractableSubType => InteractableSubType.Door;
 
     public override void Export(List<byte> array)
     {
