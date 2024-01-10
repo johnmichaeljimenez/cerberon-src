@@ -62,7 +62,9 @@ void CheckInteraction()
 		if (!a->Hovered)
 			continue;
 
-		CursorOverridePosition(GetWorldToScreen2D(a->Position, GameCamera));
+		Vector2 curPos = a->Position;
+		curPos = Vector2Lerp(GetMousePosition(), GetWorldToScreen2D(a->Position, GameCamera), 0.6f);
+		CursorOverridePosition(curPos);
 		CursorChange(CURSORSTATE_IngameInteractEnabled);
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
