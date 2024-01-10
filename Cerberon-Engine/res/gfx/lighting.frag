@@ -5,6 +5,7 @@ in vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform sampler2D screenTex;
+uniform sampler2D effectTex;
 
 out vec4 finalColor;
 
@@ -52,6 +53,10 @@ void main()
     texelColor.r = quantize(texelColor.r, depth);
     texelColor.g = quantize(texelColor.g, depth);
     texelColor.b = quantize(texelColor.b, depth);
+    texelColor *= vig;
 
-    finalColor = vec4(texelColor, 1);
+    float lum =  dot(texelColor, vec3(0.299, 0.587, 0.114));
+    vec3 screenGrayColor = vec3(lum, lum, lum);
+    
+    finalColor = vec4(mix(screenGrayColor, texelColor, effectColor.r), 1);
 }

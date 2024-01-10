@@ -124,7 +124,7 @@ void UpdateLights()
 	ClearBackground(BLACK);
 
 	BeginBlendMode(BLEND_ADDITIVE);
-	DrawCircleV(PlayerEntity.Position, 300, WHITE);
+	DrawPlayerVision();
 	EndBlendMode();
 
 	DrawShadows(&CurrentMapData->Lights[0]);

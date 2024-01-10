@@ -29,3 +29,4 @@ void PlayerDrawHUD(PlayerCharacter* p);
 void PlayerRotate(PlayerCharacter* p, float dir);
 Vector2 PlayerGetForward(PlayerCharacter* p, float length);
 void DrawPlayerFlashlight(struct Light* l);
+void DrawPlayerVision();

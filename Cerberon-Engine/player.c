@@ -105,3 +105,22 @@ void DrawPlayerFlashlight(Light* l)
 	EndBlendMode();
 
 }
+
+void DrawPlayerVision()
+{
+	Vector2 pos = PlayerEntity.Position;
+	DrawCircleGradient(pos.x, pos.y, 100, WHITE, BLACK);
+
+	float length = 1500;
+	float angle = 90;
+	float halfAngle = angle / 2;
+	Vector2 v2, v3;
+
+	v2 = Vector2Rotate((Vector2) { 1, 0 }, PlayerEntity.Rotation + (halfAngle * DEG2RAD));
+	v2 = Vector2Add(pos, Vector2Scale(v2, length));
+
+	v3 = Vector2Rotate((Vector2) { 1, 0 }, PlayerEntity.Rotation - (halfAngle * DEG2RAD));
+	v3 = Vector2Add(pos, Vector2Scale(v3, length));
+
+	DrawTriangle(pos, v2, v3, WHITE);
+}
