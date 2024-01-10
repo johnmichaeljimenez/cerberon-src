@@ -25,7 +25,6 @@ void InitLight()
 	lightShader = LoadShader(0, "res/gfx/lighting.frag");
 	screenTexParam = GetShaderLocation(lightShader, "screenTex");
 	effectsTexParam = GetShaderLocation(lightShader, "effectTex");
-	SetShaderValueTexture(lightShader, screenTexParam, RendererScreenTexture.texture);
 
 	screenLightCamera = (Camera2D){
 		.zoom = 1 / screenLightScale,
@@ -123,9 +122,7 @@ void UpdateLights()
 
 	ClearBackground(BLACK);
 
-	BeginBlendMode(BLEND_ADDITIVE);
 	DrawPlayerVision();
-	EndBlendMode();
 
 	DrawShadows(&CurrentMapData->Lights[0]);
 
