@@ -5,6 +5,7 @@
 #include "mapdata_manager.h"
 #include "camera.h"
 #include "collision.h"
+#include "cursor.h"
 
 void SetInteractableFunctions(Interactable* i)
 {
@@ -48,6 +49,7 @@ void CheckInteraction()
 
 		if (a->Hovered)
 		{
+			CursorChange(CURSORSTATE_IngameInteractHover);
 			LinecastHit hit;
 			Linecast(PlayerEntity.Position, a->Position, &hit);
 			if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 32)
@@ -59,6 +61,9 @@ void CheckInteraction()
 
 		if (!a->Hovered)
 			continue;
+
+		CursorOverridePosition(GetWorldToScreen2D(a->Position, GameCamera));
+		CursorChange(CURSORSTATE_IngameInteractEnabled);
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 		{
