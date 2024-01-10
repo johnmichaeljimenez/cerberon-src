@@ -105,3 +105,29 @@ void DrawPlayerFlashlight(Light* l)
 	EndBlendMode();
 
 }
+
+void DrawPlayerVision()
+{
+	BeginBlendMode(BLEND_ADDITIVE);
+	Color red = (Color){ 255, 0, 0, 255 };
+	Vector2 pos = PlayerEntity.Position;
+
+	DrawCircle(pos.x, pos.y, 32, red);
+	DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
+
+	//PLACEHOLDER
+	//TODO: replace with actual vision cone sprite
+	float length = 1500;
+	float angle = 120;
+	float halfAngle = angle / 2;
+	Vector2 v2, v3;
+
+	v2 = Vector2Rotate((Vector2) { 1, 0 }, PlayerEntity.Rotation + (halfAngle * DEG2RAD));
+	v2 = Vector2Add(pos, Vector2Scale(v2, length));
+
+	v3 = Vector2Rotate((Vector2) { 1, 0 }, PlayerEntity.Rotation - (halfAngle * DEG2RAD));
+	v3 = Vector2Add(pos, Vector2Scale(v3, length));
+
+	DrawTriangle(pos, v2, v3, red);
+	EndBlendMode();
+}

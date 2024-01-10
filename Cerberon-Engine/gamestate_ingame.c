@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "player.h"
 #include "renderer.h"
+#include "cursor.h"
 
 void IngameInit()
 {
@@ -17,6 +18,7 @@ void IngameInit()
 
 void IngameOnLoad()
 {
+	CursorChange(CURSORSTATE_IngameInteractReticle);
 	LoadResources();
 	RendererInit();
 	CameraInit();
@@ -39,6 +41,7 @@ void IngameOnUnload()
 
 void IngameOnUpdate()
 {
+	CursorChange(CURSORSTATE_IngameInteractReticle);
 	UpdateMap(CurrentMapData);
 	PlayerUpdate(&PlayerEntity);
 	PlayerLateUpdate(&PlayerEntity);

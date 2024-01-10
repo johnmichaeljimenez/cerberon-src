@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include "gamestate_mainmenu.h"
+#include "cursor.h"
 
 void MainMenuInit()
 {
@@ -13,7 +14,7 @@ void MainMenuInit()
 
 void MainMenuOnLoad()
 {
-
+	CursorChange(CURSORSTATE_Menu);
 }
 
 void MainMenuOnUnload()

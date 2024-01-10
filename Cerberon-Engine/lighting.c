@@ -16,6 +16,7 @@ static Camera2D screenLightCamera;
 
 static Shader lightShader;
 static int screenTexParam;
+static int effectsTexParam;
 
 void InitLight()
 {
@@ -23,7 +24,7 @@ void InitLight()
 
 	lightShader = LoadShader(0, "res/gfx/lighting.frag");
 	screenTexParam = GetShaderLocation(lightShader, "screenTex");
-	SetShaderValueTexture(lightShader, screenTexParam, RendererScreenTexture.texture);
+	effectsTexParam = GetShaderLocation(lightShader, "effectTex");
 
 	screenLightCamera = (Camera2D){
 		.zoom = 1 / screenLightScale,
@@ -94,7 +95,7 @@ void UpdateLights()
 	BeginTextureMode(LightRenderTexture);
 	BeginMode2D(screenLightCamera);
 
-	ClearBackground(ColorBrightness01(WHITE, 0.05));
+	ClearBackground(BLACK);
 
 	BeginBlendMode(BLEND_ADDITIVE);
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
@@ -115,6 +116,19 @@ void UpdateLights()
 	DrawWalls();
 	EndMode2D();
 	EndTextureMode();
+
+	BeginTextureMode(RendererEffectsTexture);
+	BeginMode2D(screenLightCamera);
+
+	ClearBackground(BLACK);
+
+	DrawPlayerVision();
+
+	DrawShadows(&CurrentMapData->Lights[0]);
+
+	DrawWalls();
+	EndMode2D();
+	EndTextureMode();
 }
 
 void DrawLights()
@@ -131,6 +145,7 @@ void DrawLights()
 
 	BeginShaderMode(lightShader);
 	SetShaderValueTexture(lightShader, screenTexParam, RendererScreenTexture.texture);
+	SetShaderValueTexture(lightShader, effectsTexParam, RendererEffectsTexture.texture);
 	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
 	EndShaderMode();
 }
