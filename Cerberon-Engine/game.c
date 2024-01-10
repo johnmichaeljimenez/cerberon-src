@@ -21,6 +21,7 @@ void GameUnload()
 
 void GameUpdate()
 {
+	CursorUpdate();
 	CurrentGameState->OnUpdate();
 }
 

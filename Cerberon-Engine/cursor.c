@@ -15,10 +15,18 @@ void CursorChange(CursorStates c)
 	cursorState = c;
 }
 
-void CursorDraw()
+void CursorUpdate()
 {
 	curPos = GetMousePosition();
+}
 
+void CursorOverridePosition(Vector2 pos)
+{
+	curPos = pos;
+}
+
+void CursorDraw()
+{
 	switch (cursorState)
 	{
 	case CURSORSTATE_None:
@@ -30,17 +38,17 @@ void CursorDraw()
 
 	case CURSORSTATE_IngameInteractReticle:
 		DrawCircleV(curPos, 2, DARKGRAY);
-		DrawCircleLines(curPos.x, curPos.y, 32, LIGHTGRAY);
+		DrawCircleLines(curPos.x, curPos.y, 16, LIGHTGRAY);
 		break;
 
 	case CURSORSTATE_IngameInteractHover:
 		DrawCircleV(curPos, 2, DARKGRAY);
-		DrawRectangle(curPos.x - 8, curPos.y - 8, 16, 16, DARKGRAY);
+		DrawRectangleLines(curPos.x - 8, curPos.y - 8, 16, 16, DARKGRAY);
 		break;
 
 	case CURSORSTATE_IngameInteractEnabled:
 		DrawCircleV(curPos, 2, DARKGRAY);
-		DrawRectangle(curPos.x - 8, curPos.y - 8, 16, 16, WHITE);
+		DrawRectangleLines(curPos.x - 8, curPos.y - 8, 16, 16, WHITE);
 		break;
 
 	default:

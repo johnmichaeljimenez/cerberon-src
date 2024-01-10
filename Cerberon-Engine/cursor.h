@@ -13,4 +13,6 @@ typedef enum CursorStates
 
 void CursorInit();
 void CursorChange(CursorStates c);
+void CursorUpdate();
 void CursorDraw();
+void CursorOverridePosition(Vector2 pos);
