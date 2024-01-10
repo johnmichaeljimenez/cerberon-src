@@ -115,6 +115,8 @@ void DrawPlayerVision()
 	DrawCircle(pos.x, pos.y, 32, red);
 	DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
 
+	//PLACEHOLDER
+	//TODO: replace with actual vision cone sprite
 	float length = 1500;
 	float angle = 120;
 	float halfAngle = angle / 2;

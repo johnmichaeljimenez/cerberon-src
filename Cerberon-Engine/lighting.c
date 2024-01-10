@@ -118,7 +118,7 @@ void UpdateLights()
 	EndTextureMode();
 
 	BeginTextureMode(RendererEffectsTexture);
-	BeginMode2D(GameCamera);
+	BeginMode2D(screenLightCamera);
 
 	ClearBackground(BLACK);
 
@@ -126,6 +126,7 @@ void UpdateLights()
 
 	DrawShadows(&CurrentMapData->Lights[0]);
 
+	DrawWalls();
 	EndMode2D();
 	EndTextureMode();
 }

@@ -4,7 +4,7 @@
 void RendererInit()
 {
 	RendererScreenTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-	RendererEffectsTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+	RendererEffectsTexture = LoadRenderTexture(GetScreenWidth() / 2, GetScreenHeight() / 2);
 }
 
 void RendererUnload()

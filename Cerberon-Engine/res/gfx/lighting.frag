@@ -31,6 +31,21 @@ vec3 BlendOverlay(vec3 base, vec3 blend) {
     );
 }
 
+vec3 Dither(vec3 texelColor)
+{
+    //PS1 dither effect from Jax on Raylib Discord server
+    vec2 fragCoord = gl_FragCoord.xy;
+    ivec2 fragCoordInt = ivec2(fragCoord);
+    vec2 scaledCoord = fragCoord.xy * 1;
+
+    texelColor.rgb += dither_table[int(scaledCoord.x) % 4][int(scaledCoord.y) % 4] * 0.05;
+    texelColor.r = quantize(texelColor.r, depth);
+    texelColor.g = quantize(texelColor.g, depth);
+    texelColor.b = quantize(texelColor.b, depth);
+
+    return texelColor;
+}
+
 void main()
 {
     vec2 uv = fragTexCoord.xy;
@@ -44,19 +59,13 @@ void main()
     vec3 screenColor = texture(screenTex, fragTexCoord).rgb;
     vec3 texelColor = BlendOverlay(lightColor, screenColor);
 
-    //PS1 dither effect from Jax on Raylib Discord server
-    vec2 fragCoord = gl_FragCoord.xy;
-    ivec2 fragCoordInt = ivec2(fragCoord);
-    vec2 scaledCoord = fragCoord.xy * 1;
-
-    texelColor.rgb += dither_table[int(scaledCoord.x) % 4][int(scaledCoord.y) % 4] * 0.05;
-    texelColor.r = quantize(texelColor.r, depth);
-    texelColor.g = quantize(texelColor.g, depth);
-    texelColor.b = quantize(texelColor.b, depth);
+    texelColor = Dither(texelColor);
     texelColor *= vig;
 
     float lum =  dot(texelColor, vec3(0.299, 0.587, 0.114));
     vec3 screenGrayColor = vec3(lum, lum, lum);
+    screenGrayColor /= 8;
     
+    effectColor = Dither(effectColor);
     finalColor = vec4(mix(screenGrayColor, texelColor, effectColor.r), 1);
 }
