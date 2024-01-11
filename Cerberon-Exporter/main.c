@@ -3,6 +3,7 @@
 #include <string.h>
 
 int export(char* directory);
+void exportSprites(char* directory, char* pakName);
 
 int main(int c, char** a)
 {
@@ -25,22 +26,40 @@ int export(char* directory)
 		printf("Directory not found: %s", directory);
 		return 1;
 	}
+	
+	printf("----- Exporting %s -----\n-\n-\n-\n", GetDirectoryPath(directory));
+	char* spritesDir = TextFormat("%s\\sprites\\", directory);
+	char* tilesDir = TextFormat("%s\\tiles\\", directory);
 
-	char* spritesDir = TextFormat("%s\\sprites\\\n", directory);
-	char* tilesDir = TextFormat("%s\\tiles\\\n", directory);
-	printf(spritesDir);
-	printf(tilesDir);
-
-	if (!DirectoryExists(spritesDir))
-	{
-
-	}
-
-	if (!DirectoryExists(tilesDir))
-	{
-
-	}
+	exportSprites(spritesDir, TextFormat("%s\\sprites.pak", directory));
+	exportSprites(tilesDir, TextFormat("%s\\tiles.pak", directory));
 
 	getch();
 	return 0;
+}
+
+void exportSprites(char* directory, char* pakName)
+{
+	if (!DirectoryExists(directory))
+	{
+		printf("Directory not exist: %s\n", directory);
+		return;
+	}
+
+	printf("----- Exporting %s -----\n", GetFileName(pakName));
+
+	FilePathList pathList = LoadDirectoryFilesEx(directory, ".png", false);
+	for (int i = 0; i < pathList.count; i++)
+	{
+		char* file = pathList.paths[i];
+		char* tName = GetFileNameWithoutExt(file);
+		char* name[32];
+
+		strcpy_s(name, 32, tName);
+
+		printf("%s %s\n", file, name);
+	}
+
+
+	UnloadDirectoryFiles(pathList);
 }
