@@ -156,7 +156,7 @@ void LoadMap(char* filename, MapData* map)
 		{
 			fread(&intType, sizeof(int), 1, file);
 			fread(&intSubType, sizeof(int), 1, file);
-			fread(&count, sizeof(int), 32, file);
+			fread(&count, sizeof(int), 1, file);
 			fread(&flags, sizeof(int), 1, file);
 			fread(&x1, sizeof(float), 1, file);
 			fread(&y1, sizeof(float), 1, file);
@@ -167,7 +167,7 @@ void LoadMap(char* filename, MapData* map)
 			if (intType == INTERACTABLE_Door)
 				DoorCount++;
 
-			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags);
+			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags, count);
 		}
 	}
 
@@ -315,7 +315,7 @@ Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targ
 	i.IsActive = true;
 	i.Position = pos;
 	i.Rotation = rot;
-	i.Count = i.Count > 0? i.Count : 1;
+	i.Count = count > 0? count : 1;
 	strcpy_s(i.Target, 32, target);
 	strcpy_s(i.TargetName, 32, targetname);
 
