@@ -73,6 +73,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\raylib\raylib-5.0_win64_msvc16\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\raylib\raylib-5.0_win64_msvc16\lib;$(LibraryPath)</LibraryPath>
+    <TargetName>cerbc</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
