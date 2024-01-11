@@ -1,3 +1,5 @@
+#pragma warning(disable:4996)
+
 #include <raylib.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,6 +9,8 @@ void exportSprites(char* directory, char* pakName);
 
 int main(int c, char** a)
 {
+	SetTraceLogLevel(LOG_NONE);
+
 	if (c != 2)
 	{
 		printf("Directory is empty!\n");
@@ -47,21 +51,35 @@ void exportSprites(char* directory, char* pakName)
 		return;
 	}
 
+	FILE* file = fopen(pakName, "wb");
+
 	printf("----- Exporting %s -----\n", GetFileName(pakName));
 
 	FilePathList pathList = LoadDirectoryFilesEx(directory, ".png", false);
+	fwrite(&pathList.count, sizeof(int), 1, file);
+
 	for (int i = 0; i < pathList.count; i++)
 	{
-		char* file = pathList.paths[i];
-		char* tName = GetFileNameWithoutExt(file);
+		char* fileName = pathList.paths[i];
+		char* tName = GetFileNameWithoutExt(fileName);
 		char* name[32];
 		strcpy_s(name, 32, tName);
+
+		Image img = LoadImage(fileName);
+		int size = 0;
+		char* data = ExportImageToMemory(img, ".png", &size);
+		UnloadImage(img);
+
+		fwrite(&name, sizeof(char), 32, file);
+		fwrite(&size, sizeof(int), 1, file);
+		fwrite(data, sizeof(char), size, file);
 
 		printf("%s\n", name);
 	}
 
 	printf("----- Export %s successful -----\n", GetFileName(pakName));
 
+	fclose(file);
 	UnloadDirectoryFiles(pathList);
 	printf("\n");
 }
