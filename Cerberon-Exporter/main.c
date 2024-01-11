@@ -52,10 +52,10 @@ void exportSprites(char* directory, char* pakName)
 	}
 
 	FILE* file = fopen(pakName, "wb");
-
-	printf("----- Exporting %s -----\n", GetFileName(pakName));
-
 	FilePathList pathList = LoadDirectoryFilesEx(directory, ".png", false);
+
+	printf("----- Exporting %s (%d) -----\n", GetFileName(pakName), pathList.count);
+
 	fwrite(&pathList.count, sizeof(int), 1, file);
 
 	for (int i = 0; i < pathList.count; i++)
