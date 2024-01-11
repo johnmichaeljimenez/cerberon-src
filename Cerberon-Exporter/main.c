@@ -27,13 +27,14 @@ int export(char* directory)
 		return 1;
 	}
 	
-	printf("----- Exporting %s -----\n-\n-\n-\n", GetDirectoryPath(directory));
+	printf("----- Exporting %s -----\n\n", GetDirectoryPath(directory));
 	char* spritesDir = TextFormat("%s\\sprites\\", directory);
 	char* tilesDir = TextFormat("%s\\tiles\\", directory);
 
 	exportSprites(spritesDir, TextFormat("%s\\sprites.pak", directory));
 	exportSprites(tilesDir, TextFormat("%s\\tiles.pak", directory));
 
+	printf("----- Export Done -----\n");
 	getch();
 	return 0;
 }
@@ -54,12 +55,13 @@ void exportSprites(char* directory, char* pakName)
 		char* file = pathList.paths[i];
 		char* tName = GetFileNameWithoutExt(file);
 		char* name[32];
-
 		strcpy_s(name, 32, tName);
 
-		printf("%s %s\n", file, name);
+		printf("%s\n", name);
 	}
 
+	printf("----- Export %s successful -----\n", GetFileName(pakName));
 
 	UnloadDirectoryFiles(pathList);
+	printf("\n");
 }
