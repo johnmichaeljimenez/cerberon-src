@@ -9,30 +9,32 @@ void LoadDoors()
 {
 	DoorList = MCalloc(DoorCount, sizeof(Door), "Door List");
 
-	for (int i = 0; i < DoorCount; i++)
+	int n = 0;
+	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
 	{
 		Interactable* in = &CurrentMapData->Interactables[i];
 		if (in->InteractableType != INTERACTABLE_Door)
 			continue;
 
-		DoorList[i].DoorPosition = in->Position;
-		DoorList[i].Interactable = in;
-		DoorList[i].IsActive = true;
-		DoorList[i].IsOpen = false;
+		DoorList[n].DoorPosition = in->Position;
+		DoorList[n].Interactable = in;
+		DoorList[n].IsActive = true;
+		DoorList[n].IsOpen = false;
 
-		DoorList[i].Width = 32;
-		DoorList[i].Length = 128;
-		DoorList[i].Duration = 0.3;
+		DoorList[n].Width = 32;
+		DoorList[n].Length = 128;
+		DoorList[n].Duration = 0.3;
 
-		DoorList[i].From = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (in->Rotation - 90)* DEG2RAD), DoorList[i].Length / 2);
-		DoorList[i].To = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (in->Rotation + 90)* DEG2RAD), DoorList[i].Length / 2);
+		DoorList[n].From = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (in->Rotation - 90)* DEG2RAD), DoorList[n].Length / 2);
+		DoorList[n].To = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (in->Rotation + 90)* DEG2RAD), DoorList[n].Length / 2);
 
-		DoorList[i].From = Vector2Add(DoorList[i].From, DoorList[i].DoorPosition);
-		DoorList[i].To = Vector2Add(DoorList[i].To, DoorList[i].DoorPosition);
+		DoorList[n].From = Vector2Add(DoorList[n].From, DoorList[n].DoorPosition);
+		DoorList[n].To = Vector2Add(DoorList[n].To, DoorList[n].DoorPosition);
 
-		DoorList[i]._timer = 0;
+		DoorList[n]._timer = 0;
 
-		in->DataIndex = i;
+		in->DataIndex = n;
+		n++;
 	}
 }
 
