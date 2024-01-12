@@ -28,11 +28,13 @@ bool InventoryAdd(InventoryContainer* ic, ItemPickup* item)
 				item->CurrentAmount += d;
 			}
 
-			if (item->CurrentAmount <= 0)
-				ItemDestroy(item);
-
 			TraceLog(LOG_INFO, "ITEM PICK %d (stack) %d/%d", i, ip->CurrentAmount, ip->CurrentMaxAmount);
-			return true;
+
+			if (item->CurrentAmount <= 0)
+			{
+				ItemDestroy(item);
+				return true;
+			}
 		}
 	}
 
