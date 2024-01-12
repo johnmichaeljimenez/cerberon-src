@@ -27,7 +27,6 @@ void LoadItems()
 		if (in->InteractableSubType == INTERACTABLESUB_ItemMedkit)
 		{
 			ItemList[n].CurrentMaxAmount = 10;
-			ItemList[n].OnPickup = OnMedkitPickup;
 			ItemList[n].OnUse = OnMedkitUse;
 		}
 
@@ -76,17 +75,16 @@ void ItemDraw(Interactable* i)
 	DrawCircleV(i->Position, 32, BLUE);
 }
 
-void ItemInteract(Interactable* i, PlayerCharacter* p)
+bool ItemInteract(Interactable* i, PlayerCharacter* p)
 {
 	ItemPickup* ip = &ItemList[i->DataIndex];
-	ip->OnPickup(ip);
+	return Pickup(ip);
 }
 
 void ItemDestroy(ItemPickup* i)
 {
 	i->Interactable->IsActive = false;
 	i->IsActive = false;
-	i->Interactable = false;
 	i->ItemStatusType = ITEMSTATUSTYPE_None;
 }
 
@@ -101,28 +99,7 @@ bool Pickup(ItemPickup* i)
 	return picked;
 }
 
-bool OnMedkitPickup(ItemPickup* i)
-{
-	bool used = InventoryAdd(&InventoryPlayer, i);
-	if (used)
-	{
-
-	}
-
-	return used;
-}
-
 bool OnMedkitUse(ItemPickup* i)
 {
 	//heal
-}
-
-bool OnFlashlightPickup(ItemPickup* i, PlayerCharacter* p)
-{
-	//toggle light
-}
-
-bool OnCashPickup(ItemPickup* i, PlayerCharacter* p)
-{
-	//add money
 }

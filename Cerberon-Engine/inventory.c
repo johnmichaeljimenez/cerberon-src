@@ -9,6 +9,8 @@ bool InventoryAdd(InventoryContainer* ic, ItemPickup* item)
 		ItemPickup* ip = a[i];
 		if (ip == NULL || ip->ItemStatusType == ITEMSTATUSTYPE_None) //empty slot
 		{
+			item->IsActive = false;
+			item->Interactable->IsActive = false;
 			item->ItemStatusType = ITEMSTATUSTYPE_OnInventory;
 			a[i] = item;
 			TraceLog(LOG_INFO, "ITEM PICK %d (empty) %d", i, item->CurrentAmount);

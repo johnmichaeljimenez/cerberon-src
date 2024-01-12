@@ -21,8 +21,6 @@ typedef struct ItemPickup
 
 	int CurrentAmount;
 	int CurrentMaxAmount;
-
-	bool(*OnPickup)(struct ItemPickup* item);
 	bool(*OnUse)(struct ItemPickup* item);
 } ItemPickup;
 
@@ -38,11 +36,8 @@ void ItemUpdate(Interactable* i);
 void ItemLateUpdate(Interactable* i);
 void ItemDraw(Interactable* i);
 
-void ItemInteract(Interactable* i, PlayerCharacter* p);
+bool ItemInteract(Interactable* i, PlayerCharacter* p);
 
 void ItemDestroy(ItemPickup* i);
 bool Pickup(ItemPickup* i);
-bool OnMedkitPickup(ItemPickup* i);
 bool OnMedkitUse(ItemPickup* i);
-bool OnFlashlightPickup(ItemPickup* i, PlayerCharacter* p);
-bool OnCashPickup(ItemPickup* i, PlayerCharacter* p);

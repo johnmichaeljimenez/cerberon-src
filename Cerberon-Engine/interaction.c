@@ -81,8 +81,12 @@ void CheckInteraction()
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 		{
-			a->OnInteract(a, &PlayerEntity);
-			break;
+			if (a->OnInteract(a, &PlayerEntity))
+			{
+				a->Activated = true;
+				//chain here
+				break;
+			}
 		}
 	}
 }

@@ -94,9 +94,11 @@ void DoorDraw(Interactable* i)
 		DrawCircleV(i->Position, 4, WHITE);
 }
 
-void DoorInteract(Interactable* i, PlayerCharacter* p)
+bool DoorInteract(Interactable* i, PlayerCharacter* p)
 {
 	Door* d = &DoorList[i->DataIndex];
 	d->_timer = d->Duration;
 	d->IsOpen = !d->IsOpen;
+
+	return true;
 }

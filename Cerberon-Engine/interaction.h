@@ -40,7 +40,7 @@ typedef struct Interactable
 	void (*OnUpdate)(struct Interactable* i);
 	void (*OnLateUpdate)(struct Interactable* i);
 	void (*OnDraw)(struct Interactable* i);
-	void (*OnInteract)(struct Interactable* i, PlayerCharacter* p);
+	bool (*OnInteract)(struct Interactable* i, PlayerCharacter* p);
 
 } Interactable;
 
