@@ -9,16 +9,27 @@ bool InventoryAdd(InventoryContainer* ic, ItemPickup* item)
 		ItemPickup* ip = a[i];
 		if (ip == NULL || ip->ItemStatusType == ITEMSTATUSTYPE_None) //empty slot
 		{
+			item->ItemStatusType = ITEMSTATUSTYPE_OnInventory;
 			a[i] = item;
-			TraceLog(LOG_INFO, "ITEM PICK %d (empty) %d", i, item->Interactable->Count);
+			TraceLog(LOG_INFO, "ITEM PICK %d (empty) %d", i, item->CurrentAmount);
 			return true;
 		}
 
-		Interactable* in = item->Interactable;
-		if (ip->Interactable->InteractableSubType == item->Interactable->InteractableSubType && item->CurrentMaxAmount > 1) //same type, should stack if allowed
+		if (item != NULL && ip->Interactable->InteractableSubType == item->Interactable->InteractableSubType && ip->CurrentAmount < ip->CurrentMaxAmount) //same type, should stack if allowed
 		{
-			ip->Interactable->Count += item->Interactable->Count;
-			TraceLog(LOG_INFO, "ITEM PICK %d (stack) %d", i, ip->Interactable->Count);
+			ip->CurrentAmount += item->CurrentAmount;
+			item->CurrentAmount = 0;
+			if (ip->CurrentAmount > ip->CurrentMaxAmount)
+			{
+				int d = (ip->CurrentAmount - ip->CurrentMaxAmount);
+				ip->CurrentAmount -= d;
+				item->CurrentAmount += d;
+			}
+
+			if (item->CurrentAmount <= 0)
+				ItemDestroy(item);
+
+			TraceLog(LOG_INFO, "ITEM PICK %d (stack) %d/%d", i, ip->CurrentAmount, ip->CurrentMaxAmount);
 			return true;
 		}
 	}
