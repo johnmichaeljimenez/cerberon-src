@@ -26,7 +26,7 @@ void LoadItems()
 
 		if (in->InteractableSubType == INTERACTABLESUB_ItemMedkit)
 		{
-			ItemList[n].CurrentMaxAmount = 8;
+			ItemList[n].CurrentMaxAmount = 10;
 			ItemList[n].OnPickup = OnMedkitPickup;
 			ItemList[n].OnUse = OnMedkitUse;
 		}
@@ -82,12 +82,20 @@ void ItemInteract(Interactable* i, PlayerCharacter* p)
 	ip->OnPickup(ip);
 }
 
+void ItemDestroy(ItemPickup* i)
+{
+	i->Interactable->IsActive = false;
+	i->IsActive = false;
+	i->Interactable = false;
+	i->ItemStatusType = ITEMSTATUSTYPE_None;
+}
+
 bool Pickup(ItemPickup* i)
 {
 	bool picked = InventoryAdd(&InventoryPlayer, i);// i->OnUse(i);
 	if (picked)
 	{
-		i->ItemStatusType = ITEMSTATUSTYPE_OnInventory;
+
 	}
 
 	return picked;
@@ -98,9 +106,7 @@ bool OnMedkitPickup(ItemPickup* i)
 	bool used = InventoryAdd(&InventoryPlayer, i);
 	if (used)
 	{
-		i->ItemStatusType = ITEMSTATUSTYPE_OnInventory;
-		i->IsActive = false;
-		NextItemSlotIndex = i->Index;
+
 	}
 
 	return used;

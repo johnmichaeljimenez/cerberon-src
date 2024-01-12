@@ -40,6 +40,7 @@ void ItemDraw(Interactable* i);
 
 void ItemInteract(Interactable* i, PlayerCharacter* p);
 
+void ItemDestroy(ItemPickup* i);
 bool Pickup(ItemPickup* i);
 bool OnMedkitPickup(ItemPickup* i);
 bool OnMedkitUse(ItemPickup* i);
