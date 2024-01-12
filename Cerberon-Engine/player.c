@@ -49,7 +49,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit);
 
-	PlayerRotate(p, newDir);
+	PlayerRotate(p, LerpAngle(p->Rotation, newDir, GetFrameTime() * 12));
 	PlayerFlashlight->Position = PlayerEntity.Position;
 }
 

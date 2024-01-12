@@ -147,6 +147,7 @@ void LoadMap(char* filename, MapData* map)
 		int intType;
 		int intSubType;
 		int flags;
+		int count;
 		char* target[32];
 		char* targetName[32];
 
@@ -155,6 +156,7 @@ void LoadMap(char* filename, MapData* map)
 		{
 			fread(&intType, sizeof(int), 1, file);
 			fread(&intSubType, sizeof(int), 1, file);
+			fread(&count, sizeof(int), 1, file);
 			fread(&flags, sizeof(int), 1, file);
 			fread(&x1, sizeof(float), 1, file);
 			fread(&y1, sizeof(float), 1, file);
@@ -165,7 +167,7 @@ void LoadMap(char* filename, MapData* map)
 			if (intType == INTERACTABLE_Door)
 				DoorCount++;
 
-			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags);
+			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags, count);
 		}
 	}
 
@@ -178,7 +180,8 @@ void LoadMap(char* filename, MapData* map)
 	map->Lights[0] = CreateLight(Vector2Zero(), 0, 1024, 0.6, WHITE, true, DrawPlayerFlashlight);
 	PlayerFlashlight = &map->Lights[0];
 
-	float _r, _g, _b, s, cs, in;
+	float _r, _g, _b, s, in;
+	bool cs;
 
 	for (int i = 1; i < map->LightCount; i += 1)
 	{
@@ -302,7 +305,7 @@ void UpdateWall(Wall* w)
 	w->Midpoint.y /= 2;
 }
 
-Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags)
+Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags, int count)
 {
 	Interactable i = { 0 };
 
@@ -313,6 +316,7 @@ Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targ
 	i.IsActive = true;
 	i.Position = pos;
 	i.Rotation = rot;
+	i.Count = count > 0? count : 1;
 	strcpy_s(i.Target, 32, target);
 	strcpy_s(i.TargetName, 32, targetname);
 

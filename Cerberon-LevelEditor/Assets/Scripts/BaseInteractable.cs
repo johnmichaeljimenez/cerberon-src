@@ -28,12 +28,16 @@ public class BaseInteractable : BaseObject
     [SerializeField] protected float Delay;
     [SerializeField] protected bool OneShot;
 
+    protected virtual int Count => 1;
     protected virtual int Flags => 0;
 
     public override void Export(List<byte> array)
     {
-        array.AddRange(BitConverter.GetBytes((int)InteractableType));
-        array.AddRange(BitConverter.GetBytes((int)InteractableSubType));
+        var n = (int)InteractableType;
+        array.AddRange(BitConverter.GetBytes(n));
+        n = (int)InteractableSubType;
+        array.AddRange(BitConverter.GetBytes(n));
+        array.AddRange(BitConverter.GetBytes(Count));
         array.AddRange(BitConverter.GetBytes(Flags));
         array.AddRange(BitConverter.GetBytes(transform.position.x * MAP_SCALE));
         array.AddRange(BitConverter.GetBytes(transform.position.y * MAP_SCALE_Y));

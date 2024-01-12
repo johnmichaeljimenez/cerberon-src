@@ -60,4 +60,4 @@ Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags);
 void UpdateWall(Wall* w);
 void DrawWalls();
 
-Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, int flags);
+Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags, int count);
