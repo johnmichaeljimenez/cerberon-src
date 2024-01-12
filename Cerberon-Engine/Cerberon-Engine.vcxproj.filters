@@ -90,6 +90,9 @@
     <ClCompile Include="renderer.c">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="cursor.c">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="renderer.h">
       <Filter>Source Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="cursor.h">
+      <Filter>Source Files\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
