@@ -7,6 +7,7 @@
 #include "cursor.h"
 #include "i_door.h"
 #include "i_item.h"
+#include "time.h"
 
 void SetInteractableFunctions(Interactable* i)
 {

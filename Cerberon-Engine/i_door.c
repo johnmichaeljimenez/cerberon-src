@@ -4,6 +4,7 @@
 #include "i_door.h"
 #include "interaction.h"
 #include "mapdata_manager.h"
+#include "time.h"
 
 void LoadDoors()
 {
@@ -59,7 +60,7 @@ void DoorUpdate(Interactable* i)
 	if (d->_timer <= 0)
 		return;
 
-	d->_timer -= GetFrameTime();
+	d->_timer -= TICKRATE;
 	if (d->_timer <= 0)
 		d->_timer = 0;
 

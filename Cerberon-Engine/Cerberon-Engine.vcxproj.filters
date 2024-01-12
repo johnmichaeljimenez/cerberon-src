@@ -155,5 +155,8 @@
     <ClInclude Include="inventory.h">
       <Filter>Source Files\gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="time.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

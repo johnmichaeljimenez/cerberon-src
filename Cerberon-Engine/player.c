@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "mapdata_manager.h"
 #include "collision.h"
+#include "time.h"
 
 static unsigned long hash;
 static LinecastHit lineHit;
@@ -37,7 +38,7 @@ Vector2 PlayerGetForward(PlayerCharacter* p, float length)
 void PlayerUpdate(PlayerCharacter* p)
 {
 	Vector2 vel = Vector2Scale(GetInputMovement(), p->MovementSpeed);
-	vel = Vector2Scale(vel, GetFrameTime());
+	vel = Vector2Scale(vel, TICKRATE);
 	p->Position = Vector2Add(p->Position, vel);
 
 	//collision here
@@ -49,7 +50,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit);
 
-	PlayerRotate(p, LerpAngle(p->Rotation, newDir, GetFrameTime() * 12));
+	PlayerRotate(p, LerpAngle(p->Rotation, newDir, TICKRATE * 12));
 	PlayerFlashlight->Position = PlayerEntity.Position;
 }
 
