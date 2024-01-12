@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "asset_manager.h"
 #include "i_door.h"
+#include "i_item.h"
 #include <string.h>
 
 void InitMap()
@@ -165,7 +166,13 @@ void LoadMap(char* filename, MapData* map)
 			fread(&targetName, sizeof(char), 32, file);
 
 			if (intType == INTERACTABLE_Door)
+			{
 				DoorCount++;
+			}
+			else if (intType == INTERACTABLE_Item)
+			{
+				ItemCount++;
+			}
 
 			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags, count);
 		}

@@ -1,11 +1,12 @@
 #include <raylib.h>
 #include "interaction.h"
 #include "player.h"
-#include "i_door.h"
 #include "mapdata_manager.h"
 #include "camera.h"
 #include "collision.h"
 #include "cursor.h"
+#include "i_door.h"
+#include "i_item.h"
 
 void SetInteractableFunctions(Interactable* i)
 {
@@ -21,12 +22,22 @@ void SetInteractableFunctions(Interactable* i)
 		i->OnInteract = DoorInteract;
 
 		break;
+
+	case INTERACTABLE_Item:
+		i->Radius = 16;
+		i->OnInit = ItemInit;
+		i->OnUpdate = ItemUpdate;
+		i->OnLateUpdate = ItemLateUpdate;
+		i->OnDraw = ItemDraw;
+		i->OnUnload = ItemUnload;
+		i->OnInteract = ItemInteract;
 	}
 }
 
 void InteractionInit()
 {
 	LoadDoors();
+	LoadItems();
 }
 
 void CheckInteraction()
@@ -77,5 +88,6 @@ void CheckInteraction()
 
 void InteractionUnload()
 {
+	UnloadItems();
 	UnloadDoors();
 }

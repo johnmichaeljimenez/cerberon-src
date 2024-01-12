@@ -24,6 +24,7 @@ typedef struct Interactable
 	char* TargetName[32];
 	int Flags;
 	bool OneShot;
+	int Count;
 
 	float Radius;
 	InteractableType InteractableType;
