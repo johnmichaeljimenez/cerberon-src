@@ -4,6 +4,7 @@
 #include "i_item.h"
 #include "mapdata_manager.h"
 #include "memory.h"
+#include "inventory.h"
 
 void LoadItems()
 {
@@ -25,6 +26,7 @@ void LoadItems()
 
 		if (in->InteractableSubType == INTERACTABLESUB_ItemMedkit)
 		{
+			ItemList[n].CurrentMaxAmount = 8;
 			ItemList[n].OnPickup = OnMedkitPickup;
 			ItemList[n].OnUse = OnMedkitUse;
 		}
@@ -82,19 +84,21 @@ void ItemInteract(Interactable* i, PlayerCharacter* p)
 
 bool Pickup(ItemPickup* i)
 {
-	bool picked = i->OnUse(i);
+	bool picked = InventoryAdd(&InventoryPlayer, i);// i->OnUse(i);
 	if (picked)
 	{
 		i->ItemStatusType = ITEMSTATUSTYPE_OnInventory;
 	}
+
+	return picked;
 }
 
 bool OnMedkitPickup(ItemPickup* i)
 {
-	bool used = i->OnUse(i);
+	bool used = InventoryAdd(&InventoryPlayer, i);
 	if (used)
 	{
-		i->ItemStatusType = ITEMSTATUSTYPE_None;
+		i->ItemStatusType = ITEMSTATUSTYPE_OnInventory;
 		i->IsActive = false;
 		NextItemSlotIndex = i->Index;
 	}
