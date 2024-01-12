@@ -42,6 +42,7 @@ void InteractionInit()
 
 void CheckInteraction()
 {
+	//TODO: Sort by nearest valid objects first before interaction
 	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
 	{
 		Interactable* a = &CurrentMapData->Interactables[i];
@@ -63,7 +64,7 @@ void CheckInteraction()
 			CursorChange(CURSORSTATE_IngameInteractHover);
 			LinecastHit hit;
 			Linecast(PlayerEntity.Position, a->Position, &hit);
-			if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 32)
+			if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 16)
 			{
 				a->Hovered = false;
 				continue;

@@ -93,6 +93,9 @@
     <ClCompile Include="cursor.c">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
+    <ClCompile Include="inventory.c">
+      <Filter>Source Files\gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -148,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="cursor.h">
       <Filter>Source Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="inventory.h">
+      <Filter>Source Files\gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

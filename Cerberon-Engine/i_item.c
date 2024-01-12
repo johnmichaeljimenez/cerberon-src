@@ -51,11 +51,17 @@ void ItemUnload(Interactable* i)
 
 void ItemUpdate(Interactable* i)
 {
+	ItemPickup* ip = &ItemList[i->DataIndex];
+	if (ip->ItemStatusType != ITEMSTATUSTYPE_OnWorld)
+		return;
 
 }
 
 void ItemLateUpdate(Interactable* i)
 {
+	ItemPickup* ip = &ItemList[i->DataIndex];
+	if (ip->ItemStatusType != ITEMSTATUSTYPE_OnWorld)
+		return;
 
 }
 
