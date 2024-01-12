@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "utils.h"
+#include <math.h>
 
 unsigned long ToHash(unsigned char* str) {
 	unsigned long hash = 5381;
@@ -19,7 +20,7 @@ void DrawSprite(TextureResource* t, Vector2 pos, float rotation, float scale, Ve
 	Rectangle dest = (Rectangle){ pos.x, pos.y, t->Texture.width * scale, t->Texture.height * scale };
 	Vector2 origin = (Vector2){ dest.width / 2, dest.height / 2 };
 
-	origin = Vector2Add(origin, (Vector2) { dest.width * offset.x, dest.height * offset.y });
+	origin = Vector2Add(origin, (Vector2) { dest.width* offset.x, dest.height* offset.y });
 
 	DrawTexturePro(t->Texture, src, dest, origin, rotation * RAD2DEG, color);
 }
@@ -38,4 +39,16 @@ Vector2 GetNormalVector(Vector2 from, Vector2 to)
 {
 	Vector2 diff = Vector2Subtract(to, from);
 	return Vector2Normalize((Vector2) { -diff.y, diff.x });
+}
+
+float WrapAngle(float from, float to)
+{
+	float max_angle = PI * 2;
+	float difference = fmodf(to - from, max_angle);
+	return fmodf(2 * difference, max_angle) - difference;
+}
+
+float LerpAngle(float r1, float r2, float t)
+{
+	return r1 + WrapAngle(r1, r2) * t;
 }
