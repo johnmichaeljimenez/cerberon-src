@@ -30,6 +30,12 @@ void LoadItems()
 			ItemList[n].OnUse = OnMedkitUse;
 		}
 
+		if (in->InteractableSubType == INTERACTABLESUB_ItemFlashlight)
+		{
+			ItemList[n].CurrentMaxAmount = 1;
+			ItemList[n].OnUse = OnFlashlightUse;
+		}
+
 		in->DataIndex = n;
 		n++;
 	}
@@ -103,3 +109,9 @@ bool OnMedkitUse(ItemPickup* i)
 {
 	//heal
 }
+
+bool OnFlashlightUse(ItemPickup* i)
+{
+	//toggle flashlight
+}
+

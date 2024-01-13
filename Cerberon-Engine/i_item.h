@@ -41,3 +41,4 @@ bool ItemInteract(Interactable* i, PlayerCharacter* p);
 void ItemDestroy(ItemPickup* i);
 bool Pickup(ItemPickup* i);
 bool OnMedkitUse(ItemPickup* i);
+bool OnFlashlightUse(ItemPickup* i);
