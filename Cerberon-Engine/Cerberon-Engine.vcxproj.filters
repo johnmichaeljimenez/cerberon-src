@@ -54,9 +54,6 @@
     <ClCompile Include="camera.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="input_handler.c">
-      <Filter>Source Files\gameplay</Filter>
-    </ClCompile>
     <ClCompile Include="gamestate_ingame.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
@@ -96,6 +93,9 @@
     <ClCompile Include="inventory.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="input_handler.c">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -111,9 +111,6 @@
       <Filter>Source Files\gameplay</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
-      <Filter>Source Files\gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="input_handler.h">
       <Filter>Source Files\gameplay</Filter>
     </ClInclude>
     <ClInclude Include="gamestate_ingame.h">
@@ -156,6 +153,9 @@
       <Filter>Source Files\gameplay</Filter>
     </ClInclude>
     <ClInclude Include="time.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="input_handler.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
   </ItemGroup>

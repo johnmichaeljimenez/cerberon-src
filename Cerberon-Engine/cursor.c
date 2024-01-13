@@ -43,7 +43,7 @@ void CursorDraw()
 
 	case CURSORSTATE_IngameInteractHover:
 		DrawCircleV(curPos, 2, DARKGRAY);
-		DrawRectangleLines(curPos.x - 8, curPos.y - 8, 16, 16, DARKGRAY);
+		//DrawRectangleLines(curPos.x - 8, curPos.y - 8, 16, 16, DARKGRAY);
 		break;
 
 	case CURSORSTATE_IngameInteractEnabled:

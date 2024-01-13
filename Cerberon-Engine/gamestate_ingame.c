@@ -7,6 +7,8 @@
 #include "player.h"
 #include "renderer.h"
 #include "cursor.h"
+#include "utils.h"
+#include "input_handler.h"
 
 void IngameInit()
 {
@@ -39,6 +41,7 @@ void IngameOnUnload()
 	UnloadResources();
 }
 
+int nn = 0;
 void IngameOnUpdate()
 {
 	CursorChange(CURSORSTATE_IngameInteractReticle);
@@ -47,8 +50,14 @@ void IngameOnUpdate()
 	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
 
-	if (IsKeyPressed(KEY_F1))
+	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);
+
+	if (InputGetPressed(INPUTACTIONTYPE_Flashlight))
+	{
+		TraceLog(LOG_INFO, "PRESS! %d", nn);
+		nn++;
+	}
 }
 
 void IngameOnDraw()
@@ -57,6 +66,18 @@ void IngameOnDraw()
 	ClearBackground(DARKGRAY);
 
 	BeginMode2D(GameCamera);
+
+	TextureResource* t = GetTextureResource(ToHash("wood_planks_3"));
+
+	DrawTexturePro(t->Texture, (Rectangle) { 0, 0, t->Texture.width, t->Texture.height }, (Rectangle) { -4096, -4096, 8192, 8192 }, Vector2Zero(), 0, WHITE);
+
+	/*for (int xx = -4096; xx < 4096; xx+=64)
+	{
+		for (int yy = -4096; yy < 4096; yy+=64)
+		{
+			DrawTexture(t->Texture, xx, yy, WHITE);
+		}
+	}*/
 
 	PlayerDraw(&PlayerEntity);
 	DrawMap(CurrentMapData);

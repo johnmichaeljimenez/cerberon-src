@@ -3,6 +3,7 @@
 #include "gamestate_mainmenu.h"
 #include "gamestate_ingame.h"
 #include "cursor.h"
+#include "input_handler.h"
 
 void GameInit()
 {
