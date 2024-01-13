@@ -17,3 +17,4 @@ InventoryContainer InventoryPlayer;
 bool InventoryAdd(InventoryContainer* i, ItemPickup* item);
 void InventoryUse(InventoryContainer* i, ItemPickup* item);
 void InventoryDraw(InventoryContainer* i);
+ItemPickup* InventoryGetItem(InventoryContainer* i, InteractableSubType itemType);

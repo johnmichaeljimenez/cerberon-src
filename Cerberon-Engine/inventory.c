@@ -50,3 +50,14 @@ void InventoryDraw(InventoryContainer* i)
 {
 
 }
+
+ItemPickup* InventoryGetItem(InventoryContainer* ic, InteractableSubType itemType)
+{
+	for (int i = 0; i < InventoryMaxSize; i++)
+	{
+		if (ic->Items[i] != NULL && ic->Items[i]->Interactable != NULL && ic->Items[i]->Interactable->InteractableSubType == itemType)
+			return ic->Items[i];
+	}
+
+	return NULL;
+}
