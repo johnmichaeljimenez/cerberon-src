@@ -24,6 +24,7 @@ typedef struct Interactable
 	char* TargetName[32];
 	int Flags;
 	bool OneShot;
+	int Count;
 
 	float Radius;
 	InteractableType InteractableType;
@@ -39,7 +40,7 @@ typedef struct Interactable
 	void (*OnUpdate)(struct Interactable* i);
 	void (*OnLateUpdate)(struct Interactable* i);
 	void (*OnDraw)(struct Interactable* i);
-	void (*OnInteract)(struct Interactable* i, PlayerCharacter* p);
+	bool (*OnInteract)(struct Interactable* i, PlayerCharacter* p);
 
 } Interactable;
 

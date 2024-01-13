@@ -140,6 +140,7 @@
     <ClCompile Include="gamestate_ingame.c" />
     <ClCompile Include="input_handler.c" />
     <ClCompile Include="interaction.c" />
+    <ClCompile Include="inventory.c" />
     <ClCompile Include="i_door.c" />
     <ClCompile Include="i_item.c" />
     <ClCompile Include="lighting.c" />
@@ -162,6 +163,7 @@
     <ClInclude Include="gamestate_mainmenu.h" />
     <ClInclude Include="input_handler.h" />
     <ClInclude Include="interaction.h" />
+    <ClInclude Include="inventory.h" />
     <ClInclude Include="i_door.h" />
     <ClInclude Include="i_item.h" />
     <ClInclude Include="lighting.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="memory.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="renderer.h" />
+    <ClInclude Include="time.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "camera.h"
-
+#include "time.h"
 
 void CameraInit()
 {
@@ -14,7 +14,7 @@ void CameraInit()
 
 void CameraUpdate()
 {
-	GameCamera.target = Vector2Lerp(GameCamera.target, CameraTargetPosition, GetFrameTime() * 2);
+	GameCamera.target = Vector2Lerp(GameCamera.target, CameraTargetPosition, TICKRATE * 2);
 }
 
 void CameraSetTarget(Vector2 pos, bool jump)

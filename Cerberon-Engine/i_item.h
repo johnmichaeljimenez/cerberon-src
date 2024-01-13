@@ -2,29 +2,43 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "player.h"
+#include "interaction.h"
 
-typedef enum ItemType
+typedef enum ItemStatusType
 {
-	ITEMTYPE_MEDKIT,
-	ITEMTYPE_FLASHLIGHT,
-	ITEMTYPE_CASH
-} ItemType;
+	ITEMSTATUSTYPE_None,
+	ITEMSTATUSTYPE_OnWorld,
+	ITEMSTATUSTYPE_OnInventory,
+} ItemStatusType;
 
 typedef struct ItemPickup
 {
-	Vector2 Position;
-	float Rotation;
-	ItemType ItemType;
+	bool IsActive;
+	Interactable* Interactable;
 	int Index;
 
-	bool IsActive;
-	int Count;
-	bool (*OnUse)(struct ItemPickup* i);
+	ItemStatusType ItemStatusType;
 
+	int CurrentAmount;
+	int CurrentMaxAmount;
+	bool(*OnUse)(struct ItemPickup* item);
 } ItemPickup;
 
 int NextItemSlotIndex;
+int ItemCount;
+ItemPickup* ItemList;
 
-ItemPickup CreateItem(Vector2 pos, float rot, ItemType type, int index);
+void LoadItems();
+void UnloadItems();
+void ItemInit(Interactable* i);
+void ItemUnload(Interactable* i);
+void ItemUpdate(Interactable* i);
+void ItemLateUpdate(Interactable* i);
+void ItemDraw(Interactable* i);
+
+bool ItemInteract(Interactable* i, PlayerCharacter* p);
+
+void ItemDestroy(ItemPickup* i);
 bool Pickup(ItemPickup* i);
-bool OnMedkitPickup(ItemPickup* i);
+bool OnMedkitUse(ItemPickup* i);
+bool OnFlashlightUse(ItemPickup* i);

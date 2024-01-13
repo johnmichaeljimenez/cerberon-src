@@ -28,4 +28,4 @@ void DoorUpdate(Interactable* i);
 void DoorLateUpdate(Interactable* i);
 void DoorDraw(Interactable* i);
 
-void DoorInteract(Interactable* i, PlayerCharacter* p);
+bool DoorInteract(Interactable* i, PlayerCharacter* p);

@@ -2,6 +2,7 @@
 #include <raymath.h>
 #include "input_handler.h"
 
+//TODO: Create an input buffer system for all "onpress" input events, do not use Raylib input directly
 Vector2 GetInputMovement()
 {
 	Vector2 m = Vector2Zero();
