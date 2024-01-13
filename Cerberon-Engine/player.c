@@ -8,9 +8,12 @@
 #include "mapdata_manager.h"
 #include "collision.h"
 #include "time.h"
+#include "inventory.h"
 
 static unsigned long hash;
 static LinecastHit lineHit;
+
+static bool isFlashlightOn;
 
 void PlayerInit(PlayerCharacter* p)
 {
@@ -37,7 +40,7 @@ Vector2 PlayerGetForward(PlayerCharacter* p, float length)
 
 void PlayerUpdate(PlayerCharacter* p)
 {
-	Vector2 vel = Vector2Scale(GetInputMovement(), p->MovementSpeed);
+	Vector2 vel = Vector2Scale(InputGetMovement(), p->MovementSpeed);
 	vel = Vector2Scale(vel, TICKRATE);
 	p->Position = Vector2Add(p->Position, vel);
 
@@ -52,6 +55,14 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	PlayerRotate(p, LerpAngle(p->Rotation, newDir, TICKRATE * 12));
 	PlayerFlashlight->Position = PlayerEntity.Position;
+
+	if (IsKeyPressed(KEY_F))
+	{
+		if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
+		{
+			isFlashlightOn = !isFlashlightOn;
+		}
+	}
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)
@@ -100,8 +111,17 @@ void DrawPlayerFlashlight(Light* l)
 
 	Color color = ColorBrightness01(l->Color, l->Intensity * 0.5f);
 	Color color2 = ColorBrightness01(l->Color, l->Intensity);
-	DrawCircleGradient(l->Position.x, l->Position.y, 80, color, BLACK);
-	DrawSprite(FlashlightTexture, l->Position, PlayerEntity.Rotation + (90 * DEG2RAD), 2, (Vector2) { 0, 0.5 }, color2);
+	Color color3 = ColorBrightness01(l->Color, l->Intensity * 0.2f);
+
+	if (isFlashlightOn)
+	{
+		DrawCircleGradient(l->Position.x, l->Position.y, 80, color, BLACK);
+		DrawSprite(FlashlightTexture, l->Position, PlayerEntity.Rotation + (90 * DEG2RAD), 2, (Vector2) { 0, 0.5 }, color2);
+	}
+	else
+	{
+		DrawCircleGradient(l->Position.x, l->Position.y, 128, color3, BLACK);
+	}
 
 	EndBlendMode();
 
@@ -113,7 +133,7 @@ void DrawPlayerVision()
 	Color red = (Color){ 255, 0, 0, 255 };
 	Vector2 pos = PlayerEntity.Position;
 
-	DrawCircle(pos.x, pos.y, 32, red);
+	DrawCircleGradient(pos.x, pos.y, 64, red, BLACK);
 	DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
 
 	//PLACEHOLDER
