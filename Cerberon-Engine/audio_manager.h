@@ -17,9 +17,9 @@ typedef struct AudioSource
 } AudioSource;
 
 Vector2 AudioListenerPosition;
-AudioSource* AudioSourceWorldList[16];
+AudioSource AudioSourceWorldList[16];
 
 void AudioInit();
 void AudioUpdate();
 void AudioUnload();
-void AudioPlay();
+bool AudioPlay(int hash, Vector2 position);

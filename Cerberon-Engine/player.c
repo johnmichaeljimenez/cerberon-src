@@ -9,6 +9,7 @@
 #include "collision.h"
 #include "time.h"
 #include "inventory.h"
+#include "audio_manager.h"
 
 static unsigned long hash;
 static LinecastHit lineHit;
@@ -61,6 +62,8 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (IsKeyPressed(KEY_F))
 	{
+		AudioPlay(-1, p->Position);
+
 		if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
 		{
 			isFlashlightOn = !isFlashlightOn;
