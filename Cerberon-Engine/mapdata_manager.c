@@ -191,15 +191,15 @@ void LoadMap(char* filename, MapData* map)
 	if (map->TileCount > 0)
 	{
 		map->Tiles = MCalloc(map->TileCount, sizeof(Tile), "Tile List");
-		for (int i = 1; i < map->TileCount; i += 1)
+		for (int i = 0; i < map->TileCount; i += 1)
 		{
-			Tile t;
+			Tile t = { 0 };
 
 			fread(&t.Position.x, sizeof(float), 1, file);
 			fread(&t.Position.y, sizeof(float), 1, file);
 			fread(&t.Rotation, sizeof(float), 1, file);
 			fread(&t.Scale.x, sizeof(float), 1, file);
-			fread(&t.Scale.y, sizeof(bool), 1, file);
+			fread(&t.Scale.y, sizeof(float), 1, file);
 			fread(&t.TextureID, sizeof(char), 32, file);
 			fread(&t.SortIndex, sizeof(int), 1, file);
 			fread(&t.Tint.r, sizeof(float), 1, file);
@@ -213,6 +213,8 @@ void LoadMap(char* filename, MapData* map)
 
 			map->Tiles[i] = t;
 		}
+
+		TilesInit();
 	}
 
 	fclose(file);

@@ -67,18 +67,7 @@ void IngameOnDraw()
 
 	BeginMode2D(GameCamera);
 
-	TextureResource* t = GetTextureResource(ToHash("wood_planks_3"));
-
-	DrawTexturePro(t->Texture, (Rectangle) { 0, 0, t->Texture.width, t->Texture.height }, (Rectangle) { -4096, -4096, 8192, 8192 }, Vector2Zero(), 0, WHITE);
-
-	/*for (int xx = -4096; xx < 4096; xx+=64)
-	{
-		for (int yy = -4096; yy < 4096; yy+=64)
-		{
-			DrawTexture(t->Texture, xx, yy, WHITE);
-		}
-	}*/
-
+	TilesDraw();
 	PlayerDraw(&PlayerEntity);
 	DrawMap(CurrentMapData);
 
