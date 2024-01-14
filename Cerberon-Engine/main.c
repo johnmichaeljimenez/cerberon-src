@@ -13,6 +13,7 @@ int main()
 
 	SetConfigFlags(FLAG_VSYNC_HINT);
 	InitWindow(1366, 768, "Cerberon Engine");
+	InitAudioDevice();
 
 	TraceLog(LOG_INFO, "Current directory: %s", GetWorkingDirectory());
 
@@ -41,6 +42,7 @@ int main()
 	}
 
 	GameUnload();
+	CloseAudioDevice();
 	CloseWindow();
 	
 	return 0;
