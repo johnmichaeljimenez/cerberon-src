@@ -202,15 +202,14 @@ void LoadMap(char* filename, MapData* map)
 			fread(&t.Scale.y, sizeof(float), 1, file);
 			fread(&t.TextureID, sizeof(char), 32, file);
 			fread(&t.SortIndex, sizeof(int), 1, file);
-			fread(&t.Tint.r, sizeof(float), 1, file);
-			fread(&t.Tint.g, sizeof(float), 1, file);
-			fread(&t.Tint.b, sizeof(float), 1, file);
+			fread(&_r, sizeof(float), 1, file);
+			fread(&_g, sizeof(float), 1, file);
+			fread(&_b, sizeof(float), 1, file);
 
-			t.Tint.r *= 255;
-			t.Tint.g *= 255;
-			t.Tint.b *= 255;
+			t.Tint.r = _r * 255;
+			t.Tint.g = _g * 255;
+			t.Tint.b = _b * 255;
 			t.Tint.a = 255;
-
 			map->Tiles[i] = t;
 		}
 
