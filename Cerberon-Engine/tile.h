@@ -3,8 +3,8 @@
 
 typedef struct Tile
 {
-	Vector2 Pos;
-	Vector2 Rot;
+	Vector2 Position;
+	float Rotation;
 	Vector2 Scale;
 	char* TextureID[32];
 	int SortIndex;

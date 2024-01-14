@@ -44,47 +44,21 @@ void UnloadMap()
 		MFree(CurrentMapData->Interactables, CurrentMapData->InteractableCount, sizeof(Interactable), "Interactable List");
 	}
 
+	if (CurrentMapData->TileCount > 0)
+		MFree(CurrentMapData->Tiles, CurrentMapData->TileCount, sizeof(Tile), "Tile List");
+
 	MFree(CurrentMapData, 1, sizeof(MapData), "Map Data");
 }
 
 void LoadMap(char* filename, MapData* map)
 {
-	/*
-	 * FORMAT:
-	 *
-	 * map name [32]
-	 *
-	 * player pos x
-	 * player pos y
-	 * rotation
-	 *
-	 * wall count
-	 * - wall 1
-	 * -- center x
-	 * -- center y
-	 * -- width
-	 * -- height
-	 *
-	 * - wall 2
-	 * -- ...
-	 *
-	 * door count
-	 * - door 1
-	 * -- pos x
-	 * -- pos y
-	 * -- rotation
-	 * -- key id
-	 *
-	 * - door 2
-	 * -- ...
-	 *
-	 */
-
 	FILE* file = fopen(filename, "rb");
 
 	int n = 0, id = 0;
 	float x1, y1, r, x2, y2;
+	float _r, _g, _b, s, in;
 
+	//PLAYER
 	fread(&x1, sizeof(float), 1, file);
 	fread(&y1, sizeof(float), 1, file);
 	fread(&r, sizeof(float), 1, file);
@@ -92,12 +66,14 @@ void LoadMap(char* filename, MapData* map)
 	map->PlayerPosition = (Vector2){ x1, y1 };
 	map->PlayerRotation = r;
 
+	//WALLS
 	fread(&n, sizeof(int), 1, file);
 	map->BlockColliderCount = n;
 	map->WallCount = n * 4;
 
 	if (map->WallCount > 0)
 	{
+		//TODO: refactor all freads
 		map->BlockColliders = MCalloc(map->BlockColliderCount, sizeof(BlockCollider), "BC List");
 		map->Walls = MCalloc(map->WallCount, sizeof(Wall), "Wall List");
 
@@ -139,7 +115,7 @@ void LoadMap(char* filename, MapData* map)
 		}
 	}
 
-
+	//INTERACTABLES
 	fread(&n, sizeof(int), 1, file);
 	map->InteractableCount = n;
 
@@ -178,7 +154,7 @@ void LoadMap(char* filename, MapData* map)
 		}
 	}
 
-
+	//LIGHTS
 	fread(&n, sizeof(int), 1, file);
 	n += 1;
 	map->LightCount = n;
@@ -187,9 +163,7 @@ void LoadMap(char* filename, MapData* map)
 	map->Lights[0] = CreateLight(Vector2Zero(), 0, 1024, 0.6, WHITE, true, DrawPlayerFlashlight);
 	PlayerFlashlight = &map->Lights[0];
 
-	float _r, _g, _b, s, in;
 	bool cs;
-
 	for (int i = 1; i < map->LightCount; i += 1)
 	{
 		fread(&x1, sizeof(float), 1, file);
@@ -207,6 +181,38 @@ void LoadMap(char* filename, MapData* map)
 		_b *= 255;
 
 		map->Lights[i] = CreateLight((Vector2) { x1, y1 }, r, s, in, (Color) { _r, _g, _b, 255 }, cs, DrawLightDefault);
+	}
+
+
+	//TILES
+	fread(&n, sizeof(int), 1, file);
+	map->TileCount = n;
+
+	if (map->TileCount > 0)
+	{
+		map->Tiles = MCalloc(map->TileCount, sizeof(Tile), "Tile List");
+		for (int i = 1; i < map->TileCount; i += 1)
+		{
+			Tile t;
+
+			fread(&t.Position.x, sizeof(float), 1, file);
+			fread(&t.Position.y, sizeof(float), 1, file);
+			fread(&t.Rotation, sizeof(float), 1, file);
+			fread(&t.Scale.x, sizeof(float), 1, file);
+			fread(&t.Scale.y, sizeof(bool), 1, file);
+			fread(&t.TextureID, sizeof(char), 32, file);
+			fread(&t.SortIndex, sizeof(int), 1, file);
+			fread(&t.Tint.r, sizeof(float), 1, file);
+			fread(&t.Tint.g, sizeof(float), 1, file);
+			fread(&t.Tint.b, sizeof(float), 1, file);
+
+			t.Tint.r *= 255;
+			t.Tint.g *= 255;
+			t.Tint.b *= 255;
+			t.Tint.a = 255;
+
+			map->Tiles[i] = t;
+		}
 	}
 
 	fclose(file);
