@@ -12,7 +12,7 @@ public class TileObject : BaseObject
 
         array.AddRange(BitConverter.GetBytes(transform.position.x * MAP_SCALE));
         array.AddRange(BitConverter.GetBytes(transform.position.y * MAP_SCALE_Y));
-        array.AddRange(BitConverter.GetBytes(transform.eulerAngles.z));
+        array.AddRange(BitConverter.GetBytes(-transform.eulerAngles.z));
         array.AddRange(BitConverter.GetBytes(s.size.x * MAP_SCALE));
         array.AddRange(BitConverter.GetBytes(s.size.y * MAP_SCALE));
         array.AddRange(Encoding.ASCII.GetBytes(s.sprite.name.ToFixedLength(32)));
