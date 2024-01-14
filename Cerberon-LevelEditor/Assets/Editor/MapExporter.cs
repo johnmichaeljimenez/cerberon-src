@@ -45,6 +45,7 @@ public class MapExporter : MonoBehaviour
         Export<WallObject>(root, data);
         Export<BaseInteractable>(root, data);
         Export<LightObject>(root, data);
+        Export<TileObject>(root, data);
 
         File.WriteAllBytes(fname, data.ToArray());
         EditorUtility.DisplayDialog("Success!", $"Map exported to {fname}", "OK");
@@ -53,6 +54,7 @@ public class MapExporter : MonoBehaviour
     static void Export<T>(Transform root, List<byte> array) where T : BaseObject
     {
         var objects = root.GetComponentsInChildren<T>();
+
         array.AddRange(BitConverter.GetBytes(objects.Length));
         foreach (var i in objects)
         {
