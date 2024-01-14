@@ -11,9 +11,11 @@ typedef struct Light
 	float Intensity;
 	Color Color;
 	bool CastShadows;
+	bool AlwaysOn;
 
 	Camera2D _RenderCamera;
 	RenderTexture2D _RenderTexture;
+	Rectangle _Bounds;
 
 	void(*OnDrawLight)(struct Light* l);
 
@@ -22,6 +24,7 @@ typedef struct Light
 void InitLight();
 void UnloadLight();
 Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color, bool cs, void* drawCommand);
+void UpdateLightBounds(Light* l);
 void UpdateLights();
 void DrawLights();
 void DrawShadows(Light* light);

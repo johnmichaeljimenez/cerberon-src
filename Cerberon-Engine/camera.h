@@ -4,6 +4,7 @@
 
 Camera2D GameCamera;
 Vector2 CameraTargetPosition;
+Rectangle CameraViewBounds;
 
 void CameraInit();
 void CameraUpdate();

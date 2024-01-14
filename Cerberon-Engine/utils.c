@@ -3,6 +3,16 @@
 #include "utils.h"
 #include <math.h>
 
+Vector2 Vector2RotateAround(Vector2 position, Vector2 origin, float rotation)
+{
+	Vector2 t = Vector2Subtract(position, origin);
+	Vector2 rotatedVector;
+	rotatedVector.x = t.x * cosf(rotation) - t.y * sinf(rotation);
+	rotatedVector.y = t.x * sinf(rotation) + t.y * cosf(rotation);
+
+	return Vector2Add(rotatedVector, origin);
+}
+
 unsigned long ToHash(unsigned char* str) {
 	unsigned long hash = 5381;
 	int c;

@@ -7,6 +7,8 @@
 #include "player.h"
 #include "renderer.h"
 #include "cursor.h"
+#include "utils.h"
+#include "input_handler.h"
 
 void IngameInit()
 {
@@ -39,6 +41,7 @@ void IngameOnUnload()
 	UnloadResources();
 }
 
+int nn = 0;
 void IngameOnUpdate()
 {
 	CursorChange(CURSORSTATE_IngameInteractReticle);
@@ -47,8 +50,14 @@ void IngameOnUpdate()
 	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
 
-	if (IsKeyPressed(KEY_F1))
+	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);
+
+	if (InputGetPressed(INPUTACTIONTYPE_Flashlight))
+	{
+		TraceLog(LOG_INFO, "PRESS! %d", nn);
+		nn++;
+	}
 }
 
 void IngameOnDraw()
@@ -58,6 +67,7 @@ void IngameOnDraw()
 
 	BeginMode2D(GameCamera);
 
+	TilesDraw();
 	PlayerDraw(&PlayerEntity);
 	DrawMap(CurrentMapData);
 

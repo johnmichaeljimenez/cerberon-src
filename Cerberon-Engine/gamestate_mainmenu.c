@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include "gamestate_mainmenu.h"
 #include "cursor.h"
+#include "input_handler.h"
 
 void MainMenuInit()
 {
@@ -24,7 +25,7 @@ void MainMenuOnUnload()
 
 void MainMenuOnUpdate()
 {
-	if (IsKeyPressed(KEY_SPACE))
+	if (InputGetPressed(INPUTACTIONTYPE_UIConfirm))
 		SetGameState(&GameStateIngame);
 }
 

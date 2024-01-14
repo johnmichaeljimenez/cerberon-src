@@ -19,6 +19,7 @@ int main()
 	GameInit();
 	while (!WindowShouldClose() && n < 9999)
 	{
+		InputUpdate();
 		float current = GetTime();
 		float elapsed = current - previous;
 		previous = current;

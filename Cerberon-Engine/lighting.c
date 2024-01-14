@@ -7,6 +7,7 @@
 #include "mapdata_manager.h"
 #include "i_door.h"
 #include "renderer.h"
+#include "camera.h"
 
 static RenderTexture2D LightRenderTexture;
 static bool isLightingEnabled;
@@ -57,10 +58,17 @@ Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color
 		.offset = (Vector2){ sc / 2 / lightScale, sc / 2 / lightScale }
 	};
 
+	UpdateLightBounds(&light);
 	light._RenderTexture = LoadRenderTexture(sc, sc);
 	light.OnDrawLight = drawCommand;
 
 	return light;
+}
+
+void UpdateLightBounds(Light* l)
+{
+	float size = l->Scale;
+	l->_Bounds = (Rectangle){ l->Position.x - (size / 2), l->Position.y - (size / 2), size, size };
 }
 
 void UpdateLights()
@@ -72,10 +80,12 @@ void UpdateLights()
 		return;
 
 	//DRAW LIGHT RENDER TEXTURES
-	//TODO: filter all static or non-shadow lights to render only once at initialization
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{
 		Light* l = &CurrentMapData->Lights[i];
+		if (!l->AlwaysOn && !CheckCollisionRecs(l->_Bounds, CameraViewBounds))
+			continue;
+
 		l->_RenderCamera.target = l->Position;
 
 		BeginTextureMode(l->_RenderTexture);
@@ -101,6 +111,9 @@ void UpdateLights()
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{
 		Light* l = &CurrentMapData->Lights[i];
+		if (!l->AlwaysOn && !CheckCollisionRecs(l->_Bounds, CameraViewBounds))
+			continue;
+
 		Vector2 pos = l->Position;
 		pos.x -= l->Scale / 2;
 		pos.y -= l->Scale / 2;

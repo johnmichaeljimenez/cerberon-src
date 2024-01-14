@@ -3,6 +3,7 @@
 #include <raymath.h>
 #include "lighting.h"
 #include "interaction.h"
+#include "tile.h"
 
 typedef struct BlockCollider
 {
@@ -43,6 +44,9 @@ typedef struct MapData
 
 	int LightCount;
 	Light* Lights;
+
+	int TileCount;
+	Tile* Tiles;
 } MapData;
 
 MapData* CurrentMapData;

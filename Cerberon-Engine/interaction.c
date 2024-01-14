@@ -8,6 +8,7 @@
 #include "i_door.h"
 #include "i_item.h"
 #include "time.h"
+#include "input_handler.h"
 
 void SetInteractableFunctions(Interactable* i)
 {
@@ -80,7 +81,7 @@ void CheckInteraction()
 		CursorOverridePosition(curPos);
 		CursorChange(CURSORSTATE_IngameInteractEnabled);
 
-		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+		if (InputGetPressed(INPUTACTIONTYPE_Interact))
 		{
 			if (a->OnInteract(a, &PlayerEntity))
 			{

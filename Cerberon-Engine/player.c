@@ -23,7 +23,7 @@ void PlayerInit(PlayerCharacter* p)
 	p->Rotation = CurrentMapData->PlayerRotation;
 	p->Direction = (Vector2){ 1, 0 };
 	p->CollisionRadius = 32;
-	p->InteractionRadius = 256;
+	p->InteractionRadius = 180;
 	p->MovementSpeed = 200;
 	p->CameraOffset = 300;
 }
@@ -55,6 +55,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	PlayerRotate(p, LerpAngle(p->Rotation, newDir, TICKRATE * 12));
 	PlayerFlashlight->Position = PlayerEntity.Position;
+	UpdateLightBounds(&PlayerFlashlight);
 
 	if (IsKeyPressed(KEY_F))
 	{
