@@ -26,11 +26,13 @@ void PlayerInit(PlayerCharacter* p)
 	p->InteractionRadius = 180;
 	p->MovementSpeed = 200;
 	p->CameraOffset = 300;
+
+	InventoryInit(&InventoryPlayer);
 }
 
 void PlayerUnload(PlayerCharacter* p)
 {
-
+	InventoryUnload(&InventoryPlayer);
 }
 
 Vector2 PlayerGetForward(PlayerCharacter* p, float length)

@@ -14,6 +14,8 @@ typedef struct InventoryContainer
 
 InventoryContainer InventoryPlayer;
 
+void InventoryInit(InventoryContainer* in);
+void InventoryUnload(InventoryContainer* in);
 bool InventoryAdd(InventoryContainer* i, ItemPickup* item);
 void InventoryUse(InventoryContainer* i, ItemPickup* item);
 void InventoryDraw(InventoryContainer* i);

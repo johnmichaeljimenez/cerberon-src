@@ -41,9 +41,26 @@ bool InventoryAdd(InventoryContainer* ic, ItemPickup* item)
 	return false;
 }
 
+void InventoryInit(InventoryContainer* in)
+{
+	for (int i = 0; i < InventoryMaxSize; i++)
+	{
+		in->Items[i] = NULL;
+	}
+}
+
+void InventoryUnload(InventoryContainer* in)
+{
+	for (int i = 0; i < InventoryMaxSize; i++)
+	{
+		//in->Items[i]->Interactable = NULL;
+		in->Items[i] = NULL;
+	}
+}
+
 void InventoryUse(InventoryContainer* i, ItemPickup* item)
 {
-
+	
 }
 
 void InventoryDraw(InventoryContainer* i)
