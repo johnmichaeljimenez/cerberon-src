@@ -151,6 +151,7 @@
     <ClCompile Include="memory.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="renderer.c" />
+    <ClCompile Include="tile.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +173,7 @@
     <ClInclude Include="memory.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="renderer.h" />
+    <ClInclude Include="tile.h" />
     <ClInclude Include="time.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
