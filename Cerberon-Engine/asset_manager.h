@@ -19,7 +19,9 @@ typedef struct SoundResource
 {
 	char* Name[32];
 	unsigned long Hash;
-	Sound Sound;
+	Sound _MainSound;
+	int SoundDataCount;
+	Sound* SoundData; //aliases
 } SoundResource;
 
 typedef struct AnimationClip
