@@ -4,6 +4,15 @@
 #include "asset_manager.h"
 #include "mapdata_manager.h"
 #include "utils.h"
+#include <stdlib.h>
+
+int _sort(const void* a, const void* b)
+{
+	Tile* tA = (Tile*)a;
+	Tile* tB = (Tile*)b;
+
+	return (tA->SortIndex - tB->SortIndex);
+}
 
 void TilesInit()
 {
@@ -28,6 +37,8 @@ void TilesInit()
 		t->_uvPoints[2] = (Vector2){ tScale.x,tScale.y };
 		t->_uvPoints[3] = (Vector2){ tScale.x,0 };
 	}
+
+	qsort(CurrentMapData->Tiles, CurrentMapData->TileCount, sizeof(Tile), _sort);
 }
 
 void TilesDraw()
