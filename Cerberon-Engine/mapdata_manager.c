@@ -162,6 +162,7 @@ void LoadMap(char* filename, MapData* map)
 
 	map->Lights[0] = CreateLight(Vector2Zero(), 0, 1024, 0.4, WHITE, true, DrawPlayerFlashlight);
 	PlayerFlashlight = &map->Lights[0];
+	PlayerFlashlight->AlwaysOn = true;
 
 	bool cs;
 	for (int i = 1; i < map->LightCount; i += 1)

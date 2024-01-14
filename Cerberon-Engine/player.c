@@ -55,6 +55,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	PlayerRotate(p, LerpAngle(p->Rotation, newDir, TICKRATE * 12));
 	PlayerFlashlight->Position = PlayerEntity.Position;
+	UpdateLightBounds(&PlayerFlashlight);
 
 	if (IsKeyPressed(KEY_F))
 	{
