@@ -21,6 +21,7 @@ static int effectsTexParam;
 
 void InitLight()
 {
+	LightAmbientColor = ColorBrightness01(WHITE, 0.01);
 	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
 
 	lightShader = LoadShader(0, "res/gfx/lighting.frag");
@@ -105,7 +106,7 @@ void UpdateLights()
 	BeginTextureMode(LightRenderTexture);
 	BeginMode2D(screenLightCamera);
 
-	ClearBackground(BLACK);
+	ClearBackground(LightAmbientColor);
 
 	BeginBlendMode(BLEND_ADDITIVE);
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
