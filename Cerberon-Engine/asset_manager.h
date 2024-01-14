@@ -15,6 +15,13 @@ typedef struct TextureResource
 	TextureType TextureType;
 } TextureResource;
 
+typedef struct SoundResource
+{
+	char* Name[32];
+	unsigned long Hash;
+	Sound Sound;
+} SoundResource;
+
 typedef struct AnimationClip
 {
 	char* Name[32];

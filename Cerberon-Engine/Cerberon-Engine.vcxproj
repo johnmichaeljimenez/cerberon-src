@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="asset_manager.c" />
+    <ClCompile Include="audio_manager.c" />
     <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
     <ClCompile Include="cursor.c" />
@@ -156,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="asset_manager.h" />
+    <ClInclude Include="audio_manager.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="cursor.h" />

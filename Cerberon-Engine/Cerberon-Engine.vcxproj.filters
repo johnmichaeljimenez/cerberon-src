@@ -34,6 +34,12 @@
     <Filter Include="Source Files\rendering">
       <UniqueIdentifier>{3b1ba834-cc95-4831-b043-f16047772c74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ui">
+      <UniqueIdentifier>{3eada580-027e-4bd7-a78c-c3c4b242d0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\audio">
+      <UniqueIdentifier>{27960ec2-dc87-4281-9a02-f7564310ff17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.c">
@@ -99,6 +105,9 @@
     <ClCompile Include="tile.c">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="audio_manager.c">
+      <Filter>Source Files\audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -163,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="tile.h">
       <Filter>Source Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="audio_manager.h">
+      <Filter>Source Files\audio</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
