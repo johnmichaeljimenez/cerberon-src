@@ -9,6 +9,7 @@
 #include "collision.h"
 #include "time.h"
 #include "inventory.h"
+#include "audio_manager.h"
 
 static unsigned long hash;
 static LinecastHit lineHit;
@@ -26,11 +27,13 @@ void PlayerInit(PlayerCharacter* p)
 	p->InteractionRadius = 180;
 	p->MovementSpeed = 200;
 	p->CameraOffset = 300;
+
+	InventoryInit(&InventoryPlayer);
 }
 
 void PlayerUnload(PlayerCharacter* p)
 {
-
+	InventoryUnload(&InventoryPlayer);
 }
 
 Vector2 PlayerGetForward(PlayerCharacter* p, float length)
@@ -59,6 +62,8 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (IsKeyPressed(KEY_F))
 	{
+		AudioPlay(-1, p->Position);
+
 		if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
 		{
 			isFlashlightOn = !isFlashlightOn;

@@ -9,6 +9,7 @@
 #include "i_door.h"
 #include "i_item.h"
 #include <string.h>
+#include "camera.h"
 
 void InitMap()
 {
@@ -301,6 +302,9 @@ void DrawWalls()
 
 		Vector2 origin = { 0, 0 };
 
+		if (!CheckCollisionRecs(CameraViewBounds, rect))
+			continue;
+
 		DrawTextureNPatch(WallTexture->Texture, WallNPatch, rect, origin, 0, WHITE);
 	}
 }
@@ -318,6 +322,14 @@ void UpdateWall(Wall* w)
 	w->Midpoint = Vector2Add(w->From, w->To);
 	w->Midpoint.x /= 2;
 	w->Midpoint.y /= 2;
+
+	w->_Bounds = (Rectangle)
+	{
+		.x = fminf(w->From.x, w->To.x)-4,
+		.y = fminf(w->From.y, w->To.y)-4,
+		.width = fabsf(w->From.x - w->To.x)+4,
+		.height = fabsf(w->From.y - w->To.y)+4,
+	};
 }
 
 Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags, int count)

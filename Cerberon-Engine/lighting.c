@@ -21,6 +21,7 @@ static int effectsTexParam;
 
 void InitLight()
 {
+	LightAmbientColor = ColorBrightness01(WHITE, 0.01);
 	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
 
 	lightShader = LoadShader(0, "res/gfx/lighting.frag");
@@ -92,7 +93,7 @@ void UpdateLights()
 		ClearBackground(BLACK);
 		BeginMode2D(l->_RenderCamera);
 		l->OnDrawLight(l);
-		DrawShadows(l);
+		DrawShadows(l, i > 0);
 
 		EndMode2D();
 		EndTextureMode();
@@ -105,7 +106,7 @@ void UpdateLights()
 	BeginTextureMode(LightRenderTexture);
 	BeginMode2D(screenLightCamera);
 
-	ClearBackground(BLACK);
+	ClearBackground(LightAmbientColor);
 
 	BeginBlendMode(BLEND_ADDITIVE);
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
@@ -137,7 +138,7 @@ void UpdateLights()
 
 	DrawPlayerVision();
 
-	DrawShadows(&CurrentMapData->Lights[0]);
+	DrawShadows(&CurrentMapData->Lights[0], false);
 
 	DrawWalls();
 	EndMode2D();
@@ -163,7 +164,7 @@ void DrawLights()
 	EndShaderMode();
 }
 
-void DrawShadows(Light* light)
+void DrawShadows(Light* light, bool useBounds)
 {
 	if (!light->CastShadows)
 		return;
@@ -172,6 +173,9 @@ void DrawShadows(Light* light)
 	{
 		Wall* w = &CurrentMapData->Walls[i];
 		if (!HasFlag(w->WallFlags, WALLFLAG_CAST_SHADOW))
+			continue;
+
+		if (useBounds && !CheckCollisionRecs(light->_Bounds, w->_Bounds))
 			continue;
 
 		Vector2 d = Vector2Subtract(light->Position, w->Midpoint);

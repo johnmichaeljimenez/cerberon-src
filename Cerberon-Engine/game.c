@@ -4,9 +4,11 @@
 #include "gamestate_ingame.h"
 #include "cursor.h"
 #include "input_handler.h"
+#include "audio_manager.h"
 
 void GameInit()
 {
+	AudioInit();
 	CursorInit();
 	MainMenuInit();
 	IngameInit();
@@ -18,12 +20,14 @@ void GameInit()
 void GameUnload()
 {
 	CurrentGameState->OnUnload();
+	AudioUnload();
 }
 
 void GameUpdate()
 {
 	CursorUpdate();
 	CurrentGameState->OnUpdate();
+	AudioUpdate();
 }
 
 void GameDraw()
