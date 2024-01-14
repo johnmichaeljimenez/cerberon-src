@@ -13,6 +13,7 @@ typedef struct Tile
 	Vector2 _meshPoints[4];
 	Vector2 _uvPoints[4];
 	TextureResource* _textureResource;
+	Rectangle _Bounds;
 } Tile;
 
 void TilesInit();

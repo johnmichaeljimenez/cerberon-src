@@ -5,6 +5,7 @@
 #include "mapdata_manager.h"
 #include "utils.h"
 #include <stdlib.h>
+#include "camera.h"
 
 int _sort(const void* a, const void* b)
 {
@@ -36,6 +37,33 @@ void TilesInit()
 		t->_uvPoints[1] = (Vector2){ 0,tScale.y };
 		t->_uvPoints[2] = (Vector2){ tScale.x,tScale.y };
 		t->_uvPoints[3] = (Vector2){ tScale.x,0 };
+
+		Vector2 _min, _max;
+		_min.x = t->_meshPoints[0].x;
+		_min.y = t->_meshPoints[0].y;
+		_max.x = t->_meshPoints[0].x;
+		_max.y = t->_meshPoints[0].x;
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (_min.x > t->_meshPoints[i].x)
+				_min.x = t->_meshPoints[i].x;
+
+			if (_min.y > t->_meshPoints[i].y)
+				_min.y = t->_meshPoints[i].y;
+
+			if (_max.x < t->_meshPoints[i].x)
+				_max.x = t->_meshPoints[i].x;
+
+			if (_max.y < t->_meshPoints[i].y)
+				_max.y = t->_meshPoints[i].y;
+		}
+
+		t->_Bounds.x = _min.x;
+		t->_Bounds.y = _min.y;
+
+		t->_Bounds.width = fabsf(_max.x - _min.x);
+		t->_Bounds.height = fabsf(_max.y - _min.y);
 	}
 
 	qsort(CurrentMapData->Tiles, CurrentMapData->TileCount, sizeof(Tile), _sort);
@@ -46,6 +74,9 @@ void TilesDraw()
 	for (int i = 0; i < CurrentMapData->TileCount; i++)
 	{
 		Tile* t = &CurrentMapData->Tiles[i];
+
+		if (!CheckCollisionRecs(CameraViewBounds, t->_Bounds))
+			continue;
 
 		rlSetTexture(t->_textureResource->Texture.id);
 		rlBegin(RL_QUADS);
