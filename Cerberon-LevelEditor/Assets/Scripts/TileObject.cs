@@ -20,6 +20,5 @@ public class TileObject : BaseObject
         array.AddRange(BitConverter.GetBytes(s.color.r));
         array.AddRange(BitConverter.GetBytes(s.color.g));
         array.AddRange(BitConverter.GetBytes(s.color.b));
-        array.AddRange(BitConverter.GetBytes(s.color.a));
     }
 }
