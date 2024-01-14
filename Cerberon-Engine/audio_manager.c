@@ -15,7 +15,7 @@ void AudioUpdate()
 	for (int i = 0; i < 16; i++)
 	{
 		AudioSource* a = &AudioSourceWorldList[i];
-		if (a->Stream == NULL)
+		if (a->SoundData == NULL)
 			continue;
 
 		if (!a->IsPlaying)
@@ -30,8 +30,11 @@ void AudioUpdate()
 		diff = Vector2Normalize(diff);
 		a->OutPan = Remap(diff.x, -1, 1, 0, 1);
 
-		SetAudioStreamPan(*a->Stream, a->OutVolume);
-		SetAudioStreamPan(*a->Stream, a->OutPan);
+		SetSoundVolume(*a->SoundData, a->OutVolume);
+		SetSoundPan(*a->SoundData, a->OutPan);
+
+		if (!IsSoundPlaying(*a->SoundData))
+			a->IsPlaying = false;
 	}
 }
 

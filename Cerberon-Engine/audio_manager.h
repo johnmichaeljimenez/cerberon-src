@@ -5,7 +5,7 @@
 typedef struct AudioSource
 {
 	bool IsPlaying;
-	AudioStream* Stream;
+	Sound* SoundData; //SoundResource alias
 	SoundResource* Clip;
 	Vector2 Position;
 	float Volume;
