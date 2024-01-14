@@ -17,7 +17,7 @@ void TilesInit()
 
 		Vector2 tScale = (Vector2){ t->Scale.x / 64, t->Scale.y / 64 };
 
-		t->_textureResource = GetTextureResource(ToHash("hay"));
+		t->_textureResource = GetTextureResource(ToHash(t->TextureID));
 		t->_meshPoints[0] = Vector2RotateAround((Vector2) { oX - hX, oY - hY }, t->Position, t->Rotation* DEG2RAD);
 		t->_meshPoints[1] = Vector2RotateAround((Vector2) { oX - hX, oY + hY }, t->Position, t->Rotation* DEG2RAD);
 		t->_meshPoints[2] = Vector2RotateAround((Vector2) { oX + hX, oY + hY }, t->Position, t->Rotation* DEG2RAD);
