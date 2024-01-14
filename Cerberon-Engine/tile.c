@@ -15,11 +15,18 @@ void TilesInit()
 		float hX = t->Scale.x / 2;
 		float hY = t->Scale.y / 2;
 
-		t->_textureResource = GetTextureResource(ToHash(t->TextureID));
-		t->_meshPoints[0] = Vector2RotateAround((Vector2) { oX-hX, oY-hY }, t->Position, t->Rotation* DEG2RAD);
-		t->_meshPoints[1] = Vector2RotateAround((Vector2) { oX-hX, oY+hY }, t->Position, t->Rotation* DEG2RAD);
-		t->_meshPoints[2] = Vector2RotateAround((Vector2) { oX+hX, oY+hY }, t->Position, t->Rotation* DEG2RAD);
-		t->_meshPoints[3] = Vector2RotateAround((Vector2) { oX+hX, oY-hY }, t->Position, t->Rotation* DEG2RAD);
+		Vector2 tScale = (Vector2){ t->Scale.x / 64, t->Scale.y / 64 };
+
+		t->_textureResource = GetTextureResource(ToHash("hay"));
+		t->_meshPoints[0] = Vector2RotateAround((Vector2) { oX - hX, oY - hY }, t->Position, t->Rotation* DEG2RAD);
+		t->_meshPoints[1] = Vector2RotateAround((Vector2) { oX - hX, oY + hY }, t->Position, t->Rotation* DEG2RAD);
+		t->_meshPoints[2] = Vector2RotateAround((Vector2) { oX + hX, oY + hY }, t->Position, t->Rotation* DEG2RAD);
+		t->_meshPoints[3] = Vector2RotateAround((Vector2) { oX + hX, oY - hY }, t->Position, t->Rotation* DEG2RAD);
+
+		t->_uvPoints[0] = (Vector2){ 0,0 };
+		t->_uvPoints[1] = (Vector2){ 0,tScale.y };
+		t->_uvPoints[2] = (Vector2){ tScale.x,tScale.y };
+		t->_uvPoints[3] = (Vector2){ tScale.x,0 };
 	}
 }
 
@@ -29,13 +36,23 @@ void TilesDraw()
 	{
 		Tile* t = &CurrentMapData->Tiles[i];
 
-		//DrawTriangleStrip(t->_meshPoints, 4, WHITE);
+		rlSetTexture(t->_textureResource->Texture.id);
+		rlBegin(RL_QUADS);
 
-		//DrawCircleV(t->Position, 200, WHITE);
+		rlColor4ub(t->Tint.r, t->Tint.g, t->Tint.b, t->Tint.a);
 
-		DrawLineV(t->_meshPoints[0], t->_meshPoints[1], WHITE);
-		DrawLineV(t->_meshPoints[1], t->_meshPoints[2], WHITE);
-		DrawLineV(t->_meshPoints[2], t->_meshPoints[3], WHITE);
-		DrawLineV(t->_meshPoints[3], t->_meshPoints[0], WHITE);
+		for (int j = 0; j < 4; j++)
+		{
+			rlTexCoord2f(t->_uvPoints[j].x, t->_uvPoints[j].y);
+			rlVertex2f(t->_meshPoints[j].x, t->_meshPoints[j].y);
+		}
+
+		rlEnd();
+		rlSetTexture(0);
+
+		//DrawLineV(t->_meshPoints[0], t->_meshPoints[1], t->Tint);
+		//DrawLineV(t->_meshPoints[1], t->_meshPoints[2], t->Tint);
+		//DrawLineV(t->_meshPoints[2], t->_meshPoints[3], t->Tint);
+		//DrawLineV(t->_meshPoints[3], t->_meshPoints[0], t->Tint);
 	}
 }
