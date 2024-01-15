@@ -25,6 +25,7 @@ typedef struct Interactable
 	int Flags;
 	bool OneShot;
 	int Count;
+	float Delay;
 
 	float Radius;
 	InteractableType InteractableType;
@@ -32,8 +33,10 @@ typedef struct Interactable
 
 	bool IsActive;
 	bool Activated;
+	bool ChainActivated;
 	bool Hovered;
 	int DataIndex;
+	float DelayTimer;
 
 	void (*OnInit)(struct Interactable* i);
 	void (*OnUnload)(struct Interactable* i);
@@ -48,3 +51,4 @@ void InteractionInit();
 void InteractionUnload();
 void CheckInteraction();
 void SetInteractableFunctions(Interactable* i);
+Interactable* FindInteractable(char* targetName);

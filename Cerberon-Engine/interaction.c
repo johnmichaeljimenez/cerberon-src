@@ -9,6 +9,7 @@
 #include "i_item.h"
 #include "time.h"
 #include "input_handler.h"
+#include <string.h>
 
 void SetInteractableFunctions(Interactable* i)
 {
@@ -26,6 +27,8 @@ void SetInteractableFunctions(Interactable* i)
 		break;
 
 	case INTERACTABLE_Item:
+		i->OneShot = true;
+		i->Delay = 0;
 		i->Radius = 16;
 		i->OnInit = ItemInit;
 		i->OnUpdate = ItemUpdate;
@@ -56,39 +59,66 @@ void CheckInteraction()
 		if (!a->IsActive)
 			continue;
 
-		if (Vector2DistanceSqr(a->Position, PlayerEntity.Position) > (PlayerEntity.InteractionRadius * PlayerEntity.InteractionRadius))
-			continue;
-
-		a->Hovered = CheckCollisionCircles(a->Position, a->Radius, CameraGetMousePosition(), 64);
-
-		if (a->Hovered)
+		if (a->Delay > 0 && a->DelayTimer > 0)
 		{
-			CursorChange(CURSORSTATE_IngameInteractHover);
-			LinecastHit hit;
-			Linecast(PlayerEntity.Position, a->Position, &hit);
-			if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 16)
-			{
-				a->Hovered = false;
-				continue;
-			}
+			a->DelayTimer -= TICKRATE;
 		}
 
-		if (!a->Hovered)
-			continue;
-
-		Vector2 curPos = a->Position;
-		curPos = Vector2Lerp(GetMousePosition(), GetWorldToScreen2D(a->Position, GameCamera), 0.6f);
-		CursorOverridePosition(curPos);
-		CursorChange(CURSORSTATE_IngameInteractEnabled);
-
-		if (InputGetPressed(INPUTACTIONTYPE_Interact))
+		if (!a->ChainActivated)
 		{
-			if (a->OnInteract(a, &PlayerEntity))
+			if (Vector2DistanceSqr(a->Position, PlayerEntity.Position) > (PlayerEntity.InteractionRadius * PlayerEntity.InteractionRadius))
+				continue;
+
+			a->Hovered = CheckCollisionCircles(a->Position, a->Radius, CameraGetMousePosition(), 64);
+
+			if (a->Hovered)
 			{
-				a->Activated = true;
-				//chain here
-				break;
+				CursorChange(CURSORSTATE_IngameInteractHover);
+				LinecastHit hit;
+				Linecast(PlayerEntity.Position, a->Position, &hit);
+				if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 16)
+				{
+					a->Hovered = false;
+					continue;
+				}
 			}
+
+			if (!a->Hovered)
+				continue;
+
+			Vector2 curPos = a->Position;
+			curPos = Vector2Lerp(GetMousePosition(), GetWorldToScreen2D(a->Position, GameCamera), 0.6f);
+			CursorOverridePosition(curPos);
+			CursorChange(CURSORSTATE_IngameInteractEnabled);
+
+			bool pressed = InputGetPressed(INPUTACTIONTYPE_Interact);
+			if (!pressed)
+				continue;
+
+			a->DelayTimer = a->Delay;
+			if (a->DelayTimer > 0)
+				a->ChainActivated = true;
+		}
+
+		if (a->Delay > 0 && a->DelayTimer > 0)
+		{
+			continue;
+		}
+
+		if (a->OnInteract(a, &PlayerEntity))
+		{
+			a->ChainActivated = false;
+			a->Activated = true;
+			a->DelayTimer = 0;
+
+			Interactable* target = FindInteractable(a->Target);
+			if (target != 0)
+			{
+				target->ChainActivated = true;
+				target->DelayTimer = target->Delay;
+			}
+
+			break;
 		}
 	}
 }
@@ -97,4 +127,16 @@ void InteractionUnload()
 {
 	UnloadItems();
 	UnloadDoors();
+}
+
+Interactable* FindInteractable(char* targetName)
+{
+	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
+	{
+		Interactable* in = &CurrentMapData->Interactables[i];
+		if (strcmp(in->TargetName, targetName) == 0)
+			return in;
+	}
+
+	return NULL;
 }

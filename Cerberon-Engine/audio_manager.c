@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <raymath.h>
+#include "collision.h"
+#include "game.h"
 
 static Sound testSound;
 static Sound soundsAlias[8];
@@ -46,6 +48,17 @@ void AudioUpdate()
 
 		SetSoundVolume(*a->SoundData, a->OutVolume * a->Volume);
 		SetSoundPan(*a->SoundData, a->OutPan);
+
+		a->_t -= GetFrameTime();
+		if (a->_t > 0)
+			return;
+
+		a->_t = 0.1;
+
+		LinecastHit hit;
+		Linecast(AudioListenerPosition, a->Position, &hit);
+		a->_occluded = hit.Hit;
+		//do occlusion here
 	}
 }
 
@@ -82,10 +95,12 @@ bool AudioPlay(int hash, Vector2 position)
 
 		a->SoundData = GetSoundFromAlias(soundsAlias, 8); //use real audio resource
 		a->Position = position;
-		a->Radius = 512;
+		a->Radius = 1024;
 		a->Is3D = true;
 		a->Volume = 1;
 		a->IsPlaying = true;
+		a->_occluded = false;
+		a->_t = 0;
 
 		PlaySound(*a->SoundData);
 		

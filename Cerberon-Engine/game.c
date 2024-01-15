@@ -27,11 +27,11 @@ void GameUpdate()
 {
 	CursorUpdate();
 	CurrentGameState->OnUpdate();
-	AudioUpdate();
 }
 
 void GameDraw()
 {
+	AudioUpdate();
 	CurrentGameState->OnDraw();
 	CursorDraw();
 }
