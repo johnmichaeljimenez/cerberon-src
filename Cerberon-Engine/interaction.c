@@ -9,6 +9,7 @@
 #include "i_item.h"
 #include "time.h"
 #include "input_handler.h"
+#include <string.h>
 
 void SetInteractableFunctions(Interactable* i)
 {
@@ -97,4 +98,16 @@ void InteractionUnload()
 {
 	UnloadItems();
 	UnloadDoors();
+}
+
+Interactable* FindInteractable(char* targetName)
+{
+	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
+	{
+		Interactable* in = &CurrentMapData->Interactables[i];
+		if (strcmp(in->TargetName, targetName) == 0)
+			return in;
+	}
+
+	return NULL;
 }

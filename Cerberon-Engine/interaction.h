@@ -32,6 +32,7 @@ typedef struct Interactable
 
 	bool IsActive;
 	bool Activated;
+	bool ChainActivated;
 	bool Hovered;
 	int DataIndex;
 
@@ -48,3 +49,4 @@ void InteractionInit();
 void InteractionUnload();
 void CheckInteraction();
 void SetInteractableFunctions(Interactable* i);
+Interactable* FindInteractable(char* targetName);
