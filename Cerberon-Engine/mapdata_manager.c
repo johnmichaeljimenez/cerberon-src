@@ -128,6 +128,8 @@ void LoadMap(char* filename, MapData* map)
 		int count;
 		char* target[32];
 		char* targetName[32];
+		float delay;
+		bool oneshot;
 
 		map->Interactables = MCalloc(map->InteractableCount, sizeof(Interactable), "Interactable List");
 		for (int i = 0; i < map->InteractableCount; i += 1)
@@ -141,6 +143,8 @@ void LoadMap(char* filename, MapData* map)
 			fread(&r, sizeof(float), 1, file);
 			fread(&targetName, sizeof(char), 32, file);
 			fread(&target, sizeof(char), 32, file);
+			fread(&delay, sizeof(float), 1, file);
+			fread(&oneshot, sizeof(bool), 1, file);
 
 			if (intType == INTERACTABLE_Door)
 			{
@@ -151,7 +155,7 @@ void LoadMap(char* filename, MapData* map)
 				ItemCount++;
 			}
 
-			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags, count);
+			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags, count, delay, oneshot);
 		}
 	}
 
@@ -332,7 +336,7 @@ void UpdateWall(Wall* w)
 	};
 }
 
-Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags, int count)
+Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags, int count, float delay, bool oneShot)
 {
 	Interactable i = { 0 };
 
@@ -344,6 +348,8 @@ Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targ
 	i.Position = pos;
 	i.Rotation = rot;
 	i.Count = count > 0? count : 1;
+	i.OneShot = oneShot;
+	i.Delay = delay;
 	strcpy_s(i.Target, 32, target);
 	strcpy_s(i.TargetName, 32, targetname);
 

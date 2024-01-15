@@ -27,6 +27,8 @@ void SetInteractableFunctions(Interactable* i)
 		break;
 
 	case INTERACTABLE_Item:
+		i->OneShot = true;
+		i->Delay = 0;
 		i->Radius = 16;
 		i->OnInit = ItemInit;
 		i->OnUpdate = ItemUpdate;
