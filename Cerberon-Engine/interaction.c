@@ -59,6 +59,11 @@ void CheckInteraction()
 		if (!a->IsActive)
 			continue;
 
+		if (a->Delay > 0 && a->DelayTimer > 0)
+		{
+			a->DelayTimer -= TICKRATE;
+		}
+
 		if (!a->ChainActivated)
 		{
 			if (Vector2DistanceSqr(a->Position, PlayerEntity.Position) > (PlayerEntity.InteractionRadius * PlayerEntity.InteractionRadius))
@@ -89,17 +94,28 @@ void CheckInteraction()
 			bool pressed = InputGetPressed(INPUTACTIONTYPE_Interact);
 			if (!pressed)
 				continue;
+
+			a->DelayTimer = a->Delay;
+			if (a->DelayTimer > 0)
+				a->ChainActivated = true;
+		}
+
+		if (a->Delay > 0 && a->DelayTimer > 0)
+		{
+			continue;
 		}
 
 		if (a->OnInteract(a, &PlayerEntity))
 		{
 			a->ChainActivated = false;
 			a->Activated = true;
+			a->DelayTimer = 0;
 
 			Interactable* target = FindInteractable(a->Target);
 			if (target != 0)
 			{
 				target->ChainActivated = true;
+				target->DelayTimer = target->Delay;
 			}
 
 			break;
