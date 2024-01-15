@@ -57,39 +57,50 @@ void CheckInteraction()
 		if (!a->IsActive)
 			continue;
 
-		if (Vector2DistanceSqr(a->Position, PlayerEntity.Position) > (PlayerEntity.InteractionRadius * PlayerEntity.InteractionRadius))
-			continue;
-
-		a->Hovered = CheckCollisionCircles(a->Position, a->Radius, CameraGetMousePosition(), 64);
-
-		if (a->Hovered)
+		if (!a->ChainActivated)
 		{
-			CursorChange(CURSORSTATE_IngameInteractHover);
-			LinecastHit hit;
-			Linecast(PlayerEntity.Position, a->Position, &hit);
-			if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 16)
-			{
-				a->Hovered = false;
+			if (Vector2DistanceSqr(a->Position, PlayerEntity.Position) > (PlayerEntity.InteractionRadius * PlayerEntity.InteractionRadius))
 				continue;
+
+			a->Hovered = CheckCollisionCircles(a->Position, a->Radius, CameraGetMousePosition(), 64);
+
+			if (a->Hovered)
+			{
+				CursorChange(CURSORSTATE_IngameInteractHover);
+				LinecastHit hit;
+				Linecast(PlayerEntity.Position, a->Position, &hit);
+				if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 16)
+				{
+					a->Hovered = false;
+					continue;
+				}
 			}
+
+			if (!a->Hovered)
+				continue;
+
+			Vector2 curPos = a->Position;
+			curPos = Vector2Lerp(GetMousePosition(), GetWorldToScreen2D(a->Position, GameCamera), 0.6f);
+			CursorOverridePosition(curPos);
+			CursorChange(CURSORSTATE_IngameInteractEnabled);
+
+			bool pressed = InputGetPressed(INPUTACTIONTYPE_Interact);
+			if (!pressed)
+				continue;
 		}
 
-		if (!a->Hovered)
-			continue;
-
-		Vector2 curPos = a->Position;
-		curPos = Vector2Lerp(GetMousePosition(), GetWorldToScreen2D(a->Position, GameCamera), 0.6f);
-		CursorOverridePosition(curPos);
-		CursorChange(CURSORSTATE_IngameInteractEnabled);
-
-		if (InputGetPressed(INPUTACTIONTYPE_Interact))
+		if (a->OnInteract(a, &PlayerEntity))
 		{
-			if (a->OnInteract(a, &PlayerEntity))
+			a->ChainActivated = false;
+			a->Activated = true;
+
+			Interactable* target = FindInteractable(a->Target);
+			if (target != 0)
 			{
-				a->Activated = true;
-				//chain here
-				break;
+				target->ChainActivated = true;
 			}
+
+			break;
 		}
 	}
 }
