@@ -23,8 +23,7 @@ public class BaseInteractable : BaseObject
     public virtual InteractableType InteractableType => throw new NotImplementedException();
     public virtual InteractableSubType InteractableSubType => throw new NotImplementedException();
 
-    [SerializeField] protected string Target;
-    [SerializeField] protected string TargetName;
+    [SerializeField] protected BaseInteractable TargetObject;
     [SerializeField] protected float Delay;
     [SerializeField] protected bool OneShot;
 
@@ -33,6 +32,9 @@ public class BaseInteractable : BaseObject
 
     public override void Export(List<byte> array)
     {
+        var target = gameObject.name;
+        var targetName = (TargetObject == null? "" : TargetObject.gameObject.name);
+
         var n = (int)InteractableType;
         array.AddRange(BitConverter.GetBytes(n));
         n = (int)InteractableSubType;
@@ -42,7 +44,7 @@ public class BaseInteractable : BaseObject
         array.AddRange(BitConverter.GetBytes(transform.position.x * MAP_SCALE));
         array.AddRange(BitConverter.GetBytes(transform.position.y * MAP_SCALE_Y));
         array.AddRange(BitConverter.GetBytes(transform.eulerAngles.z));
-        array.AddRange(Encoding.ASCII.GetBytes(Target.ToFixedLength(32)));
-        array.AddRange(Encoding.ASCII.GetBytes(TargetName.ToFixedLength(32)));
+        array.AddRange(Encoding.ASCII.GetBytes(target.ToFixedLength(32)));
+        array.AddRange(Encoding.ASCII.GetBytes(targetName.ToFixedLength(32)));
     }
 }
