@@ -116,7 +116,7 @@ void DrawPlayerFlashlight(Light* l)
 
 	Color color = ColorBrightness01(l->Color, l->Intensity * 0.5f);
 	Color color2 = ColorBrightness01(l->Color, l->Intensity);
-	Color color3 = ColorBrightness01(l->Color, l->Intensity * 0.2f);
+	Color color3 = ColorBrightness01(l->Color, l->Intensity * 0.3f);
 
 	if (isFlashlightOn)
 	{
@@ -125,7 +125,7 @@ void DrawPlayerFlashlight(Light* l)
 	}
 	else
 	{
-		DrawCircleGradient(l->Position.x, l->Position.y, 128, color3, BLACK);
+		DrawCircleGradient(l->Position.x, l->Position.y, 80, color3, BLACK);
 	}
 
 	EndBlendMode();

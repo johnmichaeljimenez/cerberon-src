@@ -60,23 +60,25 @@ static void CheckInput(InputAction* i)
 
 void InputUpdate()
 {
-	for (int i = 0; i < 4; i++)
+	/*for (int i = 0; i < 4; i++)
 	{
 		CheckInput(&(Actions[i]));
-	}
+	}*/
 }
 
 bool InputGetPressed(InputActionType type)
 {
 	InputAction action = Actions[type];
-	bool pressed = action.Time > 0 && !action.Released;
+	return action.IsMouse? IsMouseButtonPressed(action.Key) : IsKeyPressed(action.Key);
+
+	/*bool pressed = action.Time > 0 && !action.Released;
 
 	if (pressed) {
 		action.Time = 0;
 		Actions[type].Released = true;
 	}
 
-	return pressed;
+	return pressed;*/
 }
 
 Vector2 InputGetMovement()

@@ -41,7 +41,6 @@ void IngameOnUnload()
 	UnloadResources();
 }
 
-int nn = 0;
 void IngameOnUpdate()
 {
 	CursorChange(CURSORSTATE_IngameInteractReticle);
@@ -52,12 +51,6 @@ void IngameOnUpdate()
 
 	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);
-
-	if (InputGetPressed(INPUTACTIONTYPE_Flashlight))
-	{
-		TraceLog(LOG_INFO, "PRESS! %d", nn);
-		nn++;
-	}
 }
 
 void IngameOnDraw()
