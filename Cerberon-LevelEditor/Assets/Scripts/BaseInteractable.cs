@@ -33,8 +33,8 @@ public class BaseInteractable : BaseObject
 
     public override void Export(List<byte> array)
     {
-        var target = gameObject.name;
-        var targetName = (TargetObject == null? "" : TargetObject.gameObject.name);
+        var targetName = gameObject.name;
+        var target = (TargetObject == null? "" : TargetObject.gameObject.name);
 
         var n = (int)InteractableType;
         array.AddRange(BitConverter.GetBytes(n));
@@ -45,8 +45,8 @@ public class BaseInteractable : BaseObject
         array.AddRange(BitConverter.GetBytes(transform.position.x * MAP_SCALE));
         array.AddRange(BitConverter.GetBytes(transform.position.y * MAP_SCALE_Y));
         array.AddRange(BitConverter.GetBytes(transform.eulerAngles.z));
-        array.AddRange(Encoding.ASCII.GetBytes(target.ToFixedLength(32)));
         array.AddRange(Encoding.ASCII.GetBytes(targetName.ToFixedLength(32)));
+        array.AddRange(Encoding.ASCII.GetBytes(target.ToFixedLength(32)));
     }
 
     private void OnDrawGizmos()

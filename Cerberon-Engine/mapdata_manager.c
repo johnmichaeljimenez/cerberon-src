@@ -139,8 +139,8 @@ void LoadMap(char* filename, MapData* map)
 			fread(&x1, sizeof(float), 1, file);
 			fread(&y1, sizeof(float), 1, file);
 			fread(&r, sizeof(float), 1, file);
-			fread(&target, sizeof(char), 32, file);
 			fread(&targetName, sizeof(char), 32, file);
+			fread(&target, sizeof(char), 32, file);
 
 			if (intType == INTERACTABLE_Door)
 			{
