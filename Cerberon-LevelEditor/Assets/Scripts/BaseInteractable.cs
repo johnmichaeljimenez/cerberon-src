@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public enum InteractableType
 {
@@ -46,5 +47,15 @@ public class BaseInteractable : BaseObject
         array.AddRange(BitConverter.GetBytes(transform.eulerAngles.z));
         array.AddRange(Encoding.ASCII.GetBytes(target.ToFixedLength(32)));
         array.AddRange(Encoding.ASCII.GetBytes(targetName.ToFixedLength(32)));
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (TargetObject != null)
+        {
+            Gizmos.color = Color.green;
+            Utils.DrawArrow(transform.position, TargetObject.transform.position);
+            Gizmos.color = Color.white;
+        }
     }
 }
