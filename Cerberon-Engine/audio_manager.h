@@ -14,6 +14,9 @@ typedef struct AudioSource
 
 	float OutVolume;
 	float OutPan;
+
+	float _t;
+	bool _occluded;
 } AudioSource;
 
 Vector2 AudioListenerPosition;

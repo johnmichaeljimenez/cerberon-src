@@ -62,8 +62,6 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (IsKeyPressed(KEY_F))
 	{
-		AudioPlay(-1, p->Position);
-
 		if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
 		{
 			isFlashlightOn = !isFlashlightOn;
@@ -77,6 +75,7 @@ void PlayerLateUpdate(PlayerCharacter* p)
 	targPos = Vector2Add(p->Position, Vector2ClampValue(targPos, 0, 300));
 
 	CameraSetTarget(targPos, false);
+	AudioListenerPosition = p->Position;
 }
 
 void PlayerDraw(PlayerCharacter* p)
