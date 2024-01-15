@@ -47,6 +47,8 @@ public class BaseInteractable : BaseObject
         array.AddRange(BitConverter.GetBytes(transform.eulerAngles.z));
         array.AddRange(Encoding.ASCII.GetBytes(targetName.ToFixedLength(32)));
         array.AddRange(Encoding.ASCII.GetBytes(target.ToFixedLength(32)));
+        array.AddRange(BitConverter.GetBytes(Delay));
+        array.AddRange(BitConverter.GetBytes(OneShot));
     }
 
     private void OnDrawGizmos()
