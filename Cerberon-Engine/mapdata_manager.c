@@ -254,20 +254,18 @@ void LoadMap(char* filename, MapData* map)
 				t.Colliders = MCalloc(t.ColliderCount, sizeof(TriggerCollider), "Trigger Collider List");
 				for (int j = 0; j < t.ColliderCount; j++)
 				{
-					t.Colliders[i] = (TriggerCollider){ 0 };
+					t.Colliders[j] = (TriggerCollider){ 0 };
 
-					fread(&t.Colliders[i].Position.x, sizeof(float), 1, file);
-					fread(&t.Colliders[i].Position.y, sizeof(float), 1, file);
-					fread(&t.Colliders[i].Rotation, sizeof(float), 1, file);
-					fread(&t.Colliders[i].Size.x, sizeof(float), 1, file);
-					fread(&t.Colliders[i].Size.y, sizeof(float), 1, file);
+					fread(&t.Colliders[j].Position.x, sizeof(float), 1, file);
+					fread(&t.Colliders[j].Position.y, sizeof(float), 1, file);
+					fread(&t.Colliders[j].Rotation, sizeof(float), 1, file);
+					fread(&t.Colliders[j].Size.x, sizeof(float), 1, file);
+					fread(&t.Colliders[j].Size.y, sizeof(float), 1, file);
 				}
 			}
 
 			map->Triggers[i] = t;
 		}
-
-		TilesInit();
 	}
 
 	fclose(file);
