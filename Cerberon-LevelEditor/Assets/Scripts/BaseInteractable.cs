@@ -55,6 +55,16 @@ public class BaseInteractable : BaseObject
     {
         if (TargetObject != null)
         {
+            Gizmos.color = Color.gray;
+            Utils.DrawArrow(transform.position, TargetObject.transform.position);
+            Gizmos.color = Color.white;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (TargetObject != null)
+        {
             Gizmos.color = Color.green;
             Utils.DrawArrow(transform.position, TargetObject.transform.position);
             Gizmos.color = Color.white;

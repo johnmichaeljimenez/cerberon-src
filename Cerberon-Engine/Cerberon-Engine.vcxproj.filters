@@ -108,6 +108,9 @@
     <ClCompile Include="audio_manager.c">
       <Filter>Source Files\audio</Filter>
     </ClCompile>
+    <ClCompile Include="i_trigger.c">
+      <Filter>Source Files\gameplay\interaction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -175,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="audio_manager.h">
       <Filter>Source Files\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="i_trigger.h">
+      <Filter>Source Files\gameplay\interaction</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

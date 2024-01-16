@@ -21,7 +21,7 @@ static int effectsTexParam;
 
 void InitLight()
 {
-	LightAmbientColor = ColorBrightness01(WHITE, 0.01);
+	LightAmbientColor = ColorBrightness01(WHITE, 0);
 	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
 
 	lightShader = LoadShader(0, "res/gfx/lighting.frag");
