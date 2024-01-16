@@ -50,8 +50,8 @@ void main()
 {
     vec2 uv = fragTexCoord.xy;
     uv *=  1.0 - uv.yx;
-    float vig = uv.x*uv.y * 50.0;
-    vig = pow(vig, 0.8);
+    float vig = uv.x*uv.y * 15.0;
+    vig = pow(vig, 1.0);
     
     vec3 effectColor = texture(effectTex, fragTexCoord).rgb;
 
@@ -59,13 +59,13 @@ void main()
     vec3 screenColor = texture(screenTex, fragTexCoord).rgb;
     vec3 texelColor = BlendOverlay(lightColor, screenColor);
 
-    texelColor = Dither(texelColor);
-    texelColor *= vig;
-
     float lum =  dot(texelColor, vec3(0.299, 0.587, 0.114));
     vec3 screenGrayColor = vec3(lum, lum, lum);
-    screenGrayColor /= 8;
+    screenGrayColor /= 4;
+
+    vec3 outColor = mix(screenGrayColor, texelColor, effectColor.r);
+    // outColor = Dither(outColor);
+    // outColor *= vig;
     
-    effectColor = Dither(effectColor);
-    finalColor = vec4(mix(screenGrayColor, texelColor, effectColor.r), 1);
+    finalColor = vec4(outColor, 1);
 }
