@@ -266,6 +266,8 @@ void LoadMap(char* filename, MapData* map)
 
 			map->Triggers[i] = t;
 		}
+
+		TriggerInit();
 	}
 
 	fclose(file);
@@ -296,6 +298,7 @@ Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
 void UpdateMap(MapData* map)
 {
 	CheckInteraction();
+	TriggerUpdate();
 	for (int i = 0; i < map->InteractableCount; i++)
 	{
 		Interactable* a = &map->Interactables[i];

@@ -6,6 +6,8 @@ typedef struct TriggerCollider
 	Vector2 Position;
 	float Rotation;
 	Vector2 Size;
+
+	Rectangle _rectangle;
 } TriggerCollider;
 
 typedef struct Trigger
@@ -20,3 +22,6 @@ typedef struct Trigger
 	bool _activated;
 	float _timer;
 } Trigger;
+
+void TriggerInit();
+void TriggerUpdate();
