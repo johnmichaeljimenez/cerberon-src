@@ -10,6 +10,7 @@
 #include "i_item.h"
 #include <string.h>
 #include "camera.h"
+#include "i_trigger.h"
 
 void InitMap()
 {
@@ -19,6 +20,16 @@ void InitMap()
 
 void UnloadMap()
 {
+	if (CurrentMapData->TriggerCount > 0)
+	{
+		for (int i = 0; i < CurrentMapData->TriggerCount; i++)
+		{
+			MFree(CurrentMapData->Triggers[i].Colliders, CurrentMapData->Triggers[i].ColliderCount, sizeof(TriggerCollider), "Trigger Collider List");
+		}
+
+		MFree(CurrentMapData->Triggers, CurrentMapData->TriggerCount, sizeof(Trigger), "Trigger List");
+	}
+
 	if (CurrentMapData->LightCount > 0)
 	{
 		for (int i = 0; i < CurrentMapData->LightCount; i++)
@@ -217,6 +228,43 @@ void LoadMap(char* filename, MapData* map)
 			t.Tint.b = _b * 255;
 			t.Tint.a = 255;
 			map->Tiles[i] = t;
+		}
+
+		TilesInit();
+	}
+
+
+	//TRIGGERS
+	fread(&n, sizeof(int), 1, file);
+	map->TriggerCount = n;
+
+	if (map->TriggerCount > 0)
+	{
+		map->Triggers = MCalloc(map->TriggerCount, sizeof(Trigger), "Trigger List");
+		for (int i = 0; i < map->TriggerCount; i += 1)
+		{
+			Trigger t = { 0 };
+			fread(&t.Target, sizeof(char), 32, file);
+			fread(&t.OneShot, sizeof(bool), 1, file);
+			fread(&t.Cooldown, sizeof(float), 1, file);
+			fread(&t.ColliderCount, sizeof(float), 1, file);
+
+			if (t.ColliderCount > 0)
+			{
+				t.Colliders = MCalloc(t.ColliderCount, sizeof(TriggerCollider), "Trigger Collider List");
+				for (int j = 0; j < t.ColliderCount; j++)
+				{
+					t.Colliders[i] = (TriggerCollider){ 0 };
+
+					fread(&t.Colliders[i].Position.x, sizeof(float), 1, file);
+					fread(&t.Colliders[i].Position.y, sizeof(float), 1, file);
+					fread(&t.Colliders[i].Rotation, sizeof(float), 1, file);
+					fread(&t.Colliders[i].Size.x, sizeof(float), 1, file);
+					fread(&t.Colliders[i].Size.y, sizeof(float), 1, file);
+				}
+			}
+
+			map->Triggers[i] = t;
 		}
 
 		TilesInit();

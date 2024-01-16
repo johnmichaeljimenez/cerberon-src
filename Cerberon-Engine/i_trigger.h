@@ -11,7 +11,7 @@ typedef struct TriggerCollider
 typedef struct Trigger
 {
 	char* Target[32];
-	float OneShot;
+	bool OneShot;
 	float Cooldown;
 
 	int ColliderCount;
