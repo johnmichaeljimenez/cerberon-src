@@ -62,3 +62,13 @@ float LerpAngle(float r1, float r2, float t)
 {
 	return r1 + WrapAngle(r1, r2) * t;
 }
+
+bool CheckCollisionPointRecRotated(Vector2 point, Rectangle rec, float angle)
+{
+	Vector2 origin = (Vector2){ rec.x, rec.y };
+	rec.x -= (rec.width / 2);
+	rec.y -= (rec.height / 2);
+	point = Vector2RotateAround(point, origin, -angle);
+
+	return CheckCollisionPointRec(point, rec);
+}
