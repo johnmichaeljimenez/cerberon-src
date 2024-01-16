@@ -21,6 +21,7 @@ typedef struct Trigger
 
 	bool _activated;
 	float _timer;
+	bool _currentlyInside;
 } Trigger;
 
 void TriggerInit();
