@@ -64,8 +64,8 @@ void main()
     screenGrayColor /= 4;
 
     vec3 outColor = mix(screenGrayColor, texelColor, effectColor.r);
-    // outColor = Dither(outColor);
-    // outColor *= vig;
+    outColor = Dither(outColor);
+    outColor *= vig;
     
     finalColor = vec4(outColor, 1);
 }
