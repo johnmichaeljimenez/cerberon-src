@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include "utils.h"
 #include "audio_manager.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -21,6 +22,22 @@ void AudioUnload()
 {
 	FMOD_System_Close(audioSystem);
 	FMOD_System_Release(audioSystem);
+}
+
+AudioClip* AudioLoadClip(char* file, bool is3D)
+{
+	AudioClip a = { 0 };
+	FMOD_RESULT result = FMOD_System_CreateSound(system, file, is3D? FMOD_3D_LINEARSQUAREROLLOFF : FMOD_DEFAULT, 0, a.Sound);
+	if (result != FMOD_OK)
+		return NULL;
+
+	strcpy_s(a.Name, 32, GetFileNameWithoutExt(file));
+	if (is3D)
+	{
+		FMOD_Sound_Set3DMinMaxDistance(a.Sound, 64, 512);
+	}
+
+	return &a;
 }
 
 void AudioPlay(char* id, Vector2 pos)
