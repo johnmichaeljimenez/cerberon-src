@@ -11,12 +11,16 @@
 
 static FMOD_SYSTEM* audioSystem;
 static FMOD_VECTOR listenerPosition;
+static FMOD_CHANNEL* channel;
 
 void AudioInit()
 {
 	FMOD_System_Create(&audioSystem, FMOD_VERSION);
 	FMOD_System_Init(audioSystem, 512, FMOD_INIT_NORMAL, NULL);
 	FMOD_System_Set3DSettings(audioSystem, 0.0f, 1, 1.0f);
+
+	listenerPosition.x = 0;
+	listenerPosition.y = 0;
 }
 
 void AudioUnload()
@@ -41,9 +45,22 @@ AudioClip* AudioLoadClip(char* file, bool is3D)
 	return &a;
 }
 
-void AudioPlay(char* id, Vector2 pos)
+void AudioPlay(unsigned long hash, Vector2 pos)
 {
+	FMOD_VECTOR fmodPos = (FMOD_VECTOR){ pos.x, pos.y };
+	
+	for (int i = 0; i < AudioClipCount; i++)
+	{
+		AudioClip* a = &AudioClipList[i];
+		if (a->Hash == hash)
+		{
+			int result = FMOD_System_PlaySound(system, a->Sound, NULL, 0, &channel); 
+			if (result == FMOD_OK && a)
+				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
 
+			break;
+		}
+	}
 }
 
 void AudioUpdateListenerPosition(Vector2 pos)
@@ -54,5 +71,5 @@ void AudioUpdateListenerPosition(Vector2 pos)
 
 void AudioUpdate()
 {
-
+	FMOD_System_Update(audioSystem);
 }

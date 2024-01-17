@@ -11,11 +11,11 @@ typedef struct AudioClip
 } AudioClip;
 
 int AudioClipCount;
-AudioClip* Clips;
+AudioClip* AudioClipList;
 
 void AudioInit();
 void AudioUnload();
 AudioClip* AudioLoadClip(char* file, bool is3D);
 void AudioUpdate();
-void AudioPlay(char* id, Vector2 pos);
+void AudioPlay(unsigned long hash, Vector2 pos);
 void AudioUpdateListenerPosition(Vector2 pos);
