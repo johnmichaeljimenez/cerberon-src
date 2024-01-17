@@ -12,6 +12,7 @@
 
 static FMOD_SYSTEM* audioSystem;
 static FMOD_VECTOR listenerPosition;
+static Vector2 listenerPositionV;
 static FMOD_CHANNEL* channel;
 
 const float MAX_AUDIO_RADIUS = 1024;
@@ -20,7 +21,7 @@ const float MIN_AUDIO_RADIUS = 200;
 void AudioInit()
 {
 	FMOD_System_Create(&audioSystem, FMOD_VERSION);
-	FMOD_System_Init(audioSystem, 512, FMOD_INIT_NORMAL, NULL);
+	FMOD_System_Init(audioSystem, 512, FMOD_INIT_CHANNEL_LOWPASS, NULL);
 	FMOD_System_Set3DSettings(audioSystem, 0.0f, 1, 1.0f);
 
 	AudioClipCount = 1;
@@ -79,12 +80,20 @@ void AudioPlay(unsigned long hash, Vector2 pos)
 		AudioClip *a = &AudioClipList[i];
 		if (a->Hash == hash)
 		{
-			if (Vector2Distance(pos, (Vector2) { listenerPosition.x, listenerPosition.y }) > MAX_AUDIO_RADIUS)
+			float dist = Vector2Distance(pos, listenerPositionV);
+			if (dist > MAX_AUDIO_RADIUS)
 				break;
+
+			float distReverb = Remap(dist, 0, MAX_AUDIO_RADIUS, 1.0f, 0.2f);
 
 			FMOD_RESULT result = FMOD_System_PlaySound(audioSystem, a->Sound, NULL, 0, &channel);
 			if (result == FMOD_OK)
+			{
 				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
+				LinecastHit l;
+				bool occluded = Linecast(pos, listenerPositionV, &l);
+				FMOD_Channel_SetLowPassGain(channel, occluded? 0.2f : distReverb);
+			}
 
 			break;
 		}
@@ -93,6 +102,7 @@ void AudioPlay(unsigned long hash, Vector2 pos)
 
 void AudioUpdateListenerPosition(Vector2 pos)
 {
+	listenerPositionV = pos;
 	listenerPosition.x = pos.x;
 	listenerPosition.y = pos.y;
 	FMOD_System_Set3DListenerAttributes(audioSystem, 0, &listenerPosition, NULL, NULL, NULL);
