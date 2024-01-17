@@ -14,6 +14,9 @@ static FMOD_SYSTEM* audioSystem;
 static FMOD_VECTOR listenerPosition;
 static FMOD_CHANNEL* channel;
 
+const float MAX_AUDIO_RADIUS = 1024;
+const float MIN_AUDIO_RADIUS = 200;
+
 void AudioInit()
 {
 	FMOD_System_Create(&audioSystem, FMOD_VERSION);
@@ -61,7 +64,7 @@ AudioClip AudioLoadClip(char* file, bool is3D)
 	a.Hash = ToHash(a.Name);
 	if (is3D)
 	{
-		FMOD_Sound_Set3DMinMaxDistance(a.Sound, 128, 1024);
+		FMOD_Sound_Set3DMinMaxDistance(a.Sound, MIN_AUDIO_RADIUS, MAX_AUDIO_RADIUS);
 	}
 
 	return a;
@@ -73,10 +76,13 @@ void AudioPlay(unsigned long hash, Vector2 pos)
 	
 	for (int i = 0; i < AudioClipCount; i++)
 	{
-		AudioClip a = AudioClipList[i];
-		if (a.Hash == hash)
+		AudioClip *a = &AudioClipList[i];
+		if (a->Hash == hash)
 		{
-			FMOD_RESULT result = FMOD_System_PlaySound(audioSystem, a.Sound, NULL, 0, &channel);
+			if (Vector2Distance(pos, (Vector2) { listenerPosition.x, listenerPosition.y }) > MAX_AUDIO_RADIUS)
+				break;
+
+			FMOD_RESULT result = FMOD_System_PlaySound(audioSystem, a->Sound, NULL, 0, &channel);
 			if (result == FMOD_OK)
 				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
 
