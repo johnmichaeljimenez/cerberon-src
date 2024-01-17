@@ -7,6 +7,7 @@
 #include <raymath.h>
 #include "collision.h"
 #include "game.h"
+#include "memory.h"
 #include <fmod.h>
 
 static FMOD_SYSTEM* audioSystem;
@@ -25,6 +26,16 @@ void AudioInit()
 
 void AudioUnload()
 {
+	if (AudioClipCount > 0)
+	{
+		for (int i = 0; i < AudioClipCount; i++)
+		{
+			FMOD_Sound_Release(AudioClipList[i].Sound);
+		}
+
+		MFree(AudioClipList, AudioClipCount, sizeof(AudioClip), "Audio Clip List");
+	}
+
 	FMOD_System_Close(audioSystem);
 	FMOD_System_Release(audioSystem);
 }
@@ -32,7 +43,7 @@ void AudioUnload()
 AudioClip* AudioLoadClip(char* file, bool is3D)
 {
 	AudioClip a = { 0 };
-	FMOD_RESULT result = FMOD_System_CreateSound(system, file, is3D? FMOD_3D_LINEARSQUAREROLLOFF : FMOD_DEFAULT, 0, a.Sound);
+	FMOD_RESULT result = FMOD_System_CreateSound(audioSystem, file, is3D? FMOD_3D_LINEARSQUAREROLLOFF : FMOD_DEFAULT, 0, a.Sound);
 	if (result != FMOD_OK)
 		return NULL;
 
