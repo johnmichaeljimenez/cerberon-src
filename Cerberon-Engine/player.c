@@ -62,6 +62,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (IsKeyPressed(KEY_F))
 	{
+		AudioPlay(ToHash("test"), Vector2Zero());
 		if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
 		{
 			isFlashlightOn = !isFlashlightOn;

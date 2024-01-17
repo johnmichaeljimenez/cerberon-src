@@ -22,7 +22,7 @@ int main()
 	while (!WindowShouldClose())//&& n < 9999)
 	{
 		TICKRATE = GetFrameTime();
-		InputUpdate();
+		//InputUpdate();
 		//float current = GetTime();
 		//float elapsed = current - previous;
 		//previous = current;

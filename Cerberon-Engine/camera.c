@@ -2,7 +2,6 @@
 #include <raymath.h>
 #include "camera.h"
 #include "time.h"
-#include "audio_manager.h"
 
 static void UpdateCameraViewBounds()
 {

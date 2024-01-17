@@ -20,6 +20,11 @@ void AudioInit()
 	FMOD_System_Init(audioSystem, 512, FMOD_INIT_NORMAL, NULL);
 	FMOD_System_Set3DSettings(audioSystem, 0.0f, 1, 1.0f);
 
+	AudioClipCount = 1;
+	AudioClipList = MCalloc(AudioClipCount, sizeof(AudioClip), "Audio Clip List");
+
+	AudioClipList[0] = AudioLoadClip("res/test.wav", true);
+
 	listenerPosition.x = 0;
 	listenerPosition.y = 0;
 }
@@ -40,20 +45,26 @@ void AudioUnload()
 	FMOD_System_Release(audioSystem);
 }
 
-AudioClip* AudioLoadClip(char* file, bool is3D)
+AudioClip AudioLoadClip(char* file, bool is3D)
 {
-	AudioClip a = { 0 };
-	FMOD_RESULT result = FMOD_System_CreateSound(audioSystem, file, is3D? FMOD_3D_LINEARSQUAREROLLOFF : FMOD_DEFAULT, 0, a.Sound);
+	AudioClip a = (AudioClip){
+		.Sound = NULL,
+		.Hash = 0,
+		.Name = NULL,
+	};
+
+	FMOD_RESULT result = FMOD_System_CreateSound(audioSystem, file, FMOD_3D_LINEARSQUAREROLLOFF, 0, &a.Sound);
 	if (result != FMOD_OK)
-		return NULL;
+		return a;
 
 	strcpy_s(a.Name, 32, GetFileNameWithoutExt(file));
+	a.Hash = ToHash(a.Name);
 	if (is3D)
 	{
-		FMOD_Sound_Set3DMinMaxDistance(a.Sound, 64, 512);
+		FMOD_Sound_Set3DMinMaxDistance(a.Sound, 128, 1024);
 	}
 
-	return &a;
+	return a;
 }
 
 void AudioPlay(unsigned long hash, Vector2 pos)
@@ -62,11 +73,11 @@ void AudioPlay(unsigned long hash, Vector2 pos)
 	
 	for (int i = 0; i < AudioClipCount; i++)
 	{
-		AudioClip* a = &AudioClipList[i];
-		if (a->Hash == hash)
+		AudioClip a = AudioClipList[i];
+		if (a.Hash == hash)
 		{
-			int result = FMOD_System_PlaySound(system, a->Sound, NULL, 0, &channel); 
-			if (result == FMOD_OK && a)
+			FMOD_RESULT result = FMOD_System_PlaySound(audioSystem, a.Sound, NULL, 0, &channel);
+			if (result == FMOD_OK)
 				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
 
 			break;
@@ -78,6 +89,7 @@ void AudioUpdateListenerPosition(Vector2 pos)
 {
 	listenerPosition.x = pos.x;
 	listenerPosition.y = pos.y;
+	FMOD_System_Set3DListenerAttributes(audioSystem, 0, &listenerPosition, NULL, NULL, NULL);
 }
 
 void AudioUpdate()
