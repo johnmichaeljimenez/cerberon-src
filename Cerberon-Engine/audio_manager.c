@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include "utils.h"
 #include "audio_manager.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -6,108 +7,113 @@
 #include <raymath.h>
 #include "collision.h"
 #include "game.h"
+#include "memory.h"
+#include <fmod.h>
 
-static Sound testSound;
-static Sound soundsAlias[8];
+static FMOD_SYSTEM* audioSystem;
+static FMOD_VECTOR listenerPosition;
+static Vector2 listenerPositionV;
+static FMOD_CHANNEL* channel;
+
+const float MAX_AUDIO_RADIUS = 1024;
+const float MIN_AUDIO_RADIUS = 200;
 
 void AudioInit()
 {
-	testSound = LoadSound("res/test.wav");
-	for (int i = 0; i < 8; i++)
+	FMOD_System_Create(&audioSystem, FMOD_VERSION);
+	FMOD_System_Init(audioSystem, 512, FMOD_INIT_CHANNEL_LOWPASS, NULL);
+	FMOD_System_Set3DSettings(audioSystem, 0.0f, 1, 1.0f);
+
+	//TODO: Add a txt file for sound loading reference list
+	AudioClipCount = 19;
+	AudioClipList = MCalloc(AudioClipCount, sizeof(AudioClip), "Audio Clip List");
+
+	AudioClipList[0] = AudioLoadClip("res/test.wav", true);
+	for (int i = 0; i < 9; i++)
 	{
-		soundsAlias[i] = LoadSoundAlias(testSound);
+		AudioClipList[i + 1] = AudioLoadClip(TextFormat("res/sfx/footstep/%d.ogg", i), true);
 	}
-}
 
-void AudioUpdate()
-{
-	for (int i = 0; i < 16; i++)
-	{
-		AudioSource* a = &AudioSourceWorldList[i];
-		if (a->SoundData == NULL)
-			continue;
-
-		if (!a->IsPlaying)
-			continue;
-
-		if (a->IsPlaying && (a->SoundData == NULL || !IsSoundPlaying(*a->SoundData)))
-		{
-			a->IsPlaying = false;
-			a->SoundData = NULL;
-			continue;
-		}
-
-		if (!a->Is3D)
-			continue;
-
-		Vector2 diff = Vector2Subtract(AudioListenerPosition, a->Position);
-		a->OutVolume = Remap(Vector2Length(diff), 0, a->Radius, 1, 0);
-
-		diff = Vector2Normalize(diff);
-		a->OutPan = Remap(diff.x, -1, 1, 0, 1);
-
-		SetSoundVolume(*a->SoundData, a->OutVolume * a->Volume);
-		SetSoundPan(*a->SoundData, a->OutPan);
-
-		a->_t -= GetFrameTime();
-		if (a->_t > 0)
-			return;
-
-		a->_t = 0.1;
-
-		LinecastHit hit;
-		Linecast(AudioListenerPosition, a->Position, &hit);
-		a->_occluded = hit.Hit;
-		//do occlusion here
-	}
+	listenerPosition.x = 0;
+	listenerPosition.y = 0;
 }
 
 void AudioUnload()
 {
-	for (int i = 0; i < 8; i++)
+	if (AudioClipCount > 0)
 	{
-		UnloadSoundAlias(soundsAlias[i]);
+		for (int i = 0; i < AudioClipCount; i++)
+		{
+			FMOD_Sound_Release(AudioClipList[i].Sound);
+		}
+
+		MFree(AudioClipList, AudioClipCount, sizeof(AudioClip), "Audio Clip List");
 	}
 
-	UnloadSound(testSound);
+	FMOD_System_Close(audioSystem);
+	FMOD_System_Release(audioSystem);
 }
 
-static Sound* GetSoundFromAlias(Sound* list, int count)
+AudioClip AudioLoadClip(char* file, bool is3D)
 {
-	for (int i = 0; i < count; i++)
+	AudioClip a = (AudioClip){
+		.Sound = NULL,
+		.Hash = 0,
+		.Name = NULL,
+	};
+
+	FMOD_RESULT result = FMOD_System_CreateSound(audioSystem, file, FMOD_3D_LINEARSQUAREROLLOFF, 0, &a.Sound);
+	if (result != FMOD_OK)
+		return a;
+
+	strcpy_s(a.Name, 32, GetFileNameWithoutExt(file));
+	a.Hash = ToHash(a.Name);
+	if (is3D)
 	{
-		if (!IsSoundPlaying(list[i]))
+		FMOD_Sound_Set3DMinMaxDistance(a.Sound, MIN_AUDIO_RADIUS, MAX_AUDIO_RADIUS);
+	}
+
+	return a;
+}
+
+void AudioPlay(unsigned long hash, Vector2 pos)
+{
+	FMOD_VECTOR fmodPos = (FMOD_VECTOR){ pos.x, pos.y };
+
+	for (int i = 0; i < AudioClipCount; i++)
+	{
+		AudioClip* a = &AudioClipList[i];
+		if (a->Hash == hash)
 		{
-			return &list[i];
+			float dist = Vector2Distance(pos, listenerPositionV);
+			if (dist > MAX_AUDIO_RADIUS)
+				break;
+
+			float distReverb = Remap(dist, 0, MAX_AUDIO_RADIUS, 1.0f, 0.2f);
+
+			FMOD_RESULT result = FMOD_System_PlaySound(audioSystem, a->Sound, NULL, 0, &channel);
+			if (result == FMOD_OK)
+			{
+				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
+				LinecastHit l;
+				bool occluded = Linecast(pos, listenerPositionV, &l);
+				FMOD_Channel_SetLowPassGain(channel, occluded ? 0.2f : distReverb);
+			}
+
+			break;
 		}
 	}
-
-	return NULL;
 }
 
-bool AudioPlay(int hash, Vector2 position)
+void AudioUpdateListenerPosition(Vector2 pos)
 {
-	for (int i = 0; i < 16; i++)
-	{
-		AudioSource* a = &AudioSourceWorldList[i];
-		if (a->IsPlaying)
-			continue;
+	listenerPositionV = pos;
+	listenerPosition.x = pos.x;
+	listenerPosition.y = pos.y;
+	FMOD_System_Set3DListenerAttributes(audioSystem, 0, &listenerPosition, NULL, NULL, NULL);
+}
 
-		a->SoundData = GetSoundFromAlias(soundsAlias, 8); //use real audio resource
-		a->Position = position;
-		a->Radius = 1024;
-		a->Is3D = true;
-		a->Volume = 1;
-		a->IsPlaying = true;
-		a->_occluded = false;
-		a->_t = 0;
-
-		PlaySound(*a->SoundData);
-		
-		//a->Clip
-
-		return true;
-	}
-
-	return false; //ran out of empty audio channels
+void AudioUpdate()
+{
+	FMOD_System_Update(audioSystem);
 }

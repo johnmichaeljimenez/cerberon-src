@@ -27,7 +27,7 @@ public class TriggerObject : BaseObject
 
             array.AddRange(BitConverter.GetBytes(i.transform.position.x * MAP_SCALE));
             array.AddRange(BitConverter.GetBytes(i.transform.position.y * MAP_SCALE_Y));
-            array.AddRange(BitConverter.GetBytes(-transform.eulerAngles.z));
+            array.AddRange(BitConverter.GetBytes(i.transform.eulerAngles.z));
             array.AddRange(BitConverter.GetBytes(sprite.size.x * MAP_SCALE));
             array.AddRange(BitConverter.GetBytes(sprite.size.y * MAP_SCALE));
         }

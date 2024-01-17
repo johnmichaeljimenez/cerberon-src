@@ -15,6 +15,8 @@ static unsigned long hash;
 static LinecastHit lineHit;
 
 static bool isFlashlightOn;
+static Vector2 lastPos;
+static float footstepInterval;
 
 void PlayerInit(PlayerCharacter* p)
 {
@@ -29,6 +31,9 @@ void PlayerInit(PlayerCharacter* p)
 	p->CameraOffset = 300;
 
 	InventoryInit(&InventoryPlayer);
+	lastPos = p->Position;
+	footstepInterval = (p->CollisionRadius * 2.5f);
+	footstepInterval *= footstepInterval;
 }
 
 void PlayerUnload(PlayerCharacter* p)
@@ -43,12 +48,22 @@ Vector2 PlayerGetForward(PlayerCharacter* p, float length)
 
 void PlayerUpdate(PlayerCharacter* p)
 {
-	Vector2 vel = Vector2Scale(InputGetMovement(), p->MovementSpeed);
+	Vector2 movementInput = InputGetMovement();
+	Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
 	vel = Vector2Scale(vel, TICKRATE);
 	p->Position = Vector2Add(p->Position, vel);
 
 	//collision here
 	MoveBody(&p->Position, p->CollisionRadius);
+
+	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
+	{
+		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
+		{
+			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
+			lastPos = p->Position;
+		}
+	}
 
 	Vector2 diff = CameraGetMousePosition();
 	diff = Vector2Subtract(diff, p->Position);
@@ -75,7 +90,7 @@ void PlayerLateUpdate(PlayerCharacter* p)
 	targPos = Vector2Add(p->Position, Vector2ClampValue(targPos, 0, 300));
 
 	CameraSetTarget(targPos, false);
-	AudioListenerPosition = p->Position;
+	AudioUpdateListenerPosition(p->Position);
 }
 
 void PlayerDraw(PlayerCharacter* p)
