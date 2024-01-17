@@ -261,6 +261,8 @@ void LoadMap(char* filename, MapData* map)
 					fread(&t.Colliders[j].Rotation, sizeof(float), 1, file);
 					fread(&t.Colliders[j].Size.x, sizeof(float), 1, file);
 					fread(&t.Colliders[j].Size.y, sizeof(float), 1, file);
+
+					t.Colliders[j].Rotation *= -DEG2RAD;
 				}
 			}
 
