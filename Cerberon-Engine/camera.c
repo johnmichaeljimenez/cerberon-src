@@ -31,7 +31,6 @@ void CameraInit()
 void CameraUpdate()
 {
 	GameCamera.target = Vector2Lerp(GameCamera.target, CameraTargetPosition, TICKRATE * 2);
-	AudioListenerPosition = GameCamera.target;
 	UpdateCameraViewBounds();
 }
 

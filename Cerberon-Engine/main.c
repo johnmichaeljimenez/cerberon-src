@@ -2,6 +2,7 @@
 #include "game.h"
 #include "log.h"
 #include "time.h"
+#include "audio_manager.h"
 
 static int n = 0;
 int main()
@@ -13,7 +14,7 @@ int main()
 
 	SetConfigFlags(FLAG_VSYNC_HINT);
 	InitWindow(1366, 768, "Cerberon Engine");
-	InitAudioDevice();
+	AudioInit();
 
 	TraceLog(LOG_INFO, "Current directory: %s", GetWorkingDirectory());
 
@@ -29,10 +30,11 @@ int main()
 
 		//while (lag >= TICKRATE)
 		//{
-			GameUpdate();
-			//lag -= TICKRATE;
+		GameUpdate();
+		//lag -= TICKRATE;
 		//}
 
+		AudioUpdate();
 		BeginDrawing();
 
 		ClearBackground(RAYWHITE);
@@ -43,8 +45,8 @@ int main()
 	}
 
 	GameUnload();
-	CloseAudioDevice();
+	AudioUnload();
 	CloseWindow();
-	
+
 	return 0;
 }

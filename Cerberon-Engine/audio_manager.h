@@ -1,28 +1,16 @@
 #pragma once
 #include <raylib.h>
 #include "asset_manager.h"
+#include <fmod.h>
 
-typedef struct AudioSource
+typedef struct AudioClip
 {
-	bool IsPlaying;
-	Sound* SoundData; //SoundResource alias
-	SoundResource* Clip;
-	Vector2 Position;
-	float Volume;
-	float Radius;
-	bool Is3D;
-
-	float OutVolume;
-	float OutPan;
-
-	float _t;
-	bool _occluded;
-} AudioSource;
-
-Vector2 AudioListenerPosition;
-AudioSource AudioSourceWorldList[16];
+	FMOD_SOUND* Sound;
+	char* name[32];
+} AudioClip;
 
 void AudioInit();
-void AudioUpdate();
 void AudioUnload();
-bool AudioPlay(int hash, Vector2 position);
+void AudioUpdate();
+void AudioPlay(char* id, Vector2 pos);
+void AudioUpdateListenerPosition(Vector2 pos);
