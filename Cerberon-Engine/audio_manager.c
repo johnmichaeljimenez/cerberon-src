@@ -24,10 +24,15 @@ void AudioInit()
 	FMOD_System_Init(audioSystem, 512, FMOD_INIT_CHANNEL_LOWPASS, NULL);
 	FMOD_System_Set3DSettings(audioSystem, 0.0f, 1, 1.0f);
 
-	AudioClipCount = 1;
+	//TODO: Add a txt file for sound loading reference list
+	AudioClipCount = 19;
 	AudioClipList = MCalloc(AudioClipCount, sizeof(AudioClip), "Audio Clip List");
 
 	AudioClipList[0] = AudioLoadClip("res/test.wav", true);
+	for (int i = 0; i < 9; i++)
+	{
+		AudioClipList[i + 1] = AudioLoadClip(TextFormat("res/sfx/footstep/%d.ogg", i), true);
+	}
 
 	listenerPosition.x = 0;
 	listenerPosition.y = 0;
@@ -74,10 +79,10 @@ AudioClip AudioLoadClip(char* file, bool is3D)
 void AudioPlay(unsigned long hash, Vector2 pos)
 {
 	FMOD_VECTOR fmodPos = (FMOD_VECTOR){ pos.x, pos.y };
-	
+
 	for (int i = 0; i < AudioClipCount; i++)
 	{
-		AudioClip *a = &AudioClipList[i];
+		AudioClip* a = &AudioClipList[i];
 		if (a->Hash == hash)
 		{
 			float dist = Vector2Distance(pos, listenerPositionV);
@@ -92,7 +97,7 @@ void AudioPlay(unsigned long hash, Vector2 pos)
 				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
 				LinecastHit l;
 				bool occluded = Linecast(pos, listenerPositionV, &l);
-				FMOD_Channel_SetLowPassGain(channel, occluded? 0.2f : distReverb);
+				FMOD_Channel_SetLowPassGain(channel, occluded ? 0.2f : distReverb);
 			}
 
 			break;
