@@ -10,6 +10,7 @@
 #include <fmod.h>
 
 static FMOD_SYSTEM* audioSystem;
+static FMOD_VECTOR listenerPosition;
 
 void AudioInit()
 {
@@ -47,7 +48,8 @@ void AudioPlay(char* id, Vector2 pos)
 
 void AudioUpdateListenerPosition(Vector2 pos)
 {
-
+	listenerPosition.x = pos.x;
+	listenerPosition.y = pos.y;
 }
 
 void AudioUpdate()
