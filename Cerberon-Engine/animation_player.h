@@ -17,3 +17,4 @@ typedef struct AnimationPlayer
 
 AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate);
 void AnimationPlayerUpdate(AnimationPlayer* a);
+void AnimationPlayerPlay(AnimationPlayer* a);

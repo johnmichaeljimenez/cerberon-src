@@ -50,3 +50,13 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 	if (ended && a->OnEnd != NULL)
 		a->OnEnd();
 }
+
+void AnimationPlayerPlay(AnimationPlayer* a)
+{
+	a->CurrentFrame = 0;
+	a->_timer = 0;
+	a->Paused = false;
+
+	if (a->OnStart != NULL)
+		a->OnStart();
+}
