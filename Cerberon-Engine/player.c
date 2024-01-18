@@ -10,6 +10,7 @@
 #include "time.h"
 #include "inventory.h"
 #include "audio_manager.h"
+#include "animation_player.h"
 
 static unsigned long hash;
 static LinecastHit lineHit;
@@ -18,9 +19,12 @@ static bool isFlashlightOn;
 static Vector2 lastPos;
 static float footstepInterval;
 
+static AnimationPlayer idleAnimation;
+
 void PlayerInit(PlayerCharacter* p)
 {
-	hash = ToHash("survivor-idle_shotgun_0");
+	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 16);
+	hash = ToHash("survivor-idle_knife_0");
 
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
@@ -34,6 +38,8 @@ void PlayerInit(PlayerCharacter* p)
 	lastPos = p->Position;
 	footstepInterval = (p->CollisionRadius * 2.5f);
 	footstepInterval *= footstepInterval;
+
+	AnimationPlayerPlay(&idleAnimation);
 }
 
 void PlayerUnload(PlayerCharacter* p)
@@ -91,11 +97,12 @@ void PlayerLateUpdate(PlayerCharacter* p)
 
 	CameraSetTarget(targPos, false);
 	AudioUpdateListenerPosition(p->Position);
+	AnimationPlayerUpdate(&idleAnimation);
 }
 
 void PlayerDraw(PlayerCharacter* p)
 {
-	TextureResource* t = GetTextureResource(hash);
+	TextureResource* t = idleAnimation.Clip->SpriteFrames[idleAnimation.CurrentFrame];
 
 	if (t != NULL)
 	{
@@ -129,9 +136,9 @@ void DrawPlayerFlashlight(Light* l)
 {
 	BeginBlendMode(BLEND_ADDITIVE);
 
-	Color color = ColorBrightness01(l->Color, l->Intensity * 0.5f);
+	Color color = ColorBrightness01(l->Color, l->Intensity * 0.7f);
 	Color color2 = ColorBrightness01(l->Color, l->Intensity);
-	Color color3 = ColorBrightness01(l->Color, l->Intensity * 0.3f);
+	Color color3 = ColorBrightness01(l->Color, l->Intensity * 0.5f);
 
 	if (isFlashlightOn)
 	{
