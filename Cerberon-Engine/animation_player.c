@@ -1,6 +1,22 @@
 #include "animation_player.h"
 #include "time.h"
 
+AnimationPlayer CreateAnimationPlayer(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
+{
+	AnimationPlayer a = { 0 };
+
+	a.Clip = clip;
+	a.CurrentFrame = 0;
+	a.FrameRate = frameRate;
+	a.Paused = false;
+	a._timer = 0;
+	a.OnStart = onStart;
+	a.OnFrameChanged = OnFrameChanged;
+	a.OnEnd = onEnd;
+
+	return a;
+}
+
 void AnimationPlayerUpdate(AnimationPlayer* a)
 {
 	if (a->Paused)
@@ -19,7 +35,8 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 		a->_timer -= rate;
 		a->CurrentFrame++;
 
-		a->OnFrameChanged();
+		if (a->OnFrameChanged != NULL)
+			a->OnFrameChanged();
 
 		if (a->CurrentFrame >= a->Clip->FrameCount)
 		{
@@ -30,6 +47,6 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 		}
 	}
 
-	if (ended)
+	if (ended && a->OnEnd != NULL)
 		a->OnEnd();
 }

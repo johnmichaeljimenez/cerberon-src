@@ -15,4 +15,5 @@ typedef struct AnimationPlayer
 	void(*OnEnd)();
 } AnimationPlayer;
 
+AnimationPlayer CreateAnimationPlayer(AnimationClip *clip);
 void AnimationPlayerUpdate(AnimationPlayer* a);
