@@ -21,11 +21,24 @@ static float footstepInterval;
 static AnimationPlayer* currentAnimation;
 static AnimationPlayer idleAnimation;
 static AnimationPlayer moveAnimation;
+static AnimationPlayer attackAnimation;
+
+static void OnAttackHit()
+{
+	if (attackAnimation.CurrentFrame == 6)
+		TraceLog(LOG_INFO, "HIT!");
+}
+
+static void OnAttackEnd()
+{
+	AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
+}
 
 void PlayerInit(PlayerCharacter* p)
 {
 	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 16);
 	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 16);
+	attackAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 16);
 
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
@@ -75,7 +88,11 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 	else
 	{
-		AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
+		if (currentAnimation != &attackAnimation)
+			AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
+
+		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+			AnimationPlayerPlay(&attackAnimation, true, &currentAnimation, false);
 	}
 
 	Vector2 diff = CameraGetMousePosition();
