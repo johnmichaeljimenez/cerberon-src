@@ -23,14 +23,6 @@ float quantize(float value, float levels)
     return floor(value * levels) / (levels - 1.0);
 }
 
-vec3 BlendOverlay(vec3 base, vec3 blend) {
-    return vec3(
-        base.r < 0.5 ? (2.0 * base.r * blend.r) : (1.0 - 2.0 * (1.0 - base.r) * (1.0 - blend.r)),
-        base.g < 0.5 ? (2.0 * base.g * blend.g) : (1.0 - 2.0 * (1.0 - base.g) * (1.0 - blend.g)),
-        base.b < 0.5 ? (2.0 * base.b * blend.b) : (1.0 - 2.0 * (1.0 - base.b) * (1.0 - blend.b))
-    );
-}
-
 vec3 Dither(vec3 texelColor)
 {
     //PS1 dither effect from Jax on Raylib Discord server
@@ -57,7 +49,7 @@ void main()
 
     vec3 lightColor = texture(texture0, fragTexCoord).rgb;
     vec3 screenColor = texture(screenTex, fragTexCoord).rgb;
-    vec3 texelColor = BlendOverlay(lightColor, screenColor);
+    vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2));
 
     float lum =  dot(texelColor, vec3(0.299, 0.587, 0.114));
     vec3 screenGrayColor = vec3(lum, lum, lum);
