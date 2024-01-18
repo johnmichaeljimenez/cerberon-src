@@ -126,7 +126,7 @@ TextureResource* GetTextureResource(unsigned long hash)
 void LoadAnimationPack(char* filename)
 {
 	//testing
-	AnimationClipCount = 1;
+	AnimationClipCount = 2;
 	AnimationClipList = MCalloc(AnimationClipCount, sizeof(AnimationClip), "Animation Clip List");
 
 	AnimationClipList[0] = (AnimationClip)
@@ -142,6 +142,21 @@ void LoadAnimationPack(char* filename)
 		unsigned long hash = ToHash(TextFormat("survivor-idle_knife_%d", i));
 		AnimationClipList[0].Frames[i] = hash;
 		AnimationClipList[0].SpriteFrames[i] = GetTextureResource(hash);
+	}
+
+	AnimationClipList[1] = (AnimationClip)
+	{
+		.FrameCount = 20,
+		.Name = "player_move",
+		.Hash = ToHash("player_move"),
+		.Loop = true
+	};
+
+	for (int i = 0; i < 20; i++)
+	{
+		unsigned long hash = ToHash(TextFormat("survivor-move_knife_%d", i));
+		AnimationClipList[1].Frames[i] = hash;
+		AnimationClipList[1].SpriteFrames[i] = GetTextureResource(hash);
 	}
 }
 
