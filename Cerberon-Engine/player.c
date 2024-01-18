@@ -10,17 +10,35 @@
 #include "time.h"
 #include "inventory.h"
 #include "audio_manager.h"
+#include "animation_player.h"
 
-static unsigned long hash;
 static LinecastHit lineHit;
 
 static bool isFlashlightOn;
 static Vector2 lastPos;
 static float footstepInterval;
 
+static AnimationPlayer* currentAnimation;
+static AnimationPlayer idleAnimation;
+static AnimationPlayer moveAnimation;
+static AnimationPlayer attackAnimation;
+
+static void OnAttackHit()
+{
+	if (attackAnimation.CurrentFrame == 6)
+		TraceLog(LOG_INFO, "HIT!");
+}
+
+static void OnAttackEnd()
+{
+	AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
+}
+
 void PlayerInit(PlayerCharacter* p)
 {
-	hash = ToHash("survivor-idle_shotgun_0");
+	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 16);
+	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 16);
+	attackAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 16);
 
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
@@ -34,6 +52,9 @@ void PlayerInit(PlayerCharacter* p)
 	lastPos = p->Position;
 	footstepInterval = (p->CollisionRadius * 2.5f);
 	footstepInterval *= footstepInterval;
+
+	currentAnimation = &idleAnimation;
+	AnimationPlayerPlay(&idleAnimation, true, &currentAnimation, true);
 }
 
 void PlayerUnload(PlayerCharacter* p)
@@ -58,11 +79,20 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
+		AnimationPlayerPlay(&moveAnimation, false, &currentAnimation, false);
 		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
 			lastPos = p->Position;
 		}
+	}
+	else
+	{
+		if (currentAnimation != &attackAnimation)
+			AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
+
+		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+			AnimationPlayerPlay(&attackAnimation, true, &currentAnimation, false);
 	}
 
 	Vector2 diff = CameraGetMousePosition();
@@ -91,11 +121,12 @@ void PlayerLateUpdate(PlayerCharacter* p)
 
 	CameraSetTarget(targPos, false);
 	AudioUpdateListenerPosition(p->Position);
+	AnimationPlayerUpdate(currentAnimation);
 }
 
 void PlayerDraw(PlayerCharacter* p)
 {
-	TextureResource* t = GetTextureResource(hash);
+	TextureResource* t = currentAnimation->Clip->SpriteFrames[currentAnimation->CurrentFrame];
 
 	if (t != NULL)
 	{
@@ -129,9 +160,9 @@ void DrawPlayerFlashlight(Light* l)
 {
 	BeginBlendMode(BLEND_ADDITIVE);
 
-	Color color = ColorBrightness01(l->Color, l->Intensity * 0.5f);
+	Color color = ColorBrightness01(l->Color, l->Intensity * 0.7f);
 	Color color2 = ColorBrightness01(l->Color, l->Intensity);
-	Color color3 = ColorBrightness01(l->Color, l->Intensity * 0.3f);
+	Color color3 = ColorBrightness01(l->Color, l->Intensity * 0.5f);
 
 	if (isFlashlightOn)
 	{

@@ -18,10 +18,14 @@ typedef struct TextureResource
 typedef struct AnimationClip
 {
 	char* Name[32];
-	int FrameCount;
 	unsigned long Hash;
-	unsigned long* Frames;
 	bool Loop;
+
+	int FrameCount;
+
+	//64 frames fixed max frame count on animation
+	unsigned long Frames[64];
+	TextureResource* SpriteFrames[64];
 } AnimationClip;
 
 NPatchInfo WallNPatch;
@@ -38,10 +42,10 @@ AnimationClip* AnimationClipList;
 
 void LoadResources();
 void UnloadResources();
-void LoadTexturePack(char* filename, int* arrayCount, TextureResource** array);
+void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray, TextureType type);
 void UnloadTexturePack(int* arrayCount, TextureResource** array);
 TextureResource* GetTextureResource(unsigned long hash);
 
-void LoadAnimationPack(char* filename, int* arrayCount, AnimationClip** clipArray);
-void UnloadAnimationPack(int* arrayCount, AnimationClip** clipA);
+void LoadAnimationPack(char* filename);
+void UnloadAnimationPack();
 AnimationClip* GetAnimationResource(unsigned long hash);
