@@ -111,6 +111,9 @@
     <ClCompile Include="i_trigger.c">
       <Filter>Source Files\gameplay\interaction</Filter>
     </ClCompile>
+    <ClCompile Include="animation_player.c">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="i_trigger.h">
       <Filter>Source Files\gameplay\interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="animation_player.h">
+      <Filter>Source Files\rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
