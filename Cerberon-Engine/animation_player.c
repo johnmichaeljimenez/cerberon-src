@@ -51,12 +51,19 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 		a->OnEnd();
 }
 
-void AnimationPlayerPlay(AnimationPlayer* a)
+void AnimationPlayerPlay(AnimationPlayer* a, bool resetFromStart, AnimationPlayer** ref, bool allowReplay)
 {
-	a->CurrentFrame = 0;
-	a->_timer = 0;
-	a->Paused = false;
+	if (!allowReplay && *ref == a)
+		return;
 
-	if (a->OnStart != NULL)
-		a->OnStart();
+	*ref = a;
+	if (resetFromStart)
+	{
+		a->CurrentFrame = 0;
+		a->_timer = 0;
+		if (a->OnStart != NULL)
+			a->OnStart();
+	}
+
+	a->Paused = false;
 }
