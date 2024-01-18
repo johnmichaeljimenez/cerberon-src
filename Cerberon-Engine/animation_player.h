@@ -3,10 +3,10 @@
 
 typedef struct AnimationPlayer
 {
-	int ClipCount;
-	AnimationClip* Clips;
+	AnimationClip* Clip;
 	float FrameRate;
 	int CurrentFrame;
+	bool Paused;
 	
 	float _timer;
 
