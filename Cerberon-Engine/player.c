@@ -12,19 +12,20 @@
 #include "audio_manager.h"
 #include "animation_player.h"
 
-static unsigned long hash;
 static LinecastHit lineHit;
 
 static bool isFlashlightOn;
 static Vector2 lastPos;
 static float footstepInterval;
 
+static AnimationPlayer* currentAnimation;
 static AnimationPlayer idleAnimation;
+static AnimationPlayer moveAnimation;
 
 void PlayerInit(PlayerCharacter* p)
 {
 	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 16);
-	hash = ToHash("survivor-idle_knife_0");
+	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 16);
 
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
@@ -39,7 +40,8 @@ void PlayerInit(PlayerCharacter* p)
 	footstepInterval = (p->CollisionRadius * 2.5f);
 	footstepInterval *= footstepInterval;
 
-	AnimationPlayerPlay(&idleAnimation);
+	currentAnimation = &idleAnimation;
+	AnimationPlayerPlay(&idleAnimation, true, &currentAnimation, true);
 }
 
 void PlayerUnload(PlayerCharacter* p)
@@ -64,11 +66,16 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
+		AnimationPlayerPlay(&moveAnimation, false, &currentAnimation, false);
 		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
 			lastPos = p->Position;
 		}
+	}
+	else
+	{
+		AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
 	}
 
 	Vector2 diff = CameraGetMousePosition();
@@ -97,12 +104,12 @@ void PlayerLateUpdate(PlayerCharacter* p)
 
 	CameraSetTarget(targPos, false);
 	AudioUpdateListenerPosition(p->Position);
-	AnimationPlayerUpdate(&idleAnimation);
+	AnimationPlayerUpdate(currentAnimation);
 }
 
 void PlayerDraw(PlayerCharacter* p)
 {
-	TextureResource* t = idleAnimation.Clip->SpriteFrames[idleAnimation.CurrentFrame];
+	TextureResource* t = currentAnimation->Clip->SpriteFrames[currentAnimation->CurrentFrame];
 
 	if (t != NULL)
 	{
