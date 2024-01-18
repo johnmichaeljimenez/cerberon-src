@@ -38,10 +38,13 @@ void LoadResources()
 
 	LightTexture = GetTextureResource(ToHash("misc-light"));
 	FlashlightTexture = GetTextureResource(ToHash("vfx-flashlight"));
+
+	LoadAnimationPack("res/animations.pak");
 }
 
 void UnloadResources()
 {
+	UnloadAnimationPack();
 	UnloadTexturePack(&TextureResourceCount, &TextureResourceList);
 }
 
@@ -120,61 +123,43 @@ TextureResource* GetTextureResource(unsigned long hash)
 }
 
 
-void LoadAnimationPack(char* filename, int* arrayCount, AnimationClip** clipArray)
+void LoadAnimationPack(char* filename)
 {
-	/*
-	* FORMAT:
-	* clip count
-	*
-	* - clip 1
-	* -- name [32]
-	* -- clip frame length
-	* -- clip frames
-	*
-	* - clip 2
-	* -- ...
-	*/
+	//testing
+	AnimationClipCount = 1;
+	AnimationClipList = MCalloc(AnimationClipCount, sizeof(AnimationClip), "Animation Clip List");
 
-
-	FILE* file = fopen(filename, "rb");
-
-	int c = 0;
-	int start;
-	fread(&c, sizeof(int), 1, file);
-
-	start = *arrayCount;
-	*arrayCount += c;
-	*clipArray = realloc(*clipArray, sizeof(AnimationClip) * *arrayCount);
-
-	for (int i = start; i < start + c; i++)
+	AnimationClipList[0] = (AnimationClip)
 	{
-		//char* clipName[32];
-		//fread(texName, sizeof(char), 32, file);
-		//int texSize;
-		//fread(&texSize, sizeof(int), 1, file);
-		//char* texData = calloc(texSize, sizeof(char));
-		//fread(texData, sizeof(char), texSize, file);
-
-		//strcpy((*texArray)[i].Name, texName);
-		//(*texArray)[i].Texture = LoadTextureFromImage(img);
-		//(*texArray)[i].TextureType = type;
-		//(*texArray)[i].Hash = ToHash(texName);
-
-		//free(texData);
-		//UnloadImage(img);
-
-		//TraceLog(LOG_INFO, "Set animation clip index %d/%d %s", i, *arrayCount, texName);
+		.FrameCount = 20,
+		.Name = "player_idle",
+		.Hash = ToHash("player_idle"),
+		.Loop = true
 	};
 
-	fclose(file);
+	for (int i = 0; i < 20; i++)
+	{
+		unsigned long hash = ToHash(TextFormat("survivor-idle_knife_%d", i));
+		AnimationClipList[0].Frames[i] = hash;
+		AnimationClipList[0].SpriteFrames[i] = GetTextureResource(hash);
+	}
 }
 
-void UnloadAnimationPack(int* arrayCount, AnimationClip** array)
+void UnloadAnimationPack()
 {
-
+	if (AnimationClipCount > 0)
+	{
+		MFree(AnimationClipList, AnimationClipCount, sizeof(AnimationClip), "Animation Clip List");
+	}
 }
 
-AnimationClip* GetAnimationResource(char* name)
+AnimationClip* GetAnimationResource(unsigned long hash)
 {
+	for (int i = 0; i < AnimationClipCount; i++)
+	{
+		if (AnimationClipList[i].Hash == hash)
+			return &AnimationClipList[i];
+	}
 
+	return NULL;
 }
