@@ -1,7 +1,7 @@
 #include "animation_player.h"
 #include "time.h"
 
-AnimationPlayer CreateAnimationPlayer(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
+AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
 {
 	AnimationPlayer a = { 0 };
 
