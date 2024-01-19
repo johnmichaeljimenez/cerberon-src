@@ -18,3 +18,4 @@ typedef struct Tile
 
 void TilesInit();
 void TilesDraw();
+void TilesDrawSingle(Tile* t);

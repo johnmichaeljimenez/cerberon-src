@@ -6,6 +6,7 @@
 #include "utils.h"
 #include <stdlib.h>
 #include "camera.h"
+#include "renderer.h"
 
 int _sort(const void* a, const void* b)
 {
@@ -64,9 +65,28 @@ void TilesInit()
 
 		t->_Bounds.width = fabsf(_max.x - _min.x);
 		t->_Bounds.height = fabsf(_max.y - _min.y);
+
+		CreateRenderObject(RENDERLAYER_Ground, t->SortIndex, t->_Bounds, (void*)t, TilesDrawSingle);
 	}
 
-	qsort(CurrentMapData->Tiles, CurrentMapData->TileCount, sizeof(Tile), _sort);
+	//qsort(CurrentMapData->Tiles, CurrentMapData->TileCount, sizeof(Tile), _sort);
+}
+
+void TilesDrawSingle(Tile* t)
+{
+	rlSetTexture(t->_textureResource->Texture.id);
+	rlBegin(RL_QUADS);
+
+	rlColor4ub(t->Tint.r, t->Tint.g, t->Tint.b, t->Tint.a);
+
+	for (int j = 0; j < 4; j++)
+	{
+		rlTexCoord2f(t->_uvPoints[j].x, t->_uvPoints[j].y);
+		rlVertex2f(t->_meshPoints[j].x, t->_meshPoints[j].y);
+	}
+
+	rlEnd();
+	rlSetTexture(0);
 }
 
 void TilesDraw()
