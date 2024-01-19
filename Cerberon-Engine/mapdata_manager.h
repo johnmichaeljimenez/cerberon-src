@@ -64,10 +64,6 @@ void UpdateMap(MapData* map);
 void DrawMap(MapData* map);
 void DrawMapHUD(MapData* map);
 
-BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size);
-
 Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags);
 void UpdateWall(Wall* w);
 void DrawWalls();
-
-Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags, int count, float delay, bool oneShot);
