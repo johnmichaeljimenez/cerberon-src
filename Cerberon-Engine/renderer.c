@@ -12,3 +12,17 @@ void RendererUnload()
 	UnloadRenderTexture(RendererEffectsTexture);
 	UnloadRenderTexture(RendererScreenTexture);
 }
+
+void RendererDraw()
+{
+	//tiles
+	//decals
+	//low props
+	//entities
+	//high props
+	//lights
+	//overlay
+
+	//debug
+	//hud
+}

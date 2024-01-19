@@ -6,3 +6,4 @@ RenderTexture2D RendererEffectsTexture;
 
 void RendererInit();
 void RendererUnload();
+void RendererDraw();
