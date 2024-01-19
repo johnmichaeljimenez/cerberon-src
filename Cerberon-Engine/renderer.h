@@ -12,6 +12,7 @@ typedef enum RenderLayer
 
 typedef struct RenderObject
 {
+	bool IsActive;
 	RenderLayer Layer;
 	int SortingIndex;
 	Rectangle Bounds;
