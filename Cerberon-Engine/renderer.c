@@ -27,7 +27,7 @@ int _renderSort(void* a, void* b)
 void RendererInit()
 {
 	RenderObjectCount = 0;
-	_currentRenderObjectSize = 32;
+	_currentRenderObjectSize = 2;
 	RenderObjectList = MCalloc(_currentRenderObjectSize, sizeof(RenderObject), "Render Object List");
 	for (int i = 0; i < _currentRenderObjectSize; i++)
 	{
@@ -60,43 +60,71 @@ void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bou
 	r.OnDraw = onDraw;
 	r.IsActive = true;
 
-	//TraceLog(LOG_INFO, "RENDEROBJECT: %d %d %f,%f,%f,%f", r.Layer, r.SortingIndex, r.Bounds.x, r.Bounds.y, r.Bounds.width, r.Bounds.height);
+	TraceLog(LOG_INFO, "RENDEROBJECT #%d: %d %d %f,%f,%f,%f", RenderObjectCount, r.Layer, r.SortingIndex, r.Bounds.x, r.Bounds.y, r.Bounds.width, r.Bounds.height);
 
 	RenderObjectList[RenderObjectCount] = r;
 	RenderObjectCount++;
 	if (RenderObjectCount >= _currentRenderObjectSize)
 	{
+		//TODO: FIX THIS
 		int cSize = _currentRenderObjectSize;
 
-		_currentRenderObjectSize += 1;
-		RenderObjectList = MRealloc(RenderObjectList, _currentRenderObjectSize, sizeof(RenderObject), cSize, "Render Object List");
-		RenderObjectList[cSize] = (RenderObject){
-			.Data = NULL,
-			.IsActive = false
-		};
+		_currentRenderObjectSize *= 4;
+		TraceLog(LOG_INFO, "REALLOC RO %d * %d = %d", _currentRenderObjectSize, sizeof(RenderObject), _currentRenderObjectSize * sizeof(RenderObject));
+		RenderObject* newList = realloc(RenderObjectList, _currentRenderObjectSize * sizeof(RenderObject));
+		if (newList == NULL)
+			TraceLog(LOG_ERROR, "RENDER OBJECT LIST REALLOC ERROR");
+		else
+			RenderObjectList = newList;
+
+		for (int i = cSize; i < _currentRenderObjectSize; i++)
+		{
+			//TraceLog(LOG_INFO, "REALLOC RO INIT %d", i);
+			RenderObjectList[i] = (RenderObject){
+				.Data = NULL,
+				.IsActive = false,
+				.OnDraw = NULL,
+				.Layer = 0,
+				.SortingIndex = 0
+			};
+		}
 	}
 
+}
+
+void RendererPostInitialize()
+{
 	qsort(RenderObjectList, _currentRenderObjectSize, sizeof(RenderObject), _renderSort);
 }
 
 void RendererDraw()
 {
-	/*if (IsKeyPressed(KEY_G))
+	if (IsKeyPressed(KEY_G))
 	{
+		int v = 0;
 		for (int i = 0; i < _currentRenderObjectSize; i++)
 		{
 			RenderObject* r = &RenderObjectList[i];
 
+			if (r->Data != NULL)
+				v++;
+
 			if (!r->IsActive || r->Data == NULL)
 				continue;
 
-			if (r->Layer != RENDERLAYER_Ground)
-				continue;
-
-			Tile* t = (Tile*)r->Data;
-			TraceLog(LOG_INFO, "RENDER OBJECT: %d %d %s", r->Layer, r->SortingIndex, t->TextureID);
+			if (r->Layer == RENDERLAYER_Ground)
+			{
+				Tile* t = (Tile*)r->Data;
+				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d %s", i,  r->Layer, r->SortingIndex, t->TextureID);
+			}
+			else
+			{
+				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d", i, r->Layer, r->SortingIndex);
+			}
 		}
-	}*/
+
+		TraceLog(LOG_INFO, "VV: %d", v);
+	}
 
 	for (int i = 0; i < _currentRenderObjectSize; i++)
 	{

@@ -30,3 +30,4 @@ void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bou
 void RendererInit();
 void RendererUnload();
 void RendererDraw();
+void RendererPostInitialize();

@@ -29,6 +29,7 @@ void IngameOnLoad()
 	InteractionInit();
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
+	RendererPostInitialize();
 }
 
 void IngameOnUnload()
