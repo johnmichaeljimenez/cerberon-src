@@ -11,6 +11,7 @@
 #include <string.h>
 #include "camera.h"
 #include "i_trigger.h"
+#include "renderer.h"
 
 void InitMap()
 {
@@ -99,6 +100,8 @@ void LoadMap(char* filename, MapData* map)
 			fread(&bc.Size.y, sizeof(float), 1, file);
 
 			map->BlockColliders[i] = bc;
+			BlockCollider* _bc = &map->BlockColliders[i];
+			CreateRenderObject(RENDERLAYER_Wall, i, (Rectangle) { bc.Position.x, bc.Position.y, bc.Size.x, bc.Size.y }, (void*)_bc, DrawWallBlock);
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
@@ -338,6 +341,20 @@ void DrawMap(MapData* map)
 	}
 }
 
+void DrawWallBlock(BlockCollider* b)
+{
+	Vector2 size = b->Size;
+	size.x += 36;
+	size.y += 36;
+
+	Vector2 halfSize = Vector2Scale(size, 0.5);
+	Rectangle rect = { b->Position.x - halfSize.x, b->Position.y - halfSize.y, size.x, size.y };
+
+	Vector2 origin = { 0, 0 };
+
+	DrawTextureNPatch(WallTexture->Texture, WallNPatch, rect, origin, 0, WHITE);
+}
+
 void DrawWalls()
 {
 	//TODO: Merge this on drawing future overlay function (walls, roof sprites, etc)
@@ -376,9 +393,9 @@ void UpdateWall(Wall* w)
 
 	w->_Bounds = (Rectangle)
 	{
-		.x = fminf(w->From.x, w->To.x)-4,
-		.y = fminf(w->From.y, w->To.y)-4,
-		.width = fabsf(w->From.x - w->To.x)+4,
-		.height = fabsf(w->From.y - w->To.y)+4,
+		.x = fminf(w->From.x, w->To.x) - 4,
+		.y = fminf(w->From.y, w->To.y) - 4,
+		.width = fabsf(w->From.x - w->To.x) + 4,
+		.height = fabsf(w->From.y - w->To.y) + 4,
 	};
 }

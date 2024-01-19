@@ -67,3 +67,4 @@ void DrawMapHUD(MapData* map);
 Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags);
 void UpdateWall(Wall* w);
 void DrawWalls();
+void DrawWallBlock(BlockCollider* b);
