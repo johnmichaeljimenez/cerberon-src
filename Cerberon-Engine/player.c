@@ -11,6 +11,7 @@
 #include "inventory.h"
 #include "audio_manager.h"
 #include "animation_player.h"
+#include "renderer.h"
 
 static LinecastHit lineHit;
 
@@ -55,6 +56,8 @@ void PlayerInit(PlayerCharacter* p)
 
 	currentAnimation = &idleAnimation;
 	AnimationPlayerPlay(&idleAnimation, true, &currentAnimation, true);
+
+	CreateRenderObject(RENDERLAYER_Entity, 999, (Rectangle) { 0, 0, 0, 0 }, (void*)p, PlayerDraw);
 }
 
 void PlayerUnload(PlayerCharacter* p)
@@ -71,7 +74,7 @@ void PlayerUpdate(PlayerCharacter* p)
 {
 	Vector2 movementInput = InputGetMovement();
 	Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
-	vel = Vector2Scale(vel, TICKRATE);
+	vel = Vector2Scale(vel, GetFrameTime());
 	p->Position = Vector2Add(p->Position, vel);
 
 	//collision here
