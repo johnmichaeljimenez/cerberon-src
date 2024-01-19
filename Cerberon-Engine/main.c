@@ -4,12 +4,8 @@
 #include "time.h"
 #include "audio_manager.h"
 
-static int n = 0;
 int main()
 {
-	float previous = GetTime();
-	float lag = 0.0;
-
 	ClearLog();
 
 	SetConfigFlags(FLAG_VSYNC_HINT);
@@ -19,20 +15,10 @@ int main()
 	TraceLog(LOG_INFO, "Current directory: %s", GetWorkingDirectory());
 
 	GameInit();
-	while (!WindowShouldClose())//&& n < 9999)
+	while (!WindowShouldClose())
 	{
 		TICKRATE = GetFrameTime();
-		//InputUpdate();
-		//float current = GetTime();
-		//float elapsed = current - previous;
-		//previous = current;
-		//lag += elapsed;
-
-		//while (lag >= TICKRATE)
-		//{
 		GameUpdate();
-		//lag -= TICKRATE;
-		//}
 
 		AudioUpdate();
 		BeginDrawing();

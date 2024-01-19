@@ -42,8 +42,8 @@ AnimationClip* AnimationClipList;
 
 void LoadResources();
 void UnloadResources();
-void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray, TextureType type);
-void UnloadTexturePack(int* arrayCount, TextureResource** array);
+void LoadTexturePack(char* filename, TextureType type);
+void UnloadTexturePack();
 TextureResource* GetTextureResource(unsigned long hash);
 
 void LoadAnimationPack(char* filename);

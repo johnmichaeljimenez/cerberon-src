@@ -30,7 +30,7 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 	float rate = 1.0f / a->FrameRate;
 
 	a->_timer += GetFrameTime();
-	while (a->_timer > rate) //make sure to process all upcoming frames regardless of lag
+	while (a->_timer >= rate) //make sure to process all upcoming frames regardless of lag
 	{
 		a->_timer -= rate;
 		a->CurrentFrame++;

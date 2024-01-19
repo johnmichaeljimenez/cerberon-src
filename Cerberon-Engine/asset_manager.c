@@ -30,8 +30,8 @@ void LoadResources()
 	};
 	UnloadImage(img);
 
-	LoadTexturePack("res/tiles.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Tile);
-	LoadTexturePack("res/sprites.pak", &TextureResourceCount, &TextureResourceList, TEXTURETYPE_Sprite);
+	LoadTexturePack("res/tiles.pak", TEXTURETYPE_Tile);
+	LoadTexturePack("res/sprites.pak", TEXTURETYPE_Sprite);
 
 	WallTexture = GetTextureResource(ToHash("misc-wall"));
 	WallNPatch = (NPatchInfo){ (Rectangle) { 0.0f, 0.0f, WallTexture->Texture.width, WallTexture->Texture.height }, 36, 36, 36, 36, NPATCH_NINE_PATCH };
@@ -48,7 +48,7 @@ void UnloadResources()
 	UnloadTexturePack(&TextureResourceCount, &TextureResourceList);
 }
 
-void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray, TextureType type)
+void LoadTexturePack(char* filename, TextureType type)
 {
 	/*
 	* FORMAT:
@@ -69,10 +69,10 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 	size_t start;
 	fread(&c, sizeof(int), 1, file);
 
-	start = *arrayCount;
+	start = TextureResourceCount;
 
-	*arrayCount += c;
-	*texArray = MRealloc(*texArray, *arrayCount, sizeof(TextureResource), start, "Texture List");
+	TextureResourceCount += c;
+	TextureResourceList = MRealloc(TextureResourceList, TextureResourceCount, sizeof(TextureResource), start, "Texture List");
 
 	for (int i = start; i < start + c; i++)
 	{
@@ -84,28 +84,28 @@ void LoadTexturePack(char* filename, int* arrayCount, TextureResource** texArray
 		fread(texData, sizeof(char), texSize, file);
 		Image img = LoadImageFromMemory(".png", texData, texSize);
 
-		strcpy((*texArray)[i].Name, texName);
-		(*texArray)[i].Texture = LoadTextureFromImage(img);
-		(*texArray)[i].TextureType = type;
-		(*texArray)[i].Hash = ToHash(texName);
+		strcpy_s(TextureResourceList[i].Name, 32, texName);
+		TextureResourceList[i].Texture = LoadTextureFromImage(img);
+		TextureResourceList[i].TextureType = type;
+		TextureResourceList[i].Hash = ToHash(texName);
 
 		MFree(texData, texSize, sizeof(char), "Temp image data");
 		UnloadImage(img);
 
-		TraceLog(LOG_INFO, "Set texture index %d/%d %s", i, *arrayCount, texName);
+		TraceLog(LOG_INFO, "Set texture index %d/%d %s", i, TextureResourceCount, texName);
 	};
 
 	fclose(file);
 }
 
-void UnloadTexturePack(int* arrayCount, TextureResource** texArray)
+void UnloadTexturePack()
 {
-	for (int i = 0; i < *arrayCount; i++)
+	for (int i = 0; i < TextureResourceCount; i++)
 	{
-		UnloadTexture((*texArray)[i].Texture);
+		UnloadTexture(TextureResourceList[i].Texture);
 	}
 
-	MFree(*texArray, *arrayCount, sizeof(TextureResource), "Texture List");
+	MFree(TextureResourceList, TextureResourceCount, sizeof(TextureResource), "Texture List");
 }
 
 TextureResource* GetTextureResource(unsigned long hash)
@@ -139,7 +139,7 @@ void LoadAnimationPack(char* filename)
 
 	for (int i = 0; i < 20; i++)
 	{
-		unsigned long hash = ToHash(TextFormat("survivor-idle_knife_%d", i));
+		unsigned long hash = ToHash(TextFormat("survivor-idle_handgun_%d", i));
 		AnimationClipList[0].Frames[i] = hash;
 		AnimationClipList[0].SpriteFrames[i] = GetTextureResource(hash);
 	}
@@ -154,7 +154,7 @@ void LoadAnimationPack(char* filename)
 
 	for (int i = 0; i < 20; i++)
 	{
-		unsigned long hash = ToHash(TextFormat("survivor-move_knife_%d", i));
+		unsigned long hash = ToHash(TextFormat("survivor-move_handgun_%d", i));
 		AnimationClipList[1].Frames[i] = hash;
 		AnimationClipList[1].SpriteFrames[i] = GetTextureResource(hash);
 	}
@@ -170,7 +170,7 @@ void LoadAnimationPack(char* filename)
 
 	for (int i = 0; i < 15; i++)
 	{
-		unsigned long hash = ToHash(TextFormat("survivor-meleeattack_knife_%d", i));
+		unsigned long hash = ToHash(TextFormat("survivor-meleeattack_handgun_%d", i));
 		AnimationClipList[2].Frames[i] = hash;
 		AnimationClipList[2].SpriteFrames[i] = GetTextureResource(hash);
 	}

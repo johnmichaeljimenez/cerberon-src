@@ -36,9 +36,9 @@ static void OnAttackEnd()
 
 void PlayerInit(PlayerCharacter* p)
 {
-	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 16);
-	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 16);
-	attackAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 16);
+	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 24);
+	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 24);
+	attackAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 24);
 
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;

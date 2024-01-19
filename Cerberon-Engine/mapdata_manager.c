@@ -91,15 +91,14 @@ void LoadMap(char* filename, MapData* map)
 
 		for (int i = 0; i < map->BlockColliderCount; i++)
 		{
-			fread(&x1, sizeof(float), 1, file);
-			fread(&y1, sizeof(float), 1, file);
-			fread(&x2, sizeof(float), 1, file);
-			fread(&y2, sizeof(float), 1, file);
+			BlockCollider bc = { 0 };
 
-			//x1 -= x2 / 2;
-			//y1 -= y2 / 2;
+			fread(&bc.Position.x, sizeof(float), 1, file);
+			fread(&bc.Position.y, sizeof(float), 1, file);
+			fread(&bc.Size.x, sizeof(float), 1, file);
+			fread(&bc.Size.y, sizeof(float), 1, file);
 
-			map->BlockColliders[i] = CreateBlockCollider((Vector2) { x1, y1 }, (Vector2) { x2, y2 });
+			map->BlockColliders[i] = bc;
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
@@ -133,40 +132,36 @@ void LoadMap(char* filename, MapData* map)
 
 	if (map->InteractableCount > 0)
 	{
-		int intType;
-		int intSubType;
-		int flags;
-		int count;
-		char* target[32];
-		char* targetName[32];
-		float delay;
-		bool oneshot;
-
 		map->Interactables = MCalloc(map->InteractableCount, sizeof(Interactable), "Interactable List");
 		for (int i = 0; i < map->InteractableCount; i += 1)
 		{
-			fread(&intType, sizeof(int), 1, file);
-			fread(&intSubType, sizeof(int), 1, file);
-			fread(&count, sizeof(int), 1, file);
-			fread(&flags, sizeof(int), 1, file);
-			fread(&x1, sizeof(float), 1, file);
-			fread(&y1, sizeof(float), 1, file);
-			fread(&r, sizeof(float), 1, file);
-			fread(&targetName, sizeof(char), 32, file);
-			fread(&target, sizeof(char), 32, file);
-			fread(&delay, sizeof(float), 1, file);
-			fread(&oneshot, sizeof(bool), 1, file);
+			Interactable in = { 0 };
 
-			if (intType == INTERACTABLE_Door)
+			fread(&in.InteractableType, sizeof(int), 1, file);
+			fread(&in.InteractableSubType, sizeof(int), 1, file);
+			fread(&in.Count, sizeof(int), 1, file);
+			fread(&in.Flags, sizeof(int), 1, file);
+			fread(&in.Position.x, sizeof(float), 1, file);
+			fread(&in.Position.y, sizeof(float), 1, file);
+			fread(&in.Rotation, sizeof(float), 1, file);
+			fread(&in.TargetName, sizeof(char), 32, file);
+			fread(&in.Target, sizeof(char), 32, file);
+			fread(&in.Delay, sizeof(float), 1, file);
+			fread(&in.OneShot, sizeof(bool), 1, file);
+
+			if (in.InteractableType == INTERACTABLE_Door)
 			{
 				DoorCount++;
 			}
-			else if (intType == INTERACTABLE_Item)
+			else if (in.InteractableType == INTERACTABLE_Item)
 			{
 				ItemCount++;
 			}
 
-			map->Interactables[i] = CreateInteractable((Vector2) { x1, y1 }, r, target, targetName, intType, intSubType, flags, count, delay, oneshot);
+			in.IsActive = true;
+			SetInteractableFunctions(&in);
+			in.OnInit(&in);
+			map->Interactables[i] = in;
 		}
 	}
 
@@ -176,28 +171,47 @@ void LoadMap(char* filename, MapData* map)
 	map->LightCount = n;
 	map->Lights = MCalloc(map->LightCount, sizeof(Light), "Light List");
 
-	map->Lights[0] = CreateLight(Vector2Zero(), 0, 1024, 0.7, WHITE, true, DrawPlayerFlashlight);
+	map->Lights[0] = (Light){
+		.AlwaysOn = true,
+		.CastShadows = true,
+		.Color = WHITE,
+		.Intensity = 0.7,
+		.OnDrawLight = DrawPlayerFlashlight,
+		.Position = Vector2Zero(),
+		.Rotation = 0,
+		.Scale = 1024
+	};
+
+	CreateLight(&map->Lights[0]);
+
 	PlayerFlashlight = &map->Lights[0];
 	PlayerFlashlight->AlwaysOn = true;
 
 	bool cs;
 	for (int i = 1; i < map->LightCount; i += 1)
 	{
-		fread(&x1, sizeof(float), 1, file);
-		fread(&y1, sizeof(float), 1, file);
-		fread(&r, sizeof(float), 1, file);
-		fread(&s, sizeof(float), 1, file);
-		fread(&cs, sizeof(bool), 1, file);
+		Light l = { 0 };
+
+		float _r, _g, _b;
+
+		fread(&l.Position.x, sizeof(float), 1, file);
+		fread(&l.Position.y, sizeof(float), 1, file);
+		fread(&l.Rotation, sizeof(float), 1, file);
+		fread(&l.Scale, sizeof(float), 1, file);
+		fread(&l.CastShadows, sizeof(bool), 1, file);
 		fread(&_r, sizeof(float), 1, file);
 		fread(&_g, sizeof(float), 1, file);
 		fread(&_b, sizeof(float), 1, file);
-		fread(&in, sizeof(float), 1, file);
+		fread(&l.Intensity, sizeof(float), 1, file);
 
 		_r *= 255;
 		_g *= 255;
 		_b *= 255;
 
-		map->Lights[i] = CreateLight((Vector2) { x1, y1 }, r, s, in, (Color) { _r, _g, _b, 255 }, cs, DrawLightDefault);
+		l.Color = (Color){ _r, _g, _b, 255 };
+		l.OnDrawLight = DrawLightDefault;
+		CreateLight(&l);
+		map->Lights[i] = l;
 	}
 
 
@@ -275,16 +289,6 @@ void LoadMap(char* filename, MapData* map)
 	fclose(file);
 }
 
-BlockCollider CreateBlockCollider(Vector2 pos, Vector2 size)
-{
-	BlockCollider bc = { 0 };
-
-	bc.Position = pos;
-	bc.Size = size;
-
-	return bc;
-}
-
 Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
 {
 	Wall w = { 0 };
@@ -332,14 +336,6 @@ void DrawMap(MapData* map)
 
 		a->OnDraw(a);
 	}
-
-	/*for (int i = 0; i < map->WallCount; i++)
-	{
-		Wall w = map->Walls[i];
-
-		DrawLineV(w.From, w.To, WHITE);
-	}*/
-
 }
 
 void DrawWalls()
@@ -385,28 +381,4 @@ void UpdateWall(Wall* w)
 		.width = fabsf(w->From.x - w->To.x)+4,
 		.height = fabsf(w->From.y - w->To.y)+4,
 	};
-}
-
-Interactable CreateInteractable(Vector2 pos, float rot, char* target, char* targetname, InteractableType intType, InteractableSubType intSubType, int flags, int count, float delay, bool oneShot)
-{
-	Interactable i = { 0 };
-
-	i.InteractableType = intType;
-	i.InteractableSubType = intSubType;
-	i.Activated = false;
-	i.Flags = flags;
-	i.IsActive = true;
-	i.Position = pos;
-	i.Rotation = rot;
-	i.Count = count > 0? count : 1;
-	i.OneShot = oneShot;
-	i.Delay = delay;
-	strcpy_s(i.Target, 32, target);
-	strcpy_s(i.TargetName, 32, targetname);
-
-	SetInteractableFunctions(&i);
-
-	i.OnInit(&i);
-
-	return i;
 }
