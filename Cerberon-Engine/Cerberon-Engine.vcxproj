@@ -138,6 +138,7 @@
     <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
     <ClCompile Include="cursor.c" />
+    <ClCompile Include="fsm.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="gamestate_ingame.c" />
     <ClCompile Include="input_handler.c" />
@@ -164,6 +165,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="cursor.h" />
+    <ClInclude Include="fsm.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamestate_ingame.h" />
     <ClInclude Include="gamestate_mainmenu.h" />
