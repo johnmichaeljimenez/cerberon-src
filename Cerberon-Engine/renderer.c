@@ -149,8 +149,8 @@ static void _DrawWorld()
 		if (!r->IsActive || r->Data == NULL)
 			continue;
 
-		//if ((r->Bounds.width > 0 && r->Bounds.height > 0) && !CheckCollisionRecs(CameraViewBounds, r->Bounds))
-			//continue;
+		if ((r->Bounds.width > 0 && r->Bounds.height > 0) && !CheckCollisionRecs(CameraViewBounds, r->Bounds))
+			continue;
 
 		if (r->OnDraw != NULL)
 			r->OnDraw(r->Data);
