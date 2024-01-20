@@ -35,7 +35,8 @@ void UnloadMap()
 	{
 		for (int i = 0; i < CurrentMapData->LightCount; i++)
 		{
-			UnloadRenderTexture(CurrentMapData->Lights[i]._RenderTexture);
+			if (!CurrentMapData->Lights[i].CastShadows)
+				UnloadRenderTexture(CurrentMapData->Lights[i]._RenderTexture);
 		}
 
 		MFree(CurrentMapData->Lights, CurrentMapData->LightCount, sizeof(Light), "Light List");

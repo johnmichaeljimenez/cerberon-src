@@ -41,14 +41,18 @@ void UnloadLight()
 
 void CreateLight(Light* light)
 {
-	light->_RenderCamera = (Camera2D){
-		.zoom = 1 / lightScale,
-		.target = light->Position,
-		.offset = (Vector2){ light->Scale / 2 / lightScale, light->Scale / 2 / lightScale }
-	};
+	if (light->CastShadows)
+	{
+		light->_RenderCamera = (Camera2D){
+			.zoom = 1 / lightScale,
+			.target = light->Position,
+			.offset = (Vector2){ light->Scale / 2 / lightScale, light->Scale / 2 / lightScale }
+		};
+
+		light->_RenderTexture = LoadRenderTexture(light->Scale, light->Scale);
+	}
 
 	UpdateLightBounds(light);
-	light->_RenderTexture = LoadRenderTexture(light->Scale, light->Scale);
 }
 
 void UpdateLightBounds(Light* l)
@@ -70,6 +74,9 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 	{
 		Light* l = &CurrentMapData->Lights[i];
 		if (!l->AlwaysOn && !CheckCollisionRecs(l->_Bounds, CameraViewBounds))
+			continue;
+
+		if (!l->CastShadows)
 			continue;
 
 		l->_RenderCamera.target = l->Position;
@@ -99,6 +106,12 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 		Light* l = &CurrentMapData->Lights[i];
 		if (!l->AlwaysOn && !CheckCollisionRecs(l->_Bounds, CameraViewBounds))
 			continue;
+
+		if (!l->CastShadows)
+		{
+			l->OnDrawLight(l);
+			continue;
+		}
 
 		Vector2 pos = l->Position;
 		pos.x -= l->Scale / 2;
