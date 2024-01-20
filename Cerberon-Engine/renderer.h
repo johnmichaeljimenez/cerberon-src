@@ -22,5 +22,6 @@ typedef struct RenderObject
 void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*));
 void RendererInit();
 void RendererUnload();
+void RendererUpdate();
 void RendererDraw();
 void RendererPostInitialize();

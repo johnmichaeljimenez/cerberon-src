@@ -9,7 +9,6 @@
 #include "renderer.h"
 #include "camera.h"
 
-static bool isLightingEnabled;
 static float lightScale = 4;
 static float screenLightScale = 2;
 static Camera2D screenLightCamera;
@@ -30,8 +29,6 @@ void InitLight()
 		.zoom = 1 / screenLightScale,
 		.offset = (Vector2){ GetScreenWidth() / 2 / screenLightScale, GetScreenHeight() / 2 / screenLightScale }
 	};
-
-	isLightingEnabled = true;
 }
 
 void UnloadLight()
@@ -63,12 +60,6 @@ void UpdateLightBounds(Light* l)
 
 void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture)
 {
-	//if (IsKeyPressed(KEY_F3))
-		//isLightingEnabled = !isLightingEnabled;
-
-	//if (!isLightingEnabled)
-		//return;
-
 	//DRAW LIGHT RENDER TEXTURES
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{
@@ -145,20 +136,12 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 
 void DrawLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture)
 {
-	//if (!isLightingEnabled)
-		//return;
-
 	//DRAW ENTIRE LIGHT SCREEN QUAD
-	Texture2D* rt = &lightRenderTexture->texture;
-
-	Rectangle srcRec = { 0, 0, rt->width, -(float)rt->height };
-	Rectangle destRect = (Rectangle){ 0, 0, rt->width * screenLightScale , rt->height * screenLightScale };
-	Vector2 origin = { 0,0 };
 
 	BeginShaderMode(lightShader);
 	SetShaderValueTexture(lightShader, screenTexParam, screenRenderTexture->texture);
 	SetShaderValueTexture(lightShader, effectsTexParam, effectsRenderTexture->texture);
-	DrawTexturePro(lightRenderTexture->texture, srcRec, destRect, origin, 0, WHITE);
+	DrawRenderTextureToScreen(&lightRenderTexture->texture, screenLightScale);
 	EndShaderMode();
 }
 

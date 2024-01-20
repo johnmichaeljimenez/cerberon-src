@@ -5,8 +5,9 @@
 #include "memory.h"
 #include "tile.h"
 #include <stdlib.h>
+#include "utils.h"
 
-
+static bool lightingEnabled;
 static int RenderObjectCount;
 static RenderObject* RenderObjectList;
 
@@ -35,6 +36,7 @@ int _renderSort(void* a, void* b)
 
 void RendererInit()
 {
+	lightingEnabled = true;
 	RenderObjectCount = 0;
 	_currentRenderObjectSize = 2;
 	RenderObjectList = MCalloc(_currentRenderObjectSize, sizeof(RenderObject), "Render Object List");
@@ -59,6 +61,39 @@ void RendererUnload()
 	UnloadRenderTexture(LightRenderTexture);
 	UnloadRenderTexture(RendererEffectsTexture);
 	UnloadRenderTexture(RendererScreenTexture);
+}
+
+void RendererUpdate()
+{
+	if (IsKeyPressed(KEY_F2))
+		lightingEnabled = !lightingEnabled;
+
+	if (IsKeyPressed(KEY_F6))
+	{
+		int v = 0;
+		for (int i = 0; i < _currentRenderObjectSize; i++)
+		{
+			RenderObject* r = &RenderObjectList[i];
+
+			if (r->Data != NULL)
+				v++;
+
+			if (!r->IsActive || r->Data == NULL)
+				continue;
+
+			if (r->Layer == RENDERLAYER_Ground)
+			{
+				Tile* t = (Tile*)r->Data;
+				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d %s", i, r->Layer, r->SortingIndex, t->TextureID);
+			}
+			else
+			{
+				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d", i, r->Layer, r->SortingIndex);
+			}
+		}
+
+		TraceLog(LOG_INFO, "VV: %d", v);
+	}
 }
 
 void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*))
@@ -115,33 +150,6 @@ static void _DrawWorld()
 
 	BeginMode2D(GameCamera);
 
-	if (IsKeyPressed(KEY_F3))
-	{
-		int v = 0;
-		for (int i = 0; i < _currentRenderObjectSize; i++)
-		{
-			RenderObject* r = &RenderObjectList[i];
-
-			if (r->Data != NULL)
-				v++;
-
-			if (!r->IsActive || r->Data == NULL)
-				continue;
-
-			if (r->Layer == RENDERLAYER_Ground)
-			{
-				Tile* t = (Tile*)r->Data;
-				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d %s", i, r->Layer, r->SortingIndex, t->TextureID);
-			}
-			else
-			{
-				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d", i, r->Layer, r->SortingIndex);
-			}
-		}
-
-		TraceLog(LOG_INFO, "VV: %d", v);
-	}
-
 	for (int i = 0; i < _currentRenderObjectSize; i++)
 	{
 		RenderObject* r = &RenderObjectList[i];
@@ -162,9 +170,15 @@ static void _DrawWorld()
 
 void RendererDraw()
 {
-	UpdateLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
-
 	_DrawWorld();
 
-	DrawLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
+	if (lightingEnabled)
+	{
+		UpdateLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
+		DrawLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
+	}
+	else
+	{
+		DrawRenderTextureToScreen(&RendererScreenTexture.texture, 1);
+	}
 }

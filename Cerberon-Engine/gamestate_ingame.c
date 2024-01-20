@@ -49,6 +49,7 @@ void IngameOnUpdate()
 	PlayerUpdate(&PlayerEntity);
 	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
+	RendererUpdate();
 
 	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);
