@@ -72,3 +72,11 @@ bool CheckCollisionPointRecRotated(Vector2 point, Rectangle rec, float angle)
 
 	return CheckCollisionPointRec(point, rec);
 }
+
+void DrawRenderTextureToScreen(Texture* t, float scale)
+{
+	Rectangle srcRec = { 0, 0, t->width, -t->height };
+	Rectangle destRect = (Rectangle){ 0, 0, t->width * scale , t->height * scale };
+	Vector2 origin = { 0,0 };
+	DrawTexturePro(*t, srcRec, destRect, origin, 0, WHITE);
+}
