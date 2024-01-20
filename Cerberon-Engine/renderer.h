@@ -19,12 +19,6 @@ typedef struct RenderObject
 	void(*OnDraw)(void*);
 } RenderObject;
 
-int RenderObjectCount;
-RenderObject* RenderObjectList;
-
-RenderTexture2D RendererScreenTexture;
-RenderTexture2D RendererEffectsTexture;
-
 void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*));
 void RendererInit();
 void RendererUnload();

@@ -27,8 +27,9 @@ void InitLight();
 void UnloadLight();
 void CreateLight(Light* light);
 void UpdateLightBounds(Light* l);
-void UpdateLights();
-void DrawLights();
-void DrawShadows(Light* light);
+void DrawShadows(Light* light, bool useBounds);
 void DrawShadowsEx(Vector2 from, Vector2 to, Vector2 normal, Vector2 lightPos);
 void DrawLightDefault(Light* l);
+
+void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture);
+void DrawLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture);

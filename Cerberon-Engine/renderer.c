@@ -6,7 +6,16 @@
 #include "tile.h"
 #include <stdlib.h>
 
+
+static int RenderObjectCount;
+static RenderObject* RenderObjectList;
+
+static RenderTexture2D LightRenderTexture;
+static RenderTexture2D RendererScreenTexture;
+static RenderTexture2D RendererEffectsTexture;
 static int _currentRenderObjectSize;
+
+static float screenLightScale = 2;
 
 int _renderSort(void* a, void* b)
 {
@@ -40,12 +49,14 @@ void RendererInit()
 
 	RendererScreenTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 	RendererEffectsTexture = LoadRenderTexture(GetScreenWidth() / 2, GetScreenHeight() / 2);
+	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
 }
 
 void RendererUnload()
 {
 	MFree(RenderObjectList, _currentRenderObjectSize, sizeof(RenderObject), "Render Object List");
 
+	UnloadRenderTexture(LightRenderTexture);
 	UnloadRenderTexture(RendererEffectsTexture);
 	UnloadRenderTexture(RendererScreenTexture);
 }
@@ -97,8 +108,13 @@ void RendererPostInitialize()
 	qsort(RenderObjectList, _currentRenderObjectSize, sizeof(RenderObject), _renderSort);
 }
 
-void RendererDraw()
+static void _DrawWorld()
 {
+	BeginTextureMode(RendererScreenTexture);
+	ClearBackground(BLACK);
+
+	BeginMode2D(GameCamera);
+
 	if (IsKeyPressed(KEY_F3))
 	{
 		int v = 0;
@@ -115,7 +131,7 @@ void RendererDraw()
 			if (r->Layer == RENDERLAYER_Ground)
 			{
 				Tile* t = (Tile*)r->Data;
-				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d %s", i,  r->Layer, r->SortingIndex, t->TextureID);
+				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d %s", i, r->Layer, r->SortingIndex, t->TextureID);
 			}
 			else
 			{
@@ -140,14 +156,15 @@ void RendererDraw()
 			r->OnDraw(r->Data);
 	}
 
-	//tiles
-	//decals
-	//low props
-	//entities
-	//high props
-	//lights
-	//overlay
+	EndMode2D();
+	EndTextureMode();
+}
 
-	//debug
-	//hud
+void RendererDraw()
+{
+	UpdateLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
+
+	_DrawWorld();
+
+	DrawLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
 }

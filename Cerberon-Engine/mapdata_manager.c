@@ -325,8 +325,6 @@ void UpdateMap(MapData* map)
 
 		a->OnLateUpdate(a);
 	}
-
-	UpdateLights();
 }
 
 void DrawMap(MapData* map)
@@ -379,7 +377,7 @@ void DrawWalls()
 
 void DrawMapHUD(MapData* map)
 {
-	DrawLights();
+
 }
 
 void UpdateWall(Wall* w)

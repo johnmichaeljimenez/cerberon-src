@@ -56,20 +56,5 @@ void IngameOnUpdate()
 
 void IngameOnDraw()
 {
-	//BeginTextureMode(RendererScreenTexture);
-	ClearBackground(BLACK);
-
-	BeginMode2D(GameCamera);
-
 	RendererDraw();
-
-	//TilesDraw();
-	//PlayerDraw(&PlayerEntity);
-	//DrawMap(CurrentMapData);
-
-	EndMode2D();
-	//EndTextureMode();
-
-	PlayerDrawHUD(&PlayerEntity);
-	//DrawMapHUD(CurrentMapData);
 }
