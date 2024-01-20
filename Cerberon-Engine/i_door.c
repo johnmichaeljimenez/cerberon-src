@@ -5,6 +5,7 @@
 #include "interaction.h"
 #include "mapdata_manager.h"
 #include "time.h"
+#include "renderer.h"
 
 void LoadDoors()
 {
@@ -35,6 +36,7 @@ void LoadDoors()
 		DoorList[n]._timer = 0;
 
 		in->DataIndex = n;
+		CreateRenderObject(RENDERLAYER_Wall, 0, (Rectangle) { 0, 0, 0, 0 }, (void*)in, DoorDraw);
 		n++;
 	}
 }

@@ -6,7 +6,6 @@ typedef enum RenderLayer
 	RENDERLAYER_Ground,
 	RENDERLAYER_Entity,
 	RENDERLAYER_Wall,
-	RENDERLAYER_Light,
 	RENDERLAYER_Overlay,
 } RenderLayer;
 
