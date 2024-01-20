@@ -29,7 +29,7 @@ void CameraInit()
 
 void CameraUpdate()
 {
-	GameCamera.target = Vector2Lerp(GameCamera.target, CameraTargetPosition, TICKRATE * 2);
+	GameCamera.target = Vector2Lerp(GameCamera.target, CameraTargetPosition, GetFrameTime() * 2);
 	UpdateCameraViewBounds();
 }
 

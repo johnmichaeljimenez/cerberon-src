@@ -29,6 +29,7 @@ void IngameOnLoad()
 	InteractionInit();
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
+	RendererPostInitialize();
 }
 
 void IngameOnUnload()
@@ -55,18 +56,20 @@ void IngameOnUpdate()
 
 void IngameOnDraw()
 {
-	BeginTextureMode(RendererScreenTexture);
-	ClearBackground(DARKGRAY);
+	//BeginTextureMode(RendererScreenTexture);
+	ClearBackground(BLACK);
 
 	BeginMode2D(GameCamera);
 
-	TilesDraw();
-	PlayerDraw(&PlayerEntity);
-	DrawMap(CurrentMapData);
+	RendererDraw();
+
+	//TilesDraw();
+	//PlayerDraw(&PlayerEntity);
+	//DrawMap(CurrentMapData);
 
 	EndMode2D();
-	EndTextureMode();
+	//EndTextureMode();
 
 	PlayerDrawHUD(&PlayerEntity);
-	DrawMapHUD(CurrentMapData);
+	//DrawMapHUD(CurrentMapData);
 }

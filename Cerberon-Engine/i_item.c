@@ -5,6 +5,7 @@
 #include "mapdata_manager.h"
 #include "memory.h"
 #include "inventory.h"
+#include "renderer.h"
 
 void LoadItems()
 {
@@ -37,6 +38,8 @@ void LoadItems()
 		}
 
 		in->DataIndex = n;
+
+		CreateRenderObject(RENDERLAYER_Entity, 0, (Rectangle) { 0, 0, 0, 0 }, (void*)in, ItemDraw);
 		n++;
 	}
 }

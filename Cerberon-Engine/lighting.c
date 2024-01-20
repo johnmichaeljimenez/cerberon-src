@@ -42,28 +42,16 @@ void UnloadLight()
 	UnloadRenderTexture(LightRenderTexture);
 }
 
-Light CreateLight(Vector2 pos, float rot, float sc, float intensity, Color color, bool cs, void* drawCommand)
+void CreateLight(Light* light)
 {
-	Light light = (Light){
-		.Position = pos,
-		.Rotation = rot,
-		.Scale = sc,
-		.Intensity = intensity,
-		.Color = color,
-		.CastShadows = cs
-	};
-
-	light._RenderCamera = (Camera2D){
+	light->_RenderCamera = (Camera2D){
 		.zoom = 1 / lightScale,
-		.target = pos,
-		.offset = (Vector2){ sc / 2 / lightScale, sc / 2 / lightScale }
+		.target = light->Position,
+		.offset = (Vector2){ light->Scale / 2 / lightScale, light->Scale / 2 / lightScale }
 	};
 
-	UpdateLightBounds(&light);
-	light._RenderTexture = LoadRenderTexture(sc, sc);
-	light.OnDrawLight = drawCommand;
-
-	return light;
+	UpdateLightBounds(light);
+	light->_RenderTexture = LoadRenderTexture(light->Scale, light->Scale);
 }
 
 void UpdateLightBounds(Light* l)
