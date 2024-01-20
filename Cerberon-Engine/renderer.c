@@ -99,7 +99,7 @@ void RendererPostInitialize()
 
 void RendererDraw()
 {
-	if (IsKeyPressed(KEY_G))
+	if (IsKeyPressed(KEY_F3))
 	{
 		int v = 0;
 		for (int i = 0; i < _currentRenderObjectSize; i++)

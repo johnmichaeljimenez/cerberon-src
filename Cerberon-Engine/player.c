@@ -49,6 +49,9 @@ void PlayerInit(PlayerCharacter* p)
 	p->MovementSpeed = 200;
 	p->CameraOffset = 300;
 
+	p->IsDead = false;
+	p->Hitpoints = 100;
+
 	InventoryInit(&InventoryPlayer);
 	lastPos = p->Position;
 	footstepInterval = (p->CollisionRadius * 2.5f);
@@ -72,6 +75,11 @@ Vector2 PlayerGetForward(PlayerCharacter* p, float length)
 
 void PlayerUpdate(PlayerCharacter* p)
 {
+	if (p->IsDead)
+	{
+		return;
+	}
+
 	Vector2 movementInput = InputGetMovement();
 	Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
 	vel = Vector2Scale(vel, GetFrameTime());
@@ -115,6 +123,16 @@ void PlayerUpdate(PlayerCharacter* p)
 			isFlashlightOn = !isFlashlightOn;
 		}
 	}
+
+	if (IsKeyPressed(KEY_G))
+	{
+		PlayerApplyDamage(p, 32);
+	}
+
+	if (IsKeyPressed(KEY_H))
+	{
+		PlayerHeal(p, 26);
+	}
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)
@@ -135,6 +153,9 @@ void PlayerDraw(PlayerCharacter* p)
 	{
 		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 	}
+
+	if (p->IsDead)
+		return;
 
 	if (lineHit.Hit)
 	{
@@ -205,4 +226,34 @@ void DrawPlayerVision()
 
 	DrawTriangle(pos, v2, v3, red);
 	EndBlendMode();
+}
+
+
+void PlayerApplyDamage(PlayerCharacter* p, int amount)
+{
+	if (p->IsDead)
+		return;
+
+	p->Hitpoints -= amount;
+	TraceLog(LOG_INFO, "PLAYER HIT! -%d, %d/%d", amount, p->Hitpoints, 100);
+	if (p->Hitpoints <= 0)
+	{
+		p->Hitpoints = 0;
+		p->IsDead = true;
+	}
+}
+
+
+void PlayerHeal(PlayerCharacter* p, int amount)
+{
+	if (p->IsDead)
+		return;
+
+	p->Hitpoints += amount;
+	if (p->Hitpoints > 100)
+	{
+		p->Hitpoints = 100;
+	}
+
+	TraceLog(LOG_INFO, "PLAYER HEAL! +%d, %d/%d", amount, p->Hitpoints, 100);
 }

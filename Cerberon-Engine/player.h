@@ -14,6 +14,9 @@ typedef struct PlayerCharacter
 	float InteractionRadius;
 	float CameraOffset;
 
+	int Hitpoints;
+	bool IsDead;
+
 } PlayerCharacter;
 
 PlayerCharacter PlayerEntity;
@@ -25,6 +28,9 @@ void PlayerUpdate(PlayerCharacter* p);
 void PlayerLateUpdate(PlayerCharacter* p);
 void PlayerDraw(PlayerCharacter* p);
 void PlayerDrawHUD(PlayerCharacter* p);
+
+void PlayerApplyDamage(PlayerCharacter* p, int amount);
+void PlayerHeal(PlayerCharacter* p, int amount);
 
 void PlayerRotate(PlayerCharacter* p, float dir);
 Vector2 PlayerGetForward(PlayerCharacter* p, float length);
