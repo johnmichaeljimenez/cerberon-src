@@ -12,6 +12,7 @@
 #include "audio_manager.h"
 #include "animation_player.h"
 #include "renderer.h"
+#include "fsm.h"
 
 static LinecastHit lineHit;
 
@@ -23,6 +24,10 @@ static AnimationPlayer* currentAnimation;
 static AnimationPlayer idleAnimation;
 static AnimationPlayer moveAnimation;
 static AnimationPlayer attackAnimation;
+
+static FSM playerFSM;
+static FSMState defaultState;
+static FSMState attackState;
 
 static void OnAttackHit()
 {
@@ -37,6 +42,11 @@ static void OnAttackEnd()
 
 void PlayerInit(PlayerCharacter* p)
 {
+	playerFSM = (FSM){ 0 };
+	playerFSM.States[0] = FSMStateCreate(&playerFSM, "Default", p, FSMFlag_Physics | FSMFlag_CanAttack, NULL, NULL, NULL);
+	playerFSM.States[1] = FSMStateCreate(&playerFSM, "Attack", p, FSMFlag_DisableMovement, &attackAnimation, NULL, NULL);
+	playerFSM.CurrentState = &playerFSM.States[0];
+
 	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 24);
 	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 24);
 	attackAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 24);
@@ -133,6 +143,8 @@ void PlayerUpdate(PlayerCharacter* p)
 	{
 		PlayerHeal(p, 26);
 	}
+
+	FSMUpdate(&playerFSM);
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)
