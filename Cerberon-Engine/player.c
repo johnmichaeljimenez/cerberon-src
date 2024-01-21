@@ -21,7 +21,6 @@ static Vector2 lastPos;
 static float footstepInterval;
 
 static AnimationPlayerGroup playerAnimation;
-static AnimationPlayer* currentAnimation;
 static AnimationPlayer idleAnimation;
 static AnimationPlayer moveAnimation;
 static AnimationPlayer attackAnimation;
@@ -34,16 +33,18 @@ static void OnAttackHit()
 
 static void OnAttackEnd()
 {
-	AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
+	//AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
 }
 
 void PlayerInit(PlayerCharacter* p)
 {
-	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 24);
-	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 24);
-	attackAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 24);
-
 	playerAnimation = (AnimationPlayerGroup){ 0 };
+	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 24);
+	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 24);
+	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 24);
+
+	attackAnimation.NextAnimation = &idleAnimation;
+
 	playerAnimation.Animations[0] = &idleAnimation;
 	playerAnimation.Animations[1] = &moveAnimation;
 	playerAnimation.Animations[2] = &attackAnimation;
@@ -64,7 +65,6 @@ void PlayerInit(PlayerCharacter* p)
 	footstepInterval = (p->CollisionRadius * 2.5f);
 	footstepInterval *= footstepInterval;
 
-	currentAnimation = &idleAnimation;
 	AnimationPlayerPlay(&playerAnimation, &idleAnimation);
 
 	CreateRenderObject(RENDERLAYER_Entity, 999, (Rectangle) { 0, 0, 0, 0 }, (void*)p, PlayerDraw, PlayerDrawDebug);
@@ -106,11 +106,16 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 	else
 	{
-		/*if (currentAnimation != &attackAnimation)
-			AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
+		//if (currentAnimation != &attackAnimation)
+			//AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
-			AnimationPlayerPlay(&attackAnimation, true, &currentAnimation, false);*/
+		{
+			if (playerAnimation.CurrentAnimation == &idleAnimation)
+			{
+				AnimationPlayerPlay(&playerAnimation, &attackAnimation);
+			}
+		}
 	}
 
 	Vector2 diff = CameraGetMousePosition();
@@ -149,12 +154,12 @@ void PlayerLateUpdate(PlayerCharacter* p)
 
 	CameraSetTarget(targPos, false);
 	AudioUpdateListenerPosition(p->Position);
-	AnimationPlayerUpdate(currentAnimation);
+	AnimationPlayerUpdate(playerAnimation.CurrentAnimation);
 }
 
 void PlayerDraw(PlayerCharacter* p)
 {
-	TextureResource* t = currentAnimation->Clip->SpriteFrames[currentAnimation->CurrentFrame];
+	TextureResource* t = playerAnimation.CurrentAnimation->Clip->SpriteFrames[playerAnimation.CurrentAnimation->CurrentFrame];
 
 	if (t != NULL)
 	{

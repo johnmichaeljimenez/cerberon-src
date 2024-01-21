@@ -1,10 +1,11 @@
 #include "animation_player.h"
 #include "time.h"
 
-AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
+AnimationPlayer AnimationPlayerCreate(AnimationPlayerGroup* group, AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
 {
 	AnimationPlayer a = { 0 };
 
+	a.Group = group;
 	a.Clip = clip;
 	a.CurrentFrame = 0;
 	a.FrameRate = frameRate;
@@ -13,6 +14,7 @@ AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), voi
 	a.OnStart = onStart;
 	a.OnFrameChanged = OnFrameChanged;
 	a.OnEnd = onEnd;
+	a.NextAnimation = NULL;
 
 	return a;
 }
@@ -48,8 +50,14 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 		}
 	}
 
-	if (ended && a->OnEnd != NULL)
-		a->OnEnd();
+	if (ended)
+	{
+		if (a->OnEnd != NULL)
+			a->OnEnd();
+
+		if (a->NextAnimation != NULL)
+			AnimationPlayerPlay(a->Group, a->NextAnimation);
+	}
 }
 
 void AnimationPlayerPlay(AnimationPlayerGroup* a, AnimationPlayer* p)

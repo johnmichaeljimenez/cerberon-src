@@ -11,6 +11,7 @@ typedef struct AnimationPlayer
 {
 	AnimationPlayerGroup* Group;
 	AnimationClip* Clip;
+	struct AnimationPlayer* NextAnimation;
 	float FrameRate;
 	int CurrentFrame;
 	bool Paused;
@@ -24,6 +25,6 @@ typedef struct AnimationPlayer
 	void(*OnEnd)();
 } AnimationPlayer;
 
-AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate);
+AnimationPlayer AnimationPlayerCreate(AnimationPlayerGroup* group, AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate);
 void AnimationPlayerUpdate(AnimationPlayer* a);
 void AnimationPlayerPlay(AnimationPlayerGroup* a, AnimationPlayer* p);
