@@ -1,14 +1,23 @@
 #pragma once
 #include "asset_manager.h"
 
+typedef struct AnimationPlayerGroup
+{
+	AnimationPlayer* Animations[32];
+	AnimationPlayer* CurrentAnimation;
+} AnimationPlayerGroup;
+
 typedef struct AnimationPlayer
 {
+	AnimationPlayerGroup* Group;
 	AnimationClip* Clip;
 	float FrameRate;
 	int CurrentFrame;
 	bool Paused;
 	
 	float _timer;
+	float NormalizedTime;
+	bool isPlaying;
 
 	void(*OnStart)();
 	void(*OnFrameChanged)();
@@ -17,4 +26,4 @@ typedef struct AnimationPlayer
 
 AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate);
 void AnimationPlayerUpdate(AnimationPlayer* a);
-void AnimationPlayerPlay(AnimationPlayer* a, bool resetFromStart, AnimationPlayer** ref, bool allowReplay);
+void AnimationPlayerPlay(AnimationPlayerGroup* a);
