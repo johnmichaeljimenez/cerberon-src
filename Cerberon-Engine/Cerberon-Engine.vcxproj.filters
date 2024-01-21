@@ -40,6 +40,9 @@
     <Filter Include="Source Files\audio">
       <UniqueIdentifier>{27960ec2-dc87-4281-9a02-f7564310ff17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gameplay\fsm">
+      <UniqueIdentifier>{b88bf9b1-fcb3-4e99-9622-aba55e41b0af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.c">
@@ -114,6 +117,9 @@
     <ClCompile Include="animation_player.c">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="fsm.c">
+      <Filter>Source Files\gameplay\fsm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -187,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="animation_player.h">
       <Filter>Source Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="fsm.h">
+      <Filter>Source Files\gameplay\fsm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

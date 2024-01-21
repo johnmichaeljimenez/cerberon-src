@@ -9,49 +9,39 @@
 #include "renderer.h"
 #include "camera.h"
 
-static RenderTexture2D LightRenderTexture;
-static bool isLightingEnabled;
 static float lightScale = 4;
 static float screenLightScale = 2;
 static Camera2D screenLightCamera;
 
-static Shader lightShader;
-static int screenTexParam;
-static int effectsTexParam;
-
 void InitLight()
 {
 	LightAmbientColor = ColorBrightness01(WHITE, 0);
-	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
-
-	lightShader = LoadShader(0, "res/gfx/lighting.frag");
-	screenTexParam = GetShaderLocation(lightShader, "screenTex");
-	effectsTexParam = GetShaderLocation(lightShader, "effectTex");
 
 	screenLightCamera = (Camera2D){
 		.zoom = 1 / screenLightScale,
 		.offset = (Vector2){ GetScreenWidth() / 2 / screenLightScale, GetScreenHeight() / 2 / screenLightScale }
 	};
-
-	isLightingEnabled = true;
 }
 
 void UnloadLight()
 {
-	UnloadShader(lightShader);
-	UnloadRenderTexture(LightRenderTexture);
+
 }
 
 void CreateLight(Light* light)
 {
-	light->_RenderCamera = (Camera2D){
-		.zoom = 1 / lightScale,
-		.target = light->Position,
-		.offset = (Vector2){ light->Scale / 2 / lightScale, light->Scale / 2 / lightScale }
-	};
+	if (light->CastShadows)
+	{
+		light->_RenderCamera = (Camera2D){
+			.zoom = 1 / lightScale,
+			.target = light->Position,
+			.offset = (Vector2){ light->Scale / 2 / lightScale, light->Scale / 2 / lightScale }
+		};
+
+		light->_RenderTexture = LoadRenderTexture(light->Scale, light->Scale);
+	}
 
 	UpdateLightBounds(light);
-	light->_RenderTexture = LoadRenderTexture(light->Scale, light->Scale);
 }
 
 void UpdateLightBounds(Light* l)
@@ -60,19 +50,16 @@ void UpdateLightBounds(Light* l)
 	l->_Bounds = (Rectangle){ l->Position.x - (size / 2), l->Position.y - (size / 2), size, size };
 }
 
-void UpdateLights()
+void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture)
 {
-	if (IsKeyPressed(KEY_F3))
-		isLightingEnabled = !isLightingEnabled;
-
-	if (!isLightingEnabled)
-		return;
-
 	//DRAW LIGHT RENDER TEXTURES
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{
 		Light* l = &CurrentMapData->Lights[i];
 		if (!l->AlwaysOn && !CheckCollisionRecs(l->_Bounds, CameraViewBounds))
+			continue;
+
+		if (!l->CastShadows)
 			continue;
 
 		l->_RenderCamera.target = l->Position;
@@ -91,7 +78,7 @@ void UpdateLights()
 
 	screenLightCamera.target = GameCamera.target;
 
-	BeginTextureMode(LightRenderTexture);
+	BeginTextureMode(*lightRenderTexture);
 	BeginMode2D(screenLightCamera);
 
 	ClearBackground(LightAmbientColor);
@@ -102,6 +89,12 @@ void UpdateLights()
 		Light* l = &CurrentMapData->Lights[i];
 		if (!l->AlwaysOn && !CheckCollisionRecs(l->_Bounds, CameraViewBounds))
 			continue;
+
+		if (!l->CastShadows)
+		{
+			l->OnDrawLight(l);
+			continue;
+		}
 
 		Vector2 pos = l->Position;
 		pos.x -= l->Scale / 2;
@@ -119,7 +112,7 @@ void UpdateLights()
 	EndMode2D();
 	EndTextureMode();
 
-	BeginTextureMode(RendererEffectsTexture);
+	BeginTextureMode(*effectsRenderTexture);
 	BeginMode2D(screenLightCamera);
 
 	ClearBackground(BLACK);
@@ -133,23 +126,11 @@ void UpdateLights()
 	EndTextureMode();
 }
 
-void DrawLights()
+void DrawLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture)
 {
-	if (!isLightingEnabled)
-		return;
-
 	//DRAW ENTIRE LIGHT SCREEN QUAD
-	Texture2D* rt = &LightRenderTexture.texture;
 
-	Rectangle srcRec = { 0, 0, rt->width, -(float)rt->height };
-	Rectangle destRect = (Rectangle){ 0, 0, rt->width * screenLightScale , rt->height * screenLightScale };
-	Vector2 origin = { 0,0 };
-
-	BeginShaderMode(lightShader);
-	SetShaderValueTexture(lightShader, screenTexParam, RendererScreenTexture.texture);
-	SetShaderValueTexture(lightShader, effectsTexParam, RendererEffectsTexture.texture);
-	DrawTexturePro(LightRenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
-	EndShaderMode();
+	//DrawRenderTextureToScreen(&lightRenderTexture->texture, screenLightScale);
 }
 
 void DrawShadows(Light* light, bool useBounds)

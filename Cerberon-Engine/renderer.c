@@ -5,8 +5,23 @@
 #include "memory.h"
 #include "tile.h"
 #include <stdlib.h>
+#include "utils.h"
 
+static bool lightingEnabled;
+static bool debugEnabled;
+static int RenderObjectCount;
+static RenderObject* RenderObjectList;
+
+static RenderTexture2D LightRenderTexture;
+static RenderTexture2D RendererScreenTexture;
+static RenderTexture2D RendererEffectsTexture;
 static int _currentRenderObjectSize;
+
+static Shader lightShader;
+static int screenTexParam;
+static int effectsTexParam;
+
+static float screenLightScale = 2;
 
 int _renderSort(void* a, void* b)
 {
@@ -26,6 +41,7 @@ int _renderSort(void* a, void* b)
 
 void RendererInit()
 {
+	lightingEnabled = true;
 	RenderObjectCount = 0;
 	_currentRenderObjectSize = 2;
 	RenderObjectList = MCalloc(_currentRenderObjectSize, sizeof(RenderObject), "Render Object List");
@@ -36,21 +52,66 @@ void RendererInit()
 		r->Data = NULL;
 		r->SortingIndex = 0;
 		r->Layer = 0;
+		r->OnDrawDebug = NULL;
+		r->OnDraw = NULL;
 	}
 
 	RendererScreenTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 	RendererEffectsTexture = LoadRenderTexture(GetScreenWidth() / 2, GetScreenHeight() / 2);
+	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
+
+
+	lightShader = LoadShader(0, "res/gfx/lighting.frag");
+	screenTexParam = GetShaderLocation(lightShader, "screenTex");
+	effectsTexParam = GetShaderLocation(lightShader, "effectTex");
 }
 
 void RendererUnload()
 {
+	UnloadShader(lightShader);
 	MFree(RenderObjectList, _currentRenderObjectSize, sizeof(RenderObject), "Render Object List");
 
+	UnloadRenderTexture(LightRenderTexture);
 	UnloadRenderTexture(RendererEffectsTexture);
 	UnloadRenderTexture(RendererScreenTexture);
 }
 
-void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*))
+void RendererUpdate()
+{
+	if (IsKeyPressed(KEY_F2))
+		lightingEnabled = !lightingEnabled;
+	if (IsKeyPressed(KEY_F3))
+		debugEnabled = !debugEnabled;
+
+	if (IsKeyPressed(KEY_F6))
+	{
+		int v = 0;
+		for (int i = 0; i < _currentRenderObjectSize; i++)
+		{
+			RenderObject* r = &RenderObjectList[i];
+
+			if (r->Data != NULL)
+				v++;
+
+			if (!r->IsActive || r->Data == NULL)
+				continue;
+
+			if (r->Layer == RENDERLAYER_Ground)
+			{
+				Tile* t = (Tile*)r->Data;
+				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d %s", i, r->Layer, r->SortingIndex, t->TextureID);
+			}
+			else
+			{
+				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d", i, r->Layer, r->SortingIndex);
+			}
+		}
+
+		TraceLog(LOG_INFO, "VV: %d", v);
+	}
+}
+
+RenderObject* CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*), void(*onDrawDebug)(void*))
 {
 	RenderObject r = { 0 };
 	r.Layer = renderLayer;
@@ -59,6 +120,7 @@ void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bou
 	r.Data = data;
 	r.OnDraw = onDraw;
 	r.IsActive = true;
+	r.OnDrawDebug = onDrawDebug;
 
 	TraceLog(LOG_INFO, "RENDEROBJECT #%d: %d %d %f,%f,%f,%f", RenderObjectCount, r.Layer, r.SortingIndex, r.Bounds.x, r.Bounds.y, r.Bounds.width, r.Bounds.height);
 
@@ -90,6 +152,7 @@ void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bou
 		}
 	}
 
+	return &r;
 }
 
 void RendererPostInitialize()
@@ -97,34 +160,12 @@ void RendererPostInitialize()
 	qsort(RenderObjectList, _currentRenderObjectSize, sizeof(RenderObject), _renderSort);
 }
 
-void RendererDraw()
+static void _DrawWorld()
 {
-	if (IsKeyPressed(KEY_G))
-	{
-		int v = 0;
-		for (int i = 0; i < _currentRenderObjectSize; i++)
-		{
-			RenderObject* r = &RenderObjectList[i];
+	BeginTextureMode(RendererScreenTexture);
+	ClearBackground(BLACK);
 
-			if (r->Data != NULL)
-				v++;
-
-			if (!r->IsActive || r->Data == NULL)
-				continue;
-
-			if (r->Layer == RENDERLAYER_Ground)
-			{
-				Tile* t = (Tile*)r->Data;
-				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d %s", i,  r->Layer, r->SortingIndex, t->TextureID);
-			}
-			else
-			{
-				TraceLog(LOG_INFO, "RENDER OBJECT #%d: %d %d", i, r->Layer, r->SortingIndex);
-			}
-		}
-
-		TraceLog(LOG_INFO, "VV: %d", v);
-	}
+	BeginMode2D(GameCamera);
 
 	for (int i = 0; i < _currentRenderObjectSize; i++)
 	{
@@ -133,21 +174,62 @@ void RendererDraw()
 		if (!r->IsActive || r->Data == NULL)
 			continue;
 
-		//if ((r->Bounds.width > 0 && r->Bounds.height > 0) && !CheckCollisionRecs(CameraViewBounds, r->Bounds))
-			//continue;
+		if ((r->Bounds.width > 0 && r->Bounds.height > 0) && !CheckCollisionRecs(CameraViewBounds, r->Bounds))
+			continue;
 
 		if (r->OnDraw != NULL)
 			r->OnDraw(r->Data);
 	}
 
-	//tiles
-	//decals
-	//low props
-	//entities
-	//high props
-	//lights
-	//overlay
+	EndMode2D();
+	EndTextureMode();
+}
 
-	//debug
-	//hud
+void _DrawDebug()
+{
+	BeginMode2D(GameCamera);
+
+	for (int i = 0; i < _currentRenderObjectSize; i++)
+	{
+		RenderObject* r = &RenderObjectList[i];
+
+		if (!r->IsActive || r->Data == NULL)
+			continue;
+
+		if ((r->Bounds.width > 0 && r->Bounds.height > 0))
+		{
+			if (!CheckCollisionRecs(CameraViewBounds, r->Bounds))
+				continue;
+
+			DrawRectangleLines(r->Bounds.x, r->Bounds.y, r->Bounds.width, r->Bounds.height, WHITE);
+		}
+
+		if (r->OnDrawDebug != NULL)
+			r->OnDrawDebug(r->Data);
+	}
+
+	EndMode2D();
+}
+
+void RendererDraw()
+{
+	_DrawWorld();
+
+	if (lightingEnabled)
+	{
+		UpdateLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
+
+		BeginShaderMode(lightShader);
+		SetShaderValueTexture(lightShader, screenTexParam, RendererScreenTexture.texture);
+		SetShaderValueTexture(lightShader, effectsTexParam, RendererEffectsTexture.texture);
+		DrawRenderTextureToScreen(&LightRenderTexture.texture, screenLightScale);
+		EndShaderMode();
+	}
+	else
+	{
+		DrawRenderTextureToScreen(&RendererScreenTexture.texture, 1);
+	}
+
+	if (debugEnabled)
+		_DrawDebug();
 }

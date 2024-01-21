@@ -11,3 +11,4 @@ Vector2 GetNormalVector(Vector2 from, Vector2 to);
 float WrapAngle(float from, float to);
 float LerpAngle(float r1, float r2, float t);
 bool CheckCollisionPointRecRotated(Vector2 point, Rectangle rec, float angle);
+void DrawRenderTextureToScreen(Texture* t, float scale);

@@ -17,16 +17,12 @@ typedef struct RenderObject
 	Rectangle Bounds;
 	void* Data;
 	void(*OnDraw)(void*);
+	void(*OnDrawDebug)(void*);
 } RenderObject;
 
-int RenderObjectCount;
-RenderObject* RenderObjectList;
-
-RenderTexture2D RendererScreenTexture;
-RenderTexture2D RendererEffectsTexture;
-
-void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*));
+RenderObject* CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*), void(*onDrawDebug)(void*));
 void RendererInit();
 void RendererUnload();
+void RendererUpdate();
 void RendererDraw();
 void RendererPostInitialize();

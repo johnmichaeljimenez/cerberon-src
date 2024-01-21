@@ -35,7 +35,8 @@ void UnloadMap()
 	{
 		for (int i = 0; i < CurrentMapData->LightCount; i++)
 		{
-			UnloadRenderTexture(CurrentMapData->Lights[i]._RenderTexture);
+			if (!CurrentMapData->Lights[i].CastShadows)
+				UnloadRenderTexture(CurrentMapData->Lights[i]._RenderTexture);
 		}
 
 		MFree(CurrentMapData->Lights, CurrentMapData->LightCount, sizeof(Light), "Light List");
@@ -101,7 +102,7 @@ void LoadMap(char* filename, MapData* map)
 
 			map->BlockColliders[i] = bc;
 			BlockCollider* _bc = &map->BlockColliders[i];
-			CreateRenderObject(RENDERLAYER_Wall, i, (Rectangle) { bc.Position.x, bc.Position.y, bc.Size.x, bc.Size.y }, (void*)_bc, DrawWallBlock);
+			CreateRenderObject(RENDERLAYER_Wall, i, (Rectangle) { bc.Position.x - (bc.Size.x/2), bc.Position.y - (bc.Size.y/2), bc.Size.x, bc.Size.y }, (void*)_bc, DrawWallBlock, NULL);
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
@@ -325,8 +326,6 @@ void UpdateMap(MapData* map)
 
 		a->OnLateUpdate(a);
 	}
-
-	UpdateLights();
 }
 
 void DrawMap(MapData* map)
@@ -379,7 +378,7 @@ void DrawWalls()
 
 void DrawMapHUD(MapData* map)
 {
-	DrawLights();
+
 }
 
 void UpdateWall(Wall* w)

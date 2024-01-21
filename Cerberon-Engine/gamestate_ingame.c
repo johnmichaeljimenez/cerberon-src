@@ -49,6 +49,7 @@ void IngameOnUpdate()
 	PlayerUpdate(&PlayerEntity);
 	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
+	RendererUpdate();
 
 	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);
@@ -56,20 +57,5 @@ void IngameOnUpdate()
 
 void IngameOnDraw()
 {
-	//BeginTextureMode(RendererScreenTexture);
-	ClearBackground(BLACK);
-
-	BeginMode2D(GameCamera);
-
 	RendererDraw();
-
-	//TilesDraw();
-	//PlayerDraw(&PlayerEntity);
-	//DrawMap(CurrentMapData);
-
-	EndMode2D();
-	//EndTextureMode();
-
-	PlayerDrawHUD(&PlayerEntity);
-	//DrawMapHUD(CurrentMapData);
 }

@@ -16,7 +16,7 @@ const mat4 dither_table = mat4(
      3.0, -1.0, 2.0, -2.0
 );
 
-const float depth = 24;
+const float depth = 8;
 
 float quantize(float value, float levels)
 {
