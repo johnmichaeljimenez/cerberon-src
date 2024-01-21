@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include "animation_player.h"
 
-FSMState FSMStateCreate(FSM* fsm, char* name, void* data, FSMStateFlags flags, AnimationPlayer* onEnter, AnimationPlayer* onUpdate, AnimationPlayer* onExit)
+FSMState FSMStateCreate(FSM* fsm, char* name, FSMStateFlags flags, AnimationPlayer* onEnter, AnimationPlayer* onUpdate, AnimationPlayer* onExit)
 {
 	FSMState state = { 0 };
-	state.Data = data;
 	state.OnEnter = onEnter;
 	state.OnExit = onExit;
 	state.OnUpdate = onUpdate;
@@ -18,11 +17,34 @@ void FSMUpdate(FSM* fsm)
 {
 	if (fsm->CurrentState == NULL)
 		return;
+
+	FSMState* state = fsm->CurrentState;
+	if (state == 0)
+	{
+		if (state->OnEnter != NULL && state->OnEnter->isPlaying)
+			return;
+
+		state++;
+	}
+	else if (state == 1)
+	{
+		if (state->OnEnter != NULL && state->OnEnter->isPlaying)
+			return;
+
+		state++;
+	}
+	else
+	{
+		if (state->OnEnter != NULL && state->OnEnter->isPlaying)
+			return;
+
+
+	}
 }
 
-void FSMSetCurrentState(FSM* fsm, FSMState* state, AnimationPlayer** ref)
+void FSMSetCurrentState(FSM* fsm, FSMState* state)
 {
 	state->stateIndex = 0;
 	if (state->OnEnter != NULL)
-		AnimationPlayerPlay(state->OnEnter, true, ref, true);
+		AnimationPlayerPlay(fsm->AnimationPlayerGroup, state->OnEnter);
 }

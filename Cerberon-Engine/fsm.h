@@ -21,8 +21,6 @@ typedef struct FSMState
 
 	int stateIndex; //0 = start, 1 = middle/loop, 2 = end
 
-	void* Data;
-
 	AnimationPlayer* OnEnter;
 	AnimationPlayer* OnUpdate;
 	AnimationPlayer* OnExit;
@@ -33,9 +31,10 @@ typedef struct FSM
 {
 	FSMState States[16];
 	FSMState* CurrentState;
+	AnimationPlayerGroup* AnimationPlayerGroup;
 } FSM;
 
 FSMState FSMStateCreate(FSM* fsm, char* name, void* data, FSMStateFlags flags, AnimationPlayer* onEnter, AnimationPlayer* onUpdate, AnimationPlayer* onExit);
 
 void FSMUpdate(FSM* fsm);
-void FSMSetCurrentState(FSM* fsm, FSMState* state, AnimationPlayer** ref);
+void FSMSetCurrentState(FSM* fsm, FSMState* state);

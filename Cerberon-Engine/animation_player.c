@@ -34,6 +34,7 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 	{
 		a->_timer -= rate;
 		a->CurrentFrame++;
+		a->NormalizedTime = (float)a->CurrentFrame / (float)a->Clip->FrameCount;
 
 		if (a->OnFrameChanged != NULL)
 			a->OnFrameChanged();
@@ -51,19 +52,14 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 		a->OnEnd();
 }
 
-void AnimationPlayerPlay(AnimationPlayer* a, bool resetFromStart, AnimationPlayer** ref, bool allowReplay)
+void AnimationPlayerPlay(AnimationPlayerGroup* a, AnimationPlayer* p)
 {
-	if (!allowReplay && *ref == a)
+	if (a == p)
 		return;
 
-	*ref = a;
-	if (resetFromStart)
-	{
-		a->CurrentFrame = 0;
-		a->_timer = 0;
-		if (a->OnStart != NULL)
-			a->OnStart();
-	}
-
-	a->Paused = false;
+	a->CurrentAnimation = p;
+	p->CurrentFrame = 0;
+	p->_timer = 0;
+	p->Paused = false;
+	p->NormalizedTime = 0;
 }

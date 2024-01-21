@@ -20,14 +20,11 @@ static bool isFlashlightOn;
 static Vector2 lastPos;
 static float footstepInterval;
 
+static AnimationPlayerGroup playerAnimation;
 static AnimationPlayer* currentAnimation;
 static AnimationPlayer idleAnimation;
 static AnimationPlayer moveAnimation;
 static AnimationPlayer attackAnimation;
-
-static FSM playerFSM;
-static FSMState defaultState;
-static FSMState attackState;
 
 static void OnAttackHit()
 {
@@ -42,14 +39,14 @@ static void OnAttackEnd()
 
 void PlayerInit(PlayerCharacter* p)
 {
-	playerFSM = (FSM){ 0 };
-	playerFSM.States[0] = FSMStateCreate(&playerFSM, "Default", p, FSMFlag_Physics | FSMFlag_CanAttack, NULL, NULL, NULL);
-	playerFSM.States[1] = FSMStateCreate(&playerFSM, "Attack", p, FSMFlag_DisableMovement, &attackAnimation, NULL, NULL);
-	playerFSM.CurrentState = &playerFSM.States[0];
-
 	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 24);
 	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 24);
 	attackAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 24);
+
+	playerAnimation = (AnimationPlayerGroup){ 0 };
+	playerAnimation.Animations[0] = &idleAnimation;
+	playerAnimation.Animations[1] = &moveAnimation;
+	playerAnimation.Animations[2] = &attackAnimation;
 
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
@@ -68,7 +65,7 @@ void PlayerInit(PlayerCharacter* p)
 	footstepInterval *= footstepInterval;
 
 	currentAnimation = &idleAnimation;
-	AnimationPlayerPlay(&idleAnimation, true, &currentAnimation, true);
+	AnimationPlayerPlay(&playerAnimation, &idleAnimation);
 
 	CreateRenderObject(RENDERLAYER_Entity, 999, (Rectangle) { 0, 0, 0, 0 }, (void*)p, PlayerDraw, PlayerDrawDebug);
 }
@@ -100,7 +97,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
-		AnimationPlayerPlay(&moveAnimation, false, &currentAnimation, false);
+		//AnimationPlayerPlay(&moveAnimation, false, &currentAnimation, false);
 		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
@@ -109,11 +106,11 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 	else
 	{
-		if (currentAnimation != &attackAnimation)
+		/*if (currentAnimation != &attackAnimation)
 			AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
-			AnimationPlayerPlay(&attackAnimation, true, &currentAnimation, false);
+			AnimationPlayerPlay(&attackAnimation, true, &currentAnimation, false);*/
 	}
 
 	Vector2 diff = CameraGetMousePosition();
@@ -143,8 +140,6 @@ void PlayerUpdate(PlayerCharacter* p)
 	{
 		PlayerHeal(p, 26);
 	}
-
-	FSMUpdate(&playerFSM);
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)

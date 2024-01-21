@@ -3,8 +3,8 @@
 
 typedef struct AnimationPlayerGroup
 {
-	AnimationPlayer* Animations[32];
-	AnimationPlayer* CurrentAnimation;
+	struct AnimationPlayer* Animations[32];
+	struct AnimationPlayer* CurrentAnimation;
 } AnimationPlayerGroup;
 
 typedef struct AnimationPlayer
@@ -26,4 +26,4 @@ typedef struct AnimationPlayer
 
 AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate);
 void AnimationPlayerUpdate(AnimationPlayer* a);
-void AnimationPlayerPlay(AnimationPlayerGroup* a);
+void AnimationPlayerPlay(AnimationPlayerGroup* a, AnimationPlayer* p);
