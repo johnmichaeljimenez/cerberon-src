@@ -13,17 +13,9 @@ static float lightScale = 4;
 static float screenLightScale = 2;
 static Camera2D screenLightCamera;
 
-static Shader lightShader;
-static int screenTexParam;
-static int effectsTexParam;
-
 void InitLight()
 {
 	LightAmbientColor = ColorBrightness01(WHITE, 0);
-
-	lightShader = LoadShader(0, "res/gfx/lighting.frag");
-	screenTexParam = GetShaderLocation(lightShader, "screenTex");
-	effectsTexParam = GetShaderLocation(lightShader, "effectTex");
 
 	screenLightCamera = (Camera2D){
 		.zoom = 1 / screenLightScale,
@@ -33,7 +25,7 @@ void InitLight()
 
 void UnloadLight()
 {
-	UnloadShader(lightShader);
+
 }
 
 void CreateLight(Light* light)
@@ -138,11 +130,7 @@ void DrawLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRender
 {
 	//DRAW ENTIRE LIGHT SCREEN QUAD
 
-	BeginShaderMode(lightShader);
-	SetShaderValueTexture(lightShader, screenTexParam, screenRenderTexture->texture);
-	SetShaderValueTexture(lightShader, effectsTexParam, effectsRenderTexture->texture);
-	DrawRenderTextureToScreen(&lightRenderTexture->texture, screenLightScale);
-	EndShaderMode();
+	//DrawRenderTextureToScreen(&lightRenderTexture->texture, screenLightScale);
 }
 
 void DrawShadows(Light* light, bool useBounds)

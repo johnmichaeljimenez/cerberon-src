@@ -17,6 +17,10 @@ static RenderTexture2D RendererScreenTexture;
 static RenderTexture2D RendererEffectsTexture;
 static int _currentRenderObjectSize;
 
+static Shader lightShader;
+static int screenTexParam;
+static int effectsTexParam;
+
 static float screenLightScale = 2;
 
 int _renderSort(void* a, void* b)
@@ -55,10 +59,16 @@ void RendererInit()
 	RendererScreenTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 	RendererEffectsTexture = LoadRenderTexture(GetScreenWidth() / 2, GetScreenHeight() / 2);
 	LightRenderTexture = LoadRenderTexture(GetScreenWidth() / screenLightScale, GetScreenHeight() / screenLightScale);
+
+
+	lightShader = LoadShader(0, "res/gfx/lighting.frag");
+	screenTexParam = GetShaderLocation(lightShader, "screenTex");
+	effectsTexParam = GetShaderLocation(lightShader, "effectTex");
 }
 
 void RendererUnload()
 {
+	UnloadShader(lightShader);
 	MFree(RenderObjectList, _currentRenderObjectSize, sizeof(RenderObject), "Render Object List");
 
 	UnloadRenderTexture(LightRenderTexture);
@@ -208,7 +218,12 @@ void RendererDraw()
 	if (lightingEnabled)
 	{
 		UpdateLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
-		DrawLights(&RendererScreenTexture, &RendererEffectsTexture, &LightRenderTexture);
+
+		BeginShaderMode(lightShader);
+		SetShaderValueTexture(lightShader, screenTexParam, RendererScreenTexture.texture);
+		SetShaderValueTexture(lightShader, effectsTexParam, RendererEffectsTexture.texture);
+		DrawRenderTextureToScreen(&LightRenderTexture.texture, screenLightScale);
+		EndShaderMode();
 	}
 	else
 	{
