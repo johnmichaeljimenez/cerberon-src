@@ -66,7 +66,7 @@ void TilesInit()
 		t->_Bounds.width = fabsf(_max.x - _min.x);
 		t->_Bounds.height = fabsf(_max.y - _min.y);
 
-		CreateRenderObject(RENDERLAYER_Ground, t->SortIndex, t->_Bounds, (void*)t, TilesDrawSingle);
+		CreateRenderObject(RENDERLAYER_Ground, t->SortIndex, t->_Bounds, (void*)t, TilesDrawSingle, NULL);
 	}
 
 	//qsort(CurrentMapData->Tiles, CurrentMapData->TileCount, sizeof(Tile), _sort);

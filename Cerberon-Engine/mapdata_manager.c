@@ -102,7 +102,7 @@ void LoadMap(char* filename, MapData* map)
 
 			map->BlockColliders[i] = bc;
 			BlockCollider* _bc = &map->BlockColliders[i];
-			CreateRenderObject(RENDERLAYER_Wall, i, (Rectangle) { bc.Position.x - (bc.Size.x/2), bc.Position.y - (bc.Size.y/2), bc.Size.x, bc.Size.y }, (void*)_bc, DrawWallBlock);
+			CreateRenderObject(RENDERLAYER_Wall, i, (Rectangle) { bc.Position.x - (bc.Size.x/2), bc.Position.y - (bc.Size.y/2), bc.Size.x, bc.Size.y }, (void*)_bc, DrawWallBlock, NULL);
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)

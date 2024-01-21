@@ -36,7 +36,7 @@ void LoadDoors()
 		DoorList[n]._timer = 0;
 
 		in->DataIndex = n;
-		CreateRenderObject(RENDERLAYER_Wall, 0, (Rectangle) { 0, 0, 0, 0 }, (void*)in, DoorDraw);
+		CreateRenderObject(RENDERLAYER_Wall, 0, (Rectangle) { 0, 0, 0, 0 }, (void*)in, DoorDraw, NULL);
 		n++;
 	}
 }

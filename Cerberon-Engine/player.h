@@ -27,6 +27,7 @@ void PlayerUnload(PlayerCharacter* p);
 void PlayerUpdate(PlayerCharacter* p);
 void PlayerLateUpdate(PlayerCharacter* p);
 void PlayerDraw(PlayerCharacter* p);
+void PlayerDrawDebug(PlayerCharacter* p);
 void PlayerDrawHUD(PlayerCharacter* p);
 
 void PlayerApplyDamage(PlayerCharacter* p, int amount);

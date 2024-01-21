@@ -60,7 +60,7 @@ void PlayerInit(PlayerCharacter* p)
 	currentAnimation = &idleAnimation;
 	AnimationPlayerPlay(&idleAnimation, true, &currentAnimation, true);
 
-	CreateRenderObject(RENDERLAYER_Entity, 999, (Rectangle) { 0, 0, 0, 0 }, (void*)p, PlayerDraw);
+	CreateRenderObject(RENDERLAYER_Entity, 999, (Rectangle) { 0, 0, 0, 0 }, (void*)p, PlayerDraw, PlayerDrawDebug);
 }
 
 void PlayerUnload(PlayerCharacter* p)
@@ -153,7 +153,10 @@ void PlayerDraw(PlayerCharacter* p)
 	{
 		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 	}
+}
 
+void PlayerDrawDebug(PlayerCharacter* p)
+{
 	if (p->IsDead)
 		return;
 

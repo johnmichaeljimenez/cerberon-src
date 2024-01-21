@@ -17,9 +17,10 @@ typedef struct RenderObject
 	Rectangle Bounds;
 	void* Data;
 	void(*OnDraw)(void*);
+	void(*OnDrawDebug)(void*);
 } RenderObject;
 
-void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*));
+RenderObject* CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*), void(*onDrawDebug)(void*));
 void RendererInit();
 void RendererUnload();
 void RendererUpdate();

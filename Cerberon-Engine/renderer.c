@@ -8,6 +8,7 @@
 #include "utils.h"
 
 static bool lightingEnabled;
+static bool debugEnabled;
 static int RenderObjectCount;
 static RenderObject* RenderObjectList;
 
@@ -47,6 +48,8 @@ void RendererInit()
 		r->Data = NULL;
 		r->SortingIndex = 0;
 		r->Layer = 0;
+		r->OnDrawDebug = NULL;
+		r->OnDraw = NULL;
 	}
 
 	RendererScreenTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
@@ -67,6 +70,8 @@ void RendererUpdate()
 {
 	if (IsKeyPressed(KEY_F2))
 		lightingEnabled = !lightingEnabled;
+	if (IsKeyPressed(KEY_F3))
+		debugEnabled = !debugEnabled;
 
 	if (IsKeyPressed(KEY_F6))
 	{
@@ -96,7 +101,7 @@ void RendererUpdate()
 	}
 }
 
-void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*))
+RenderObject* CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bounds, void* data, void(*onDraw)(void*), void(*onDrawDebug)(void*))
 {
 	RenderObject r = { 0 };
 	r.Layer = renderLayer;
@@ -105,6 +110,7 @@ void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bou
 	r.Data = data;
 	r.OnDraw = onDraw;
 	r.IsActive = true;
+	r.OnDrawDebug = onDrawDebug;
 
 	TraceLog(LOG_INFO, "RENDEROBJECT #%d: %d %d %f,%f,%f,%f", RenderObjectCount, r.Layer, r.SortingIndex, r.Bounds.x, r.Bounds.y, r.Bounds.width, r.Bounds.height);
 
@@ -136,6 +142,7 @@ void CreateRenderObject(RenderLayer renderLayer, int sortingIndex, Rectangle bou
 		}
 	}
 
+	return &r;
 }
 
 void RendererPostInitialize()
@@ -168,6 +175,32 @@ static void _DrawWorld()
 	EndTextureMode();
 }
 
+void _DrawDebug()
+{
+	BeginMode2D(GameCamera);
+
+	for (int i = 0; i < _currentRenderObjectSize; i++)
+	{
+		RenderObject* r = &RenderObjectList[i];
+
+		if (!r->IsActive || r->Data == NULL)
+			continue;
+
+		if ((r->Bounds.width > 0 && r->Bounds.height > 0))
+		{
+			if (!CheckCollisionRecs(CameraViewBounds, r->Bounds))
+				continue;
+
+			DrawRectangleLines(r->Bounds.x, r->Bounds.y, r->Bounds.width, r->Bounds.height, WHITE);
+		}
+
+		if (r->OnDrawDebug != NULL)
+			r->OnDrawDebug(r->Data);
+	}
+
+	EndMode2D();
+}
+
 void RendererDraw()
 {
 	_DrawWorld();
@@ -181,4 +214,7 @@ void RendererDraw()
 	{
 		DrawRenderTextureToScreen(&RendererScreenTexture.texture, 1);
 	}
+
+	if (debugEnabled)
+		_DrawDebug();
 }
