@@ -1,10 +1,11 @@
 #include "animation_player.h"
 #include "time.h"
 
-AnimationPlayer AnimationPlayerCreate(AnimationPlayerGroup* group, AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
+AnimationPlayer AnimationPlayerCreate(AnimationPlayerGroup* group, AnimationClip* clip, AnimationFlags flags, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
 {
 	AnimationPlayer a = { 0 };
 
+	a.Flags = flags;
 	a.Group = group;
 	a.Clip = clip;
 	a.CurrentFrame = 0;

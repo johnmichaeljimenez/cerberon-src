@@ -39,9 +39,9 @@ static void OnAttackEnd()
 void PlayerInit(PlayerCharacter* p)
 {
 	playerAnimation = (AnimationPlayerGroup){ 0 };
-	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 24);
-	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 24);
-	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 24);
+	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), AnimationFlag_Physics, NULL, NULL, NULL, 24);
+	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), AnimationFlag_Physics, NULL, NULL, NULL, 24);
+	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), AnimationFlag_DisableMovement, NULL, OnAttackHit, OnAttackEnd, 24);
 
 	attackAnimation.NextAnimation = &idleAnimation;
 
@@ -97,24 +97,18 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
-		//AnimationPlayerPlay(&moveAnimation, false, &currentAnimation, false);
 		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
 			lastPos = p->Position;
 		}
 	}
-	else
-	{
-		//if (currentAnimation != &attackAnimation)
-			//AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
 
-		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+	{
+		if (playerAnimation.CurrentAnimation == &idleAnimation)
 		{
-			if (playerAnimation.CurrentAnimation == &idleAnimation)
-			{
-				AnimationPlayerPlay(&playerAnimation, &attackAnimation);
-			}
+			AnimationPlayerPlay(&playerAnimation, &attackAnimation);
 		}
 	}
 
