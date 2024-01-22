@@ -10,9 +10,11 @@ out vec4 finalColor;
 
 void main()
 {
-    vec3 effectColor = texture(effectTex, fragTexCoord).rgb;
+	vec2 uv2 = gl_FragCoord.rg/vec2(1366,768); //TODO: provide uniform resolution values
+
+    vec3 effectColor = texture(effectTex, uv2).rgb;
     vec4 color = texture(texture0, fragTexCoord).rgba;
 	vec3 outColor = color.rgb;
 
-    finalColor = vec4(1, 0, 0, effectColor.r);
+    finalColor = vec4(color.rgb, effectColor.r * color.a);
 }
