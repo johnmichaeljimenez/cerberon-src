@@ -39,8 +39,8 @@ static void OnAttackEnd()
 void PlayerInit(PlayerCharacter* p)
 {
 	playerAnimation = (AnimationPlayerGroup){ 0 };
-	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), AnimationFlag_Physics, NULL, NULL, NULL, 24);
-	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), AnimationFlag_Physics, NULL, NULL, NULL, 24);
+	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
+	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
 	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), AnimationFlag_DisableMovement, NULL, OnAttackHit, OnAttackEnd, 24);
 
 	attackAnimation.NextAnimation = &idleAnimation;
@@ -103,6 +103,14 @@ void PlayerUpdate(PlayerCharacter* p)
 		diff = Vector2Subtract(diff, p->Position);
 		float newDir = atan2f(diff.y, diff.x);
 		rot = LerpAngle(rot, newDir, TICKRATE * 12);
+
+		if (IsKeyPressed(KEY_F))
+		{
+			if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
+			{
+				isFlashlightOn = !isFlashlightOn;
+			}
+		}
 	}
 
 	//collision here
@@ -119,7 +127,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
 	{
-		if (playerAnimation.CurrentAnimation == &idleAnimation)
+		if (HasFlag(currentAnimation->Flags, AnimationFlag_CanAttack))
 		{
 			AnimationPlayerPlay(&playerAnimation, &attackAnimation);
 		}
@@ -130,14 +138,6 @@ void PlayerUpdate(PlayerCharacter* p)
 	PlayerRotate(p, rot);
 	PlayerFlashlight->Position = PlayerEntity.Position;
 	UpdateLightBounds(&PlayerFlashlight);
-
-	if (IsKeyPressed(KEY_F))
-	{
-		if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
-		{
-			isFlashlightOn = !isFlashlightOn;
-		}
-	}
 
 	if (IsKeyPressed(KEY_G))
 	{
