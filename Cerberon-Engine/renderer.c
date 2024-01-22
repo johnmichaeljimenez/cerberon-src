@@ -21,6 +21,9 @@ static Shader lightShader;
 static int screenTexParam;
 static int effectsTexParam;
 
+static Shader spriteMaskedShader;
+static int spriteMaskedEffectsParam;
+
 static float screenLightScale = 2;
 
 int _renderSort(void* a, void* b)
@@ -64,11 +67,15 @@ void RendererInit()
 	lightShader = LoadShader(0, "res/gfx/lighting.frag");
 	screenTexParam = GetShaderLocation(lightShader, "screenTex");
 	effectsTexParam = GetShaderLocation(lightShader, "effectTex");
+
+	spriteMaskedShader = LoadShader(0, "res/gfx/sprite_masked.frag");
+	spriteMaskedEffectsParam = GetShaderLocation(spriteMaskedShader, "effectTex");
 }
 
 void RendererUnload()
 {
 	UnloadShader(lightShader);
+	UnloadShader(spriteMaskedShader);
 	MFree(RenderObjectList, _currentRenderObjectSize, sizeof(RenderObject), "Render Object List");
 
 	UnloadRenderTexture(LightRenderTexture);
@@ -178,7 +185,9 @@ static void _DrawWorld()
 			continue;
 
 		if (r->OnDraw != NULL)
+		{
 			r->OnDraw(r->Data);
+		}
 	}
 
 	EndMode2D();
@@ -234,4 +243,10 @@ void RendererDraw()
 		_DrawDebug();
 
 	PlayerDrawHUD(&PlayerEntity);
+}
+
+void SetShaderMaskedMode()
+{
+	BeginShaderMode(spriteMaskedShader);
+	SetShaderValueTexture(spriteMaskedShader, spriteMaskedEffectsParam, RendererEffectsTexture.texture);
 }
