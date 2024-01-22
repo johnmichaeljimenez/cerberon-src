@@ -14,6 +14,7 @@ static FMOD_SYSTEM* audioSystem;
 static FMOD_VECTOR listenerPosition;
 static Vector2 listenerPositionV;
 static FMOD_CHANNEL* channel;
+static FMOD_CHANNELGROUP* worldChannelGroup;
 
 const float MAX_AUDIO_RADIUS = 1024;
 const float MIN_AUDIO_RADIUS = 200;
@@ -23,6 +24,8 @@ void AudioInit()
 	FMOD_System_Create(&audioSystem, FMOD_VERSION);
 	FMOD_System_Init(audioSystem, 512, FMOD_INIT_CHANNEL_LOWPASS, NULL);
 	FMOD_System_Set3DSettings(audioSystem, 0.0f, 1, 1.0f);
+
+	FMOD_System_CreateChannelGroup(audioSystem, "World", &worldChannelGroup);
 
 	//TODO: Add a txt file for sound loading reference list
 	AudioClipCount = 19;
@@ -91,7 +94,7 @@ void AudioPlay(unsigned long hash, Vector2 pos)
 
 			float distReverb = Remap(dist, 0, MAX_AUDIO_RADIUS, 1.0f, 0.2f);
 
-			FMOD_RESULT result = FMOD_System_PlaySound(audioSystem, a->Sound, NULL, 0, &channel);
+			FMOD_RESULT result = FMOD_System_PlaySound(audioSystem, a->Sound, worldChannelGroup, 0, &channel);
 			if (result == FMOD_OK)
 			{
 				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
