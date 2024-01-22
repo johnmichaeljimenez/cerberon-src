@@ -1,5 +1,6 @@
 #include "animation_player.h"
 #include "time.h"
+#include "utils.h"
 
 AnimationPlayer AnimationPlayerCreate(AnimationPlayerGroup* group, AnimationClip* clip, AnimationFlags flags, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
 {
@@ -63,7 +64,10 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 
 void AnimationPlayerPlay(AnimationPlayerGroup* a, AnimationPlayer* p)
 {
-	if (a == p)
+	if (a->CurrentAnimation == p)
+		return;
+
+	if (a->CurrentAnimation != NULL && HasFlag(a->CurrentAnimation, AnimationFlag_CannotBeInterrupted) && !HasFlag(p->Flags, AnimationFlag_CannotBeInterrupted))
 		return;
 
 	a->CurrentAnimation = p;
