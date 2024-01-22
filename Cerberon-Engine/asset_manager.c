@@ -181,12 +181,12 @@ void LoadAnimationPack(char* filename)
 		.FrameCount = 1,
 		.Name = "player_leg_idle",
 		.Hash = ToHash("player_leg_idle"),
-		.Loop = false
+		.Loop = true
 	};
 
 	for (int i = 0; i < 1; i++)
 	{
-		unsigned long hash = ToHash(TextFormat("survivor-idle_%d.png", i));
+		unsigned long hash = ToHash(TextFormat("survivor-idle_%d", i));
 		AnimationClipList[3].Frames[i] = hash;
 		AnimationClipList[3].SpriteFrames[i] = GetTextureResource(hash);
 	}
@@ -197,7 +197,7 @@ void LoadAnimationPack(char* filename)
 		.FrameCount = 20,
 		.Name = "player_leg_move",
 		.Hash = ToHash("player_leg_move"),
-		.Loop = false
+		.Loop = true
 	};
 
 	for (int i = 0; i < 20; i++)
