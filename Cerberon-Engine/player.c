@@ -87,6 +87,8 @@ void PlayerUpdate(PlayerCharacter* p)
 		return;
 	}
 
+	Vector2 diff = p->Position;
+	float rot = p->Rotation;
 	Vector2 movementInput = (Vector2){ 0,0 };
 	AnimationPlayer* currentAnimation = playerAnimation.CurrentAnimation;
 
@@ -96,6 +98,11 @@ void PlayerUpdate(PlayerCharacter* p)
 		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
 		vel = Vector2Scale(vel, GetFrameTime());
 		p->Position = Vector2Add(p->Position, vel);
+
+		diff = CameraGetMousePosition();
+		diff = Vector2Subtract(diff, p->Position);
+		float newDir = atan2f(diff.y, diff.x);
+		rot = LerpAngle(rot, newDir, TICKRATE * 12);
 	}
 
 	//collision here
@@ -118,13 +125,9 @@ void PlayerUpdate(PlayerCharacter* p)
 		}
 	}
 
-	Vector2 diff = CameraGetMousePosition();
-	diff = Vector2Subtract(diff, p->Position);
-	float newDir = atan2f(diff.y, diff.x);
-
 	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit);
 
-	PlayerRotate(p, LerpAngle(p->Rotation, newDir, TICKRATE * 12));
+	PlayerRotate(p, rot);
 	PlayerFlashlight->Position = PlayerEntity.Position;
 	UpdateLightBounds(&PlayerFlashlight);
 
