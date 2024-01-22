@@ -106,6 +106,20 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 
 		DrawTexturePro(l->_RenderTexture.texture, srcRec, destRect, origin, 0, WHITE);
 	}
+
+	for (int i = 0; i < CurrentMapData->TriggerCount; i++)
+	{
+		Trigger* t = &CurrentMapData->Triggers[i];
+		if (!t->HasAmbientLight)
+			continue;
+
+		for (int j = 0; j < t->ColliderCount; j++)
+		{
+			TriggerCollider* c = &t->Colliders[j];
+			DrawRectanglePro(c->_rectangle, (Vector2) { c->_rectangle.width / 2, c->_rectangle.height / 2 }, c->Rotation * RAD2DEG, t->AmbientLightColor);
+		}
+	}
+
 	EndBlendMode();
 
 	DrawWalls();

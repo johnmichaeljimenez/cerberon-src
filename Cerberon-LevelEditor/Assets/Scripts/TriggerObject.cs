@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class TriggerObject : BaseObject
 {
     [SerializeField] private BaseInteractable TargetObject;
     [SerializeField] private bool OneShot;
     [SerializeField] private float Cooldown;
+    [SerializeField] private bool HasAmbientLight;
+    [SerializeField] [ShowIf(nameof(HasAmbientLight))] private Color AmbientColor;
 
     public override void Export(List<byte> array)
     {
@@ -19,8 +22,13 @@ public class TriggerObject : BaseObject
         array.AddRange(Encoding.ASCII.GetBytes(target.ToFixedLength(32)));
         array.AddRange(BitConverter.GetBytes(OneShot));
         array.AddRange(BitConverter.GetBytes(Cooldown));
-        array.AddRange(BitConverter.GetBytes(colliders.Length));
 
+        array.AddRange(BitConverter.GetBytes(HasAmbientLight));
+        array.AddRange(BitConverter.GetBytes(AmbientColor.r));
+        array.AddRange(BitConverter.GetBytes(AmbientColor.g));
+        array.AddRange(BitConverter.GetBytes(AmbientColor.b));
+
+        array.AddRange(BitConverter.GetBytes(colliders.Length));
         foreach (var i in colliders)
         {
             var sprite = i.GetComponent<SpriteRenderer>();

@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "inventory.h"
 #include "renderer.h"
+#include "utils.h"
 
 void LoadItems()
 {
@@ -39,7 +40,7 @@ void LoadItems()
 
 		in->DataIndex = n;
 
-		CreateRenderObject(RENDERLAYER_Entity, 0, (Rectangle) { 0, 0, 0, 0 }, (void*)in, ItemDraw, NULL);
+		RenderObject* r = CreateRenderObject(RENDERLAYER_Entity, 0, (Rectangle) { 0, 0, 0, 0 }, (void*)in, ItemDraw, NULL);
 		n++;
 	}
 }
@@ -81,7 +82,11 @@ void ItemDraw(Interactable* i)
 	if (ip->ItemStatusType != ITEMSTATUSTYPE_OnWorld)
 		return;
 
-	DrawCircleV(i->Position, 32, BLUE);
+	//DrawCircleV(i->Position, 32, BLUE);
+	SetShaderMaskedMode();
+	TextureResource* t = GetTextureResource(ToHash("survivor-idle_0"));
+	DrawSprite(t, i->Position, 0, 1, Vector2Zero(), WHITE);
+	EndShaderMode();
 }
 
 bool ItemInteract(Interactable* i, PlayerCharacter* p)

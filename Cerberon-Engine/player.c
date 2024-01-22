@@ -25,6 +25,13 @@ static AnimationPlayer idleAnimation;
 static AnimationPlayer moveAnimation;
 static AnimationPlayer attackAnimation;
 
+static AnimationPlayerGroup playerLegAnimation;
+static AnimationPlayer legIdleAnimation;
+static AnimationPlayer legMoveAnimation;
+
+static float legAngle;
+static float legAngleRange = 60;
+
 static void OnAttackHit()
 {
 	if (attackAnimation.CurrentFrame == 6)
@@ -43,18 +50,25 @@ void PlayerInit(PlayerCharacter* p)
 	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
 	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), AnimationFlag_DisableMovement, NULL, OnAttackHit, OnAttackEnd, 24);
 
+	playerLegAnimation = (AnimationPlayerGroup){ 0 };
+	legIdleAnimation = AnimationPlayerCreate(&playerLegAnimation, GetAnimationResource(ToHash("player_leg_idle")), AnimationFlag_None, NULL, NULL, NULL, 24);
+	legMoveAnimation = AnimationPlayerCreate(&playerLegAnimation, GetAnimationResource(ToHash("player_leg_move")), AnimationFlag_None, NULL, NULL, NULL, 24);
+
 	attackAnimation.NextAnimation = &idleAnimation;
 
 	playerAnimation.Animations[0] = &idleAnimation;
 	playerAnimation.Animations[1] = &moveAnimation;
 	playerAnimation.Animations[2] = &attackAnimation;
 
+	playerLegAnimation.Animations[0] = &legIdleAnimation;
+	playerLegAnimation.Animations[1] = &legMoveAnimation;
+
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
 	p->Direction = (Vector2){ 1, 0 };
 	p->CollisionRadius = 32;
 	p->InteractionRadius = 180;
-	p->MovementSpeed = 200;
+	p->MovementSpeed = 150;
 	p->CameraOffset = 300;
 
 	p->IsDead = false;
@@ -66,6 +80,7 @@ void PlayerInit(PlayerCharacter* p)
 	footstepInterval *= footstepInterval;
 
 	AnimationPlayerPlay(&playerAnimation, &idleAnimation);
+	AnimationPlayerPlay(&playerLegAnimation, &legIdleAnimation);
 
 	CreateRenderObject(RENDERLAYER_Entity, 999, (Rectangle) { 0, 0, 0, 0 }, (void*)p, PlayerDraw, PlayerDrawDebug);
 }
@@ -118,11 +133,16 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
+		AnimationPlayerPlay(&playerLegAnimation, &legMoveAnimation);
 		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
 			lastPos = p->Position;
 		}
+	}
+	else
+	{
+		AnimationPlayerPlay(&playerLegAnimation, &legIdleAnimation);
 	}
 
 	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
@@ -158,16 +178,21 @@ void PlayerLateUpdate(PlayerCharacter* p)
 	CameraSetTarget(targPos, false);
 	AudioUpdateListenerPosition(p->Position);
 	AnimationPlayerUpdate(playerAnimation.CurrentAnimation);
+	AnimationPlayerUpdate(playerLegAnimation.CurrentAnimation);
 }
 
 void PlayerDraw(PlayerCharacter* p)
 {
 	TextureResource* t = playerAnimation.CurrentAnimation->Clip->SpriteFrames[playerAnimation.CurrentAnimation->CurrentFrame];
+	TextureResource* t2 = playerLegAnimation.CurrentAnimation->Clip->SpriteFrames[playerLegAnimation.CurrentAnimation->CurrentFrame];
 
-	if (t != NULL)
-	{
-		DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
-	}
+	DrawBlobShadow(p->Position, p->CollisionRadius * 1.5, 255);
+
+	float halfLegAngle = (legAngleRange / 2) * DEG2RAD;
+	legAngle = ClampRelativeAngle(legAngle, p->Rotation, -halfLegAngle, halfLegAngle);
+
+	DrawSprite(t2, p->Position, legAngle, 0.6, (Vector2) { 0, 0 }, WHITE);
+	DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 }
 
 void PlayerDrawDebug(PlayerCharacter* p)
@@ -226,8 +251,8 @@ void DrawPlayerVision()
 	Color red = (Color){ 255, 0, 0, 255 };
 	Vector2 pos = PlayerEntity.Position;
 
-	DrawCircleGradient(pos.x, pos.y, 64, red, BLACK);
-	DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
+	DrawCircleGradient(pos.x, pos.y, 100, red, BLACK);
+	//DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
 
 	//PLACEHOLDER
 	//TODO: replace with actual vision cone sprite

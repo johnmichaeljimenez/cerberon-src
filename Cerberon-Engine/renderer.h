@@ -26,3 +26,4 @@ void RendererUnload();
 void RendererUpdate();
 void RendererDraw();
 void RendererPostInitialize();
+void SetShaderMaskedMode();

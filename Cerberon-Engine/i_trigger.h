@@ -16,6 +16,9 @@ typedef struct Trigger
 	bool OneShot;
 	float Cooldown;
 
+	bool HasAmbientLight;
+	Color AmbientLightColor;
+
 	int ColliderCount;
 	TriggerCollider* Colliders;
 
