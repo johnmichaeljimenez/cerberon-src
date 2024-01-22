@@ -267,7 +267,6 @@ void LoadMap(char* filename, MapData* map)
 			fread(&t.Target, sizeof(char), 32, file);
 			fread(&t.OneShot, sizeof(bool), 1, file);
 			fread(&t.Cooldown, sizeof(float), 1, file);
-			fread(&t.ColliderCount, sizeof(float), 1, file);
 
 			fread(&t.HasAmbientLight, sizeof(bool), 1, file);
 			fread(&_r, sizeof(float), 1, file);
@@ -279,6 +278,7 @@ void LoadMap(char* filename, MapData* map)
 			t.AmbientLightColor.b = _b * 255;
 			t.AmbientLightColor.a = 255;
 
+			fread(&t.ColliderCount, sizeof(float), 1, file);
 			if (t.ColliderCount > 0)
 			{
 				t.Colliders = MCalloc(t.ColliderCount, sizeof(TriggerCollider), "Trigger Collider List");
