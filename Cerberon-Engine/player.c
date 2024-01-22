@@ -183,7 +183,8 @@ void PlayerDraw(PlayerCharacter* p)
 	TextureResource* t = playerAnimation.CurrentAnimation->Clip->SpriteFrames[playerAnimation.CurrentAnimation->CurrentFrame];
 	TextureResource* t2 = playerLegAnimation.CurrentAnimation->Clip->SpriteFrames[playerLegAnimation.CurrentAnimation->CurrentFrame];
 
-	DrawSprite(t2, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
+	DrawBlobShadow(p->Position, p->CollisionRadius * 1.5, 255);
+	DrawSprite(t2, p->Position, p->Rotation, 0.6, (Vector2) { 0, 0 }, WHITE);
 	DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 }
 
@@ -243,8 +244,8 @@ void DrawPlayerVision()
 	Color red = (Color){ 255, 0, 0, 255 };
 	Vector2 pos = PlayerEntity.Position;
 
-	DrawCircleGradient(pos.x, pos.y, 64, red, BLACK);
-	DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
+	DrawCircleGradient(pos.x, pos.y, 100, red, BLACK);
+	//DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
 
 	//PLACEHOLDER
 	//TODO: replace with actual vision cone sprite

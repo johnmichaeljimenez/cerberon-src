@@ -12,3 +12,4 @@ float WrapAngle(float from, float to);
 float LerpAngle(float r1, float r2, float t);
 bool CheckCollisionPointRecRotated(Vector2 point, Rectangle rec, float angle);
 void DrawRenderTextureToScreen(Texture* t, float scale);
+void DrawBlobShadow(Vector2 pos, float radius, float intensity);
