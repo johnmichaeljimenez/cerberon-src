@@ -88,3 +88,11 @@ void DrawBlobShadow(Vector2 pos, float radius, float intensity)
 
 	DrawCircleGradient(pos.x, pos.y, radius, c1, c2);
 }
+
+float ClampRelativeAngle(float angle, float reference, float min_offset, float max_offset)
+{
+	float relative_angle = angle - reference;
+	float clamped_relative_angle = fmaxf(fminf(relative_angle, max_offset), min_offset);
+
+	return reference + clamped_relative_angle;
+}
