@@ -1,10 +1,13 @@
 #include "animation_player.h"
 #include "time.h"
+#include "utils.h"
 
-AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
+AnimationPlayer AnimationPlayerCreate(AnimationPlayerGroup* group, AnimationClip* clip, AnimationFlags flags, void(*onStart)(), void(*OnFrameChanged)(), void(*onEnd)(), int frameRate)
 {
 	AnimationPlayer a = { 0 };
 
+	a.Flags = flags;
+	a.Group = group;
 	a.Clip = clip;
 	a.CurrentFrame = 0;
 	a.FrameRate = frameRate;
@@ -13,6 +16,7 @@ AnimationPlayer AnimationPlayerCreate(AnimationClip* clip, void(*onStart)(), voi
 	a.OnStart = onStart;
 	a.OnFrameChanged = OnFrameChanged;
 	a.OnEnd = onEnd;
+	a.NextAnimation = NULL;
 
 	return a;
 }
@@ -34,6 +38,7 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 	{
 		a->_timer -= rate;
 		a->CurrentFrame++;
+		a->NormalizedTime = (float)a->CurrentFrame / (float)a->Clip->FrameCount;
 
 		if (a->OnFrameChanged != NULL)
 			a->OnFrameChanged();
@@ -47,23 +52,27 @@ void AnimationPlayerUpdate(AnimationPlayer* a)
 		}
 	}
 
-	if (ended && a->OnEnd != NULL)
-		a->OnEnd();
+	if (ended)
+	{
+		if (a->OnEnd != NULL)
+			a->OnEnd();
+
+		if (a->NextAnimation != NULL)
+			AnimationPlayerPlay(a->Group, a->NextAnimation);
+	}
 }
 
-void AnimationPlayerPlay(AnimationPlayer* a, bool resetFromStart, AnimationPlayer** ref, bool allowReplay)
+void AnimationPlayerPlay(AnimationPlayerGroup* a, AnimationPlayer* p)
 {
-	if (!allowReplay && *ref == a)
+	if (a->CurrentAnimation == p)
 		return;
 
-	*ref = a;
-	if (resetFromStart)
-	{
-		a->CurrentFrame = 0;
-		a->_timer = 0;
-		if (a->OnStart != NULL)
-			a->OnStart();
-	}
+	if (a->CurrentAnimation != NULL && HasFlag(a->CurrentAnimation, AnimationFlag_CannotBeInterrupted) && !HasFlag(p->Flags, AnimationFlag_CannotBeInterrupted))
+		return;
 
-	a->Paused = false;
+	a->CurrentAnimation = p;
+	p->CurrentFrame = 0;
+	p->_timer = 0;
+	p->Paused = false;
+	p->NormalizedTime = 0;
 }

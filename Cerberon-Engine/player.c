@@ -12,6 +12,7 @@
 #include "audio_manager.h"
 #include "animation_player.h"
 #include "renderer.h"
+#include "fsm.h"
 
 static LinecastHit lineHit;
 
@@ -19,7 +20,7 @@ static bool isFlashlightOn;
 static Vector2 lastPos;
 static float footstepInterval;
 
-static AnimationPlayer* currentAnimation;
+static AnimationPlayerGroup playerAnimation;
 static AnimationPlayer idleAnimation;
 static AnimationPlayer moveAnimation;
 static AnimationPlayer attackAnimation;
@@ -32,14 +33,21 @@ static void OnAttackHit()
 
 static void OnAttackEnd()
 {
-	AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
+	//AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
 }
 
 void PlayerInit(PlayerCharacter* p)
 {
-	idleAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_idle")), NULL, NULL, NULL, 24);
-	moveAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_move")), NULL, NULL, NULL, 24);
-	attackAnimation = AnimationPlayerCreate(GetAnimationResource(ToHash("player_attack")), NULL, OnAttackHit, OnAttackEnd, 24);
+	playerAnimation = (AnimationPlayerGroup){ 0 };
+	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
+	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
+	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), AnimationFlag_DisableMovement, NULL, OnAttackHit, OnAttackEnd, 24);
+
+	attackAnimation.NextAnimation = &idleAnimation;
+
+	playerAnimation.Animations[0] = &idleAnimation;
+	playerAnimation.Animations[1] = &moveAnimation;
+	playerAnimation.Animations[2] = &attackAnimation;
 
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
@@ -57,8 +65,7 @@ void PlayerInit(PlayerCharacter* p)
 	footstepInterval = (p->CollisionRadius * 2.5f);
 	footstepInterval *= footstepInterval;
 
-	currentAnimation = &idleAnimation;
-	AnimationPlayerPlay(&idleAnimation, true, &currentAnimation, true);
+	AnimationPlayerPlay(&playerAnimation, &idleAnimation);
 
 	CreateRenderObject(RENDERLAYER_Entity, 999, (Rectangle) { 0, 0, 0, 0 }, (void*)p, PlayerDraw, PlayerDrawDebug);
 }
@@ -80,49 +87,57 @@ void PlayerUpdate(PlayerCharacter* p)
 		return;
 	}
 
-	Vector2 movementInput = InputGetMovement();
-	Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
-	vel = Vector2Scale(vel, GetFrameTime());
-	p->Position = Vector2Add(p->Position, vel);
+	Vector2 diff = p->Position;
+	float rot = p->Rotation;
+	Vector2 movementInput = (Vector2){ 0,0 };
+	AnimationPlayer* currentAnimation = playerAnimation.CurrentAnimation;
+
+	if (!HasFlag(currentAnimation->Flags, AnimationFlag_DisableMovement))
+	{
+		movementInput = InputGetMovement();
+		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
+		vel = Vector2Scale(vel, GetFrameTime());
+		p->Position = Vector2Add(p->Position, vel);
+
+		diff = CameraGetMousePosition();
+		diff = Vector2Subtract(diff, p->Position);
+		float newDir = atan2f(diff.y, diff.x);
+		rot = LerpAngle(rot, newDir, TICKRATE * 12);
+
+		if (IsKeyPressed(KEY_F))
+		{
+			if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
+			{
+				isFlashlightOn = !isFlashlightOn;
+			}
+		}
+	}
 
 	//collision here
 	MoveBody(&p->Position, p->CollisionRadius);
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
-		AnimationPlayerPlay(&moveAnimation, false, &currentAnimation, false);
 		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
 			lastPos = p->Position;
 		}
 	}
-	else
+
+	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
 	{
-		if (currentAnimation != &attackAnimation)
-			AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
-
-		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
-			AnimationPlayerPlay(&attackAnimation, true, &currentAnimation, false);
+		if (HasFlag(currentAnimation->Flags, AnimationFlag_CanAttack))
+		{
+			AnimationPlayerPlay(&playerAnimation, &attackAnimation);
+		}
 	}
-
-	Vector2 diff = CameraGetMousePosition();
-	diff = Vector2Subtract(diff, p->Position);
-	float newDir = atan2f(diff.y, diff.x);
 
 	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit);
 
-	PlayerRotate(p, LerpAngle(p->Rotation, newDir, TICKRATE * 12));
+	PlayerRotate(p, rot);
 	PlayerFlashlight->Position = PlayerEntity.Position;
 	UpdateLightBounds(&PlayerFlashlight);
-
-	if (IsKeyPressed(KEY_F))
-	{
-		if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
-		{
-			isFlashlightOn = !isFlashlightOn;
-		}
-	}
 
 	if (IsKeyPressed(KEY_G))
 	{
@@ -142,12 +157,12 @@ void PlayerLateUpdate(PlayerCharacter* p)
 
 	CameraSetTarget(targPos, false);
 	AudioUpdateListenerPosition(p->Position);
-	AnimationPlayerUpdate(currentAnimation);
+	AnimationPlayerUpdate(playerAnimation.CurrentAnimation);
 }
 
 void PlayerDraw(PlayerCharacter* p)
 {
-	TextureResource* t = currentAnimation->Clip->SpriteFrames[currentAnimation->CurrentFrame];
+	TextureResource* t = playerAnimation.CurrentAnimation->Clip->SpriteFrames[playerAnimation.CurrentAnimation->CurrentFrame];
 
 	if (t != NULL)
 	{

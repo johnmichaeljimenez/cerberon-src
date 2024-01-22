@@ -1,5 +1,6 @@
 #pragma once
 #include <stdbool.h>
+#include "animation_player.h"
 
 typedef enum FSMStateFlags
 {
@@ -18,12 +19,11 @@ typedef struct FSMState
 	char* Name[32];
 	unsigned long Hash;
 
-	void* Data;
+	int stateIndex; //0 = start, 1 = middle/loop, 2 = end
 
-	void(*OnInit)(struct FSMState* state);
-	void(*OnEnter)(struct FSMState* state);
-	void(*OnUpdate)(struct FSMState* state);
-	void(*OnExit)(struct FSMState* state);
+	AnimationPlayer* OnEnter;
+	AnimationPlayer* OnUpdate;
+	AnimationPlayer* OnExit;
 
 } FSMState;
 
@@ -31,13 +31,10 @@ typedef struct FSM
 {
 	FSMState States[16];
 	FSMState* CurrentState;
+	AnimationPlayerGroup* AnimationPlayerGroup;
 } FSM;
 
-FSMState FSMStateCreate(FSM* fsm, char* name, void* data, FSMStateFlags flags,
-	void(*onInit)(FSMState* s),
-	void(*onEnter)(FSMState* s),
-	void(*onUpdate)(FSMState* s),
-	void(*onExit)(FSMState* s)
-);
+FSMState FSMStateCreate(FSM* fsm, char* name, void* data, FSMStateFlags flags, AnimationPlayer* onEnter, AnimationPlayer* onUpdate, AnimationPlayer* onExit);
 
 void FSMUpdate(FSM* fsm);
+void FSMSetCurrentState(FSM* fsm, FSMState* state);
