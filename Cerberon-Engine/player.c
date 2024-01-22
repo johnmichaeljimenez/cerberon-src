@@ -87,10 +87,16 @@ void PlayerUpdate(PlayerCharacter* p)
 		return;
 	}
 
-	Vector2 movementInput = InputGetMovement();
-	Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
-	vel = Vector2Scale(vel, GetFrameTime());
-	p->Position = Vector2Add(p->Position, vel);
+	Vector2 movementInput = (Vector2){ 0,0 };
+	AnimationPlayer* currentAnimation = playerAnimation.CurrentAnimation;
+
+	if (!HasFlag(currentAnimation->Flags, AnimationFlag_DisableMovement))
+	{
+		movementInput = InputGetMovement();
+		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
+		vel = Vector2Scale(vel, GetFrameTime());
+		p->Position = Vector2Add(p->Position, vel);
+	}
 
 	//collision here
 	MoveBody(&p->Position, p->CollisionRadius);
