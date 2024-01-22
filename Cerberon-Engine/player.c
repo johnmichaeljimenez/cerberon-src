@@ -29,6 +29,9 @@ static AnimationPlayerGroup playerLegAnimation;
 static AnimationPlayer legIdleAnimation;
 static AnimationPlayer legMoveAnimation;
 
+static float legAngle;
+static float legAngleRange = 60;
+
 static void OnAttackHit()
 {
 	if (attackAnimation.CurrentFrame == 6)
@@ -184,7 +187,11 @@ void PlayerDraw(PlayerCharacter* p)
 	TextureResource* t2 = playerLegAnimation.CurrentAnimation->Clip->SpriteFrames[playerLegAnimation.CurrentAnimation->CurrentFrame];
 
 	DrawBlobShadow(p->Position, p->CollisionRadius * 1.5, 255);
-	DrawSprite(t2, p->Position, p->Rotation, 0.6, (Vector2) { 0, 0 }, WHITE);
+
+	float halfLegAngle = (legAngleRange / 2) * DEG2RAD;
+	legAngle = ClampRelativeAngle(legAngle, p->Rotation, -halfLegAngle, halfLegAngle);
+
+	DrawSprite(t2, p->Position, legAngle, 0.6, (Vector2) { 0, 0 }, WHITE);
 	DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 }
 
