@@ -10,8 +10,8 @@ public class CircleWallObject : BaseWall
     {
         var radius = GetComponent<CircleCollider2D>().radius * Mathf.Max(transform.localScale.x, transform.localScale.y);
 
-        array.AddRange(BitConverter.GetBytes(transform.position.x));
-        array.AddRange(BitConverter.GetBytes(transform.position.y));
+        array.AddRange(BitConverter.GetBytes(transform.position.x * MAP_SCALE));
+        array.AddRange(BitConverter.GetBytes(transform.position.y * MAP_SCALE_Y));
         array.AddRange(BitConverter.GetBytes(radius * MAP_SCALE));
         array.AddRange(BitConverter.GetBytes(0f));
         array.AddRange(BitConverter.GetBytes(true));
