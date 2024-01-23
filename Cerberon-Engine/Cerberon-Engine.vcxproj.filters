@@ -120,6 +120,9 @@
     <ClCompile Include="fsm.c">
       <Filter>Source Files\gameplay\fsm</Filter>
     </ClCompile>
+    <ClCompile Include="hitbox.c">
+      <Filter>Source Files\gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -196,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="fsm.h">
       <Filter>Source Files\gameplay\fsm</Filter>
+    </ClInclude>
+    <ClInclude Include="hitbox.h">
+      <Filter>Source Files\gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
