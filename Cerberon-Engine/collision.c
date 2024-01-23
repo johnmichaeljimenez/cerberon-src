@@ -6,6 +6,32 @@
 #include <float.h>
 #include "utils.h"
 
+bool GetCircleLineIntersection(Vector2 circleCenter, float radius, Vector2 lineStart, Vector2 lineEnd, Vector2* intersectionPoint) {
+	Vector2 nearest = WallGetClosestPoint(lineStart, lineEnd, circleCenter);
+	float distanceSquared = Vector2DistanceSqr(nearest, circleCenter);
+	float c2 = (radius * radius);
+
+	if (distanceSquared > c2)
+	{
+		return false;
+	}
+
+	Vector2 offset = Vector2Scale(Vector2Normalize(Vector2Subtract(lineEnd, lineStart)), sqrtf(c2 - distanceSquared));
+
+	if (Vector2DistanceSqr(circleCenter, lineStart) < c2)
+	{
+		*intersectionPoint = Vector2Add(nearest, offset);
+		return true;
+	}
+	else
+	{
+		*intersectionPoint = Vector2Subtract(nearest, offset);
+		return true;
+	}
+
+	return false;
+}
+
 bool GetLineIntersection(float p0_x, float p0_y, float p1_x, float p1_y,
 	float p2_x, float p2_y, float p3_x, float p3_y, Vector2* hit)
 {
@@ -55,6 +81,23 @@ void MoveBody(Vector2* pos, float radius)
 	{
 		Wall w = CurrentMapData->Walls[i];
 
+		if (w.IsCircle)
+		{
+			float distance = Vector2Distance(*pos, w.CirclePosition);
+			if (distance > (radius + w.CircleRadius))
+				continue;
+
+			float overlap = (radius + w.CircleRadius) - distance;
+
+			// Calculate the unit vector pointing from c1 to c2
+			Vector2 direction = Vector2Normalize(Vector2Subtract(w.CirclePosition, *pos));
+
+			// Move circles away from each other
+			*pos = Vector2Subtract(*pos, Vector2Scale(direction, overlap / 2));
+
+			continue;
+		}
+
 		Vector2 d = Vector2Subtract(*pos, w.Midpoint);
 
 		bool visible = Vector2DotProduct(w.Normal, d) > 0;
@@ -74,7 +117,7 @@ void MoveBody(Vector2* pos, float radius)
 
 	for (int i = 0; i < CurrentMapData->InteractableCount; i++)
 	{
-		Interactable *in = &CurrentMapData->Interactables[i];
+		Interactable* in = &CurrentMapData->Interactables[i];
 		if (in->InteractableType != INTERACTABLE_Door)
 			continue;
 
@@ -87,7 +130,7 @@ void MoveBody(Vector2* pos, float radius)
 		Vector2 cv = Vector2Subtract(c, *pos);
 		float cd = Vector2Length(cv);
 
-		float rad = radius + (door->Width/3);
+		float rad = radius + (door->Width / 3);
 
 		if (cd <= rad)
 		{
@@ -137,7 +180,28 @@ bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
 
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
+		Vector2 hitPos;
 		Wall* w = &CurrentMapData->Walls[i];
+
+		if (w->IsCircle)
+		{
+			if (GetCircleLineIntersection(w->CirclePosition, w->CircleRadius, from, to, &hitPos))
+			{
+				float diff = Vector2Distance(hitPos, from);
+
+				if (diff < lastHit)
+				{
+					hit = true;
+					result->To = hitPos;
+					result->Length = diff;
+					result->WallHit = w;
+					result->Hit = true;
+					lastHit = diff;
+				}
+			}
+
+			continue;
+		}
 
 		Vector2 d = Vector2Subtract(from, w->Midpoint);
 
@@ -146,7 +210,6 @@ bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
 		if (!visible)
 			continue;
 
-		Vector2 hitPos;
 		bool hasHit = GetLineIntersection(from.x, from.y, to.x, to.y, w->From.x, w->From.y, w->To.x, w->To.y, &hitPos);
 		//CheckCollisionLines(from, to, w->From, w->To, &hitPos);
 

@@ -96,3 +96,26 @@ float ClampRelativeAngle(float angle, float reference, float min_offset, float m
 
 	return reference + clamped_relative_angle;
 }
+
+bool GetCircleTangent(Vector2 from, Vector2 circlePos, float radius, Vector2* tanA, Vector2* tanB)
+{
+	Vector2 dir = Vector2Subtract(from, circlePos);
+	float m = Vector2Length(dir);
+
+	if (m < radius)
+		return false;
+
+	m = fminf(radius, m);
+
+	float angle = atan2(dir.y, dir.x);
+
+	float tangentAngle = asin(radius / m);
+
+	tanA->x = circlePos.x + radius * cos(angle + tangentAngle);
+	tanA->y = circlePos.y + radius * sin(angle + tangentAngle);
+
+	tanB->x = circlePos.x + radius * cos(angle - tangentAngle);
+	tanB->y = circlePos.y + radius * sin(angle - tangentAngle);
+
+	return true;
+}

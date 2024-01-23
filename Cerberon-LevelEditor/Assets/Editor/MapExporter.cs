@@ -42,7 +42,7 @@ public class MapExporter : MonoBehaviour
         data.AddRange(BitConverter.GetBytes(player.position.y * MAP_SCALE_Y));
         data.AddRange(BitConverter.GetBytes(player.eulerAngles.z));
 
-        Export<WallObject>(root, data);
+        Export<BaseWall>(root, data);
         Export<BaseInteractable>(root, data);
         Export<LightObject>(root, data);
         Export<TileObject>(root, data);

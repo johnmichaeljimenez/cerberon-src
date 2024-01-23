@@ -99,15 +99,35 @@ void LoadMap(char* filename, MapData* map)
 			fread(&bc.Position.y, sizeof(float), 1, file);
 			fread(&bc.Size.x, sizeof(float), 1, file);
 			fread(&bc.Size.y, sizeof(float), 1, file);
+			fread(&bc.IsCircle, sizeof(bool), 1, file);
 
 			map->BlockColliders[i] = bc;
 			BlockCollider* _bc = &map->BlockColliders[i];
-			CreateRenderObject(RENDERLAYER_Wall, i, (Rectangle) { bc.Position.x - (bc.Size.x/2), bc.Position.y - (bc.Size.y/2), bc.Size.x, bc.Size.y }, (void*)_bc, DrawWallBlock, NULL);
+			CreateRenderObject(RENDERLAYER_Wall, i, (Rectangle) { bc.Position.x - (bc.Size.x / 2), bc.Position.y - (bc.Size.y / 2), bc.Size.x, bc.Size.y }, (void*)_bc, DrawWallBlock, NULL);
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
 		{
 			BlockCollider* block = &map->BlockColliders[i / 4];
+
+			if (block->IsCircle)
+			{
+				map->Walls[i] = (Wall){
+					.IsCircle = true,
+					.CircleRadius = block->Size.x,
+					.CirclePosition = block->Position,
+					.WallFlags = WALLFLAG_CAST_SHADOW,
+					._Bounds = (Rectangle){
+						.x = block->Position.x - (block->Size.x / 2),
+						.y = block->Position.y - (block->Size.x / 2),
+						.width = block->Size.x,
+						.height = block->Size.x,
+					}
+				};
+
+				continue;
+			}
+
 			x1 = block->Position.x;
 			y1 = block->Position.y;
 			x2 = block->Size.x;
@@ -354,6 +374,12 @@ void DrawMap(MapData* map)
 
 void DrawWallBlock(BlockCollider* b)
 {
+	if (b->IsCircle)
+	{
+		DrawCircle(b->Position.x, b->Position.y, b->Size.x, BLACK);
+		return;
+	}
+
 	Vector2 size = b->Size;
 	size.x += 36;
 	size.y += 36;

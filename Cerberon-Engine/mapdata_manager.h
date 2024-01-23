@@ -10,6 +10,7 @@ typedef struct BlockCollider
 {
 	Vector2 Position;
 	Vector2 Size;
+	bool IsCircle;
 } BlockCollider;
 
 typedef enum WallFlag
@@ -27,6 +28,9 @@ typedef struct Wall
 	Vector2 Normal;
 	Vector2 Midpoint;
 	WallFlag WallFlags;
+	bool IsCircle;
+	Vector2 CirclePosition;
+	float CircleRadius;
 
 	Rectangle _Bounds;
 } Wall;
