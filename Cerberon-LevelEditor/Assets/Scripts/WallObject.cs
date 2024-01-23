@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
-public class WallObject : BaseObject
+public class WallObject : BaseWall
 {
     public override void Export(List<byte> array)
     {
@@ -14,5 +14,6 @@ public class WallObject : BaseObject
         array.AddRange(BitConverter.GetBytes(transform.position.y + box.center.y * MAP_SCALE_Y));
         array.AddRange(BitConverter.GetBytes(box.size.x * MAP_SCALE));
         array.AddRange(BitConverter.GetBytes(box.size.y * MAP_SCALE));
+        array.AddRange(BitConverter.GetBytes(false));
     }
 }
