@@ -161,6 +161,13 @@ void DrawShadows(Light* light, bool useBounds)
 		if (useBounds && !CheckCollisionRecs(light->_Bounds, w->_Bounds))
 			continue;
 
+		if (w->IsCircle)
+		{
+			DrawCircleShadows(light->Position, w->CirclePosition, w->CircleRadius);
+			//DrawCircleV(w->CirclePosition, w->CircleRadius, BLACK);
+			continue;
+		}
+
 		Vector2 d = Vector2Subtract(light->Position, w->Midpoint);
 		bool visible = Vector2DotProduct(w->Normal, d) > 0;
 		if (!visible)
@@ -189,6 +196,28 @@ void DrawShadows(Light* light, bool useBounds)
 		else
 			DrawShadowsEx(door->From, door->To, normal, light->Position);
 	}
+}
+
+void DrawCircleShadows(Vector2 from, Vector2 circlePos, float circleRadius)
+{
+	Vector2 a, b, c, d;
+
+	if (!GetCircleTangent(from, circlePos, circleRadius, &a, &b))
+		return;
+
+	c = Vector2Add(a, Vector2Scale(Vector2Normalize(Vector2Subtract(a, from)), 800));
+	d = Vector2Add(b, Vector2Scale(Vector2Normalize(Vector2Subtract(b, from)), 800));
+
+	Vector2 points[4] = {
+		a, b, c, d
+	};
+
+	//DrawLineV(from, a, BLACK);
+	//DrawLineV(from, b, BLACK);
+	//DrawLineV(a, c, BLACK);
+	//DrawLineV(b, d, BLACK);
+
+	DrawTriangleStrip(points, 4, BLACK);
 }
 
 void DrawShadowsEx(Vector2 from, Vector2 to, Vector2 normal, Vector2 lightPos)

@@ -28,6 +28,7 @@ void UnloadLight();
 void CreateLight(Light* light);
 void UpdateLightBounds(Light* l);
 void DrawShadows(Light* light, bool useBounds);
+void DrawCircleShadows(Vector2 from, Vector2 circlePos, float circleRadius);
 void DrawShadowsEx(Vector2 from, Vector2 to, Vector2 normal, Vector2 lightPos);
 void DrawLightDefault(Light* l);
 
