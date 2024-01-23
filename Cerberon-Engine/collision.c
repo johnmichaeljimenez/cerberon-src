@@ -55,6 +55,23 @@ void MoveBody(Vector2* pos, float radius)
 	{
 		Wall w = CurrentMapData->Walls[i];
 
+		if (w.IsCircle)
+		{
+			float distance = Vector2Distance(*pos, w.CirclePosition);
+			if (distance > (radius + w.CircleRadius))
+				continue;
+
+			float overlap = (radius + w.CircleRadius) - distance;
+
+			// Calculate the unit vector pointing from c1 to c2
+			Vector2 direction = Vector2Normalize(Vector2Subtract(w.CirclePosition, *pos));
+
+			// Move circles away from each other
+			*pos = Vector2Subtract(*pos, Vector2Scale(direction, overlap / 2));
+
+			continue;
+		}
+
 		Vector2 d = Vector2Subtract(*pos, w.Midpoint);
 
 		bool visible = Vector2DotProduct(w.Normal, d) > 0;
@@ -138,6 +155,11 @@ bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
 		Wall* w = &CurrentMapData->Walls[i];
+
+		if (w->IsCircle)
+		{
+			continue;
+		}
 
 		Vector2 d = Vector2Subtract(from, w->Midpoint);
 
