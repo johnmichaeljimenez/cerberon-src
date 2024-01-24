@@ -1,9 +1,9 @@
 #include "time.h"
 #include <math.h>
 #include "utils.h"
+#include <raymath.h>
 
-
-float MaxTimePerDay = 60.0f;
+float MaxTimePerDay = 120.0f;
 static int _currentTimeIndex;
 static Color _previousAmbientColor;
 static Color _currentAmbientColor;
@@ -12,7 +12,7 @@ static float maxSegment;
 
 void TimeInit()
 {
-	maxSegment = MaxTimePerDay * 0.0625f;
+	maxSegment = Remap(1, 0, 16, 0, MaxTimePerDay);
 	CurrentTimeOfDay = 0.25f;
 	lerpColorAmount = 1;
 }
@@ -23,7 +23,7 @@ void TimeUpdate()
 	if (CurrentTimeOfDay >= MaxTimePerDay)
 		CurrentTimeOfDay = 0;
 
-	_currentTimeIndex = (int)round(GetCurrentTimeOfDay() * 16);
+	_currentTimeIndex = (int)floorf(GetCurrentTimeOfDay() * 16);
 
 	lerpColorAmount += TICKRATE;
 	if (lerpColorAmount >= maxSegment)
