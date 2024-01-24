@@ -86,6 +86,19 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 
 	ClearBackground(LightAmbientColor);
 
+	for (int i = 0; i < CurrentMapData->TriggerCount; i++)
+	{
+		Trigger* t = &CurrentMapData->Triggers[i];
+		if (!t->HasAmbientLight)
+			continue;
+
+		for (int j = 0; j < t->ColliderCount; j++)
+		{
+			TriggerCollider* c = &t->Colliders[j];
+			DrawRectanglePro(c->_rectangle, (Vector2) { c->_rectangle.width / 2, c->_rectangle.height / 2 }, c->Rotation* RAD2DEG, LerpColor(BLACK, LightAmbientColor, t->DaylightAmbientAmount));
+		}
+	}
+
 	BeginBlendMode(BLEND_ADDITIVE);
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{

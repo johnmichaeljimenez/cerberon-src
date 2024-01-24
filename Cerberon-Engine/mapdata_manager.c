@@ -302,6 +302,7 @@ void LoadMap(char* filename, MapData* map)
 			fread(&_r, sizeof(float), 1, file);
 			fread(&_g, sizeof(float), 1, file);
 			fread(&_b, sizeof(float), 1, file);
+			fread(&t.DaylightAmbientAmount, sizeof(float), 1, file);
 
 			t.AmbientLightColor.r = _r * 255;
 			t.AmbientLightColor.g = _g * 255;
