@@ -3,7 +3,10 @@
 #include "utils.h"
 #include <raymath.h>
 
-float MaxTimePerDay = 120.0f;
+static float MaxTimePerDay = 30.0f;
+static float MorningTime = 0.25f;
+static float EveningTime = 0.85f;
+
 static int _currentTimeIndex;
 static Color _previousAmbientColor;
 static Color _currentAmbientColor;
@@ -19,11 +22,12 @@ void TimeInit()
 
 void TimeUpdate()
 {
+	float d = GetCurrentTimeOfDay();
 	CurrentTimeOfDay += TICKRATE;
 	if (CurrentTimeOfDay >= MaxTimePerDay)
 		CurrentTimeOfDay = 0;
 
-	_currentTimeIndex = (int)floorf(GetCurrentTimeOfDay() * 16);
+	_currentTimeIndex = (int)floorf(d * 16);
 
 	lerpColorAmount += TICKRATE;
 	if (lerpColorAmount >= maxSegment)
@@ -32,6 +36,15 @@ void TimeUpdate()
 		_previousAmbientColor = _currentAmbientColor;
 		_currentAmbientColor = TimeOfDayGradient[_currentTimeIndex];
 	}
+
+	if (d < MorningTime)
+		CurrentTimeStatus = TIMESTATUS_Midnight;
+	else if (d < 0.5f)
+		CurrentTimeStatus = TIMESTATUS_Morning;
+	else if (d < EveningTime)
+		CurrentTimeStatus = TIMESTATUS_Afternoon;
+	else
+		CurrentTimeStatus = TIMESTATUS_Evening;
 }
 
 float GetCurrentTimeOfDay()
@@ -57,5 +70,5 @@ void DrawDebugTime()
 	DrawRectangle(4, 100, 32, 32, _previousAmbientColor);
 	DrawRectangle(4, 140, 32, 32, _currentAmbientColor);
 
-	DrawText(TextFormat("%.2f/%.2f = %.2f ---> %.2f %.2f", CurrentTimeOfDay, MaxTimePerDay, GetCurrentTimeOfDay(), lerpColorAmount, maxSegment), 4, 50, 32, GREEN);
+	DrawText(TextFormat("%d %.2f/%.2f = %.2f ---> %.2f %.2f", CurrentTimeStatus, CurrentTimeOfDay, MaxTimePerDay, GetCurrentTimeOfDay(), lerpColorAmount, maxSegment), 4, 50, 32, GREEN);
 }
