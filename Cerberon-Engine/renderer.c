@@ -6,6 +6,7 @@
 #include "tile.h"
 #include <stdlib.h>
 #include "utils.h"
+#include "time.h"
 
 static bool lightingEnabled;
 static bool debugEnabled;
@@ -243,6 +244,7 @@ void RendererDraw()
 		_DrawDebug();
 
 	PlayerDrawHUD(&PlayerEntity);
+	DrawDebugTime();
 }
 
 void SetShaderMaskedMode()

@@ -13,3 +13,4 @@ void TimeInit();
 void TimeUpdate();
 float GetCurrentTimeOfDay();
 Color GetAmbientLightColor();
+void DrawDebugTime();

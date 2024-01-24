@@ -53,7 +53,7 @@ void UpdateLightBounds(Light* l)
 
 void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture)
 {
-	LightAmbientColor = LerpColor(LightAmbientColor, GetAmbientLightColor(), TICKRATE * 2);
+	LightAmbientColor = GetAmbientLightColor();
 
 	//DRAW LIGHT RENDER TEXTURES
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
