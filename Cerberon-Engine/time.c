@@ -3,7 +3,7 @@
 #include "utils.h"
 #include <raymath.h>
 
-static float MaxTimePerDay = 30.0f;
+static float MaxTimePerDay = 60.0f;
 static float MorningTime = 0.25f;
 static float EveningTime = 0.85f;
 
@@ -16,8 +16,12 @@ static float maxSegment;
 void TimeInit()
 {
 	maxSegment = Remap(1, 0, 16, 0, MaxTimePerDay);
-	CurrentTimeOfDay = 0.25f;
+	CurrentTimeOfDay = MaxTimePerDay * 0.25f;
 	lerpColorAmount = 1;
+
+	_currentTimeIndex = (int)floorf(GetCurrentTimeOfDay() * 16);
+	_currentAmbientColor = TimeOfDayGradient[_currentTimeIndex];
+	_previousAmbientColor = _currentAmbientColor;
 }
 
 void TimeUpdate()
