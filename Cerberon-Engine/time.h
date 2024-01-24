@@ -5,3 +5,4 @@
 #pragma once
 
 float TICKRATE;
+Color TimeOfDayGradient[16];

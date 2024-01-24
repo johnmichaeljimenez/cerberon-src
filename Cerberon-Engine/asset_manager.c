@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include "utils.h"
 #include "memory.h"
+#include "time.h"
 
 //TODO: investigate memory leakage from logfile report
 void LoadResources()
 {
-	TextureResourceList = MCalloc(2, sizeof(TextureResource), "Texture List");
-	TextureResourceCount = 2;
+	TextureResourceCount = 3;
+	TextureResourceList = MCalloc(TextureResourceCount, sizeof(TextureResource), "Texture List");
 
 	Image img = GenImageChecked(128, 128, 16, 16, MAGENTA, BLACK);
 	TextureResourceList[0] = (TextureResource){
@@ -28,6 +29,13 @@ void LoadResources()
 		.Texture = LoadTextureFromImage(img),
 		.TextureType = TEXTURETYPE_Sprite
 	};
+	UnloadImage(img);
+
+	img = LoadImage("res/system/misc-ambient-gradient.png");
+	for (int i = 0; i < 16; i++)
+	{
+		TimeOfDayGradient[i] = GetImageColor(img, i, 0);
+	}
 	UnloadImage(img);
 
 	LoadTexturePack("res/tiles.pak", TEXTURETYPE_Tile);
