@@ -101,9 +101,19 @@ void LoadMap(char* filename, MapData* map)
 			fread(&bc.Size.y, sizeof(float), 1, file);
 			fread(&bc.IsCircle, sizeof(bool), 1, file);
 
+			Rectangle blockRect = (Rectangle){ bc.Position.x - (bc.Size.x / 2), bc.Position.y - (bc.Size.y / 2), bc.Size.x, bc.Size.y };
+			if (bc.IsCircle)
+			{
+				blockRect.x = bc.Position.x - bc.Size.x;
+				blockRect.y = bc.Position.y - bc.Size.x;
+				blockRect.width = bc.Size.x * 2;
+				blockRect.height = bc.Size.x * 2;
+			}
+
 			map->BlockColliders[i] = bc;
 			BlockCollider* _bc = &map->BlockColliders[i];
-			CreateRenderObject(RENDERLAYER_Wall, i, (Rectangle) { bc.Position.x - (bc.Size.x / 2), bc.Position.y - (bc.Size.y / 2), bc.Size.x, bc.Size.y }, (void*)_bc, DrawWallBlock, NULL);
+
+			CreateRenderObject(RENDERLAYER_Wall, i, blockRect, (void*)_bc, DrawWallBlock, NULL);
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
@@ -292,6 +302,7 @@ void LoadMap(char* filename, MapData* map)
 			fread(&_r, sizeof(float), 1, file);
 			fread(&_g, sizeof(float), 1, file);
 			fread(&_b, sizeof(float), 1, file);
+			fread(&t.DaylightAmbientAmount, sizeof(float), 1, file);
 
 			t.AmbientLightColor.r = _r * 255;
 			t.AmbientLightColor.g = _g * 255;

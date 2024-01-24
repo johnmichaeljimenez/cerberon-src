@@ -8,6 +8,7 @@
 #include "i_door.h"
 #include "renderer.h"
 #include "camera.h"
+#include "time.h"
 
 static float lightScale = 4;
 static float screenLightScale = 2;
@@ -52,6 +53,8 @@ void UpdateLightBounds(Light* l)
 
 void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture)
 {
+	LightAmbientColor = GetAmbientLightColor();
+
 	//DRAW LIGHT RENDER TEXTURES
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{
@@ -82,6 +85,19 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 	BeginMode2D(screenLightCamera);
 
 	ClearBackground(LightAmbientColor);
+
+	for (int i = 0; i < CurrentMapData->TriggerCount; i++)
+	{
+		Trigger* t = &CurrentMapData->Triggers[i];
+		if (!t->HasAmbientLight)
+			continue;
+
+		for (int j = 0; j < t->ColliderCount; j++)
+		{
+			TriggerCollider* c = &t->Colliders[j];
+			DrawRectanglePro(c->_rectangle, (Vector2) { c->_rectangle.width / 2, c->_rectangle.height / 2 }, c->Rotation* RAD2DEG, LerpColor(BLACK, LightAmbientColor, t->DaylightAmbientAmount));
+		}
+	}
 
 	BeginBlendMode(BLEND_ADDITIVE);
 	for (int i = 0; i < CurrentMapData->LightCount; i++)

@@ -13,6 +13,7 @@ public class TriggerObject : BaseObject
     [SerializeField] private float Cooldown;
     [SerializeField] private bool HasAmbientLight;
     [SerializeField] [ShowIf(nameof(HasAmbientLight))] private Color AmbientColor;
+    [SerializeField][ShowIf(nameof(HasAmbientLight))] [Range(0f, 1f)] private float DaylightAmbientAmount;
 
     public override void Export(List<byte> array)
     {
@@ -27,6 +28,7 @@ public class TriggerObject : BaseObject
         array.AddRange(BitConverter.GetBytes(AmbientColor.r));
         array.AddRange(BitConverter.GetBytes(AmbientColor.g));
         array.AddRange(BitConverter.GetBytes(AmbientColor.b));
+        array.AddRange(BitConverter.GetBytes(DaylightAmbientAmount));
 
         array.AddRange(BitConverter.GetBytes(colliders.Length));
         foreach (var i in colliders)
