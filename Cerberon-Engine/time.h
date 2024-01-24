@@ -6,10 +6,10 @@
 #include <raylib.h>
 
 float TICKRATE;
-float MaxTimePerDay;
 float CurrentTimeOfDay;
 Color TimeOfDayGradient[16];
 
 void TimeInit();
 void TimeUpdate();
 float GetCurrentTimeOfDay();
+Color GetAmbientLightColor();

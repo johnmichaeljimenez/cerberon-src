@@ -1,5 +1,8 @@
 #include "time.h"
+#include <math.h>
 
+
+float MaxTimePerDay = 60.0f;
 
 void TimeInit()
 {
@@ -16,4 +19,9 @@ void TimeUpdate()
 float GetCurrentTimeOfDay()
 {
 	return CurrentTimeOfDay / MaxTimePerDay;
+}
+
+Color GetAmbientLightColor()
+{
+	return TimeOfDayGradient[(int)round(GetCurrentTimeOfDay() * 16)];
 }

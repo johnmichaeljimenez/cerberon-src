@@ -8,6 +8,7 @@
 #include "i_door.h"
 #include "renderer.h"
 #include "camera.h"
+#include "time.h"
 
 static float lightScale = 4;
 static float screenLightScale = 2;
@@ -52,6 +53,8 @@ void UpdateLightBounds(Light* l)
 
 void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRenderTexture, RenderTexture* lightRenderTexture)
 {
+	LightAmbientColor = LerpColor(LightAmbientColor, GetAmbientLightColor(), TICKRATE * 2);
+
 	//DRAW LIGHT RENDER TEXTURES
 	for (int i = 0; i < CurrentMapData->LightCount; i++)
 	{
