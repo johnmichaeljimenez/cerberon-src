@@ -9,6 +9,7 @@
 #include "cursor.h"
 #include "utils.h"
 #include "input_handler.h"
+#include "time.h"
 
 void IngameInit()
 {
@@ -30,6 +31,7 @@ void IngameOnLoad()
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
 	RendererPostInitialize();
+	TimeInit();
 }
 
 void IngameOnUnload()
@@ -50,6 +52,7 @@ void IngameOnUpdate()
 	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
 	RendererUpdate();
+	TimeUpdate();
 
 	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);

@@ -123,6 +123,9 @@
     <ClCompile Include="hitbox.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="time.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
