@@ -119,3 +119,19 @@ bool GetCircleTangent(Vector2 from, Vector2 circlePos, float radius, Vector2* ta
 
 	return true;
 }
+
+Color LerpColor(Color a, Color b, float t)
+{
+	Vector3 ca = ColorToHSV(a);
+	Vector3 cb = ColorToHSV(b);
+	Vector3 output;
+
+	output.x = Lerp(ca.x, cb.x, t);
+	output.y = Lerp(ca.y, cb.y, t);
+	output.z = Lerp(ca.z, cb.z, t);
+
+	Color c = ColorFromHSV(output.x, output.y, output.z);
+	c.a = 255;
+
+	return c;
+}

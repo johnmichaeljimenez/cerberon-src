@@ -15,3 +15,4 @@ void DrawRenderTextureToScreen(Texture* t, float scale);
 void DrawBlobShadow(Vector2 pos, float radius, float intensity);
 float ClampRelativeAngle(float angle, float reference, float min_offset, float max_offset);
 bool GetCircleTangent(Vector2 from, Vector2 circlePos, float radius, Vector2* tanA, Vector2* tanB);
+Color LerpColor(Color a, Color b, float t);
