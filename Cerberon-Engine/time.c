@@ -3,7 +3,7 @@
 #include "utils.h"
 #include <raymath.h>
 
-static float MaxTimePerDay = 60.0f;
+static float MaxTimePerDay = 300.0f;
 static float MorningTime = 0.25f;
 static float EveningTime = 0.85f;
 
