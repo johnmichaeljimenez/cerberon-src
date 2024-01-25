@@ -92,6 +92,12 @@ void LoadTexturePack(char* filename, TextureType type)
 		fread(texData, sizeof(char), texSize, file);
 		Image img = LoadImageFromMemory(".png", texData, texSize);
 
+		if (StartsWith("overlay-", texName))
+		{
+			ImageColorInvert(&img);
+			ImageColorTint(&img, (Color) { 0, 0, 255, 255 });
+		}
+
 		strcpy_s(TextureResourceList[i].Name, 32, texName);
 		TextureResourceList[i].Texture = LoadTextureFromImage(img);
 		TextureResourceList[i].TextureType = type;
