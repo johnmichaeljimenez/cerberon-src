@@ -219,6 +219,15 @@ void _DrawDebug()
 			r->OnDrawDebug(r->Data);
 	}
 
+	for (int i = 0; i < CurrentMapData->OverlayCount; i++)
+	{
+		Overlay* o = &CurrentMapData->Overlays[i];
+		if (!CheckCollisionRecs(o->_Bounds, CameraViewBounds))
+			continue;
+
+		DrawRectangleLines(o->_Bounds.x, o->_Bounds.y, o->_Bounds.width, o->_Bounds.height, WHITE);
+	}
+
 	EndMode2D();
 }
 
