@@ -47,6 +47,7 @@ public class MapExporter : MonoBehaviour
         Export<LightObject>(root, data);
         Export<TileObject>(root, data);
         Export<TriggerObject>(root, data);
+        Export<OverlayObject>(root, data);
 
         File.WriteAllBytes(fname, data.ToArray());
         EditorUtility.DisplayDialog("Success!", $"Map exported to {fname}", "OK");
