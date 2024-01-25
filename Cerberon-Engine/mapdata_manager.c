@@ -359,6 +359,8 @@ void LoadMap(char* filename, MapData* map)
 			fread(&t.TextureID, sizeof(char), 32, file);
 			fread(&t.Alpha, sizeof(float), 1, file);
 
+			t.Rotation *= DEG2RAD;
+
 			map->Overlays[i] = t;
 		}
 
