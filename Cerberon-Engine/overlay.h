@@ -14,4 +14,5 @@ typedef struct Overlay
 	Rectangle _Bounds;
 } Overlay;
 
-void DrawOverlays();
+void OverlayInit();
+void OverlayDraw();

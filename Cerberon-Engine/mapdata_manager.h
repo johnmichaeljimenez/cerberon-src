@@ -5,6 +5,7 @@
 #include "interaction.h"
 #include "tile.h"
 #include "i_trigger.h"
+#include "overlay.h"
 
 typedef struct BlockCollider
 {
@@ -57,6 +58,9 @@ typedef struct MapData
 
 	int TriggerCount;
 	Trigger* Triggers;
+
+	int OverlayCount;
+	Overlay* Overlays;
 } MapData;
 
 MapData* CurrentMapData;

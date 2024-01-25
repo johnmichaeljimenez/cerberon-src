@@ -2,7 +2,13 @@
 #include "overlay.h"
 #include "mapdata_manager.h"
 
-void DrawOverlays()
+
+void OverlayInit()
+{
+
+}
+
+void OverlayDraw()
 {
 
 }
