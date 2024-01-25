@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "time.h"
+#include "overlay.h"
 
 static bool lightingEnabled;
 static bool debugEnabled;
@@ -216,6 +217,15 @@ void _DrawDebug()
 
 		if (r->OnDrawDebug != NULL)
 			r->OnDrawDebug(r->Data);
+	}
+
+	for (int i = 0; i < CurrentMapData->OverlayCount; i++)
+	{
+		Overlay* o = &CurrentMapData->Overlays[i];
+		if (!CheckCollisionRecs(o->_Bounds, CameraViewBounds))
+			continue;
+
+		DrawRectangleLines(o->_Bounds.x, o->_Bounds.y, o->_Bounds.width, o->_Bounds.height, WHITE);
 	}
 
 	EndMode2D();

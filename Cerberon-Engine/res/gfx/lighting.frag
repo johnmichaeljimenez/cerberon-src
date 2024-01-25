@@ -46,6 +46,7 @@ void main()
     vig = pow(vig, 1.0);
     
     vec3 effectColor = texture(effectTex, fragTexCoord).rgb;
+    effectColor.b = mix(effectColor.b, 0, effectColor.g);
 
     vec3 lightColor = texture(texture0, fragTexCoord).rgb;
     vec3 screenColor = texture(screenTex, fragTexCoord).rgb;
@@ -56,8 +57,11 @@ void main()
     screenGrayColor /= 4;
 
     vec3 outColor = mix(screenGrayColor, texelColor, effectColor.r);
-    outColor = Dither(outColor);
-    outColor *= vig;
+    outColor = mix(outColor, vec3(0,0,0), effectColor.b);
     
+    outColor = Dither(outColor);
+
+    outColor *= vig;
+
     finalColor = vec4(outColor, 1);
 }

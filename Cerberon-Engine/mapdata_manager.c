@@ -21,6 +21,11 @@ void InitMap()
 
 void UnloadMap()
 {
+	if (CurrentMapData->OverlayCount > 0)
+	{
+		MFree(CurrentMapData->Overlays, CurrentMapData->OverlayCount, sizeof(Overlay), "Overlay List");
+	}
+
 	if (CurrentMapData->TriggerCount > 0)
 	{
 		for (int i = 0; i < CurrentMapData->TriggerCount; i++)
@@ -331,6 +336,35 @@ void LoadMap(char* filename, MapData* map)
 		}
 
 		TriggerInit();
+	}
+
+
+
+
+	//OVERLAYS
+	fread(&n, sizeof(int), 1, file);
+	map->OverlayCount = n;
+
+	if (map->OverlayCount > 0)
+	{
+		map->Overlays = MCalloc(map->OverlayCount, sizeof(Overlay), "Overlay List");
+		for (int i = 0; i < map->OverlayCount; i += 1)
+		{
+			Overlay t = { 0 };
+			fread(&t.Position.x, sizeof(float), 1, file);
+			fread(&t.Position.y, sizeof(float), 1, file);
+			fread(&t.Rotation, sizeof(float), 1, file);
+			fread(&t.Scale.x, sizeof(float), 1, file);
+			fread(&t.Scale.y, sizeof(float), 1, file);
+			fread(&t.TextureID, sizeof(char), 32, file);
+			fread(&t.Alpha, sizeof(float), 1, file);
+
+			t.Rotation *= DEG2RAD;
+
+			map->Overlays[i] = t;
+		}
+
+		OverlayInit();
 	}
 
 	fclose(file);

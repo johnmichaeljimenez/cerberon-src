@@ -18,6 +18,7 @@ typedef struct Trigger
 
 	bool HasAmbientLight;
 	Color AmbientLightColor;
+	float DaylightAmbientAmount;
 
 	int ColliderCount;
 	TriggerCollider* Colliders;

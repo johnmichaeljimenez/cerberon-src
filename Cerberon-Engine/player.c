@@ -247,11 +247,11 @@ void DrawPlayerFlashlight(Light* l)
 
 void DrawPlayerVision()
 {
-	BeginBlendMode(BLEND_ADDITIVE);
+	//BeginBlendMode(BLEND_ADDITIVE);
 	Color red = (Color){ 255, 0, 0, 255 };
 	Vector2 pos = PlayerEntity.Position;
 
-	DrawCircleGradient(pos.x, pos.y, 100, red, BLACK);
+	DrawCircleGradient(pos.x, pos.y, 100, red, ColorAlpha(red, 0));
 	//DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
 
 	//PLACEHOLDER
@@ -268,7 +268,7 @@ void DrawPlayerVision()
 	v3 = Vector2Add(pos, Vector2Scale(v3, length));
 
 	DrawTriangle(pos, v2, v3, red);
-	EndBlendMode();
+	//EndBlendMode();
 }
 
 

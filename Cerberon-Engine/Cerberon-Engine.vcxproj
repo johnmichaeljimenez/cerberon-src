@@ -154,6 +154,7 @@
     <ClCompile Include="gamestate_mainmenu.c" />
     <ClCompile Include="mapdata_manager.c" />
     <ClCompile Include="memory.c" />
+    <ClCompile Include="overlay.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="renderer.c" />
     <ClCompile Include="tile.c" />
@@ -182,6 +183,7 @@
     <ClInclude Include="log.h" />
     <ClInclude Include="mapdata_manager.h" />
     <ClInclude Include="memory.h" />
+    <ClInclude Include="overlay.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="tile.h" />
