@@ -20,6 +20,6 @@ void OverlayDraw()
 	for (int i = 0; i < CurrentMapData->OverlayCount; i++)
 	{
 		Overlay* o = &CurrentMapData->Overlays[i];
-		DrawSprite(o->_textureResource, o->Position, o->Rotation, o->Scale.x, Vector2Zero(), BLACK);
+		DrawSprite(o->_textureResource, o->Position, o->Rotation, o->Scale.x, Vector2Zero(), WHITE);
 	}
 }

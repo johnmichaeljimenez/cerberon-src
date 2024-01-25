@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "time.h"
+#include "overlay.h"
 
 static bool lightingEnabled;
 static bool debugEnabled;

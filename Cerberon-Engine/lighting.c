@@ -9,6 +9,7 @@
 #include "renderer.h"
 #include "camera.h"
 #include "time.h"
+#include "overlay.h"
 
 static float lightScale = 4;
 static float screenLightScale = 2;
@@ -132,7 +133,7 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 		for (int j = 0; j < t->ColliderCount; j++)
 		{
 			TriggerCollider* c = &t->Colliders[j];
-			DrawRectanglePro(c->_rectangle, (Vector2) { c->_rectangle.width / 2, c->_rectangle.height / 2 }, c->Rotation * RAD2DEG, t->AmbientLightColor);
+			DrawRectanglePro(c->_rectangle, (Vector2) { c->_rectangle.width / 2, c->_rectangle.height / 2 }, c->Rotation* RAD2DEG, t->AmbientLightColor);
 		}
 	}
 
@@ -146,10 +147,19 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 	BeginMode2D(screenLightCamera);
 
 	ClearBackground(BLACK);
+	BeginBlendMode(BLEND_ADDITIVE);
 
 	DrawPlayerVision();
 
+	DrawCircleGradient(PlayerEntity.Position.x, PlayerEntity.Position.y, 200, GREEN, BLACK);
+	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 200, GREEN, BLACK);
+	EndBlendMode();
+
 	DrawShadows(&CurrentMapData->Lights[0], false);
+
+	BeginBlendMode(BLEND_ADDITIVE);
+	OverlayDraw();
+	EndBlendMode();
 
 	DrawWalls();
 	EndMode2D();
@@ -180,7 +190,7 @@ void DrawShadows(Light* light, bool useBounds)
 		if (w->IsCircle)
 		{
 			DrawCircleShadows(light->Position, w->CirclePosition, w->CircleRadius);
-			//DrawCircleV(w->CirclePosition, w->CircleRadius, BLACK);
+			DrawCircleV(w->CirclePosition, w->CircleRadius, BLACK);
 			continue;
 		}
 
