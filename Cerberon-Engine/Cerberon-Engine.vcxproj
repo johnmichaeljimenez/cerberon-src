@@ -142,6 +142,7 @@
     <ClCompile Include="game.c" />
     <ClCompile Include="gamestate_ingame.c" />
     <ClCompile Include="hitbox.c" />
+    <ClCompile Include="hud.c" />
     <ClCompile Include="input_handler.c" />
     <ClCompile Include="interaction.c" />
     <ClCompile Include="inventory.c" />
@@ -173,6 +174,7 @@
     <ClInclude Include="gamestate_ingame.h" />
     <ClInclude Include="gamestate_mainmenu.h" />
     <ClInclude Include="hitbox.h" />
+    <ClInclude Include="hud.h" />
     <ClInclude Include="input_handler.h" />
     <ClInclude Include="interaction.h" />
     <ClInclude Include="inventory.h" />

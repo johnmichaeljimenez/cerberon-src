@@ -123,11 +123,14 @@
     <ClCompile Include="hitbox.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="time.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="overlay.c">
       <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="time.c">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="hud.c">
+      <Filter>Source Files\ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="overlay.h">
       <Filter>Source Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="hud.h">
+      <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
