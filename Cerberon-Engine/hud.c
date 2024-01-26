@@ -11,7 +11,7 @@ void DrawHUD()
 
 	//player stats
 	DrawRectangle(4, 4, 120, 15, (Color) { 25, 25, 25, 255 });
-	DrawRectangle(4, 4, (char)(120.0 * (PlayerEntity.Hitpoints / 100.0)), 15, (Color) { 120, 0, 0, 255 });
+	DrawRectangle(4, 4, 120.0 * (PlayerEntity.Hitpoints / 100.0), 15, (Color) { 120, 0, 0, 255 });
 	DrawRectangleLines(4, 4, 120, 15, WHITE);
 
 	//inventory
@@ -26,14 +26,12 @@ void DrawHUD()
 			continue;
 
 		char* amt;
-		//if (in->CurrentMaxAmount > 1)
-		//{
-			//amt = TextFormat("%02d/%02d", in->CurrentAmount, in->CurrentMaxAmount);
-		//}
-		//else
-		//{
-			amt = TextFormat("%02d", in->CurrentAmount);
-		//}
+		amt = TextFormat("%02d", in->CurrentAmount);
+
+		if (in->CurrentMaxAmount > 1)
+		{
+			DrawRectangleLines(5, y + 29, 30 * (float)in->CurrentAmount/(float)in->CurrentMaxAmount, 2, RED);
+		}
 
 		//add icon here
 
