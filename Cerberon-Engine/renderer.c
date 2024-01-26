@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "time.h"
 #include "overlay.h"
+#include "hud.h"
 
 static bool lightingEnabled;
 static bool debugEnabled;
@@ -257,8 +258,7 @@ void RendererDraw()
 
 	PlayerDrawHUD(&PlayerEntity);
 	//DrawDebugTime();
-
-	DrawText(TimeGetString(), 4, 50, 50, WHITE);
+	DrawHUD();
 }
 
 void SetShaderMaskedMode()
