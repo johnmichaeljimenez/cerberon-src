@@ -3,7 +3,7 @@
 #include "utils.h"
 #include <raymath.h>
 
-static float MaxTimePerDay = 600.0f;
+static float MaxTimePerDay = 1200.0f;
 static float MorningTime = 0.25f;
 static float EveningTime = 0.85f;
 
@@ -70,9 +70,17 @@ void DrawDebugTime()
 			DrawRectangleLines(4 + (32 * i), 60, 32, 32, GREEN);
 	}
 
-
 	DrawRectangle(4, 100, 32, 32, _previousAmbientColor);
 	DrawRectangle(4, 140, 32, 32, _currentAmbientColor);
 
 	DrawText(TextFormat("%d %.2f/%.2f = %.2f ---> %.2f %.2f", CurrentTimeStatus, CurrentTimeOfDay, MaxTimePerDay, GetCurrentTimeOfDay(), lerpColorAmount, maxSegment), 4, 50, 32, GREEN);
+}
+
+char* TimeGetString()
+{
+	float realTime = GetCurrentTimeOfDay() * 24.0f;
+	int h = (int)realTime;
+	int m = (int)((realTime - h) * 60);
+
+	return TextFormat("%02d:%02d", h, m);
 }
