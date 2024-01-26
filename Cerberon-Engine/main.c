@@ -25,7 +25,6 @@ int main()
 
 		ClearBackground(RAYWHITE);
 		GameDraw();
-		DrawFPS(2, 2);
 
 		EndDrawing();
 	}
