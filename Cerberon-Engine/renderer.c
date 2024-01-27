@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "time.h"
 #include "overlay.h"
+#include "hud.h"
 
 static bool lightingEnabled;
 static bool debugEnabled;
@@ -229,6 +230,8 @@ void _DrawDebug()
 	}
 
 	EndMode2D();
+
+	DrawFPS(2, 2);
 }
 
 void RendererDraw()
@@ -254,7 +257,8 @@ void RendererDraw()
 		_DrawDebug();
 
 	PlayerDrawHUD(&PlayerEntity);
-	DrawDebugTime();
+	//DrawDebugTime();
+	DrawHUD();
 }
 
 void SetShaderMaskedMode()

@@ -9,7 +9,7 @@
 
 typedef struct InventoryContainer
 {
-	ItemPickup* Items[8];
+	ItemPickup* Items[InventoryMaxSize];
 } InventoryContainer;
 
 InventoryContainer InventoryPlayer;

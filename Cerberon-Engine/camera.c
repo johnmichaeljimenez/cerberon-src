@@ -45,3 +45,10 @@ Vector2 CameraGetMousePosition()
 {
 	return GetScreenToWorld2D(GetMousePosition(), GameCamera);
 }
+
+Vector2 CameraGetParallaxPosition(Vector2 pos, float amt)
+{
+	Vector2 dir = Vector2Subtract(pos, GameCamera.target);
+	dir = Vector2Normalize(dir);
+	return Vector2Add(pos, Vector2Scale(dir, amt));
+}

@@ -151,9 +151,10 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 
 	DrawPlayerVision();
 
-	DrawCircleGradient(PlayerEntity.Position.x, PlayerEntity.Position.y, 100, GREEN, BLACK);
-	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 90, GREEN, BLACK);
-	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 128, GREEN, BLACK);
+	Color green = (Color){ 0,255,0,255 };
+	DrawCircleGradient(PlayerEntity.Position.x, PlayerEntity.Position.y, 100, green, BLACK);
+	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 90, green, BLACK);
+	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 128, green, BLACK);
 	EndBlendMode();
 
 	DrawShadows(&CurrentMapData->Lights[0], false);

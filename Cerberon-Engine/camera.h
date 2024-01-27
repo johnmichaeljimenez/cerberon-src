@@ -10,3 +10,4 @@ void CameraInit();
 void CameraUpdate();
 void CameraSetTarget(Vector2 pos, bool jump);
 Vector2 CameraGetMousePosition();
+Vector2 CameraGetParallaxPosition(Vector2 pos, float amt);
