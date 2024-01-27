@@ -19,7 +19,7 @@ static void UpdateCameraViewBounds()
 
 void CameraInit()
 {
-	GameCamera = (Camera2D) {
+	GameCamera = (Camera2D){
 		.offset = (Vector2){ GetScreenWidth() / 2, GetScreenHeight() / 2 },
 		.zoom = 1,
 		.target = Vector2Zero()
@@ -49,6 +49,10 @@ Vector2 CameraGetMousePosition()
 Vector2 CameraGetParallaxPosition(Vector2 pos, float amt)
 {
 	Vector2 dir = Vector2Subtract(pos, GameCamera.target);
-	dir = Vector2Normalize(dir);
+	dir = Vector2Scale(dir, 1.0f / 64.0f);
+
+	//if (Vector2Length(dir) > 64)
+		//dir = Vector2Normalize(dir);
+
 	return Vector2Add(pos, Vector2Scale(dir, amt));
 }
