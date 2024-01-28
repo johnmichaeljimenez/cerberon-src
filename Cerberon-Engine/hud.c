@@ -4,6 +4,7 @@
 #include "time.h"
 #include "inventory.h"
 #include "player.h"
+#include "weapon_manager.h"
 
 void DrawHUD()
 {
@@ -36,6 +37,17 @@ void DrawHUD()
 		//add icon here
 
 		DrawText(amt, 6, y + 2, 8, WHITE);
+	}
+
+	//weapon
+	if (PlayerWeaponContainer.CurrentWeapon != NULL)
+	{
+		Weapon* w = PlayerWeaponContainer.CurrentWeapon;
+		if (w->IsMelee)
+			DrawText(w->Name, 125, 4, 8, WHITE);
+		else
+			//TODO: Fix weapon name display
+			DrawText(TextFormat("[%s] %d/%d", w->Name, w->CurrentAmmo1, w->CurrentAmmo2), 125, 4, 8, WHITE);
 	}
 
 	//misc

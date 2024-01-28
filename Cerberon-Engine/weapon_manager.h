@@ -38,6 +38,8 @@ typedef struct WeaponContainer
 	int CurrentWeaponIndex;
 } WeaponContainer;
 
+WeaponContainer PlayerWeaponContainer;
+
 void WeaponInitData();
 Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2);
 void WeaponUpdate(Weapon* w);
