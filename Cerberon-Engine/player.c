@@ -153,11 +153,24 @@ void PlayerUpdate(PlayerCharacter* p)
 		AnimationPlayerPlay(&playerLegAnimation, &legIdleAnimation);
 	}
 
-	if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+	if (weaponContainer.CurrentWeaponIndex >= 0)
 	{
 		if (HasFlag(currentAnimation->Flags, AnimationFlag_CanAttack))
 		{
-			AnimationPlayerPlay(&playerAnimation, &attackAnimation);
+			if (IsKeyPressed(KEY_R))
+			{
+				weaponContainer.CurrentWeapon->OnReload(weaponContainer.CurrentWeapon);
+			}
+
+			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+			{
+				weaponContainer.CurrentWeapon->OnFire(weaponContainer.CurrentWeapon);
+			}
+
+			if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+			{
+
+			}
 		}
 	}
 
