@@ -33,8 +33,6 @@ static AnimationPlayer legMoveAnimation;
 static float legAngle;
 static float legAngleRange = 60;
 
-static WeaponContainer weaponContainer;
-
 static void OnAttackHit()
 {
 	if (attackAnimation.CurrentFrame == 6)
@@ -77,7 +75,7 @@ void PlayerInit(PlayerCharacter* p)
 	p->IsDead = false;
 	p->Hitpoints = 100;
 
-	weaponContainer = (WeaponContainer){
+	PlayerWeaponContainer = (WeaponContainer){
 		.CurrentWeaponIndex = -1,
 		.CurrentWeapon = NULL
 	};
@@ -153,18 +151,20 @@ void PlayerUpdate(PlayerCharacter* p)
 		AnimationPlayerPlay(&playerLegAnimation, &legIdleAnimation);
 	}
 
-	if (weaponContainer.CurrentWeaponIndex >= 0)
+	if (PlayerWeaponContainer.CurrentWeaponIndex >= 0 && PlayerWeaponContainer.CurrentWeapon != NULL)
 	{
 		if (HasFlag(currentAnimation->Flags, AnimationFlag_CanAttack))
 		{
 			if (IsKeyPressed(KEY_R))
 			{
-				weaponContainer.CurrentWeapon->OnReload(weaponContainer.CurrentWeapon);
+				if (PlayerWeaponContainer.CurrentWeapon->OnReloadStart != NULL)
+					PlayerWeaponContainer.CurrentWeapon->OnReloadStart(PlayerWeaponContainer.CurrentWeapon);
 			}
 
 			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 			{
-				weaponContainer.CurrentWeapon->OnFire(weaponContainer.CurrentWeapon);
+				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
+					PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon);
 			}
 
 			if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
@@ -191,6 +191,9 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 
 	SelectInventoryItem(&InventoryPlayer);
+
+	if (PlayerWeaponContainer.CurrentWeapon != NULL)
+		WeaponUpdate(PlayerWeaponContainer.CurrentWeapon);
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)
@@ -332,18 +335,35 @@ void SelectInventoryItem(InventoryContainer* in)
 	{
 		if (IsKeyPressed(i))
 		{
+			in->CurrentSelectedIndex = n;
+
 			if (in->Items[n] == NULL)
+			{
+				PlayerWeaponContainer.CurrentWeapon = NULL;
 				continue;
+			}
 
 			InteractableSubType t = in->Items[n]->Interactable->InteractableSubType;
-			if (t != INTERACTABLESUB_ItemWeaponPistol)
-				continue;
 
-			weaponContainer.CurrentWeaponIndex = n;
-			weaponContainer.CurrentWeapon = weaponContainer.Weapons[n];
-			weaponContainer.CurrentWeapon->OnSelect(weaponContainer.CurrentWeapon);
+			PlayerWeaponContainer.CurrentWeaponIndex = n;
+
+			if (t != INTERACTABLESUB_ItemWeaponPistol)
+			{
+				PlayerWeaponContainer.CurrentWeapon = NULL;
+				continue;
+			}
+
+			PlayerWeaponContainer.CurrentWeapon = &PlayerWeaponContainer.Weapons[n];
+
+			if (PlayerWeaponContainer.CurrentWeapon->OnSelect != NULL)
+				PlayerWeaponContainer.CurrentWeapon->OnSelect(PlayerWeaponContainer.CurrentWeapon);
 		}
 
 		n++;
 	}
+}
+
+void PlayerAddWeapon(struct Weapon w, struct ItemPickup* i)
+{
+	PlayerWeaponContainer.Weapons[i->CurrentSlotIndex] = w;
 }

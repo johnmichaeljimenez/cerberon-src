@@ -13,6 +13,7 @@ bool InventoryAdd(InventoryContainer* ic, ItemPickup* item)
 			item->Interactable->IsActive = false;
 			item->ItemStatusType = ITEMSTATUSTYPE_OnInventory;
 			a[i] = item;
+			item->CurrentSlotIndex = i;
 			TraceLog(LOG_INFO, "ITEM PICK %d (empty) %d", i, item->CurrentAmount);
 			return true;
 		}
@@ -47,6 +48,8 @@ void InventoryInit(InventoryContainer* in)
 	{
 		in->Items[i] = NULL;
 	}
+
+	in->CurrentSelectedIndex = -1;
 }
 
 void InventoryUnload(InventoryContainer* in)

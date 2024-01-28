@@ -33,6 +33,7 @@ void PlayerDrawHUD(PlayerCharacter* p);
 void SelectInventoryItem(struct InventoryContainer* in);
 void PlayerApplyDamage(PlayerCharacter* p, int amount);
 void PlayerHeal(PlayerCharacter* p, int amount);
+void PlayerAddWeapon(struct Weapon w, struct ItemPickup* i);
 
 void PlayerRotate(PlayerCharacter* p, float dir);
 Vector2 PlayerGetForward(PlayerCharacter* p, float length);

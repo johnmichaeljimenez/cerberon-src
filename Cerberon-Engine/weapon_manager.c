@@ -2,58 +2,81 @@
 #include <raymath.h>
 #include "weapon_manager.h"
 #include "inventory.h"
-#include "player.h"
 #include <string.h>
+#include "time.h"
+
+Weapon WeaponDataList[32];
+int WeaponDataCount = 32;
 
 void WeaponInitData()
 {
-	weaponData[0] = (Weapon)
+	WeaponDataList[0] = (Weapon)
 	{
 		.Name = "Knife",
-		.CurrentAmmo1 = 0,
-		.CurrentAmmo2 = 0,
+		.WeaponType = WEAPONTYPE_Knife,
+		.FiringTime = 1.5,
+		.ReloadTime = 0,
+		.MaxAmmo1 = 0,
+		.MaxAmmo2 = 0,
 		.IsMelee = true,
+		.OnInit = WeaponOnInit,
+		.OnFire = WeaponOnFire,
+		.OnSelect = WeaponOnSelect,
+		.OnReloadStart = NULL,
 		.OnReload = NULL,
-		.OnInit = NULL,
-		.OnFire = NULL,
-		.OnSelect = NULL,
 		._isValid = true,
 	};
 
-	weaponData[1] = (Weapon)
+	WeaponDataList[1] = (Weapon)
 	{
 		.Name = "Pistol",
-		.CurrentAmmo1 = 12,
-		.CurrentAmmo2 = 30,
+		.WeaponType = WEAPONTYPE_Pistol,
+		.MaxAmmo1 = 12,
+		.MaxAmmo2 = 30,
+		.FiringTime = 0.3,
+		.ReloadTime = 2,
 		.IsMelee = false,
-		.OnReload = NULL,
-		.OnInit = NULL,
-		.OnFire = NULL,
-		.OnSelect = NULL,
+		.OnReload = WeaponOnReload,
+		.OnReloadStart = WeaponOnReloadStart,
+		.OnInit = WeaponOnInit,
+		.OnFire = WeaponOnFire,
+		.OnSelect = WeaponOnSelect,
 		._isValid = true,
 	};
 }
 
-Weapon WeaponGive(Weapon* refWeapon, ItemPickup* refItem, int ammo1, int ammo2)
+Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 {
+	Weapon* refWeapon = NULL;
+	for (int i = 0; i < WeaponDataCount; i++)
+	{
+		if (WeaponDataList[i].WeaponType == type)
+		{
+			refWeapon = &WeaponDataList[i];
+		}
+	}
+
 	Weapon w = { 0 };
-	
+
 	strcpy_s(w.Name, 32, refWeapon->Name);
 
-	w.itemReference = refItem;
-	w.CurrentAmmo1 = refWeapon->CurrentAmmo1;
-	w.CurrentAmmo2 = refWeapon->CurrentAmmo2;
-	
+	w.CurrentAmmo1 = ammo1;
+	w.CurrentAmmo2 = ammo2;
+
 	w.IsMelee = refWeapon->IsMelee;
 	w.MaxAmmo1 = refWeapon->MaxAmmo1;
 	w.MaxAmmo2 = refWeapon->MaxAmmo2;
-	
+	w.FiringTime = refWeapon->FiringTime;
+	w.ReloadTime = refWeapon->ReloadTime;
+
 	w.OnFire = refWeapon->OnFire;
 	w.OnInit = refWeapon->OnInit;
 	w.OnReload = refWeapon->OnReload;
+	w.OnReloadStart = refWeapon->OnReloadStart;
 	w.OnSelect = refWeapon->OnSelect;
 
-	w._timer = 0;
+	w._fireTimer = 0;
+	w._reloadTimer = 0;
 	w._isValid = true;
 	w._isActive = true;
 
@@ -62,5 +85,75 @@ Weapon WeaponGive(Weapon* refWeapon, ItemPickup* refItem, int ammo1, int ammo2)
 
 void WeaponUpdate(Weapon* w)
 {
+	if (w->_fireTimer > 0)
+	{
+		w->_fireTimer -= TICKRATE;
+		if (w->_fireTimer <= 0)
+			w->_fireTimer = 0;
+	}
 
+	if (w->_reloadTimer > 0)
+	{
+		w->_reloadTimer -= TICKRATE;
+		if (w->_reloadTimer <= 0)
+		{
+			w->_reloadTimer = 0;
+			w->OnReload(w);
+		}
+	}
+}
+
+void WeaponOnInit(Weapon* w)
+{
+	w->_fireTimer = 0;
+	w->_reloadTimer = 0;
+}
+
+void WeaponOnFire(Weapon* w)
+{
+	if (w->_fireTimer > 0)
+		return;
+
+	if (!w->IsMelee && w->MaxAmmo1 > 0)
+	{
+		if (w->CurrentAmmo1 <= 0)
+			return;
+
+		w->CurrentAmmo1 -= 1;
+	}
+
+	w->_fireTimer = w->FiringTime;
+	w->_reloadTimer = 0;
+
+	TraceLog(LOG_INFO, "FIRING");
+}
+
+void WeaponOnSelect(Weapon* w)
+{
+	w->_fireTimer = 0;
+	w->_reloadTimer = 0;
+}
+
+void WeaponOnReloadStart(Weapon* w)
+{
+	if (w->IsMelee || w->MaxAmmo2 <= 0 || w->_reloadTimer > 0 || w->CurrentAmmo1 >= w->MaxAmmo1)
+		return;
+
+	w->_fireTimer = 0;
+	w->_reloadTimer = w->ReloadTime;
+}
+
+void WeaponOnReload(Weapon* w)
+{
+	w->_fireTimer = 0;
+	w->_reloadTimer = 0;
+
+	w->CurrentAmmo1 += w->CurrentAmmo2;
+	w->CurrentAmmo2 = 0;
+	if (w->CurrentAmmo1 > w->MaxAmmo1)
+	{
+		int diff = w->CurrentAmmo1 - w->MaxAmmo1;
+		w->CurrentAmmo1 -= diff;
+		w->CurrentAmmo2 += diff;
+	}
 }
