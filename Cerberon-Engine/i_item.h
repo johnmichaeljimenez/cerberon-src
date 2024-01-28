@@ -18,9 +18,11 @@ typedef struct ItemPickup
 	int Index;
 
 	ItemStatusType ItemStatusType;
+	int CurrentSlotIndex;
 
 	int CurrentAmount;
 	int CurrentMaxAmount;
+	bool(*OnPickup)(struct ItemPickup* item);
 	bool(*OnUse)(struct ItemPickup* item);
 } ItemPickup;
 
@@ -42,3 +44,4 @@ void ItemDestroy(ItemPickup* i);
 bool Pickup(ItemPickup* i);
 bool OnMedkitUse(ItemPickup* i);
 bool OnFlashlightUse(ItemPickup* i);
+bool OnWeaponPickup(ItemPickup* i);

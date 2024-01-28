@@ -7,6 +7,7 @@
 #include "inventory.h"
 #include "renderer.h"
 #include "utils.h"
+#include "weapon_manager.h"
 
 void LoadItems()
 {
@@ -25,6 +26,8 @@ void LoadItems()
 		ItemList[n].CurrentAmount = in->Count;
 		ItemList[n].CurrentMaxAmount = 1; //default
 		ItemList[n].Index = n;
+		ItemList[n].OnPickup = NULL;
+		ItemList[n].CurrentSlotIndex = -1;
 
 		if (in->InteractableSubType == INTERACTABLESUB_ItemMedkit)
 		{
@@ -36,6 +39,13 @@ void LoadItems()
 		{
 			ItemList[n].CurrentMaxAmount = 1;
 			ItemList[n].OnUse = OnFlashlightUse;
+		}
+
+		if (in->InteractableSubType == INTERACTABLESUB_ItemWeaponPistol)
+		{
+			ItemList[n].CurrentMaxAmount = 1;
+			ItemList[n].OnUse = NULL;
+			ItemList[n].OnPickup = OnWeaponPickup;
 		}
 
 		in->DataIndex = n;
@@ -107,7 +117,8 @@ bool Pickup(ItemPickup* i)
 	bool picked = InventoryAdd(&InventoryPlayer, i);// i->OnUse(i);
 	if (picked)
 	{
-
+		if (i->OnPickup != NULL)
+			i->OnPickup(i);
 	}
 
 	return picked;
@@ -123,3 +134,7 @@ bool OnFlashlightUse(ItemPickup* i)
 	//toggle flashlight
 }
 
+bool OnWeaponPickup(ItemPickup* i)
+{
+	PlayerAddWeapon(WeaponGive(WEAPONTYPE_Pistol, 5, 12), i);
+}
