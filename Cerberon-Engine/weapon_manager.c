@@ -136,7 +136,7 @@ void WeaponOnSelect(Weapon* w)
 
 void WeaponOnReloadStart(Weapon* w)
 {
-	if (w->IsMelee || w->MaxAmmo2 <= 0 || w->_reloadTimer > 0)
+	if (w->IsMelee || w->MaxAmmo2 <= 0 || w->_reloadTimer > 0 || w->CurrentAmmo1 >= w->MaxAmmo1)
 		return;
 
 	w->_fireTimer = 0;
