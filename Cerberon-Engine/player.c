@@ -13,6 +13,7 @@
 #include "animation_player.h"
 #include "renderer.h"
 #include "fsm.h"
+#include "weapon_manager.h"
 
 static LinecastHit lineHit;
 
@@ -31,6 +32,8 @@ static AnimationPlayer legMoveAnimation;
 
 static float legAngle;
 static float legAngleRange = 60;
+
+static WeaponContainer weaponContainer;
 
 static void OnAttackHit()
 {
@@ -73,6 +76,11 @@ void PlayerInit(PlayerCharacter* p)
 
 	p->IsDead = false;
 	p->Hitpoints = 100;
+
+	weaponContainer = (WeaponContainer){
+		.CurrentWeaponIndex = -1,
+		.CurrentWeapon = NULL
+	};
 
 	InventoryInit(&InventoryPlayer);
 	lastPos = p->Position;
@@ -168,6 +176,8 @@ void PlayerUpdate(PlayerCharacter* p)
 	{
 		PlayerHeal(p, 26);
 	}
+
+	SelectInventoryItem(&InventoryPlayer);
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)
@@ -299,4 +309,28 @@ void PlayerHeal(PlayerCharacter* p, int amount)
 	}
 
 	TraceLog(LOG_INFO, "PLAYER HEAL! +%d, %d/%d", amount, p->Hitpoints, 100);
+}
+
+
+void SelectInventoryItem(InventoryContainer* in)
+{
+	int n = 0;
+	for (int i = KEY_ONE; i < KEY_EIGHT + 1; i++)
+	{
+		if (IsKeyPressed(i))
+		{
+			if (in->Items[n] == NULL)
+				continue;
+
+			InteractableSubType t = in->Items[n]->Interactable->InteractableSubType;
+			if (t != INTERACTABLESUB_ItemWeaponPistol)
+				continue;
+
+			weaponContainer.CurrentWeaponIndex = n;
+			weaponContainer.CurrentWeapon = weaponContainer.Weapons[n];
+			weaponContainer.CurrentWeapon->OnSelect(weaponContainer.CurrentWeapon);
+		}
+
+		n++;
+	}
 }
