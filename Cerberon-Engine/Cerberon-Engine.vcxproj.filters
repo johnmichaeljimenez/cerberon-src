@@ -43,6 +43,9 @@
     <Filter Include="Source Files\gameplay\fsm">
       <UniqueIdentifier>{b88bf9b1-fcb3-4e99-9622-aba55e41b0af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gameplay\combat">
+      <UniqueIdentifier>{82dbdd6c-8f57-4669-98c1-c189d0184660}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.c">
@@ -120,9 +123,6 @@
     <ClCompile Include="fsm.c">
       <Filter>Source Files\gameplay\fsm</Filter>
     </ClCompile>
-    <ClCompile Include="hitbox.c">
-      <Filter>Source Files\gameplay</Filter>
-    </ClCompile>
     <ClCompile Include="overlay.c">
       <Filter>Source Files\rendering</Filter>
     </ClCompile>
@@ -131,6 +131,12 @@
     </ClCompile>
     <ClCompile Include="hud.c">
       <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="hitbox.c">
+      <Filter>Source Files\gameplay\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon_manager.c">
+      <Filter>Source Files\gameplay\combat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,14 +215,17 @@
     <ClInclude Include="fsm.h">
       <Filter>Source Files\gameplay\fsm</Filter>
     </ClInclude>
-    <ClInclude Include="hitbox.h">
-      <Filter>Source Files\gameplay</Filter>
-    </ClInclude>
     <ClInclude Include="overlay.h">
       <Filter>Source Files\rendering</Filter>
     </ClInclude>
     <ClInclude Include="hud.h">
       <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="hitbox.h">
+      <Filter>Source Files\gameplay\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon_manager.h">
+      <Filter>Source Files\gameplay\combat</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
