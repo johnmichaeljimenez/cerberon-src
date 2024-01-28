@@ -35,7 +35,12 @@ void OverlayDraw()
 		if (!CheckCollisionRecs(o->_Bounds, CameraViewBounds))
 			continue;
 
-		Vector2 pos = CameraGetParallaxPosition(o->Position,16);
+		Vector2 pos = o->Position;
+		if (fabsf(o->Height) > 0)
+		{
+			pos = CameraGetParallaxPosition(o->Position, o->Height);
+		}
+
 		DrawSprite(o->_textureResource, pos, o->Rotation, o->Scale.x, Vector2Zero(), WHITE);
 	}
 }

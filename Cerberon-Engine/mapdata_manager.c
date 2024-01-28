@@ -358,6 +358,7 @@ void LoadMap(char* filename, MapData* map)
 			fread(&t.Scale.y, sizeof(float), 1, file);
 			fread(&t.TextureID, sizeof(char), 32, file);
 			fread(&t.Alpha, sizeof(float), 1, file);
+			fread(&t.Height, sizeof(float), 1, file);
 
 			t.Rotation *= DEG2RAD;
 
