@@ -20,7 +20,7 @@ void DrawHUD()
 		float y = 24 + (i * 32) + (i * 4);
 
 		ItemPickup* in = InventoryPlayer.Items[i];
-		DrawRectangleLines(4, y, 32, 32, in == NULL ? DARKGRAY : WHITE);
+		DrawRectangleLines(4, y, 32, 32, InventoryPlayer.CurrentSelectedIndex == i ? RED : in == NULL ? DARKGRAY : WHITE);
 
 		if (in == NULL)
 			continue;
