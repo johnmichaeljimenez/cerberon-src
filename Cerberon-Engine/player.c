@@ -153,12 +153,13 @@ void PlayerUpdate(PlayerCharacter* p)
 		AnimationPlayerPlay(&playerLegAnimation, &legIdleAnimation);
 	}
 
-	if (weaponContainer.CurrentWeaponIndex >= 0)
+	if (weaponContainer.CurrentWeaponIndex >= 0 && weaponContainer.CurrentWeapon != NULL)
 	{
 		if (HasFlag(currentAnimation->Flags, AnimationFlag_CanAttack))
 		{
 			if (IsKeyPressed(KEY_R))
 			{
+				TraceLog(LOG_INFO, "RELOADING");
 				if (weaponContainer.CurrentWeapon->OnReload != NULL)
 					weaponContainer.CurrentWeapon->OnReload(weaponContainer.CurrentWeapon);
 			}
@@ -334,14 +335,24 @@ void SelectInventoryItem(InventoryContainer* in)
 	{
 		if (IsKeyPressed(i))
 		{
+			in->CurrentSelectedIndex = n;
+
 			if (in->Items[n] == NULL)
+			{
+				weaponContainer.CurrentWeapon = NULL;
 				continue;
+			}
 
 			InteractableSubType t = in->Items[n]->Interactable->InteractableSubType;
-			if (t != INTERACTABLESUB_ItemWeaponPistol)
-				continue;
 
 			weaponContainer.CurrentWeaponIndex = n;
+
+			if (t != INTERACTABLESUB_ItemWeaponPistol)
+			{
+				weaponContainer.CurrentWeapon = NULL;
+				continue;
+			}
+
 			weaponContainer.CurrentWeapon = &weaponContainer.Weapons[n];
 
 			WeaponOnSelect(weaponContainer.CurrentWeapon);
