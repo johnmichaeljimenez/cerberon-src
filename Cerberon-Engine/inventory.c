@@ -49,7 +49,7 @@ void InventoryInit(InventoryContainer* in)
 		in->Items[i] = NULL;
 	}
 
-	in->CurrentSelectedIndex = 0;
+	in->CurrentSelectedIndex = -1;
 }
 
 void InventoryUnload(InventoryContainer* in)
