@@ -22,6 +22,7 @@ typedef struct Weapon
 	void(*OnInit)(struct Weapon* w);
 	void(*OnFire)(struct Weapon* w);
 	void(*OnReload)(struct Weapon* w);
+	void(*OnReloadStart)(struct Weapon* w);
 	void(*OnSelect)(struct Weapon* w);
 
 	bool _isValid;
@@ -43,4 +44,5 @@ void WeaponUpdate(Weapon* w);
 void WeaponOnInit(Weapon* w);
 void WeaponOnFire(Weapon* w);
 void WeaponOnSelect(Weapon* w);
+void WeaponOnReloadStart(Weapon* w);
 void WeaponOnReload(Weapon* w);

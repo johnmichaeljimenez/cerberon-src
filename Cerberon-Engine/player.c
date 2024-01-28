@@ -159,9 +159,8 @@ void PlayerUpdate(PlayerCharacter* p)
 		{
 			if (IsKeyPressed(KEY_R))
 			{
-				TraceLog(LOG_INFO, "RELOADING");
-				if (weaponContainer.CurrentWeapon->OnReload != NULL)
-					weaponContainer.CurrentWeapon->OnReload(weaponContainer.CurrentWeapon);
+				if (weaponContainer.CurrentWeapon->OnReloadStart != NULL)
+					weaponContainer.CurrentWeapon->OnReloadStart(weaponContainer.CurrentWeapon);
 			}
 
 			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -194,6 +193,9 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 
 	SelectInventoryItem(&InventoryPlayer);
+
+	if (weaponContainer.CurrentWeapon != NULL)
+		WeaponUpdate(weaponContainer.CurrentWeapon);
 }
 
 void PlayerLateUpdate(PlayerCharacter* p)
