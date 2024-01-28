@@ -355,7 +355,6 @@ void SelectInventoryItem(InventoryContainer* in)
 
 			weaponContainer.CurrentWeapon = &weaponContainer.Weapons[n];
 
-			WeaponOnSelect(weaponContainer.CurrentWeapon);
 			if (weaponContainer.CurrentWeapon->OnSelect != NULL)
 				weaponContainer.CurrentWeapon->OnSelect(weaponContainer.CurrentWeapon);
 		}

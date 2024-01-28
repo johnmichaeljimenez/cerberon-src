@@ -17,9 +17,9 @@ void WeaponInitData()
 		.CurrentAmmo2 = 0,
 		.IsMelee = true,
 		.OnReload = NULL,
-		.OnInit = NULL,
-		.OnFire = NULL,
-		.OnSelect = NULL,
+		.OnInit = WeaponOnInit,
+		.OnFire = WeaponOnFire,
+		.OnSelect = WeaponOnSelect,
 		._isValid = true,
 	};
 
@@ -30,10 +30,10 @@ void WeaponInitData()
 		.CurrentAmmo1 = 12,
 		.CurrentAmmo2 = 30,
 		.IsMelee = false,
-		.OnReload = NULL,
-		.OnInit = NULL,
-		.OnFire = NULL,
-		.OnSelect = NULL,
+		.OnReload = WeaponOnReload,
+		.OnInit = WeaponOnInit,
+		.OnFire = WeaponOnFire,
+		.OnSelect = WeaponOnSelect,
 		._isValid = true,
 	};
 }
@@ -77,8 +77,22 @@ void WeaponUpdate(Weapon* w)
 
 }
 
+void WeaponOnInit(Weapon* w)
+{
+
+}
+
+void WeaponOnFire(Weapon* w)
+{
+
+}
 
 void WeaponOnSelect(Weapon* w)
+{
+
+}
+
+void WeaponOnReload(Weapon* w)
 {
 
 }

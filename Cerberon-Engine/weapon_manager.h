@@ -37,4 +37,7 @@ typedef struct WeaponContainer
 void WeaponInitData();
 Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2);
 void WeaponUpdate(Weapon* w);
+void WeaponOnInit(Weapon* w);
+void WeaponOnFire(Weapon* w);
 void WeaponOnSelect(Weapon* w);
+void WeaponOnReload(Weapon* w);
