@@ -159,12 +159,14 @@ void PlayerUpdate(PlayerCharacter* p)
 		{
 			if (IsKeyPressed(KEY_R))
 			{
-				weaponContainer.CurrentWeapon->OnReload(weaponContainer.CurrentWeapon);
+				if (weaponContainer.CurrentWeapon->OnReload != NULL)
+					weaponContainer.CurrentWeapon->OnReload(weaponContainer.CurrentWeapon);
 			}
 
 			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 			{
-				weaponContainer.CurrentWeapon->OnFire(weaponContainer.CurrentWeapon);
+				if (weaponContainer.CurrentWeapon->OnFire != NULL)
+					weaponContainer.CurrentWeapon->OnFire(weaponContainer.CurrentWeapon);
 			}
 
 			if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
@@ -340,10 +342,18 @@ void SelectInventoryItem(InventoryContainer* in)
 				continue;
 
 			weaponContainer.CurrentWeaponIndex = n;
-			weaponContainer.CurrentWeapon = weaponContainer.Weapons[n];
-			weaponContainer.CurrentWeapon->OnSelect(weaponContainer.CurrentWeapon);
+			weaponContainer.CurrentWeapon = &weaponContainer.Weapons[n];
+
+			WeaponOnSelect(weaponContainer.CurrentWeapon);
+			if (weaponContainer.CurrentWeapon->OnSelect != NULL)
+				weaponContainer.CurrentWeapon->OnSelect(weaponContainer.CurrentWeapon);
 		}
 
 		n++;
 	}
+}
+
+void PlayerAddWeapon(struct Weapon w, struct ItemPickup* i)
+{
+	weaponContainer.Weapons[i->CurrentSlotIndex] = w;
 }

@@ -2,14 +2,19 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "inventory.h"
-#include "player.h"
+
+typedef enum WeaponTypes
+{
+	WEAPONTYPE_Knife,
+	WEAPONTYPE_Pistol,
+} WeaponTypes;
 
 typedef struct Weapon
 {
-	ItemPickup* itemReference;
 	int CurrentAmmo1, CurrentAmmo2;
 
 	char* Name[32];
+	WeaponTypes WeaponType;
 	bool IsMelee;
 	int MaxAmmo1, MaxAmmo2;
 	void(*OnInit)(struct Weapon* w);
@@ -24,13 +29,12 @@ typedef struct Weapon
 
 typedef struct WeaponContainer
 {
-	Weapon* Weapons[32];
+	Weapon Weapons[32];
 	Weapon* CurrentWeapon;
 	int CurrentWeaponIndex;
 } WeaponContainer;
 
-Weapon weaponData[32];
-
 void WeaponInitData();
-Weapon WeaponGive(Weapon* refWeapon, ItemPickup* refItem, int ammo1, int ammo2);
+Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2);
 void WeaponUpdate(Weapon* w);
+void WeaponOnSelect(Weapon* w);

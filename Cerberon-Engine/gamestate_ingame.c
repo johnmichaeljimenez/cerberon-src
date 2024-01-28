@@ -10,6 +10,7 @@
 #include "utils.h"
 #include "input_handler.h"
 #include "time.h"
+#include "weapon_manager.h"
 
 void IngameInit()
 {
@@ -27,6 +28,7 @@ void IngameOnLoad()
 	CameraInit();
 	InitLight();
 	InitMap();
+	WeaponInitData();
 	InteractionInit();
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
