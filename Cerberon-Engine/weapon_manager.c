@@ -3,6 +3,7 @@
 #include "weapon_manager.h"
 #include "inventory.h"
 #include <string.h>
+#include "time.h"
 
 Weapon WeaponDataList[32];
 int WeaponDataCount = 32;
@@ -65,7 +66,8 @@ Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 	w.OnReload = refWeapon->OnReload;
 	w.OnSelect = refWeapon->OnSelect;
 
-	w._timer = 0;
+	w._fireTimer = 0;
+	w._reloadTimer = 0;
 	w._isValid = true;
 	w._isActive = true;
 
@@ -74,25 +76,46 @@ Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 
 void WeaponUpdate(Weapon* w)
 {
+	if (w->_fireTimer > 0)
+	{
+		w->_fireTimer -= TICKRATE;
+		if (w->_fireTimer <= 0)
+			w->_fireTimer = 0;
+	}
 
+	if (w->_reloadTimer > 0)
+	{
+		w->_reloadTimer -= TICKRATE;
+		if (w->_reloadTimer <= 0)
+		{
+			w->_reloadTimer = 0;
+			w->OnReload(w);
+		}
+	}
 }
 
 void WeaponOnInit(Weapon* w)
 {
-
+	w->_fireTimer = 0;
+	w->_reloadTimer = 0;
 }
 
 void WeaponOnFire(Weapon* w)
 {
+	w->_fireTimer = 0;
+	w->_reloadTimer = 0;
 
+	TraceLog(LOG_INFO, "FIRING");
 }
 
 void WeaponOnSelect(Weapon* w)
 {
-
+	w->_fireTimer = 0;
+	w->_reloadTimer = 0;
 }
 
 void WeaponOnReload(Weapon* w)
 {
-
+	w->_fireTimer = 0;
+	w->_reloadTimer = 0;
 }

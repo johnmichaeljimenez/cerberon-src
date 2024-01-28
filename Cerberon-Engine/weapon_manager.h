@@ -17,6 +17,8 @@ typedef struct Weapon
 	WeaponTypes WeaponType;
 	bool IsMelee;
 	int MaxAmmo1, MaxAmmo2;
+	float FiringTime;
+	float ReloadTime;
 	void(*OnInit)(struct Weapon* w);
 	void(*OnFire)(struct Weapon* w);
 	void(*OnReload)(struct Weapon* w);
@@ -24,7 +26,8 @@ typedef struct Weapon
 
 	bool _isValid;
 	bool _isActive;
-	float _timer;
+	float _reloadTimer;
+	float _fireTimer;
 } Weapon;
 
 typedef struct WeaponContainer
