@@ -148,12 +148,12 @@ void WeaponOnReload(Weapon* w)
 	w->_fireTimer = 0;
 	w->_reloadTimer = 0;
 
-	w->CurrentAmmo1 += w->MaxAmmo2;
-	w->MaxAmmo2 = 0;
+	w->CurrentAmmo1 += w->CurrentAmmo2;
+	w->CurrentAmmo2 = 0;
 	if (w->CurrentAmmo1 > w->MaxAmmo1)
 	{
 		int diff = w->CurrentAmmo1 - w->MaxAmmo1;
 		w->CurrentAmmo1 -= diff;
-		w->MaxAmmo2 += diff;
+		w->CurrentAmmo2 += diff;
 	}
 }
