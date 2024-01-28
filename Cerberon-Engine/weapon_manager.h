@@ -21,6 +21,13 @@ typedef struct Weapon
 	float _timer;
 } Weapon;
 
+typedef struct WeaponContainer
+{
+	Weapon* weapons[32];
+	Weapon* CurrentWeapon;
+	int CurrentWeaponIndex;
+} WeaponContainer;
+
 Weapon weaponData[32];
 
 void WeaponInitData();
