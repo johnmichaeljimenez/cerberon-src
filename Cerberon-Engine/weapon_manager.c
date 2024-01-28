@@ -16,6 +16,7 @@ void WeaponInitData()
 		.OnReload = NULL,
 		.OnInit = NULL,
 		.OnFire = NULL,
+		.OnSelect = NULL,
 		._isValid = true,
 	};
 
@@ -28,6 +29,7 @@ void WeaponInitData()
 		.OnReload = NULL,
 		.OnInit = NULL,
 		.OnFire = NULL,
+		.OnSelect = NULL,
 		._isValid = true,
 	};
 }
@@ -49,6 +51,7 @@ Weapon WeaponGive(Weapon* refWeapon, ItemPickup* refItem, int ammo1, int ammo2)
 	w.OnFire = refWeapon->OnFire;
 	w.OnInit = refWeapon->OnInit;
 	w.OnReload = refWeapon->OnReload;
+	w.OnSelect = refWeapon->OnSelect;
 
 	w._timer = 0;
 	w._isValid = true;

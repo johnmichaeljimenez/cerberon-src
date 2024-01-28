@@ -15,6 +15,7 @@ typedef struct Weapon
 	void(*OnInit)(struct Weapon* w);
 	void(*OnFire)(struct Weapon* w);
 	void(*OnReload)(struct Weapon* w);
+	void(*OnSelect)(struct Weapon* w);
 
 	bool _isValid;
 	bool _isActive;
@@ -23,7 +24,7 @@ typedef struct Weapon
 
 typedef struct WeaponContainer
 {
-	Weapon* weapons[32];
+	Weapon* Weapons[32];
 	Weapon* CurrentWeapon;
 	int CurrentWeaponIndex;
 } WeaponContainer;
