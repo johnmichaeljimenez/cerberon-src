@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class OverlayObject : BaseObject
 {
+    [SerializeField] private float height = 0;
+
     public override void Export(List<byte> array)
     {
         var s = GetComponent<SpriteRenderer>();
@@ -17,5 +19,6 @@ public class OverlayObject : BaseObject
         array.AddRange(BitConverter.GetBytes(transform.localScale.y));
         array.AddRange(Encoding.ASCII.GetBytes(s.sprite.name.ToFixedLength(32)));
         array.AddRange(BitConverter.GetBytes(s.color.a));
+        array.AddRange(BitConverter.GetBytes(height));
     }
 }

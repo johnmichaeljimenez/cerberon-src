@@ -9,6 +9,7 @@ typedef struct Overlay
 	Vector2 Scale;
 	char* TextureID[32];
 	float Alpha;
+	float Height;
 
 	TextureResource* _textureResource;
 	Rectangle _Bounds;

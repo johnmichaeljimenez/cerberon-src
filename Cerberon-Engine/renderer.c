@@ -230,7 +230,10 @@ void _DrawDebug()
 	}
 
 	EndMode2D();
+}
 
+void _DrawDebugHUD()
+{
 	DrawFPS(2, 2);
 }
 
@@ -259,6 +262,9 @@ void RendererDraw()
 	PlayerDrawHUD(&PlayerEntity);
 	//DrawDebugTime();
 	DrawHUD();
+
+	if (debugEnabled)
+		_DrawDebugHUD();
 }
 
 void SetShaderMaskedMode()

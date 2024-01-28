@@ -30,6 +30,7 @@ void PlayerDraw(PlayerCharacter* p);
 void PlayerDrawDebug(PlayerCharacter* p);
 void PlayerDrawHUD(PlayerCharacter* p);
 
+void SelectInventoryItem(struct InventoryContainer* in);
 void PlayerApplyDamage(PlayerCharacter* p, int amount);
 void PlayerHeal(PlayerCharacter* p, int amount);
 
