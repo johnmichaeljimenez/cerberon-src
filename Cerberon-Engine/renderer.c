@@ -9,6 +9,7 @@
 #include "time.h"
 #include "overlay.h"
 #include "hud.h"
+#include "projectile.h"
 
 static bool lightingEnabled;
 static bool debugEnabled;
@@ -192,6 +193,8 @@ static void _DrawWorld()
 			r->OnDraw(r->Data);
 		}
 	}
+
+	ProjectileDraw();
 
 	EndMode2D();
 	EndTextureMode();
