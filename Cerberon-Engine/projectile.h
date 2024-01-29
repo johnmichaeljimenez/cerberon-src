@@ -7,6 +7,8 @@ typedef struct Projectile
 	float Speed;
 	float Damage;
 
+	Vector2 _position;
+	float _lifeTime;
 	bool _isAlive;
 	bool _hit;
 	Vector2 _hitPos;
