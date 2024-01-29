@@ -51,7 +51,7 @@ void ProjectileUpdate()
 	for (int i = 0; i < ProjectileCount; i++)
 	{
 		Projectile* p = &ProjectileList[i];
-		if (p == NULL || !p->_isAlive)
+		if (!p->_isAlive)
 			continue;
 
 		p->_lifeTime -= TICKRATE;

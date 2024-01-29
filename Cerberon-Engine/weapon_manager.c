@@ -19,6 +19,7 @@ void WeaponInitData()
 		.ReloadTime = 0,
 		.MaxAmmo1 = 0,
 		.MaxAmmo2 = 0,
+		.Damage = 30,
 		.IsMelee = true,
 		.OnInit = WeaponOnInit,
 		.OnFire = WeaponOnFire,
@@ -34,6 +35,8 @@ void WeaponInitData()
 		.WeaponType = WEAPONTYPE_Pistol,
 		.MaxAmmo1 = 12,
 		.MaxAmmo2 = 30,
+		.Damage = 50,
+		.ProjectileSpeed = 500,
 		.FiringTime = 0.3,
 		.ReloadTime = 2,
 		.IsMelee = false,
@@ -54,15 +57,20 @@ Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 		if (WeaponDataList[i].WeaponType == type)
 		{
 			refWeapon = &WeaponDataList[i];
+			break;
 		}
 	}
 
 	Weapon w = { 0 };
+	w.WeaponType = refWeapon->WeaponType;
 
 	strcpy_s(w.Name, 32, refWeapon->Name);
 
 	w.CurrentAmmo1 = ammo1;
 	w.CurrentAmmo2 = ammo2;
+
+	w.ProjectileSpeed = refWeapon->ProjectileSpeed;
+	w.Damage = refWeapon->Damage;
 
 	w.IsMelee = refWeapon->IsMelee;
 	w.MaxAmmo1 = refWeapon->MaxAmmo1;
