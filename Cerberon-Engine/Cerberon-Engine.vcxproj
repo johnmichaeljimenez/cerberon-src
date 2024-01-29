@@ -135,6 +135,7 @@
     <ClCompile Include="animation_player.c" />
     <ClCompile Include="asset_manager.c" />
     <ClCompile Include="audio_manager.c" />
+    <ClCompile Include="projectile.c" />
     <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
     <ClCompile Include="cursor.c" />
@@ -167,6 +168,7 @@
     <ClInclude Include="animation_player.h" />
     <ClInclude Include="asset_manager.h" />
     <ClInclude Include="audio_manager.h" />
+    <ClInclude Include="projectile.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="cursor.h" />
