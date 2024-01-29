@@ -5,6 +5,8 @@
 #include <string.h>
 #include "time.h"
 #include "projectile.h"
+#include "audio_manager.h"
+#include "utils.h"
 
 Weapon WeaponDataList[32];
 int WeaponDataCount = 32;
@@ -129,6 +131,7 @@ void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
 			return;
 
 		w->CurrentAmmo1 -= 1;
+		AudioPlay(ToHash("gunshot"), pos);
 		ProjectileSpawn(pos, dir, w->ProjectileSpeed, w->Damage);
 	}
 

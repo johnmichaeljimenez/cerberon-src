@@ -37,6 +37,8 @@ void AudioInit()
 		AudioClipList[i + 1] = AudioLoadClip(TextFormat("res/sfx/footstep/%d.ogg", i), true);
 	}
 
+	AudioClipList[10] = AudioLoadClip("res/sfx/gunshot.wav", true);
+
 	listenerPosition.x = 0;
 	listenerPosition.y = 0;
 }
