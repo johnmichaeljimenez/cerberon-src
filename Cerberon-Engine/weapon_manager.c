@@ -4,6 +4,7 @@
 #include "inventory.h"
 #include <string.h>
 #include "time.h"
+#include "projectile.h"
 
 Weapon WeaponDataList[32];
 int WeaponDataCount = 32;
@@ -109,7 +110,7 @@ void WeaponOnInit(Weapon* w)
 	w->_reloadTimer = 0;
 }
 
-void WeaponOnFire(Weapon* w)
+void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
 {
 	if (w->_fireTimer > 0)
 		return;
@@ -120,6 +121,7 @@ void WeaponOnFire(Weapon* w)
 			return;
 
 		w->CurrentAmmo1 -= 1;
+		ProjectileSpawn(pos, dir, w->ProjectileSpeed, w->Damage);
 	}
 
 	w->_fireTimer = w->FiringTime;

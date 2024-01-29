@@ -17,6 +17,8 @@ typedef struct Weapon
 	WeaponTypes WeaponType;
 	bool IsMelee;
 	int MaxAmmo1, MaxAmmo2;
+	float ProjectileSpeed;
+	float Damage;
 	float FiringTime;
 	float ReloadTime;
 	void(*OnInit)(struct Weapon* w);
@@ -44,7 +46,7 @@ void WeaponInitData();
 Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2);
 void WeaponUpdate(Weapon* w);
 void WeaponOnInit(Weapon* w);
-void WeaponOnFire(Weapon* w);
+void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir);
 void WeaponOnSelect(Weapon* w);
 void WeaponOnReloadStart(Weapon* w);
 void WeaponOnReload(Weapon* w);

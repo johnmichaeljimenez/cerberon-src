@@ -164,7 +164,10 @@ void PlayerUpdate(PlayerCharacter* p)
 			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
-					PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon);
+				{
+					Vector2 dir = Vector2Normalize(Vector2Subtract(PlayerGetForward(p, 1), p->Position));
+					PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir);
+				}
 			}
 
 			if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
