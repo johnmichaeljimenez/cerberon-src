@@ -36,7 +36,7 @@ void WeaponInitData()
 		.MaxAmmo1 = 12,
 		.MaxAmmo2 = 30,
 		.Damage = 50,
-		.ProjectileSpeed = 500,
+		.ProjectileSpeed = 5000,
 		.FiringTime = 0.3,
 		.ReloadTime = 2,
 		.IsMelee = false,

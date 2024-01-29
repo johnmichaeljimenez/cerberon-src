@@ -62,7 +62,19 @@ void ProjectileUpdate()
 			continue;
 		}
 
-		p->_position = Vector2Add(p->_position, Vector2Scale(p->Direction, p->Speed * TICKRATE));
+		LinecastHit l;
+		Vector2 to = Vector2Scale(p->Direction, p->Speed * TICKRATE);
+
+		if (Linecast(p->_position, to, &l))
+		{
+			to = l.To;
+			p->_hitPos = l.To;
+			p->_lifeTime = 0;
+			p->_isAlive = false;
+			continue;
+		}
+
+		p->_position = Vector2Add(p->_position, to);
 	}
 }
 
