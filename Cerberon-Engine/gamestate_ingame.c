@@ -31,6 +31,7 @@ void IngameOnLoad()
 	InitMap();
 	WeaponInitData();
 	InteractionInit();
+	ProjectileInit();
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
 	RendererPostInitialize();

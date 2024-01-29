@@ -7,6 +7,25 @@
 int ProjectileCount = 64;
 int NextProjectileIndex = 0;
 
+void ProjectileInit()
+{
+	for (int i = 0; i < ProjectileCount; i++)
+	{
+		Projectile p = (Projectile){
+			.Damage = 0,
+			.Direction = Vector2Zero(),
+			.From = Vector2Zero(),
+			.Speed = 0,
+			._hit = false,
+			._hitPos = Vector2Zero(),
+			._isAlive = false,
+			._lifeTime = 0,
+			._position = Vector2Zero()
+		};
+
+		ProjectileList[i] = p;
+	}
+}
 
 void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage)
 {
@@ -21,7 +40,7 @@ void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage)
 	p.Speed = speed;
 	p.Damage = damage;
 
-	ProjectileList[NextProjectileIndex] = &p;
+	ProjectileList[NextProjectileIndex] = p;
 	NextProjectileIndex++;
 	if (NextProjectileIndex >= ProjectileCount)
 		NextProjectileIndex = 0;
@@ -31,7 +50,7 @@ void ProjectileUpdate()
 {
 	for (int i = 0; i < ProjectileCount; i++)
 	{
-		Projectile* p = ProjectileList[i];
+		Projectile* p = &ProjectileList[i];
 		if (p == NULL || !p->_isAlive)
 			continue;
 
@@ -40,7 +59,6 @@ void ProjectileUpdate()
 		{
 			p->_lifeTime = 0;
 			p->_isAlive = false;
-			ProjectileList[i] = NULL;
 			continue;
 		}
 
@@ -53,10 +71,10 @@ void ProjectileDraw()
 {
 	for (int i = 0; i < ProjectileCount; i++)
 	{
-		Projectile* p = ProjectileList[i];
-		if (p == NULL || !p->_isAlive)
+		Projectile p = ProjectileList[i];
+		if (!p._isAlive)
 			continue;
 
-		DrawCircleV(p->_position, 12, RED);
+		DrawCircleV(p._position, 12, RED);
 	}
 }
