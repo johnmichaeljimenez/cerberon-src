@@ -22,6 +22,7 @@ void WeaponInitData()
 		.MaxAmmo1 = 0,
 		.MaxAmmo2 = 0,
 		.Damage = 30,
+		.Spread = 0,
 		.IsMelee = true,
 		.OnInit = WeaponOnInit,
 		.OnFire = WeaponOnFire,
@@ -39,7 +40,8 @@ void WeaponInitData()
 		.MaxAmmo2 = 30,
 		.Damage = 50,
 		.ProjectileSpeed = 5000,
-		.FiringTime = 0.3,
+		.FiringTime = 0.1,
+		.Spread = 4,
 		.ReloadTime = 2,
 		.IsMelee = false,
 		.OnReload = WeaponOnReload,
@@ -79,6 +81,8 @@ Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 	w.MaxAmmo2 = refWeapon->MaxAmmo2;
 	w.FiringTime = refWeapon->FiringTime;
 	w.ReloadTime = refWeapon->ReloadTime;
+
+	w.Spread = refWeapon->Spread;
 
 	w.OnFire = refWeapon->OnFire;
 	w.OnInit = refWeapon->OnInit;
@@ -124,6 +128,11 @@ void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
 {
 	if (w->_fireTimer > 0)
 		return;
+
+	float amt = ((float)GetRandomValue(-100, 100) / 100.0f) * w->Spread;
+	amt *= DEG2RAD;
+
+	dir = Vector2Rotate(dir, amt);
 
 	if (!w->IsMelee && w->MaxAmmo1 > 0)
 	{

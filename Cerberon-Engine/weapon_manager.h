@@ -21,6 +21,7 @@ typedef struct Weapon
 	float Damage;
 	float FiringTime;
 	float ReloadTime;
+	float Spread;
 	void(*OnInit)(struct Weapon* w);
 	void(*OnFire)(struct Weapon* w);
 	void(*OnReload)(struct Weapon* w);
