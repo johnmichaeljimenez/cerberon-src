@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "time.h"
 #include "overlay.h"
+#include "projectile.h"
 
 static float lightScale = 4;
 static float screenLightScale = 2;
@@ -137,6 +138,8 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 		}
 	}
 
+	ProjectileDrawLights(); //because bullets flying in the dark looks cool
+
 	EndBlendMode();
 
 	DrawWalls();
@@ -152,9 +155,9 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 	DrawPlayerVision();
 
 	Color green = (Color){ 0,255,0,255 };
-	DrawCircleGradient(PlayerEntity.Position.x, PlayerEntity.Position.y, 100, green, BLACK);
-	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 90, green, BLACK);
-	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 128, green, BLACK);
+	DrawCircleGradient(PlayerEntity.Position.x, PlayerEntity.Position.y, 150, green, BLACK);
+	//DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 128, green, BLACK);
+	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 256, green, BLACK);
 	EndBlendMode();
 
 	DrawShadows(&CurrentMapData->Lights[0], false);

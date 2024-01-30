@@ -100,7 +100,23 @@ void ProjectileDraw()
 			continue;
 		
 		DrawSprite(bulletTracerSprite, p._position, p.Rotation, 0.4, (Vector2) { 0.3, 0 }, WHITE);
-		DrawCircleV(p._position, 12, RED);
+	}
+
+	EndBlendMode();
+}
+
+
+void ProjectileDrawLights()
+{
+	BeginBlendMode(BLEND_ADDITIVE);
+
+	for (int i = 0; i < ProjectileCount; i++)
+	{
+		Projectile p = ProjectileList[i];
+		if (!p._isAlive)
+			continue;
+
+		DrawSprite(bulletTracerSprite, p._position, p.Rotation, 0.4, (Vector2) { 0.3, 0 }, GRAY);
 	}
 
 	EndBlendMode();

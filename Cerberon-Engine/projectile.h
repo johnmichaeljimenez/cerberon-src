@@ -20,3 +20,4 @@ void ProjectileInit();
 void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage);
 void ProjectileUpdate();
 void ProjectileDraw();
+void ProjectileDrawLights();
