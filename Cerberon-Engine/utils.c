@@ -142,3 +142,8 @@ bool StartsWith(const char* pre, const char* str)
 		lenstr = strlen(str);
 	return lenstr < lenpre ? false : memcmp(pre, str, lenpre) == 0;
 }
+
+float GetRandomValueFloat(float min, float max)
+{
+	return Lerp(min, max, (float)GetRandomValue(0, 100) / 100.0f);
+}

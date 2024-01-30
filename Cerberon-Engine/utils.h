@@ -17,3 +17,4 @@ float ClampRelativeAngle(float angle, float reference, float min_offset, float m
 bool GetCircleTangent(Vector2 from, Vector2 circlePos, float radius, Vector2* tanA, Vector2* tanB);
 Color LerpColor(Color a, Color b, float t);
 bool StartsWith(const char* pre, const char* str);
+float GetRandomValueFloat(float min, float max);

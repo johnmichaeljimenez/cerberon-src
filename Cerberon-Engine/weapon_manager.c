@@ -114,7 +114,7 @@ void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
 	if (w->_fireTimer > 0)
 		return;
 
-	float amt = ((float)GetRandomValue(-100, 100) / 100.0f) * w->Spread;
+	float amt = GetRandomValueFloat(-1, 1) * w->Spread;
 	amt *= DEG2RAD;
 
 	dir = Vector2Rotate(dir, amt);
