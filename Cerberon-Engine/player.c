@@ -165,8 +165,10 @@ void PlayerUpdate(PlayerCharacter* p)
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnReloadStart != NULL)
 				{
-					PlayerWeaponContainer.CurrentWeapon->OnReloadStart(PlayerWeaponContainer.CurrentWeapon);
-					AnimationPlayerPlay(&playerAnimation, &handgunReloadAnimation);
+					if (PlayerWeaponContainer.CurrentWeapon->OnReloadStart(PlayerWeaponContainer.CurrentWeapon))
+					{
+						AnimationPlayerPlay(&playerAnimation, &handgunReloadAnimation);
+					}
 				}
 			}
 
@@ -177,10 +179,11 @@ void PlayerUpdate(PlayerCharacter* p)
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
 				{
-					AnimationPlayerPlay(&playerAnimation, &handgunShootAnimation);
-
 					Vector2 dir = Vector2Normalize(Vector2Subtract(PlayerGetForward(p, 1), p->Position));
-					PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir);
+					if (PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir))
+					{
+						AnimationPlayerPlay(&playerAnimation, &handgunShootAnimation);
+					}
 				}
 			}
 

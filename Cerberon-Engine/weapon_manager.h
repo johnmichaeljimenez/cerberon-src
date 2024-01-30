@@ -24,9 +24,9 @@ typedef struct Weapon
 	float ReloadTime;
 	float Spread;
 	void(*OnInit)(struct Weapon* w);
-	void(*OnFire)(struct Weapon* w);
-	void(*OnReload)(struct Weapon* w);
-	void(*OnReloadStart)(struct Weapon* w);
+	bool(*OnFire)(struct Weapon* w);
+	bool(*OnReload)(struct Weapon* w);
+	bool(*OnReloadStart)(struct Weapon* w);
 	void(*OnSelect)(struct Weapon* w);
 
 	bool _isValid;
@@ -48,7 +48,7 @@ void WeaponInitData();
 Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2);
 void WeaponUpdate(Weapon* w);
 void WeaponOnInit(Weapon* w);
-void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir);
+bool WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir);
 void WeaponOnSelect(Weapon* w);
-void WeaponOnReloadStart(Weapon* w);
-void WeaponOnReload(Weapon* w);
+bool WeaponOnReloadStart(Weapon* w);
+bool WeaponOnReload(Weapon* w);
