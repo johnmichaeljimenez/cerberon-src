@@ -25,6 +25,8 @@ static AnimationPlayerGroup playerAnimation;
 static AnimationPlayer idleAnimation;
 static AnimationPlayer moveAnimation;
 static AnimationPlayer attackAnimation;
+static AnimationPlayer handgunShootAnimation;
+static AnimationPlayer handgunReloadAnimation;
 
 static AnimationPlayerGroup playerLegAnimation;
 static AnimationPlayer legIdleAnimation;
@@ -50,12 +52,16 @@ void PlayerInit(PlayerCharacter* p)
 	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
 	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
 	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), AnimationFlag_DisableMovement, NULL, OnAttackHit, OnAttackEnd, 24);
+	handgunShootAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_handgun_fire")), AnimationFlag_None, NULL, NULL, NULL, 24);
+	handgunReloadAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_handgun_reload")), AnimationFlag_None, NULL, NULL, NULL, 24);
 
 	playerLegAnimation = (AnimationPlayerGroup){ 0 };
 	legIdleAnimation = AnimationPlayerCreate(&playerLegAnimation, GetAnimationResource(ToHash("player_leg_idle")), AnimationFlag_None, NULL, NULL, NULL, 24);
 	legMoveAnimation = AnimationPlayerCreate(&playerLegAnimation, GetAnimationResource(ToHash("player_leg_move")), AnimationFlag_None, NULL, NULL, NULL, 24);
 
 	attackAnimation.NextAnimation = &idleAnimation;
+	handgunShootAnimation.NextAnimation = &idleAnimation;
+	handgunReloadAnimation.NextAnimation = &idleAnimation;
 
 	playerAnimation.Animations[0] = &idleAnimation;
 	playerAnimation.Animations[1] = &moveAnimation;
@@ -158,7 +164,10 @@ void PlayerUpdate(PlayerCharacter* p)
 			if (IsKeyPressed(KEY_R))
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnReloadStart != NULL)
+				{
 					PlayerWeaponContainer.CurrentWeapon->OnReloadStart(PlayerWeaponContainer.CurrentWeapon);
+					AnimationPlayerPlay(&playerAnimation, &handgunReloadAnimation);
+				}
 			}
 
 			if ((!PlayerWeaponContainer.CurrentWeapon->IsAutomatic && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -168,6 +177,8 @@ void PlayerUpdate(PlayerCharacter* p)
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
 				{
+					AnimationPlayerPlay(&playerAnimation, &handgunShootAnimation);
+
 					Vector2 dir = Vector2Normalize(Vector2Subtract(PlayerGetForward(p, 1), p->Position));
 					PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir);
 				}
