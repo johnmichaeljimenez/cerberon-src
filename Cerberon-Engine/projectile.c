@@ -101,6 +101,9 @@ void ProjectileDraw()
 		Projectile p = ProjectileList[i];
 		if (!p._isAlive)
 			continue;
+
+		if (Vector2LengthSqr(p.From, p._position) > (128 * 128))
+			continue;
 		
 		DrawSprite(bulletTracerSprite, p._position, p.Rotation, 0.4, (Vector2) { 0.3, 0 }, WHITE);
 	}
@@ -116,9 +119,13 @@ void ProjectileDrawLights()
 	for (int i = 0; i < ProjectileCount; i++)
 	{
 		Projectile* p = &ProjectileList[i];
-		if (p->_isAlive)
+
+		if (Vector2LengthSqr(p->From, p->_position) > (128 * 128))
 		{
-			DrawSprite(bulletTracerSprite, p->_position, p->Rotation, 0.4, (Vector2) { 0.3, 0 }, GRAY);
+			if (p->_isAlive)
+			{
+				DrawSprite(bulletTracerSprite, p->_position, p->Rotation, 0.4, (Vector2) { 0.3, 0 }, GRAY);
+			}
 		}
 
 		if (p->_flashTime <= 0)
