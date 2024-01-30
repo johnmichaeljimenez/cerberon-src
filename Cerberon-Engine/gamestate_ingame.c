@@ -11,6 +11,7 @@
 #include "input_handler.h"
 #include "time.h"
 #include "weapon_manager.h"
+#include "projectile.h"
 
 void IngameInit()
 {
@@ -30,6 +31,7 @@ void IngameOnLoad()
 	InitMap();
 	WeaponInitData();
 	InteractionInit();
+	ProjectileInit();
 	PlayerInit(&PlayerEntity);
 	CameraSetTarget(PlayerEntity.Position, true);
 	RendererPostInitialize();
@@ -51,10 +53,12 @@ void IngameOnUpdate()
 	CursorChange(CURSORSTATE_IngameInteractReticle);
 	UpdateMap(CurrentMapData);
 	PlayerUpdate(&PlayerEntity);
+	ProjectileUpdate();
 	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
 	RendererUpdate();
 	TimeUpdate();
+
 
 	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);

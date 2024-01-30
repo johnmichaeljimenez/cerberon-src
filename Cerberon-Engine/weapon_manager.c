@@ -4,6 +4,9 @@
 #include "inventory.h"
 #include <string.h>
 #include "time.h"
+#include "projectile.h"
+#include "audio_manager.h"
+#include "utils.h"
 
 Weapon WeaponDataList[32];
 int WeaponDataCount = 32;
@@ -18,6 +21,7 @@ void WeaponInitData()
 		.ReloadTime = 0,
 		.MaxAmmo1 = 0,
 		.MaxAmmo2 = 0,
+		.Damage = 30,
 		.IsMelee = true,
 		.OnInit = WeaponOnInit,
 		.OnFire = WeaponOnFire,
@@ -33,6 +37,8 @@ void WeaponInitData()
 		.WeaponType = WEAPONTYPE_Pistol,
 		.MaxAmmo1 = 12,
 		.MaxAmmo2 = 30,
+		.Damage = 50,
+		.ProjectileSpeed = 5000,
 		.FiringTime = 0.3,
 		.ReloadTime = 2,
 		.IsMelee = false,
@@ -53,15 +59,20 @@ Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 		if (WeaponDataList[i].WeaponType == type)
 		{
 			refWeapon = &WeaponDataList[i];
+			break;
 		}
 	}
 
 	Weapon w = { 0 };
+	w.WeaponType = refWeapon->WeaponType;
 
 	strcpy_s(w.Name, 32, refWeapon->Name);
 
 	w.CurrentAmmo1 = ammo1;
 	w.CurrentAmmo2 = ammo2;
+
+	w.ProjectileSpeed = refWeapon->ProjectileSpeed;
+	w.Damage = refWeapon->Damage;
 
 	w.IsMelee = refWeapon->IsMelee;
 	w.MaxAmmo1 = refWeapon->MaxAmmo1;
@@ -109,7 +120,7 @@ void WeaponOnInit(Weapon* w)
 	w->_reloadTimer = 0;
 }
 
-void WeaponOnFire(Weapon* w)
+void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
 {
 	if (w->_fireTimer > 0)
 		return;
@@ -120,6 +131,8 @@ void WeaponOnFire(Weapon* w)
 			return;
 
 		w->CurrentAmmo1 -= 1;
+		AudioPlay(ToHash("gunshot"), pos);
+		ProjectileSpawn(pos, dir, w->ProjectileSpeed, w->Damage);
 	}
 
 	w->_fireTimer = w->FiringTime;

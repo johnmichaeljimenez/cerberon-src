@@ -138,6 +138,9 @@
     <ClCompile Include="weapon_manager.c">
       <Filter>Source Files\gameplay\combat</Filter>
     </ClCompile>
+    <ClCompile Include="projectile.c">
+      <Filter>Source Files\gameplay\combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -225,6 +228,9 @@
       <Filter>Source Files\gameplay\combat</Filter>
     </ClInclude>
     <ClInclude Include="weapon_manager.h">
+      <Filter>Source Files\gameplay\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="projectile.h">
       <Filter>Source Files\gameplay\combat</Filter>
     </ClInclude>
   </ItemGroup>
