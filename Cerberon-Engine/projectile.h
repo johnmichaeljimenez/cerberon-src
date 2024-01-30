@@ -4,6 +4,7 @@ typedef struct Projectile
 {
 	Vector2 From;
 	Vector2 Direction;
+	float Rotation;
 	float Speed;
 	float Damage;
 

@@ -3,12 +3,17 @@
 #include "projectile.h"
 #include "collision.h"
 #include "time.h"
+#include "utils.h"
 
 int ProjectileCount = 64;
 int NextProjectileIndex = 0;
 
+static TextureResource* bulletTracerSprite;
+
 void ProjectileInit()
 {
+	bulletTracerSprite = GetTextureResource(ToHash("misc-bullet-tracer"));
+
 	for (int i = 0; i < ProjectileCount; i++)
 	{
 		Projectile p = (Projectile){
@@ -39,6 +44,9 @@ void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage)
 	p.Direction = dir;
 	p.Speed = speed;
 	p.Damage = damage;
+
+	p.Rotation = atan2f(dir.y, dir.x);
+	//TraceLog(LOG_INFO, "%f", p.Rotation);
 
 	ProjectileList[NextProjectileIndex] = p;
 	NextProjectileIndex++;
@@ -83,12 +91,17 @@ void ProjectileUpdate()
 
 void ProjectileDraw()
 {
+	BeginBlendMode(BLEND_ADDITIVE);
+
 	for (int i = 0; i < ProjectileCount; i++)
 	{
 		Projectile p = ProjectileList[i];
 		if (!p._isAlive)
 			continue;
-
+		
+		DrawSprite(bulletTracerSprite, p._position, p.Rotation, 0.4, (Vector2) { 0.3, 0 }, WHITE);
 		DrawCircleV(p._position, 12, RED);
 	}
+
+	EndBlendMode();
 }
