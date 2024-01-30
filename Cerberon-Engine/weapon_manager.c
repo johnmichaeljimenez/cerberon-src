@@ -40,9 +40,9 @@ void WeaponInitData()
 		.MaxAmmo1 = 12,
 		.MaxAmmo2 = 30,
 		.Damage = 50,
-		.IsAutomatic = true,
+		.IsAutomatic = false,
 		.ProjectileSpeed = 5000,
-		.FiringTime = 0.1,
+		.FiringTime = 0.2,
 		.Spread = 4,
 		.ReloadTime = 2,
 		.IsMelee = false,
@@ -67,31 +67,13 @@ Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 		}
 	}
 
-	Weapon w = { 0 };
+	Weapon w = *refWeapon;
 	w.WeaponType = refWeapon->WeaponType;
 
 	strcpy_s(w.Name, 32, refWeapon->Name);
 
 	w.CurrentAmmo1 = ammo1;
 	w.CurrentAmmo2 = ammo2;
-
-	w.ProjectileSpeed = refWeapon->ProjectileSpeed;
-	w.Damage = refWeapon->Damage;
-
-	w.IsMelee = refWeapon->IsMelee;
-	w.MaxAmmo1 = refWeapon->MaxAmmo1;
-	w.MaxAmmo2 = refWeapon->MaxAmmo2;
-	w.FiringTime = refWeapon->FiringTime;
-	w.ReloadTime = refWeapon->ReloadTime;
-	w.IsAutomatic = refWeapon->IsAutomatic;
-
-	w.Spread = refWeapon->Spread;
-
-	w.OnFire = refWeapon->OnFire;
-	w.OnInit = refWeapon->OnInit;
-	w.OnReload = refWeapon->OnReload;
-	w.OnReloadStart = refWeapon->OnReloadStart;
-	w.OnSelect = refWeapon->OnSelect;
 
 	w._fireTimer = 0;
 	w._reloadTimer = 0;
