@@ -143,7 +143,7 @@ void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
 			return;
 
 		w->CurrentAmmo1 -= 1;
-		AudioPlay(ToHash("gunshot"), pos);
+		AudioPlay(ToHash("gunshot"), Vector2Add(pos, dir));
 		ProjectileSpawn(pos, dir, w->ProjectileSpeed, w->Damage);
 	}
 
