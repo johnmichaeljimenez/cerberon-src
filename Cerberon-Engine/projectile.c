@@ -8,6 +8,7 @@
 int ProjectileCount = 64;
 int NextProjectileIndex = 0;
 
+static float flashDuration = 0.3;
 static TextureResource* bulletTracerSprite;
 
 void ProjectileInit()
@@ -25,7 +26,8 @@ void ProjectileInit()
 			._hitPos = Vector2Zero(),
 			._isAlive = false,
 			._lifeTime = 0,
-			._position = Vector2Zero()
+			._position = Vector2Zero(),
+			._flashTime = 0
 		};
 
 		ProjectileList[i] = p;
@@ -44,6 +46,7 @@ void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage)
 	p.Direction = dir;
 	p.Speed = speed;
 	p.Damage = damage;
+	p._flashTime = flashDuration;
 
 	p.Rotation = atan2f(dir.y, dir.x);
 	//TraceLog(LOG_INFO, "%f", p.Rotation);
@@ -112,11 +115,17 @@ void ProjectileDrawLights()
 
 	for (int i = 0; i < ProjectileCount; i++)
 	{
-		Projectile p = ProjectileList[i];
-		if (!p._isAlive)
-			continue;
+		Projectile* p = &ProjectileList[i];
+		if (p->_isAlive)
+		{
+			DrawSprite(bulletTracerSprite, p->_position, p->Rotation, 0.4, (Vector2) { 0.3, 0 }, GRAY);
+		}
 
-		DrawSprite(bulletTracerSprite, p._position, p.Rotation, 0.4, (Vector2) { 0.3, 0 }, GRAY);
+		if (p->_flashTime <= 0)
+			continue;
+		p->_flashTime -= TICKRATE;
+
+		DrawCircleGradient(p->From.x, p->From.y, 256, ColorBrightness01(WHITE, p->_flashTime/ flashDuration), BLACK);
 	}
 
 	EndBlendMode();
