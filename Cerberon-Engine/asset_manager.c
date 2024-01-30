@@ -140,7 +140,7 @@ TextureResource* GetTextureResource(unsigned long hash)
 void LoadAnimationPack(char* filename)
 {
 	//testing
-	AnimationClipCount = 5;
+	AnimationClipCount = 7;
 	AnimationClipList = MCalloc(AnimationClipCount, sizeof(AnimationClip), "Animation Clip List");
 
 	AnimationClipList[0] = (AnimationClip)
@@ -219,6 +219,38 @@ void LoadAnimationPack(char* filename)
 		unsigned long hash = ToHash(TextFormat("survivor-walk_%d", i));
 		AnimationClipList[4].Frames[i] = hash;
 		AnimationClipList[4].SpriteFrames[i] = GetTextureResource(hash);
+	}
+
+
+	AnimationClipList[5] = (AnimationClip)
+	{
+		.FrameCount = 3,
+		.Name = "player_handgun_fire",
+		.Hash = ToHash("player_handgun_fire"),
+		.Loop = false
+	};
+
+	for (int i = 0; i < 3; i++)
+	{
+		unsigned long hash = ToHash(TextFormat("survivor-shoot_handgun_%d", i));
+		AnimationClipList[5].Frames[i] = hash;
+		AnimationClipList[5].SpriteFrames[i] = GetTextureResource(hash);
+	}
+
+
+	AnimationClipList[6] = (AnimationClip)
+	{
+		.FrameCount = 15,
+		.Name = "player_handgun_reload",
+		.Hash = ToHash("player_handgun_reload"),
+		.Loop = false
+	};
+
+	for (int i = 0; i < 15; i++)
+	{
+		unsigned long hash = ToHash(TextFormat("survivor-reload_handgun_%d", i));
+		AnimationClipList[6].Frames[i] = hash;
+		AnimationClipList[6].SpriteFrames[i] = GetTextureResource(hash);
 	}
 }
 

@@ -99,7 +99,7 @@ void AudioPlay(unsigned long hash, Vector2 pos)
 			FMOD_RESULT result = FMOD_System_PlaySound(audioSystem, a->Sound, worldChannelGroup, 0, &channel);
 			if (result == FMOD_OK)
 			{
-				FMOD_Channel_SetPitch(channel, Lerp(0.8, 1.2, (float)GetRandomValue(0, 100) / 100.0f));
+				FMOD_Channel_SetPitch(channel, GetRandomValueFloat(0.8, 1.2));
 				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
 				LinecastHit l;
 				bool occluded = Linecast(pos, listenerPositionV, &l);

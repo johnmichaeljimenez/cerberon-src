@@ -25,6 +25,8 @@ static AnimationPlayerGroup playerAnimation;
 static AnimationPlayer idleAnimation;
 static AnimationPlayer moveAnimation;
 static AnimationPlayer attackAnimation;
+static AnimationPlayer handgunShootAnimation;
+static AnimationPlayer handgunReloadAnimation;
 
 static AnimationPlayerGroup playerLegAnimation;
 static AnimationPlayer legIdleAnimation;
@@ -50,12 +52,16 @@ void PlayerInit(PlayerCharacter* p)
 	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
 	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
 	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), AnimationFlag_DisableMovement, NULL, OnAttackHit, OnAttackEnd, 24);
+	handgunShootAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_handgun_fire")), AnimationFlag_None, NULL, NULL, NULL, 24);
+	handgunReloadAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_handgun_reload")), AnimationFlag_None, NULL, NULL, NULL, 24);
 
 	playerLegAnimation = (AnimationPlayerGroup){ 0 };
 	legIdleAnimation = AnimationPlayerCreate(&playerLegAnimation, GetAnimationResource(ToHash("player_leg_idle")), AnimationFlag_None, NULL, NULL, NULL, 24);
 	legMoveAnimation = AnimationPlayerCreate(&playerLegAnimation, GetAnimationResource(ToHash("player_leg_move")), AnimationFlag_None, NULL, NULL, NULL, 24);
 
 	attackAnimation.NextAnimation = &idleAnimation;
+	handgunShootAnimation.NextAnimation = &idleAnimation;
+	handgunReloadAnimation.NextAnimation = &idleAnimation;
 
 	playerAnimation.Animations[0] = &idleAnimation;
 	playerAnimation.Animations[1] = &moveAnimation;
@@ -82,7 +88,7 @@ void PlayerInit(PlayerCharacter* p)
 
 	InventoryInit(&InventoryPlayer);
 	lastPos = p->Position;
-	footstepInterval = (p->CollisionRadius * 2.5f);
+	footstepInterval = (p->CollisionRadius * 1.8f);
 	footstepInterval *= footstepInterval;
 
 	AnimationPlayerPlay(&playerAnimation, &idleAnimation);
@@ -158,15 +164,26 @@ void PlayerUpdate(PlayerCharacter* p)
 			if (IsKeyPressed(KEY_R))
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnReloadStart != NULL)
-					PlayerWeaponContainer.CurrentWeapon->OnReloadStart(PlayerWeaponContainer.CurrentWeapon);
+				{
+					if (PlayerWeaponContainer.CurrentWeapon->OnReloadStart(PlayerWeaponContainer.CurrentWeapon))
+					{
+						AnimationPlayerPlay(&playerAnimation, &handgunReloadAnimation);
+					}
+				}
 			}
 
-			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+			if ((!PlayerWeaponContainer.CurrentWeapon->IsAutomatic && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+				||
+				(PlayerWeaponContainer.CurrentWeapon->IsAutomatic && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+				)
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
 				{
 					Vector2 dir = Vector2Normalize(Vector2Subtract(PlayerGetForward(p, 1), p->Position));
-					PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir);
+					if (PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir))
+					{
+						AnimationPlayerPlay(&playerAnimation, &handgunShootAnimation);
+					}
 				}
 			}
 
@@ -285,7 +302,7 @@ void DrawPlayerVision()
 
 	//PLACEHOLDER
 	//TODO: replace with actual vision cone sprite
-	float length = 1500;
+	float length = 1800;
 	float angle = 120;
 	float halfAngle = angle / 2;
 	Vector2 v2, v3;
@@ -297,6 +314,7 @@ void DrawPlayerVision()
 	v3 = Vector2Add(pos, Vector2Scale(v3, length));
 
 	DrawTriangle(pos, v2, v3, red);
+
 	//EndBlendMode();
 }
 

@@ -136,5 +136,5 @@ bool OnFlashlightUse(ItemPickup* i)
 
 bool OnWeaponPickup(ItemPickup* i)
 {
-	PlayerAddWeapon(WeaponGive(WEAPONTYPE_Pistol, 5, 12), i);
+	PlayerAddWeapon(WeaponGive(WEAPONTYPE_Pistol, 12, 50), i);
 }

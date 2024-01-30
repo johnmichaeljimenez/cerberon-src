@@ -21,7 +21,9 @@ void WeaponInitData()
 		.ReloadTime = 0,
 		.MaxAmmo1 = 0,
 		.MaxAmmo2 = 0,
+		.IsAutomatic = false,
 		.Damage = 30,
+		.Spread = 0,
 		.IsMelee = true,
 		.OnInit = WeaponOnInit,
 		.OnFire = WeaponOnFire,
@@ -38,9 +40,11 @@ void WeaponInitData()
 		.MaxAmmo1 = 12,
 		.MaxAmmo2 = 30,
 		.Damage = 50,
+		.IsAutomatic = false,
 		.ProjectileSpeed = 5000,
-		.FiringTime = 0.3,
-		.ReloadTime = 2,
+		.FiringTime = 0.125,
+		.Spread = 4,
+		.ReloadTime = 0.625,
 		.IsMelee = false,
 		.OnReload = WeaponOnReload,
 		.OnReloadStart = WeaponOnReloadStart,
@@ -63,28 +67,13 @@ Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 		}
 	}
 
-	Weapon w = { 0 };
+	Weapon w = *refWeapon;
 	w.WeaponType = refWeapon->WeaponType;
 
 	strcpy_s(w.Name, 32, refWeapon->Name);
 
 	w.CurrentAmmo1 = ammo1;
 	w.CurrentAmmo2 = ammo2;
-
-	w.ProjectileSpeed = refWeapon->ProjectileSpeed;
-	w.Damage = refWeapon->Damage;
-
-	w.IsMelee = refWeapon->IsMelee;
-	w.MaxAmmo1 = refWeapon->MaxAmmo1;
-	w.MaxAmmo2 = refWeapon->MaxAmmo2;
-	w.FiringTime = refWeapon->FiringTime;
-	w.ReloadTime = refWeapon->ReloadTime;
-
-	w.OnFire = refWeapon->OnFire;
-	w.OnInit = refWeapon->OnInit;
-	w.OnReload = refWeapon->OnReload;
-	w.OnReloadStart = refWeapon->OnReloadStart;
-	w.OnSelect = refWeapon->OnSelect;
 
 	w._fireTimer = 0;
 	w._reloadTimer = 0;
@@ -120,25 +109,31 @@ void WeaponOnInit(Weapon* w)
 	w->_reloadTimer = 0;
 }
 
-void WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
+bool WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
 {
 	if (w->_fireTimer > 0)
-		return;
+		return false;
+
+	float amt = GetRandomValueFloat(-1, 1) * w->Spread;
+	amt *= DEG2RAD;
+
+	dir = Vector2Rotate(dir, amt);
 
 	if (!w->IsMelee && w->MaxAmmo1 > 0)
 	{
 		if (w->CurrentAmmo1 <= 0)
-			return;
+			return false;
 
 		w->CurrentAmmo1 -= 1;
-		AudioPlay(ToHash("gunshot"), pos);
+		AudioPlay(ToHash("gunshot"), Vector2Add(pos, dir));
 		ProjectileSpawn(pos, dir, w->ProjectileSpeed, w->Damage);
 	}
 
 	w->_fireTimer = w->FiringTime;
 	w->_reloadTimer = 0;
 
-	TraceLog(LOG_INFO, "FIRING");
+	//TraceLog(LOG_INFO, "FIRING");
+	return true;
 }
 
 void WeaponOnSelect(Weapon* w)
@@ -147,16 +142,18 @@ void WeaponOnSelect(Weapon* w)
 	w->_reloadTimer = 0;
 }
 
-void WeaponOnReloadStart(Weapon* w)
+bool WeaponOnReloadStart(Weapon* w)
 {
 	if (w->IsMelee || w->MaxAmmo2 <= 0 || w->_reloadTimer > 0 || w->CurrentAmmo1 >= w->MaxAmmo1)
-		return;
+		return false;
 
 	w->_fireTimer = 0;
 	w->_reloadTimer = w->ReloadTime;
+
+	return true;
 }
 
-void WeaponOnReload(Weapon* w)
+bool WeaponOnReload(Weapon* w)
 {
 	w->_fireTimer = 0;
 	w->_reloadTimer = 0;
@@ -169,4 +166,6 @@ void WeaponOnReload(Weapon* w)
 		w->CurrentAmmo1 -= diff;
 		w->CurrentAmmo2 += diff;
 	}
+
+	return true;
 }
