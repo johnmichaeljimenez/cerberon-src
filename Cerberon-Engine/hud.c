@@ -46,7 +46,6 @@ void DrawHUD()
 		if (w->IsMelee)
 			DrawText(w->Name, 125, 4, 8, WHITE);
 		else
-			//TODO: Fix weapon name display
 			DrawText(TextFormat("[%s] %d/%d", w->Name, w->CurrentAmmo1, w->CurrentAmmo2), 125, 4, 8, WHITE);
 	}
 

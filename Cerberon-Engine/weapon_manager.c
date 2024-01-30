@@ -15,7 +15,6 @@ void WeaponInitData()
 {
 	WeaponDataList[0] = (Weapon)
 	{
-		.Name = "Knife",
 		.WeaponType = WEAPONTYPE_Knife,
 		.FiringTime = 1.5,
 		.ReloadTime = 0,
@@ -32,10 +31,10 @@ void WeaponInitData()
 		.OnReload = NULL,
 		._isValid = true,
 	};
+	strcpy_s(WeaponDataList[0].Name, 32, "Knife");
 
 	WeaponDataList[1] = (Weapon)
 	{
-		.Name = "Pistol",
 		.WeaponType = WEAPONTYPE_Pistol,
 		.MaxAmmo1 = 12,
 		.MaxAmmo2 = 30,
@@ -53,6 +52,7 @@ void WeaponInitData()
 		.OnSelect = WeaponOnSelect,
 		._isValid = true,
 	};
+	strcpy_s(WeaponDataList[1].Name, 32, "Pistol");
 }
 
 Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
