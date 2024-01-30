@@ -31,7 +31,7 @@ void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage)
 {
 	Projectile p = { 0 };
 
-	p._lifeTime = 10.0f;
+	p._lifeTime = 5.0f;
 	p._isAlive = true;
 	p._position = from;
 	p._hit = false;
@@ -63,18 +63,20 @@ void ProjectileUpdate()
 		}
 
 		LinecastHit l;
-		Vector2 to = Vector2Scale(p->Direction, p->Speed * TICKRATE);
+		Vector2 to = Vector2Add(p->_position, Vector2Scale(p->Direction, p->Speed * TICKRATE));
 
 		if (Linecast(p->_position, to, &l))
 		{
+			//TraceLog(LOG_INFO, "HIT! %f -> %f, %f", l.Length, l.To.x, l.To.y);
 			to = l.To;
 			p->_hitPos = l.To;
 			p->_lifeTime = 0;
 			p->_isAlive = false;
+			p->_position = to;
 			continue;
 		}
 
-		p->_position = Vector2Add(p->_position, to);
+		p->_position = to;
 	}
 }
 
