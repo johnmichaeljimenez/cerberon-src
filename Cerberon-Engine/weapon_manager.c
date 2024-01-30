@@ -21,6 +21,7 @@ void WeaponInitData()
 		.ReloadTime = 0,
 		.MaxAmmo1 = 0,
 		.MaxAmmo2 = 0,
+		.IsAutomatic = false,
 		.Damage = 30,
 		.Spread = 0,
 		.IsMelee = true,
@@ -39,6 +40,7 @@ void WeaponInitData()
 		.MaxAmmo1 = 12,
 		.MaxAmmo2 = 30,
 		.Damage = 50,
+		.IsAutomatic = true,
 		.ProjectileSpeed = 5000,
 		.FiringTime = 0.1,
 		.Spread = 4,
@@ -81,6 +83,7 @@ Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
 	w.MaxAmmo2 = refWeapon->MaxAmmo2;
 	w.FiringTime = refWeapon->FiringTime;
 	w.ReloadTime = refWeapon->ReloadTime;
+	w.IsAutomatic = refWeapon->IsAutomatic;
 
 	w.Spread = refWeapon->Spread;
 

@@ -82,7 +82,7 @@ void PlayerInit(PlayerCharacter* p)
 
 	InventoryInit(&InventoryPlayer);
 	lastPos = p->Position;
-	footstepInterval = (p->CollisionRadius * 2.5f);
+	footstepInterval = (p->CollisionRadius * 1.8f);
 	footstepInterval *= footstepInterval;
 
 	AnimationPlayerPlay(&playerAnimation, &idleAnimation);
@@ -161,7 +161,10 @@ void PlayerUpdate(PlayerCharacter* p)
 					PlayerWeaponContainer.CurrentWeapon->OnReloadStart(PlayerWeaponContainer.CurrentWeapon);
 			}
 
-			if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+			if ((!PlayerWeaponContainer.CurrentWeapon->IsAutomatic && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+				||
+				(PlayerWeaponContainer.CurrentWeapon->IsAutomatic && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+				)
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
 				{
@@ -285,7 +288,7 @@ void DrawPlayerVision()
 
 	//PLACEHOLDER
 	//TODO: replace with actual vision cone sprite
-	float length = 1500;
+	float length = 1800;
 	float angle = 120;
 	float halfAngle = angle / 2;
 	Vector2 v2, v3;
@@ -297,6 +300,7 @@ void DrawPlayerVision()
 	v3 = Vector2Add(pos, Vector2Scale(v3, length));
 
 	DrawTriangle(pos, v2, v3, red);
+
 	//EndBlendMode();
 }
 

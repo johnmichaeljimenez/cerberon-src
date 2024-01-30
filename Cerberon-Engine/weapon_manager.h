@@ -16,6 +16,7 @@ typedef struct Weapon
 	char* Name[32];
 	WeaponTypes WeaponType;
 	bool IsMelee;
+	bool IsAutomatic;
 	int MaxAmmo1, MaxAmmo2;
 	float ProjectileSpeed;
 	float Damage;
