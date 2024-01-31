@@ -75,20 +75,31 @@ Vector2 WallGetClosestPoint(Vector2 p1, Vector2 p2, Vector2 pos)
 	return res;
 }
 
-void MoveBody(Vector2* pos, float radius, bool isCrouching)
+void MoveBody(Vector2* pos, float radius, bool isCrouching, bool* canStand)
 {
+	bool underCrawlspace = false;
+	*canStand = true;
+
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
 		Wall w = CurrentMapData->Walls[i];
 
 		if (isCrouching && w.WallHeight == WALLHEIGHT_Crawlspace)
-			continue;
+		{
+			underCrawlspace = true;
+		}
 
 		if (w.IsCircle)
 		{
 			float distance = Vector2Distance(*pos, w.CirclePosition);
 			if (distance > (radius + w.CircleRadius))
 				continue;
+
+			if (underCrawlspace)
+			{
+				*canStand = false;
+				continue;
+			}
 
 			float overlap = (radius + w.CircleRadius) - distance;
 
@@ -113,6 +124,12 @@ void MoveBody(Vector2* pos, float radius, bool isCrouching)
 
 		if (cd <= radius)
 		{
+			if (underCrawlspace)
+			{
+				*canStand = false;
+				continue;
+			}
+
 			float rd = cd - radius;
 			*pos = Vector2Add(*pos, Vector2Multiply(Vector2Normalize(cv), (Vector2) { rd, rd }));
 		}

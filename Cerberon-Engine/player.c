@@ -35,6 +35,8 @@ static AnimationPlayer legMoveAnimation;
 static float legAngle;
 static float legAngleRange = 60;
 
+static bool canStand = true;
+
 static void OnAttackHit()
 {
 	if (attackAnimation.CurrentFrame == 6)
@@ -82,6 +84,7 @@ void PlayerInit(PlayerCharacter* p)
 	p->Hitpoints = 100;
 
 	p->IsCrouching = false;
+	canStand = true;
 
 	PlayerWeaponContainer = (WeaponContainer){
 		.CurrentWeaponIndex = -1,
@@ -123,7 +126,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (!HasFlag(currentAnimation->Flags, AnimationFlag_DisableMovement))
 	{
-		if (IsKeyPressed(KEY_LEFT_CONTROL))
+		if (IsKeyPressed(KEY_LEFT_CONTROL) && (!p->IsCrouching || canStand))
 			p->IsCrouching = !p->IsCrouching;
 
 		movementInput = InputGetMovement();
@@ -146,7 +149,7 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 
 	//collision here
-	MoveBody(&p->Position, p->CollisionRadius, p->IsCrouching);
+	MoveBody(&p->Position, p->CollisionRadius, p->IsCrouching, &canStand);
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
