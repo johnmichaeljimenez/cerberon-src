@@ -81,6 +81,8 @@ void PlayerInit(PlayerCharacter* p)
 	p->IsDead = false;
 	p->Hitpoints = 100;
 
+	p->IsCrouching = false;
+
 	PlayerWeaponContainer = (WeaponContainer){
 		.CurrentWeaponIndex = -1,
 		.CurrentWeapon = NULL
@@ -121,8 +123,11 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (!HasFlag(currentAnimation->Flags, AnimationFlag_DisableMovement))
 	{
+		if (IsKeyPressed(KEY_LEFT_CONTROL))
+			p->IsCrouching = !p->IsCrouching;
+
 		movementInput = InputGetMovement();
-		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
+		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed * (p->IsCrouching? 0.3 : 1));
 		vel = Vector2Scale(vel, GetFrameTime());
 		p->Position = Vector2Add(p->Position, vel);
 
@@ -146,7 +151,7 @@ void PlayerUpdate(PlayerCharacter* p)
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
 		AnimationPlayerPlay(&playerLegAnimation, &legMoveAnimation);
-		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
+		if (!p->IsCrouching && Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
 			lastPos = p->Position;
