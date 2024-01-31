@@ -75,7 +75,7 @@ void CheckInteraction()
 			{
 				CursorChange(CURSORSTATE_IngameInteractHover);
 				LinecastHit hit;
-				Linecast(PlayerEntity.Position, a->Position, &hit);
+				Linecast(PlayerEntity.Position, a->Position, &hit, PlayerEntity.IsCrouching? 2 : 1);
 				if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 16)
 				{
 					a->Hovered = false;

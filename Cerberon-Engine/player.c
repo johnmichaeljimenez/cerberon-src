@@ -202,7 +202,7 @@ void PlayerUpdate(PlayerCharacter* p)
 		}
 	}
 
-	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit);
+	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit, p->IsCrouching? 2 : 1);
 
 	PlayerRotate(p, rot);
 	PlayerFlashlight->Position = PlayerEntity.Position;

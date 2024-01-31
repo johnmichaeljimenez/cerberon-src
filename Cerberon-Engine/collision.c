@@ -82,6 +82,7 @@ void MoveBody(Vector2* pos, float radius, bool isCrouching, bool* canStand)
 
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
+		underCrawlspace = false;
 		Wall w = CurrentMapData->Walls[i];
 
 		if (isCrouching && w.WallHeight == WALLHEIGHT_Crawlspace)
@@ -160,7 +161,7 @@ void MoveBody(Vector2* pos, float radius, bool isCrouching, bool* canStand)
 	}
 }
 
-bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
+bool Linecast(Vector2 from, Vector2 to, LinecastHit* result, int height)
 {
 	bool hit = false;
 	float lastHit = FLT_MAX;
@@ -202,6 +203,10 @@ bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
 	{
 		Vector2 hitPos;
 		Wall* w = &CurrentMapData->Walls[i];
+
+		//0 - default (all), 1 - standing, 2 - crouching
+		if (height == 1 && w->WallHeight == WALLHEIGHT_Low)
+			continue;
 
 		if (w->IsCircle)
 		{
