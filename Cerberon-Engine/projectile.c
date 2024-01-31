@@ -34,7 +34,7 @@ void ProjectileInit()
 	}
 }
 
-void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage)
+void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage, int height)
 {
 	Projectile p = { 0 };
 
@@ -47,6 +47,7 @@ void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage)
 	p.Speed = speed;
 	p.Damage = damage;
 	p._flashTime = flashDuration;
+	p._height = height;
 
 	p.Rotation = atan2f(dir.y, dir.x);
 	//TraceLog(LOG_INFO, "%f", p.Rotation);
@@ -76,7 +77,7 @@ void ProjectileUpdate()
 		LinecastHit l;
 		Vector2 to = Vector2Add(p->_position, Vector2Scale(p->Direction, p->Speed * TICKRATE));
 
-		if (Linecast(p->_position, to, &l))
+		if (Linecast(p->_position, to, &l, p->_height))
 		{
 			//TraceLog(LOG_INFO, "HIT! %f -> %f, %f", l.Length, l.To.x, l.To.y);
 			to = l.To;
@@ -94,7 +95,7 @@ void ProjectileUpdate()
 
 void ProjectileDraw()
 {
-	BeginBlendMode(BLEND_ADDITIVE);
+	//BeginBlendMode(BLEND_ADDITIVE);
 
 	for (int i = 0; i < ProjectileCount; i++)
 	{
@@ -108,7 +109,7 @@ void ProjectileDraw()
 		DrawSprite(bulletTracerSprite, p._position, p.Rotation, 0.4, (Vector2) { 0.3, 0 }, WHITE);
 	}
 
-	EndBlendMode();
+	//EndBlendMode();
 }
 
 
@@ -124,7 +125,7 @@ void ProjectileDrawLights()
 		{
 			if (p->_isAlive)
 			{
-				DrawSprite(bulletTracerSprite, p->_position, p->Rotation, 0.4, (Vector2) { 0.3, 0 }, GRAY);
+				DrawSprite(bulletTracerSprite, p->_position, p->Rotation, 0.4, (Vector2) { 0.3, 0 }, WHITE);
 			}
 		}
 

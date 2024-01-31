@@ -48,7 +48,7 @@ void WeaponInitData();
 Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2);
 void WeaponUpdate(Weapon* w);
 void WeaponOnInit(Weapon* w);
-bool WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir);
+bool WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir, int height);
 void WeaponOnSelect(Weapon* w);
 bool WeaponOnReloadStart(Weapon* w);
 bool WeaponOnReload(Weapon* w);

@@ -188,7 +188,7 @@ void PlayerUpdate(PlayerCharacter* p)
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
 				{
 					Vector2 dir = Vector2Normalize(Vector2Subtract(PlayerGetForward(p, 1), p->Position));
-					if (PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir))
+					if (PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir, p->IsCrouching? 2 : 1))
 					{
 						AnimationPlayerPlay(&playerAnimation, &handgunShootAnimation);
 					}
