@@ -75,11 +75,14 @@ Vector2 WallGetClosestPoint(Vector2 p1, Vector2 p2, Vector2 pos)
 	return res;
 }
 
-void MoveBody(Vector2* pos, float radius)
+void MoveBody(Vector2* pos, float radius, bool isCrouching)
 {
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
 		Wall w = CurrentMapData->Walls[i];
+
+		if (isCrouching && w.WallHeight == WALLHEIGHT_Crawlspace)
+			continue;
 
 		if (w.IsCircle)
 		{

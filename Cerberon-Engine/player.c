@@ -146,7 +146,7 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 
 	//collision here
-	MoveBody(&p->Position, p->CollisionRadius);
+	MoveBody(&p->Position, p->CollisionRadius, p->IsCrouching);
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
