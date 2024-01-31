@@ -160,10 +160,10 @@ void LoadMap(char* filename, MapData* map)
 
 			WallFlag flags = WALLFLAG_CAST_SHADOW;
 
-			map->Walls[i] = CreateWall(a, b, flags);
-			map->Walls[i + 1] = CreateWall(b, c, flags);
-			map->Walls[i + 2] = CreateWall(c, d, flags);
-			map->Walls[i + 3] = CreateWall(d, a, flags);
+			map->Walls[i] = CreateWall(a, b, flags, block->WallHeight);
+			map->Walls[i + 1] = CreateWall(b, c, flags, block->WallHeight);
+			map->Walls[i + 2] = CreateWall(c, d, flags, block->WallHeight);
+			map->Walls[i + 3] = CreateWall(d, a, flags, block->WallHeight);
 		}
 	}
 
@@ -373,12 +373,13 @@ void LoadMap(char* filename, MapData* map)
 	fclose(file);
 }
 
-Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
+Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags, WallHeight height)
 {
 	Wall w = { 0 };
 	w.From = from;
 	w.To = to;
 	w.WallFlags = flags;
+	w.WallHeight = height;
 
 	UpdateWall(&w);
 
