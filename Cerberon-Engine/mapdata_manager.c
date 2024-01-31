@@ -119,7 +119,7 @@ void LoadMap(char* filename, MapData* map)
 			map->BlockColliders[i] = bc;
 			BlockCollider* _bc = &map->BlockColliders[i];
 
-			CreateRenderObject(RENDERLAYER_Wall, i, blockRect, (void*)_bc, DrawWallBlock, NULL);
+			CreateRenderObject(bc.WallHeight == WALLHEIGHT_Low? RENDERLAYER_Ground : RENDERLAYER_Wall, i, blockRect, (void*)_bc, DrawWallBlock, NULL);
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
@@ -447,6 +447,9 @@ void DrawWalls()
 	for (int i = 0; i < CurrentMapData->BlockColliderCount; i++)
 	{
 		BlockCollider* b = &CurrentMapData->BlockColliders[i];
+		if (b->WallHeight == WALLHEIGHT_Low)
+			continue;
+
 		Vector2 size = b->Size;
 		size.x += 36;
 		size.y += 36;

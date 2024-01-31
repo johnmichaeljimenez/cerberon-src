@@ -186,6 +186,10 @@ void DrawShadows(Light* light, bool useBounds)
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
 		Wall* w = &CurrentMapData->Walls[i];
+
+		if (w->WallHeight == WALLHEIGHT_Low)
+			continue;
+
 		if (!HasFlag(w->WallFlags, WALLFLAG_CAST_SHADOW))
 			continue;
 

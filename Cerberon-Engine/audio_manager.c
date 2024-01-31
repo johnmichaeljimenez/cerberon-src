@@ -102,7 +102,7 @@ void AudioPlay(unsigned long hash, Vector2 pos)
 				FMOD_Channel_SetPitch(channel, GetRandomValueFloat(0.8, 1.2));
 				FMOD_Channel_Set3DAttributes(channel, &fmodPos, NULL);
 				LinecastHit l;
-				bool occluded = Linecast(pos, listenerPositionV, &l);
+				bool occluded = Linecast(pos, listenerPositionV, &l, 0);
 				FMOD_Channel_SetLowPassGain(channel, occluded ? 0.2f : distReverb);
 			}
 
