@@ -105,6 +105,7 @@ void LoadMap(char* filename, MapData* map)
 			fread(&bc.Size.x, sizeof(float), 1, file);
 			fread(&bc.Size.y, sizeof(float), 1, file);
 			fread(&bc.IsCircle, sizeof(bool), 1, file);
+			fread(&bc.WallHeight, sizeof(int), 1, file);
 
 			Rectangle blockRect = (Rectangle){ bc.Position.x - (bc.Size.x / 2), bc.Position.y - (bc.Size.y / 2), bc.Size.x, bc.Size.y };
 			if (bc.IsCircle)
@@ -118,7 +119,7 @@ void LoadMap(char* filename, MapData* map)
 			map->BlockColliders[i] = bc;
 			BlockCollider* _bc = &map->BlockColliders[i];
 
-			CreateRenderObject(RENDERLAYER_Wall, i, blockRect, (void*)_bc, DrawWallBlock, NULL);
+			CreateRenderObject(bc.WallHeight == WALLHEIGHT_Low? RENDERLAYER_Ground : RENDERLAYER_Wall, i, blockRect, (void*)_bc, DrawWallBlock, NULL);
 		}
 
 		for (int i = 0; i < map->WallCount; i += 4)
@@ -132,6 +133,7 @@ void LoadMap(char* filename, MapData* map)
 					.CircleRadius = block->Size.x,
 					.CirclePosition = block->Position,
 					.WallFlags = WALLFLAG_CAST_SHADOW,
+					.WallHeight = block->WallHeight,
 					._Bounds = (Rectangle){
 						.x = block->Position.x - (block->Size.x / 2),
 						.y = block->Position.y - (block->Size.x / 2),
@@ -158,10 +160,10 @@ void LoadMap(char* filename, MapData* map)
 
 			WallFlag flags = WALLFLAG_CAST_SHADOW;
 
-			map->Walls[i] = CreateWall(a, b, flags);
-			map->Walls[i + 1] = CreateWall(b, c, flags);
-			map->Walls[i + 2] = CreateWall(c, d, flags);
-			map->Walls[i + 3] = CreateWall(d, a, flags);
+			map->Walls[i] = CreateWall(a, b, flags, block->WallHeight);
+			map->Walls[i + 1] = CreateWall(b, c, flags, block->WallHeight);
+			map->Walls[i + 2] = CreateWall(c, d, flags, block->WallHeight);
+			map->Walls[i + 3] = CreateWall(d, a, flags, block->WallHeight);
 		}
 	}
 
@@ -371,12 +373,13 @@ void LoadMap(char* filename, MapData* map)
 	fclose(file);
 }
 
-Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags)
+Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags, WallHeight height)
 {
 	Wall w = { 0 };
 	w.From = from;
 	w.To = to;
 	w.WallFlags = flags;
+	w.WallHeight = height;
 
 	UpdateWall(&w);
 
@@ -444,6 +447,9 @@ void DrawWalls()
 	for (int i = 0; i < CurrentMapData->BlockColliderCount; i++)
 	{
 		BlockCollider* b = &CurrentMapData->BlockColliders[i];
+		if (b->WallHeight == WALLHEIGHT_Low)
+			continue;
+
 		Vector2 size = b->Size;
 		size.x += 36;
 		size.y += 36;

@@ -14,11 +14,12 @@ typedef struct Projectile
 	bool _isAlive;
 	bool _hit;
 	Vector2 _hitPos;
+	int _height;
 } Projectile;
 
 Projectile ProjectileList[64];
 void ProjectileInit();
-void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage);
+void ProjectileSpawn(Vector2 from, Vector2 dir, float speed, float damage, int height);
 void ProjectileUpdate();
 void ProjectileDraw();
 void ProjectileDrawLights();

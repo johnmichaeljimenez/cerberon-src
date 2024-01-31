@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(CircleCollider2D))]
 public class CircleWallObject : BaseWall
 {
+    [SerializeField] private WallHeight height;
+
     public override void Export(List<byte> array)
     {
         var radius = GetComponent<CircleCollider2D>().radius * Mathf.Max(transform.localScale.x, transform.localScale.y);
@@ -15,5 +17,6 @@ public class CircleWallObject : BaseWall
         array.AddRange(BitConverter.GetBytes(radius * MAP_SCALE));
         array.AddRange(BitConverter.GetBytes(0f));
         array.AddRange(BitConverter.GetBytes(true));
+        array.AddRange(BitConverter.GetBytes((int)height));
     }
 }

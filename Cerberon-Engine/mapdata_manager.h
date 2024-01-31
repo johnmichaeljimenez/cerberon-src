@@ -7,11 +7,19 @@
 #include "i_trigger.h"
 #include "overlay.h"
 
+typedef enum WallHeight
+{
+	WALLHEIGHT_Default = 0,
+	WALLHEIGHT_Low = 1,
+	WALLHEIGHT_Crawlspace = 2
+} WallHeight;
+
 typedef struct BlockCollider
 {
 	Vector2 Position;
 	Vector2 Size;
 	bool IsCircle;
+	WallHeight WallHeight;
 } BlockCollider;
 
 typedef enum WallFlag
@@ -29,6 +37,7 @@ typedef struct Wall
 	Vector2 Normal;
 	Vector2 Midpoint;
 	WallFlag WallFlags;
+	WallHeight WallHeight;
 	bool IsCircle;
 	Vector2 CirclePosition;
 	float CircleRadius;
@@ -72,7 +81,7 @@ void UpdateMap(MapData* map);
 void DrawMap(MapData* map);
 void DrawMapHUD(MapData* map);
 
-Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags);
+Wall CreateWall(Vector2 from, Vector2 to, WallFlag flags, WallHeight height);
 void UpdateWall(Wall* w);
 void DrawWalls();
 void DrawWallBlock(BlockCollider* b);

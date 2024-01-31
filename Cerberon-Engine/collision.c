@@ -75,17 +75,32 @@ Vector2 WallGetClosestPoint(Vector2 p1, Vector2 p2, Vector2 pos)
 	return res;
 }
 
-void MoveBody(Vector2* pos, float radius)
+void MoveBody(Vector2* pos, float radius, bool isCrouching, bool* canStand)
 {
+	bool underCrawlspace = false;
+	*canStand = true;
+
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
+		underCrawlspace = false;
 		Wall w = CurrentMapData->Walls[i];
+
+		if (isCrouching && w.WallHeight == WALLHEIGHT_Crawlspace)
+		{
+			underCrawlspace = true;
+		}
 
 		if (w.IsCircle)
 		{
 			float distance = Vector2Distance(*pos, w.CirclePosition);
 			if (distance > (radius + w.CircleRadius))
 				continue;
+
+			if (underCrawlspace)
+			{
+				*canStand = false;
+				continue;
+			}
 
 			float overlap = (radius + w.CircleRadius) - distance;
 
@@ -110,6 +125,12 @@ void MoveBody(Vector2* pos, float radius)
 
 		if (cd <= radius)
 		{
+			if (underCrawlspace)
+			{
+				*canStand = false;
+				continue;
+			}
+
 			float rd = cd - radius;
 			*pos = Vector2Add(*pos, Vector2Multiply(Vector2Normalize(cv), (Vector2) { rd, rd }));
 		}
@@ -140,7 +161,7 @@ void MoveBody(Vector2* pos, float radius)
 	}
 }
 
-bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
+bool Linecast(Vector2 from, Vector2 to, LinecastHit* result, int height)
 {
 	bool hit = false;
 	float lastHit = FLT_MAX;
@@ -182,6 +203,10 @@ bool Linecast(Vector2 from, Vector2 to, LinecastHit* result)
 	{
 		Vector2 hitPos;
 		Wall* w = &CurrentMapData->Walls[i];
+
+		//0 - default (all), 1 - standing, 2 - crouching
+		if (height == 1 && w->WallHeight == WALLHEIGHT_Low)
+			continue;
 
 		if (w->IsCircle)
 		{

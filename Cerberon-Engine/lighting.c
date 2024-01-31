@@ -73,7 +73,7 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 		ClearBackground(BLACK);
 		BeginMode2D(l->_RenderCamera);
 		l->OnDrawLight(l);
-		DrawShadows(l, i > 0);
+		DrawShadows(l, i > 0, false);
 
 		EndMode2D();
 		EndTextureMode();
@@ -160,7 +160,7 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 256, green, BLACK);
 	EndBlendMode();
 
-	DrawShadows(&CurrentMapData->Lights[0], false);
+	DrawShadows(&CurrentMapData->Lights[0], false, true);
 
 	BeginBlendMode(BLEND_ADDITIVE);
 	OverlayDraw();
@@ -178,7 +178,7 @@ void DrawLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRender
 	//DrawRenderTextureToScreen(&lightRenderTexture->texture, screenLightScale);
 }
 
-void DrawShadows(Light* light, bool useBounds)
+void DrawShadows(Light* light, bool useBounds, bool visionMode)
 {
 	if (!light->CastShadows)
 		return;
@@ -186,6 +186,16 @@ void DrawShadows(Light* light, bool useBounds)
 	for (int i = 0; i < CurrentMapData->WallCount; i++)
 	{
 		Wall* w = &CurrentMapData->Walls[i];
+
+		if (w->WallHeight == WALLHEIGHT_Low)
+		{
+			if (!visionMode)
+				continue;
+
+			if (!PlayerEntity.IsCrouching)
+				continue;
+		}
+
 		if (!HasFlag(w->WallFlags, WALLFLAG_CAST_SHADOW))
 			continue;
 

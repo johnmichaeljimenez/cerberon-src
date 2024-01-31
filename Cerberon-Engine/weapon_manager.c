@@ -15,7 +15,6 @@ void WeaponInitData()
 {
 	WeaponDataList[0] = (Weapon)
 	{
-		.Name = "Knife",
 		.WeaponType = WEAPONTYPE_Knife,
 		.FiringTime = 1.5,
 		.ReloadTime = 0,
@@ -32,10 +31,10 @@ void WeaponInitData()
 		.OnReload = NULL,
 		._isValid = true,
 	};
+	strcpy_s(WeaponDataList[0].Name, 32, "Knife");
 
 	WeaponDataList[1] = (Weapon)
 	{
-		.Name = "Pistol",
 		.WeaponType = WEAPONTYPE_Pistol,
 		.MaxAmmo1 = 12,
 		.MaxAmmo2 = 30,
@@ -53,6 +52,7 @@ void WeaponInitData()
 		.OnSelect = WeaponOnSelect,
 		._isValid = true,
 	};
+	strcpy_s(WeaponDataList[1].Name, 32, "Pistol");
 }
 
 Weapon WeaponGive(WeaponTypes type, int ammo1, int ammo2)
@@ -109,7 +109,7 @@ void WeaponOnInit(Weapon* w)
 	w->_reloadTimer = 0;
 }
 
-bool WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
+bool WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir, int height)
 {
 	if (w->_fireTimer > 0)
 		return false;
@@ -126,7 +126,7 @@ bool WeaponOnFire(Weapon* w, Vector2 pos, Vector2 dir)
 
 		w->CurrentAmmo1 -= 1;
 		AudioPlay(ToHash("gunshot"), Vector2Add(pos, dir));
-		ProjectileSpawn(pos, dir, w->ProjectileSpeed, w->Damage);
+		ProjectileSpawn(pos, dir, w->ProjectileSpeed, w->Damage, height);
 	}
 
 	w->_fireTimer = w->FiringTime;
@@ -144,7 +144,7 @@ void WeaponOnSelect(Weapon* w)
 
 bool WeaponOnReloadStart(Weapon* w)
 {
-	if (w->IsMelee || w->MaxAmmo2 <= 0 || w->_reloadTimer > 0 || w->CurrentAmmo1 >= w->MaxAmmo1)
+	if (w->IsMelee || w->CurrentAmmo2 <= 0 || w->MaxAmmo2 <= 0 || w->_reloadTimer > 0 || w->CurrentAmmo1 >= w->MaxAmmo1)
 		return false;
 
 	w->_fireTimer = 0;

@@ -17,6 +17,8 @@ typedef struct PlayerCharacter
 	int Hitpoints;
 	bool IsDead;
 
+	bool IsCrouching;
+
 } PlayerCharacter;
 
 PlayerCharacter PlayerEntity;

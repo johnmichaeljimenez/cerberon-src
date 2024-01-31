@@ -35,6 +35,8 @@ static AnimationPlayer legMoveAnimation;
 static float legAngle;
 static float legAngleRange = 60;
 
+static bool canStand = true;
+
 static void OnAttackHit()
 {
 	if (attackAnimation.CurrentFrame == 6)
@@ -81,6 +83,9 @@ void PlayerInit(PlayerCharacter* p)
 	p->IsDead = false;
 	p->Hitpoints = 100;
 
+	p->IsCrouching = false;
+	canStand = true;
+
 	PlayerWeaponContainer = (WeaponContainer){
 		.CurrentWeaponIndex = -1,
 		.CurrentWeapon = NULL
@@ -121,8 +126,11 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (!HasFlag(currentAnimation->Flags, AnimationFlag_DisableMovement))
 	{
+		if (IsKeyPressed(KEY_LEFT_CONTROL) && (!p->IsCrouching || canStand))
+			p->IsCrouching = !p->IsCrouching;
+
 		movementInput = InputGetMovement();
-		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed);
+		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed * (p->IsCrouching? 0.3 : 1));
 		vel = Vector2Scale(vel, GetFrameTime());
 		p->Position = Vector2Add(p->Position, vel);
 
@@ -141,12 +149,12 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 
 	//collision here
-	MoveBody(&p->Position, p->CollisionRadius);
+	MoveBody(&p->Position, p->CollisionRadius, p->IsCrouching, &canStand);
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
 		AnimationPlayerPlay(&playerLegAnimation, &legMoveAnimation);
-		if (Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
+		if (!p->IsCrouching && Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
 			lastPos = p->Position;
@@ -180,7 +188,7 @@ void PlayerUpdate(PlayerCharacter* p)
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
 				{
 					Vector2 dir = Vector2Normalize(Vector2Subtract(PlayerGetForward(p, 1), p->Position));
-					if (PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir))
+					if (PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir, p->IsCrouching? 2 : 1))
 					{
 						AnimationPlayerPlay(&playerAnimation, &handgunShootAnimation);
 					}
@@ -194,7 +202,7 @@ void PlayerUpdate(PlayerCharacter* p)
 		}
 	}
 
-	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit);
+	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit, p->IsCrouching? 2 : 1);
 
 	PlayerRotate(p, rot);
 	PlayerFlashlight->Position = PlayerEntity.Position;
