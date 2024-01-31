@@ -105,6 +105,7 @@ void LoadMap(char* filename, MapData* map)
 			fread(&bc.Size.x, sizeof(float), 1, file);
 			fread(&bc.Size.y, sizeof(float), 1, file);
 			fread(&bc.IsCircle, sizeof(bool), 1, file);
+			fread(&bc.WallHeight, sizeof(int), 1, file);
 
 			Rectangle blockRect = (Rectangle){ bc.Position.x - (bc.Size.x / 2), bc.Position.y - (bc.Size.y / 2), bc.Size.x, bc.Size.y };
 			if (bc.IsCircle)
@@ -132,6 +133,7 @@ void LoadMap(char* filename, MapData* map)
 					.CircleRadius = block->Size.x,
 					.CirclePosition = block->Position,
 					.WallFlags = WALLFLAG_CAST_SHADOW,
+					.WallHeight = block->WallHeight,
 					._Bounds = (Rectangle){
 						.x = block->Position.x - (block->Size.x / 2),
 						.y = block->Position.y - (block->Size.x / 2),

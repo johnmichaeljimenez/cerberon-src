@@ -7,11 +7,19 @@
 #include "i_trigger.h"
 #include "overlay.h"
 
+typedef enum WallHeight
+{
+	WALLHEIGHT_Default = 0,
+	WALLHEIGHT_Low = 1,
+	WALLHEIGHT_Crawlspace = 2
+} WallHeight;
+
 typedef struct BlockCollider
 {
 	Vector2 Position;
 	Vector2 Size;
 	bool IsCircle;
+	WallHeight WallHeight;
 } BlockCollider;
 
 typedef enum WallFlag
@@ -29,6 +37,7 @@ typedef struct Wall
 	Vector2 Normal;
 	Vector2 Midpoint;
 	WallFlag WallFlags;
+	WallHeight WallHeight;
 	bool IsCircle;
 	Vector2 CirclePosition;
 	float CircleRadius;
