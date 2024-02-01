@@ -12,6 +12,7 @@
 #include "time.h"
 #include "weapon_manager.h"
 #include "projectile.h"
+#include "ui_manager.h"
 
 void IngameInit()
 {
@@ -23,6 +24,7 @@ void IngameInit()
 
 void IngameOnLoad()
 {
+	UIInit();
 	CursorChange(CURSORSTATE_IngameInteractReticle);
 	LoadResources();
 	RendererInit();
@@ -58,7 +60,7 @@ void IngameOnUpdate()
 	CameraUpdate();
 	RendererUpdate();
 	TimeUpdate();
-
+	UIUpdate();
 
 	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);
@@ -67,4 +69,5 @@ void IngameOnUpdate()
 void IngameOnDraw()
 {
 	RendererDraw();
+	UIDraw();
 }
