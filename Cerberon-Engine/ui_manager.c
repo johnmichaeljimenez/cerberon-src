@@ -9,13 +9,24 @@ void UIInit()
 
 void UISetSelection(UIControl* c)
 {
-	if (c->OnDeselect != NULL)
-		c->OnDeselect(c);
+	if (UICurrentSelected != NULL)
+	{
+		UICurrentSelected->Selected = false;
+		if (UICurrentSelected->OnDeselect != NULL)
+			UICurrentSelected->OnDeselect(UICurrentSelected);
+	}
 
 	UICurrentSelected = c;
 
-	if (c != NULL && c->OnSelect != NULL)
-		c->OnSelect(c);
+	if (c != NULL)
+	{
+		c->Selected = true;
+
+		if (c->OnSelect != NULL)
+		{
+			c->OnSelect(c);
+		}
+	}
 }
 
 void UIUpdate()
@@ -24,6 +35,16 @@ void UIUpdate()
 }
 
 void UIDraw()
+{
+
+}
+
+void UIShow(UIPanel* c)
+{
+
+}
+
+void UIHide(UIPanel* c)
 {
 
 }
