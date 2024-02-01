@@ -161,6 +161,7 @@
     <ClCompile Include="renderer.c" />
     <ClCompile Include="tile.c" />
     <ClCompile Include="time.c" />
+    <ClCompile Include="ui_manager.c" />
     <ClCompile Include="utils.c" />
     <ClCompile Include="weapon_manager.c" />
   </ItemGroup>
@@ -193,6 +194,7 @@
     <ClInclude Include="renderer.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="time.h" />
+    <ClInclude Include="ui_manager.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="weapon_manager.h" />
   </ItemGroup>
