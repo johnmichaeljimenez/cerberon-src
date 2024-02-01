@@ -126,7 +126,7 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (!HasFlag(currentAnimation->Flags, AnimationFlag_DisableMovement))
 	{
-		if (IsKeyPressed(KEY_LEFT_CONTROL) && (!p->IsCrouching || canStand))
+		if (InputGetKeyPressed(KEY_LEFT_CONTROL) && (!p->IsCrouching || canStand))
 			p->IsCrouching = !p->IsCrouching;
 
 		movementInput = InputGetMovement();
@@ -139,7 +139,7 @@ void PlayerUpdate(PlayerCharacter* p)
 		float newDir = atan2f(diff.y, diff.x);
 		rot = LerpAngle(rot, newDir, TICKRATE * 12);
 
-		if (IsKeyPressed(KEY_F))
+		if (InputGetKeyPressed(KEY_F))
 		{
 			if (InventoryGetItem(&InventoryPlayer, INTERACTABLESUB_ItemFlashlight) != NULL)
 			{
@@ -169,7 +169,7 @@ void PlayerUpdate(PlayerCharacter* p)
 	{
 		if (HasFlag(currentAnimation->Flags, AnimationFlag_CanAttack))
 		{
-			if (IsKeyPressed(KEY_R))
+			if (InputGetKeyPressed(KEY_R))
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnReloadStart != NULL)
 				{
@@ -180,9 +180,9 @@ void PlayerUpdate(PlayerCharacter* p)
 				}
 			}
 
-			if ((!PlayerWeaponContainer.CurrentWeapon->IsAutomatic && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+			if ((!PlayerWeaponContainer.CurrentWeapon->IsAutomatic && InputGetMousePressed(MOUSE_BUTTON_LEFT))
 				||
-				(PlayerWeaponContainer.CurrentWeapon->IsAutomatic && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+				(PlayerWeaponContainer.CurrentWeapon->IsAutomatic && InputGetMouseDown(MOUSE_BUTTON_LEFT))
 				)
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
@@ -195,7 +195,7 @@ void PlayerUpdate(PlayerCharacter* p)
 				}
 			}
 
-			if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+			if (InputGetMousePressed(MOUSE_BUTTON_RIGHT))
 			{
 
 			}
@@ -362,7 +362,7 @@ void SelectInventoryItem(InventoryContainer* in)
 	int n = 0;
 	for (int i = KEY_ONE; i < KEY_EIGHT + 1; i++)
 	{
-		if (IsKeyPressed(i))
+		if (InputGetKeyPressed(i))
 		{
 			in->CurrentSelectedIndex = n;
 

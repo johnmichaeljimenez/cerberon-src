@@ -8,7 +8,7 @@ int main()
 {
 	ClearLog();
 
-	//SetConfigFlags(FLAG_VSYNC_HINT);
+	SetConfigFlags(FLAG_VSYNC_HINT);
 	InitWindow(1366, 768, "Cerberon Engine");
 	AudioInit();
 

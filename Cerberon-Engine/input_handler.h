@@ -21,6 +21,7 @@ typedef struct InputAction
 
 bool InputGetKeyPressed(KeyboardKey key);
 bool InputGetMousePressed(MouseButton button);
+bool InputGetMouseDown(MouseButton button);
 
 void InputUpdate();
 bool InputGetPressed(InputActionType type);

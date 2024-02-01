@@ -33,6 +33,14 @@ bool InputGetMousePressed(MouseButton button)
 	if (UIIsVisible)
 		return false;
 
+	return IsMouseButtonPressed(button);
+}
+
+bool InputGetMouseDown(MouseButton button)
+{
+	if (UIIsVisible)
+		return false;
+
 	return IsMouseButtonDown(button);
 }
 
@@ -89,7 +97,7 @@ bool InputGetPressed(InputActionType type)
 		return false;
 
 	InputAction action = Actions[type];
-	return action.IsMouse? IsMouseButtonPressed(action.Key) : IsKeyPressed(action.Key);
+	return action.IsMouse? IsMouseButtonPressed(action.Key) : InputGetKeyPressed(action.Key);
 
 	/*bool pressed = action.Time > 0 && !action.Released;
 
