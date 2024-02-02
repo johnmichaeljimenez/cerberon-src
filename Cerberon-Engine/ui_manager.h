@@ -8,6 +8,7 @@ typedef struct UIControl
 	bool IsValid;
 	bool Clickable;
 	bool Selected;
+	bool Hovered;
 	struct UIPanel* Parent;
 
 	void(*OnDeselect)(struct UIControl* c);
@@ -38,3 +39,6 @@ void UIUpdate();
 void UIDraw();
 void UIShow(UIPanel* c);
 void UIHide(UIPanel* c);
+
+UIPanel UICreatePanel(void(*onShow)(UIPanel* p), void(*onHide)(UIPanel* p));
+UIControl UICreateControl(UIPanel* parent, Rectangle rect, void(*onDraw)(UIControl* c));
