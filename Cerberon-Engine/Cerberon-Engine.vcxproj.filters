@@ -141,6 +141,9 @@
     <ClCompile Include="projectile.c">
       <Filter>Source Files\gameplay\combat</Filter>
     </ClCompile>
+    <ClCompile Include="ui_manager.c">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="projectile.h">
       <Filter>Source Files\gameplay\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_manager.h">
+      <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

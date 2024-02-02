@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "input_handler.h"
+#include "ui_manager.h"
 
 static InputAction Actions[] = {
 	{ INPUTACTIONTYPE_UIConfirm, KEY_SPACE, 0, false, false },
@@ -17,6 +18,30 @@ static void DoTimer(float* t)
 		if (*t <= 0)
 			*t = 0;
 	}
+}
+
+bool InputGetKeyPressed(KeyboardKey key)
+{
+	if (UIIsVisible)
+		return false;
+
+	return IsKeyPressed(key);
+}
+
+bool InputGetMousePressed(MouseButton button)
+{
+	if (UIIsVisible)
+		return false;
+
+	return IsMouseButtonPressed(button);
+}
+
+bool InputGetMouseDown(MouseButton button)
+{
+	if (UIIsVisible)
+		return false;
+
+	return IsMouseButtonDown(button);
 }
 
 static void CheckInput(InputAction* i)
@@ -68,8 +93,11 @@ void InputUpdate()
 
 bool InputGetPressed(InputActionType type)
 {
+	if (UIIsVisible)
+		return false;
+
 	InputAction action = Actions[type];
-	return action.IsMouse? IsMouseButtonPressed(action.Key) : IsKeyPressed(action.Key);
+	return action.IsMouse? IsMouseButtonPressed(action.Key) : InputGetKeyPressed(action.Key);
 
 	/*bool pressed = action.Time > 0 && !action.Released;
 
@@ -84,6 +112,9 @@ bool InputGetPressed(InputActionType type)
 Vector2 InputGetMovement()
 {
 	Vector2 m = Vector2Zero();
+
+	if (UIIsVisible)
+		return m;
 
 	if (IsKeyDown(KEY_W))
 		m.y = -1;
