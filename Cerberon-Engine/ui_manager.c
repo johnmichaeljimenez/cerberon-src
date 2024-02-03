@@ -126,8 +126,7 @@ void UIHide(UIElement* c)
 	if (c->OnHide != NULL)
 		c->OnHide(c);
 }
-
-UIElement UICreateElement(UIElement* parent, bool clickable)
+UIElement UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax)
 {
 	UIElement e = (UIElement){
 		.Parent = parent,
@@ -163,6 +162,11 @@ Rect UICreateRect(float x1, float y1, float x2, float y2)
 		.y = y1,
 		.width = (x2 - x1),
 		.height = (y2 - y1)
+	};
+
+	r.Position = (Vector2){
+		.x = (x1+x2)/2,
+		.y = (y1+y2)/2
 	};
 
 	return r;
