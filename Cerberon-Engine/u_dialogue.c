@@ -2,9 +2,16 @@
 #include "ui_manager.h"
 #include "u_dialogue.h"
 
-UIElement UDialogueCreate()
+void UDialogueCreate()
 {
+	UIElement* e = UICreateElement(NULL, false,
+		(Vector2){ 4, 4 },
+		(Vector2){ 4, 4 },
+		(Vector2){ 1, 0 },
+		(Vector2){ 1, 1 }
+	);
 
+	e->OnDraw = UDialogueDraw;
 }
 
 void UDialogueUpdate(UIElement* u)
@@ -24,6 +31,5 @@ void UDialogueHide(UIElement* u)
 
 void UDialogueDraw(UIElement* u)
 {
-	DrawRectangle(12, GetScreenHeight() - 212, GetScreenWidth() - 24, 200, (Color){255,255,255,50});
-	DrawText("hello", 24, GetScreenHeight() - 200, 25, WHITE);
+	DrawRectangleRec(u->Rect.Rectangle, WHITE);
 }
