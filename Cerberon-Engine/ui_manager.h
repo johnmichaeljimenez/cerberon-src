@@ -24,8 +24,7 @@ typedef struct UIElement
 	bool Selected;
 	bool Hovered;
 
-	Vector2 AnchorMin;
-	Vector2 AnchorMax;
+	bool IsMainPanel;
 
 	void(*OnDeselect)(struct UIElement* c);
 	void(*OnSelect)(struct UIElement* c);
@@ -51,4 +50,4 @@ void UIHide(UIElement* c);
 
 Rect UICreateRect(float x1, float y1, float x2, float y2);
 
-UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin);
+UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin, bool isMainPanel);

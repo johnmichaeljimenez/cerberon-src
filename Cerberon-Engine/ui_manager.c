@@ -43,7 +43,7 @@ void UIUpdate()
 			continue;
 
 		c->Hovered = false;
-		if (!c->IsValid || !c->IsVisible || !c->Clickable || !c->IsOpen)
+		if (!c->IsValid || !c->IsVisible || !c->Clickable || (!c->IsOpen && c->IsMainPanel))
 			continue;
 
 		if (CheckCollisionPointRec(mousePos, c->Rect.Rectangle))
@@ -79,7 +79,7 @@ void UIDraw()
 		if (c == NULL)
 			continue;
 
-		if (!c->IsValid || !c->IsVisible || !c->IsOpen)
+		if (!c->IsValid || !c->IsVisible || (!c->IsOpen && c->IsMainPanel))
 			continue;
 
 		if (c->OnDraw != NULL)
@@ -133,7 +133,7 @@ void UIHide(UIElement* c)
 		c->OnHide(c);
 }
 
-UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin)
+UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin, bool isMainPanel)
 {
 	UIElement e = (UIElement){
 		.Parent = parent,
@@ -141,7 +141,8 @@ UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vecto
 		.IsVisible = true,
 		.IsOpen = false,
 		.Clickable = clickable,
-		.OnDraw = NULL
+		.OnDraw = NULL,
+		.IsMainPanel = isMainPanel
 	};
 
 	if (e.Parent == NULL)
