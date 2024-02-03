@@ -45,7 +45,7 @@ void UIUpdate()
 		if (!c->IsValid || !c->IsVisible || !c->Clickable)
 			continue;
 
-		if (CheckCollisionPointRec(mousePos, c->Rect))
+		if (CheckCollisionPointRec(mousePos, c->Rect.Rectangle))
 		{
 			newHovered = c;
 		}
@@ -137,7 +137,7 @@ UIElement UICreateElement(UIElement* parent, bool clickable)
 	};
 
 	if (e.Parent == NULL)
-		e.ParentRect = (Rectangle){ 0, 0, GetScreenWidth(), GetScreenHeight() };
+		e.ParentRect = UICreateRect(0, 0, GetScreenWidth(), GetScreenHeight());
 	else
 		e.ParentRect = e.Parent->Rect;
 
@@ -146,13 +146,24 @@ UIElement UICreateElement(UIElement* parent, bool clickable)
 
 void UICalculateRect(UIElement* e, float x1, float y1, float x2, float y2)
 {
-	e->_inRectMin = (Vector2){ x1, y1 },
-	e->_inRectMax = (Vector2){ x2, y2 },
+	e->Rect = UICreateRect(x1, y1, x2, y2);
+}
 
-	e->Rect = (Rectangle){
-		.x = e->_inRectMin.x,
-		.y = e->_inRectMin.y,
-		.width = (e->_inRectMax.x - e->_inRectMin.x),
-		.height = (e->_inRectMax.y - e->_inRectMin.y)
+
+Rect UICreateRect(float x1, float y1, float x2, float y2)
+{
+	Rect r = {
+		.Min = (Vector2){x1, y1},
+		.Max = (Vector2){x2, y2},
 	};
+
+	r.Rectangle = (Rectangle)
+	{
+		.x = x1,
+		.y = y1,
+		.width = (x2 - x1),
+		.height = (y2 - y1)
+	};
+
+	return r;
 }

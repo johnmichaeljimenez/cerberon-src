@@ -1,14 +1,19 @@
 #pragma once
 
+typedef struct Rect
+{
+	Vector2 Min;
+	Vector2 Max;
+	Rectangle Rectangle;
+} Rect;
+
 typedef struct UIElement
 {
 	struct UIElement* Parent;
 	struct UIElement* Children[64];
 
-	Vector2 _inRectMin;
-	Vector2 _inRectMax;
-	Rectangle Rect;
-	Rectangle ParentRect;
+	Rect Rect;
+	Rect ParentRect;
 
 	bool IsValid;
 	bool IsVisible;
@@ -39,6 +44,8 @@ void UIUpdate();
 void UIDraw();
 void UIShow(UIElement* c);
 void UIHide(UIElement* c);
+
+Rect UICreateRect(float x1, float y1, float x2, float y2);
 
 UIElement UICreateElement(UIElement* parent, bool clickable);
 void UICalculateRect(UIElement* e, float x1, float y1, float x2, float y2);
