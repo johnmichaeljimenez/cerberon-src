@@ -2,6 +2,8 @@
 #include <raymath.h>
 #include "input_handler.h"
 #include "ui_manager.h"
+#include "camera.h"
+#include "time.h"
 
 static InputAction Actions[] = {
 	{ INPUTACTIONTYPE_UIConfirm, KEY_SPACE, 0, false, false },
@@ -129,4 +131,15 @@ Vector2 InputGetMovement()
 	m = Vector2Normalize(m);
 
 	return m;
+}
+
+bool InputGetMouseDirection(Vector2 from, Vector2* out)
+{
+	if (UIIsVisible)
+		return false;
+
+	Vector2 diff = CameraGetMousePosition();
+	*out = Vector2Subtract(diff, from);
+
+	return true;
 }
