@@ -42,7 +42,8 @@ void UIUpdate()
 		if (c == NULL)
 			continue;
 
-		if (!c->IsValid || !c->IsVisible || !c->Clickable)
+		c->Hovered = false;
+		if (!c->IsValid || !c->IsVisible || !c->Clickable || !c->IsOpen)
 			continue;
 
 		if (CheckCollisionPointRec(mousePos, c->Rect.Rectangle))
@@ -139,6 +140,8 @@ UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vecto
 		.IsValid = true,
 		.IsVisible = true,
 		.IsOpen = false,
+		.Clickable = clickable,
+		.OnDraw = NULL
 	};
 
 	if (e.Parent == NULL)
@@ -155,8 +158,11 @@ UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vecto
 		//anchor only center using anchorMin, uses max as width and height instead
 
 		Vector2 half = Vector2Scale(max, 0.5);
-		x1 = Lerp(e.ParentRect.Position.x, e.ParentRect.Min.x, anchorMin.x) + min.y;
-		y1 = Lerp(e.ParentRect.Position.y, e.ParentRect.Min.y, anchorMin.y) + min.y;
+		anchorMin.x = Remap(anchorMin.x, -1, 1, 0, 1);
+		anchorMin.y = Remap(anchorMin.y, -1, 1, 0, 1);
+
+		x1 = Lerp(e.ParentRect.Min.x, e.ParentRect.Max.x, anchorMin.x) + min.x;
+		y1 = Lerp(e.ParentRect.Min.y, e.ParentRect.Max.y, anchorMin.y) + min.y;
 
 		x1 -= half.x;
 		y1 -= half.y;
