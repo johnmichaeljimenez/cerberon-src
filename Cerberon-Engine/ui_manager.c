@@ -5,9 +5,8 @@
 
 void UIInit()
 {
-	UIElement p = UICreateElement(UDialogueShow, UDialogueHide, UDialogueDraw);
-
-	UIElementList[0] = p;
+	UINextElementSlot = 0;
+	UDialogueCreate();
 }
 
 void UISetSelection(UIElement* c)
@@ -37,7 +36,7 @@ void UIUpdate()
 	UIElement* newHovered = NULL;
 	Vector2 mousePos = GetMousePosition();
 
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < UINextElementSlot; i++)
 	{
 		UIElement* c = &UIElementList[i];
 		if (c == NULL)
@@ -73,7 +72,7 @@ void UIUpdate()
 
 void UIDraw()
 {
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < UINextElementSlot; i++)
 	{
 		UIElement* c = &UIElementList[i];
 		if (c == NULL)

@@ -8,6 +8,11 @@ typedef struct UIElement
 	Rectangle InRect;
 	Rectangle OutRect;
 
+	bool AnchorLeft;
+	bool AnchorRight;
+	bool AnchorUp;
+	bool AnchorDown;
+
 	bool IsValid;
 	bool IsVisible;
 	bool IsOpen;
@@ -26,6 +31,7 @@ typedef struct UIElement
 
 UIElement* UICurrentElement;
 UIElement UIElementList[1024];
+int UINextElementSlot;
 UIElement* UICurrentSelected;
 UIElement* UICurrentHovered;
 

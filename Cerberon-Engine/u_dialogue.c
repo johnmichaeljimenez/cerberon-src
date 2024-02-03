@@ -2,7 +2,7 @@
 #include "ui_manager.h"
 #include "u_dialogue.h"
 
-void UDialogueInit(UIElement* u)
+UIElement UDialogueCreate()
 {
 
 }
