@@ -85,9 +85,30 @@ void UIDraw()
 	}
 }
 
+static bool IsAnyUIVisible()
+{
+	for (int i = 0; i < UINextElementSlot; i++)
+	{
+		UIElement* c = &UIElementList[i];
+		if (c == NULL)
+			continue;
+
+		if (!c->IsValid)
+			continue;
+
+		if (c->IsVisible)
+			return true;
+	}
+
+	return false;
+}
+
 void UIShow(UIElement* c)
 {
-	UIIsVisible = true;
+	UIIsVisible = IsAnyUIVisible();
+	if (!UIIsVisible)
+		return;
+
 	c->IsOpen = true;
 
 	if (c->OnShow != NULL)
@@ -96,7 +117,10 @@ void UIShow(UIElement* c)
 
 void UIHide(UIElement* c)
 {
-	UIIsVisible = false;
+	UIIsVisible = IsAnyUIVisible();
+	if (!UIIsVisible)
+		return;
+
 	c->IsOpen = false;
 
 	if (c->OnHide != NULL)
