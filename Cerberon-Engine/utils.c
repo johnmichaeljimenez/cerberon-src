@@ -148,6 +148,7 @@ float GetRandomValueFloat(float min, float max)
 	return Lerp(min, max, (float)GetRandomValue(0, 100) / 100.0f);
 }
 
+//Taken from Raylib examples
 void DrawTextRect(const char* text, Rectangle rec, float fontSize, bool wordWrap, Color tint)
 {
     Font font = GetFontDefault();
