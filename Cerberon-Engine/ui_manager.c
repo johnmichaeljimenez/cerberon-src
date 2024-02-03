@@ -132,7 +132,7 @@ void UIHide(UIElement* c)
 		c->OnHide(c);
 }
 
-UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax)
+UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin)
 {
 	UIElement e = (UIElement){
 		.Parent = parent,
@@ -147,12 +147,35 @@ UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vecto
 		e.ParentRect = e.Parent->Rect;
 
 	float x1, y1, x2, y2;
-	x1 = Lerp(e.ParentRect.Position.x, e.ParentRect.Min.x, anchorMin.x) + min.x;
-	y1 = Lerp(e.ParentRect.Position.y, e.ParentRect.Min.y, anchorMin.y) + min.y;
-	x2 = Lerp(e.ParentRect.Position.x, e.ParentRect.Max.x, anchorMax.x) - max.x;
-	y2 = Lerp(e.ParentRect.Position.y, e.ParentRect.Max.y, anchorMax.y) - max.y;
+	//anchormin = parent center to parent min
+	//anchormax = parent center to parent max
 
-	e.Rect = UICreateRect(x1, y1, x2, y2);
+	if (anchorOnlyOrigin)
+	{
+		//anchor only center using anchorMin, uses max as width and height instead
+
+		Vector2 half = Vector2Scale(max, 0.5);
+		x1 = Lerp(e.ParentRect.Position.x, e.ParentRect.Min.x, anchorMin.x) + min.y;
+		y1 = Lerp(e.ParentRect.Position.y, e.ParentRect.Min.y, anchorMin.y) + min.y;
+
+		x1 -= half.x;
+		y1 -= half.y;
+		x2 = max.x;
+		y2 = max.y;
+
+		e.Rect = UICreateRect(x1, y1, x1 + x2, y1 + y2);
+	}
+	else
+	{
+		//anchor all 4 sides according to parent, uses min and max as absolute positions
+
+		x1 = Lerp(e.ParentRect.Position.x, e.ParentRect.Min.x, anchorMin.x) + min.x;
+		y1 = Lerp(e.ParentRect.Position.y, e.ParentRect.Min.y, anchorMin.y) + min.y;
+		x2 = Lerp(e.ParentRect.Position.x, e.ParentRect.Max.x, anchorMax.x) - max.x;
+		y2 = Lerp(e.ParentRect.Position.y, e.ParentRect.Max.y, anchorMax.y) - max.y;
+
+		e.Rect = UICreateRect(x1, y1, x2, y2);
+	}
 
 	UIElementList[UINextElementSlot] = e;
 	UINextElementSlot++;
@@ -171,8 +194,8 @@ Rect UICreateRect(float x1, float y1, float x2, float y2)
 	{
 		.x = x1,
 		.y = y1,
-		.width = (x2 - x1),
-		.height = (y2 - y1)
+		.width = fabsf(x2 - x1),
+		.height = fabsf(y2 - y1)
 	};
 
 	r.Position = (Vector2){

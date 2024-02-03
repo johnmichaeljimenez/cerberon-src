@@ -51,4 +51,4 @@ void UIHide(UIElement* c);
 
 Rect UICreateRect(float x1, float y1, float x2, float y2);
 
-UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax);
+UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin);
