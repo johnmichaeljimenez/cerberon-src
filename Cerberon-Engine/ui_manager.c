@@ -40,7 +40,7 @@ void UIUpdate()
 	for (int i = 0; i < 32; i++)
 	{
 		UIPanel* p = &UIPanelList[i];
-		if (!p->IsValid || !p->IsVisible)
+		if (!p->IsValid || !p->IsVisible || !p->IsOpen)
 			continue;
 
 		for (int j = 0; j < 32; j++)
@@ -67,6 +67,15 @@ void UIUpdate()
 		UICurrentHovered = newHovered;
 		UICurrentHovered->Hovered = true;
 	}
+
+	if (IsKeyPressed(KEY_Q))
+	{
+		UIPanel* p = &UIPanelList[0];
+		if (p->IsOpen)
+			UIHide(p);
+		else
+			UIShow(p);
+	}
 }
 
 void UIDraw()
@@ -74,8 +83,11 @@ void UIDraw()
 	for (int i = 0; i < 32; i++)
 	{
 		UIPanel* p = &UIPanelList[i];
-		if (!p->IsValid || !p->IsVisible)
+		if (!p->IsValid || !p->IsVisible || !p->IsOpen)
 			continue;
+
+		if (p->OnDraw != NULL)
+			p->OnDraw(p);
 
 		for (int j = 0; j < 32; j++)
 		{
@@ -94,7 +106,7 @@ void UIDraw()
 void UIShow(UIPanel* c)
 {
 	UIIsVisible = true;
-	c->IsVisible = true;
+	c->IsOpen = true;
 
 	if (c->OnShow != NULL)
 		c->OnShow(c);
@@ -103,7 +115,7 @@ void UIShow(UIPanel* c)
 void UIHide(UIPanel* c)
 {
 	UIIsVisible = false;
-	c->IsVisible = false;
+	c->IsOpen = false;
 
 	if (c->OnHide != NULL)
 		c->OnHide(c);
@@ -114,8 +126,10 @@ UIPanel UICreatePanel(void(*onShow)(UIPanel* p), void(*onHide)(UIPanel* p), void
 	return (UIPanel) {
 		.IsValid = true,
 		.IsVisible = true,
+		.IsOpen = false,
 		.OnShow = onShow,
-		.OnHide = onHide
+		.OnHide = onHide,
+		.OnDraw = onDraw
 	};
 }
 

@@ -20,6 +20,7 @@ typedef struct UIControl
 typedef struct UIPanel
 {
 	UIControl* Controls[32];
+	bool IsOpen;
 	bool IsVisible;
 	bool IsValid;
 
