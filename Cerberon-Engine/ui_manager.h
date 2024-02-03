@@ -5,13 +5,10 @@ typedef struct UIElement
 	struct UIElement* Parent;
 	struct UIElement* Children[64];
 
-	Rectangle InRect;
-	Rectangle OutRect;
-
-	bool AnchorLeft;
-	bool AnchorRight;
-	bool AnchorUp;
-	bool AnchorDown;
+	Vector2 _inRectMin;
+	Vector2 _inRectMax;
+	Rectangle Rect;
+	Rectangle ParentRect;
 
 	bool IsValid;
 	bool IsVisible;
@@ -43,4 +40,5 @@ void UIDraw();
 void UIShow(UIElement* c);
 void UIHide(UIElement* c);
 
-UIElement UICreateElement(void(*onShow)(UIElement* p), void(*onHide)(UIElement* p), void(*onDraw)(UIElement* p));
+UIElement UICreateElement(UIElement* parent, bool clickable);
+void UICalculateRect(UIElement* e, float x1, float y1, float x2, float y2);

@@ -45,7 +45,7 @@ void UIUpdate()
 		if (!c->IsValid || !c->IsVisible || !c->Clickable)
 			continue;
 
-		if (CheckCollisionPointRec(mousePos, c->OutRect))
+		if (CheckCollisionPointRec(mousePos, c->Rect))
 		{
 			newHovered = c;
 		}
@@ -127,14 +127,32 @@ void UIHide(UIElement* c)
 		c->OnHide(c);
 }
 
-UIElement UICreateElement(void(*onShow)(UIElement* p), void(*onHide)(UIElement* p), void(*onDraw)(UIElement* p))
+UIElement UICreateElement(UIElement* parent, bool clickable)
 {
-	return (UIElement) {
+	UIElement e = (UIElement){
+		.Parent = parent,
 		.IsValid = true,
 		.IsVisible = true,
 		.IsOpen = false,
-		.OnShow = onShow,
-		.OnHide = onHide,
-		.OnDraw = onDraw
+	};
+
+	if (e.Parent == NULL)
+		e.ParentRect = (Rectangle){ 0, 0, GetScreenWidth(), GetScreenHeight() };
+	else
+		e.ParentRect = e.Parent->Rect;
+
+	return e;
+}
+
+void UICalculateRect(UIElement* e, float x1, float y1, float x2, float y2)
+{
+	e->_inRectMin = (Vector2){ x1, y1 },
+	e->_inRectMax = (Vector2){ x2, y2 },
+
+	e->Rect = (Rectangle){
+		.x = e->_inRectMin.x,
+		.y = e->_inRectMin.y,
+		.width = (e->_inRectMax.x - e->_inRectMin.x),
+		.height = (e->_inRectMax.y - e->_inRectMin.y)
 	};
 }
