@@ -2,27 +2,27 @@
 #include "ui_manager.h"
 #include "u_dialogue.h"
 
-void UDialogueInit(UIPanel* u)
+void UDialogueInit(UIElement* u)
 {
 
 }
 
-void UDialogueUpdate(UIPanel* u)
+void UDialogueUpdate(UIElement* u)
 {
 
 }
 
-void UDialogueShow(UIPanel* u)
+void UDialogueShow(UIElement* u)
 {
 
 }
 
-void UDialogueHide(UIPanel* u)
+void UDialogueHide(UIElement* u)
 {
 
 }
 
-void UDialogueDraw(UIPanel* u)
+void UDialogueDraw(UIElement* u)
 {
 	DrawRectangle(12, GetScreenHeight() - 212, GetScreenWidth() - 24, 200, (Color){255,255,255,50});
 	DrawText("hello", 24, GetScreenHeight() - 200, 25, WHITE);

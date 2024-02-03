@@ -5,12 +5,12 @@
 
 void UIInit()
 {
-	UIPanel p = UICreatePanel(UDialogueShow, UDialogueHide, UDialogueDraw);
+	UIElement p = UICreateElement(UDialogueShow, UDialogueHide, UDialogueDraw);
 
-	UIPanelList[0] = p;
+	UIElementList[0] = p;
 }
 
-void UISetSelection(UIControl* c)
+void UISetSelection(UIElement* c)
 {
 	if (UICurrentSelected != NULL)
 	{
@@ -34,28 +34,21 @@ void UISetSelection(UIControl* c)
 
 void UIUpdate()
 {
-	UIControl* newHovered = NULL;
+	UIElement* newHovered = NULL;
 	Vector2 mousePos = GetMousePosition();
 
 	for (int i = 0; i < 32; i++)
 	{
-		UIPanel* p = &UIPanelList[i];
-		if (!p->IsValid || !p->IsVisible || !p->IsOpen)
+		UIElement* c = &UIElementList[i];
+		if (c == NULL)
 			continue;
 
-		for (int j = 0; j < 32; j++)
+		if (!c->IsValid || !c->IsVisible || !c->Clickable)
+			continue;
+
+		if (CheckCollisionPointRec(mousePos, c->OutRect))
 		{
-			UIControl* c = p->Controls[j];
-			if (c == NULL)
-				continue;
-
-			if (!c->IsValid || !c->IsVisible || !c->Clickable)
-				continue;
-
-			if (CheckCollisionPointRec(mousePos, c->Rect))
-			{
-				newHovered = c;
-			}
+			newHovered = c;
 		}
 	}
 
@@ -70,7 +63,7 @@ void UIUpdate()
 
 	if (IsKeyPressed(KEY_Q))
 	{
-		UIPanel* p = &UIPanelList[0];
+		UIElement* p = &UIElementList[0];
 		if (p->IsOpen)
 			UIHide(p);
 		else
@@ -82,28 +75,18 @@ void UIDraw()
 {
 	for (int i = 0; i < 32; i++)
 	{
-		UIPanel* p = &UIPanelList[i];
-		if (!p->IsValid || !p->IsVisible || !p->IsOpen)
+		UIElement* c = &UIElementList[i];
+		if (c == NULL)
 			continue;
 
-		if (p->OnDraw != NULL)
-			p->OnDraw(p);
+		if (!c->IsValid || !c->IsVisible)
+			continue;
 
-		for (int j = 0; j < 32; j++)
-		{
-			UIControl* c = p->Controls[j];
-			if (c == NULL)
-				continue;
-
-			if (!c->IsValid || !c->IsVisible)
-				continue;
-
-			c->OnDraw(c);
-		}
+		c->OnDraw(c);
 	}
 }
 
-void UIShow(UIPanel* c)
+void UIShow(UIElement* c)
 {
 	UIIsVisible = true;
 	c->IsOpen = true;
@@ -112,7 +95,7 @@ void UIShow(UIPanel* c)
 		c->OnShow(c);
 }
 
-void UIHide(UIPanel* c)
+void UIHide(UIElement* c)
 {
 	UIIsVisible = false;
 	c->IsOpen = false;
@@ -121,27 +104,14 @@ void UIHide(UIPanel* c)
 		c->OnHide(c);
 }
 
-UIPanel UICreatePanel(void(*onShow)(UIPanel* p), void(*onHide)(UIPanel* p), void(*onDraw)(UIPanel* p))
+UIElement UICreateElement(void(*onShow)(UIElement* p), void(*onHide)(UIElement* p), void(*onDraw)(UIElement* p))
 {
-	return (UIPanel) {
+	return (UIElement) {
 		.IsValid = true,
 		.IsVisible = true,
 		.IsOpen = false,
 		.OnShow = onShow,
 		.OnHide = onHide,
-		.OnDraw = onDraw
-	};
-}
-
-UIControl UICreateControl(UIPanel* parent, Rectangle rect, void(*onDraw)(UIControl *c))
-{
-	return (UIControl) {
-		.Clickable = true,
-		.Hovered = false,
-		.IsValid = true,
-		.Parent = parent,
-		.Rect = rect,
-		.Selected = false,
 		.OnDraw = onDraw
 	};
 }

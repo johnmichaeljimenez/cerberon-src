@@ -1,8 +1,8 @@
 #pragma once
 #include "ui_manager.h"
 
-void UDialogueInit(UIPanel* u);
-void UDialogueUpdate(UIPanel* u);
-void UDialogueShow(UIPanel* u);
-void UDialogueHide(UIPanel* u);
-void UDialogueDraw(UIPanel* u);
+void UDialogueInit(UIElement* u);
+void UDialogueUpdate(UIElement* u);
+void UDialogueShow(UIElement* u);
+void UDialogueHide(UIElement* u);
+void UDialogueDraw(UIElement* u);
