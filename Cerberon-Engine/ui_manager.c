@@ -78,10 +78,11 @@ void UIDraw()
 		if (c == NULL)
 			continue;
 
-		if (!c->IsValid || !c->IsVisible)
+		if (!c->IsValid || !c->IsVisible || !c->IsOpen)
 			continue;
 
-		c->OnDraw(c);
+		if (c->OnDraw != NULL)
+			c->OnDraw(c);
 	}
 }
 
@@ -96,7 +97,7 @@ static bool IsAnyUIVisible()
 		if (!c->IsValid)
 			continue;
 
-		if (c->IsVisible)
+		if (c->IsOpen)
 			return true;
 	}
 
@@ -105,11 +106,13 @@ static bool IsAnyUIVisible()
 
 void UIShow(UIElement* c)
 {
-	UIIsVisible = IsAnyUIVisible();
-	if (!UIIsVisible)
+	if (c == NULL || !c->IsValid)
 		return;
 
 	c->IsOpen = true;
+	UIIsVisible = IsAnyUIVisible();
+	if (!UIIsVisible)
+		return;
 
 	if (c->OnShow != NULL)
 		c->OnShow(c);
@@ -117,16 +120,19 @@ void UIShow(UIElement* c)
 
 void UIHide(UIElement* c)
 {
+	if (c == NULL || !c->IsValid)
+		return;
+
+	c->IsOpen = false;
 	UIIsVisible = IsAnyUIVisible();
 	if (!UIIsVisible)
 		return;
 
-	c->IsOpen = false;
-
 	if (c->OnHide != NULL)
 		c->OnHide(c);
 }
-UIElement UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax)
+
+UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax)
 {
 	UIElement e = (UIElement){
 		.Parent = parent,
@@ -140,14 +146,19 @@ UIElement UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector
 	else
 		e.ParentRect = e.Parent->Rect;
 
-	return e;
-}
+	float x1, y1, x2, y2;
+	x1 = Lerp(e.ParentRect.Position.x, e.ParentRect.Min.x, anchorMin.x) + min.x;
+	y1 = Lerp(e.ParentRect.Position.y, e.ParentRect.Min.y, anchorMin.y) + min.y;
+	x2 = Lerp(e.ParentRect.Position.x, e.ParentRect.Max.x, anchorMax.x) - max.x;
+	y2 = Lerp(e.ParentRect.Position.y, e.ParentRect.Max.y, anchorMax.y) - max.y;
 
-void UICalculateRect(UIElement* e, float x1, float y1, float x2, float y2)
-{
-	e->Rect = UICreateRect(x1, y1, x2, y2);
-}
+	e.Rect = UICreateRect(x1, y1, x2, y2);
 
+	UIElementList[UINextElementSlot] = e;
+	UINextElementSlot++;
+
+	return &UIElementList[UINextElementSlot-1];
+}
 
 Rect UICreateRect(float x1, float y1, float x2, float y2)
 {
