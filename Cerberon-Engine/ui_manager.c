@@ -1,10 +1,13 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "ui_manager.h"
+#include "u_dialogue.h"
 
 void UIInit()
 {
+	UIPanel p = UICreatePanel(UDialogueShow, UDialogueHide, UDialogueDraw);
 
+	UIPanelList[0] = p;
 }
 
 void UISetSelection(UIControl* c)
@@ -43,6 +46,9 @@ void UIUpdate()
 		for (int j = 0; j < 32; j++)
 		{
 			UIControl* c = p->Controls[j];
+			if (c == NULL)
+				continue;
+
 			if (!c->IsValid || !c->IsVisible || !c->Clickable)
 				continue;
 
@@ -74,6 +80,9 @@ void UIDraw()
 		for (int j = 0; j < 32; j++)
 		{
 			UIControl* c = p->Controls[j];
+			if (c == NULL)
+				continue;
+
 			if (!c->IsValid || !c->IsVisible)
 				continue;
 
@@ -100,7 +109,7 @@ void UIHide(UIPanel* c)
 		c->OnHide(c);
 }
 
-UIPanel UICreatePanel(void(*onShow)(UIPanel* p), void(*onHide)(UIPanel* p))
+UIPanel UICreatePanel(void(*onShow)(UIPanel* p), void(*onHide)(UIPanel* p), void(*onDraw)(UIPanel* p))
 {
 	return (UIPanel) {
 		.IsValid = true,

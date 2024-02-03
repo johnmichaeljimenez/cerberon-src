@@ -25,6 +25,7 @@ typedef struct UIPanel
 
 	void (*OnShow)(UIControl* c);
 	void (*OnHide)(UIControl* c);
+	void (*OnDraw)(UIControl* c);
 } UIPanel;
 
 UIPanel* UICurrentPanel;
@@ -40,5 +41,5 @@ void UIDraw();
 void UIShow(UIPanel* c);
 void UIHide(UIPanel* c);
 
-UIPanel UICreatePanel(void(*onShow)(UIPanel* p), void(*onHide)(UIPanel* p));
+UIPanel UICreatePanel(void(*onShow)(UIPanel* p), void(*onHide)(UIPanel* p), void(*onDraw)(UIPanel* p));
 UIControl UICreateControl(UIPanel* parent, Rectangle rect, void(*onDraw)(UIControl* c));
