@@ -163,6 +163,7 @@
     <ClCompile Include="time.c" />
     <ClCompile Include="ui_manager.c" />
     <ClCompile Include="utils.c" />
+    <ClCompile Include="u_dialogue.c" />
     <ClCompile Include="weapon_manager.c" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +197,7 @@
     <ClInclude Include="time.h" />
     <ClInclude Include="ui_manager.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="u_dialogue.h" />
     <ClInclude Include="weapon_manager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
