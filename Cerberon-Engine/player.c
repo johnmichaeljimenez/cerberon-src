@@ -14,6 +14,7 @@
 #include "renderer.h"
 #include "fsm.h"
 #include "weapon_manager.h"
+#include "ui_manager.h"
 
 static LinecastHit lineHit;
 
@@ -134,10 +135,11 @@ void PlayerUpdate(PlayerCharacter* p)
 		vel = Vector2Scale(vel, GetFrameTime());
 		p->Position = Vector2Add(p->Position, vel);
 
-		diff = CameraGetMousePosition();
-		diff = Vector2Subtract(diff, p->Position);
-		float newDir = atan2f(diff.y, diff.x);
-		rot = LerpAngle(rot, newDir, TICKRATE * 12);
+		if (InputGetMouseDirection(p->Position, &diff))
+		{
+			float newDir = atan2f(diff.y, diff.x);
+			rot = LerpAngle(rot, newDir, TICKRATE * 12);
+		}
 
 		if (InputGetKeyPressed(KEY_F))
 		{
@@ -227,7 +229,7 @@ void PlayerUpdate(PlayerCharacter* p)
 void PlayerLateUpdate(PlayerCharacter* p)
 {
 	Vector2 targPos = Vector2Subtract(CameraGetMousePosition(), p->Position);
-	targPos = Vector2Add(p->Position, Vector2ClampValue(targPos, 0, 300));
+	targPos = Vector2Add(p->Position, Vector2ClampValue(targPos, 0, UIIsVisible? 50 : 300));
 
 	CameraSetTarget(targPos, false);
 	AudioUpdateListenerPosition(p->Position);

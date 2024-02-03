@@ -144,6 +144,9 @@
     <ClCompile Include="ui_manager.c">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="u_dialogue.c">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -237,6 +240,9 @@
       <Filter>Source Files\gameplay\combat</Filter>
     </ClInclude>
     <ClInclude Include="ui_manager.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="u_dialogue.h">
       <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>

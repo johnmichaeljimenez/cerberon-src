@@ -1,36 +1,46 @@
 #pragma once
 
-typedef struct UIControl
+typedef struct UIElement
 {
-	Rectangle Rect;
+	struct UIElement* Parent;
+	struct UIElement* Children[64];
+
+	Rectangle InRect;
+	Rectangle OutRect;
+
+	bool AnchorLeft;
+	bool AnchorRight;
+	bool AnchorUp;
+	bool AnchorDown;
+
+	bool IsValid;
+	bool IsVisible;
+	bool IsOpen;
 
 	bool Clickable;
 	bool Selected;
-	struct UIPanel* Parent;
+	bool Hovered;
 
-	void(*OnDeselect)(struct UIControl* c);
-	void(*OnSelect)(struct UIControl* c);
-	void(*OnClick)(struct UIControl* c);
-	void(*OnDraw)(void* data);
-} UIControl;
+	void(*OnDeselect)(struct UIElement* c);
+	void(*OnSelect)(struct UIElement* c);
+	void(*OnClick)(struct UIElement* c);
+	void(*OnDraw)(struct UIElement* c);
+	void(*OnShow)(struct UIElement* c);
+	void(*OnHide)(struct UIElement* c);
+} UIElement;
 
-typedef struct UIPanel
-{
-	UIControl* Controls[32];
-	bool Visible;
-
-	void (*OnShow)(UIControl* c);
-	void (*OnHide)(UIControl* c);
-} UIPanel;
-
-UIPanel UIPanelList[32];
-UIControl* UICurrentSelected;
-UIControl* UICurrentHovered;
+UIElement* UICurrentElement;
+UIElement UIElementList[1024];
+int UINextElementSlot;
+UIElement* UICurrentSelected;
+UIElement* UICurrentHovered;
 
 bool UIIsVisible; //dialogues, popups, etc
 void UIInit();
-void UISetSelection(UIControl* c);
+void UISetSelection(UIElement* c);
 void UIUpdate();
 void UIDraw();
-void UIShow(UIPanel* c);
-void UIHide(UIPanel* c);
+void UIShow(UIElement* c);
+void UIHide(UIElement* c);
+
+UIElement UICreateElement(void(*onShow)(UIElement* p), void(*onHide)(UIElement* p), void(*onDraw)(UIElement* p));

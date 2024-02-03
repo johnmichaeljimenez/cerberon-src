@@ -26,3 +26,4 @@ bool InputGetMouseDown(MouseButton button);
 void InputUpdate();
 bool InputGetPressed(InputActionType type);
 Vector2 InputGetMovement();
+bool InputGetMouseDirection(Vector2 from, Vector2* out);
