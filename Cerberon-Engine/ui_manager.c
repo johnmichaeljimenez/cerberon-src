@@ -1,11 +1,50 @@
+#pragma warning(disable:4996)
 #include <raylib.h>
 #include <raymath.h>
 #include "ui_manager.h"
 #include "u_dialogue.h"
+#include <string.h>
+#include "utils.h"
+#include <stdio.h>
+
+void UILoadData()
+{
+	FILE* file = fopen("res/data/gui_layout.tsv", "rb");
+
+	int lineCount = 0;
+	char buffer[100];
+
+	while (fgets(buffer, sizeof(buffer), file) != NULL) {
+		lineCount++;
+	}
+
+	fseek(file, 0, SEEK_SET);
+
+	char id[32];
+	char idparent[32];
+	int clickable = 0;
+	Vector2 min = Vector2One(), max = Vector2One(), aMin = Vector2One(), aMax = Vector2One();
+	int anchorOrigin = 0;
+	int isPanel = 0;
+
+	for (int i = 0; i < lineCount; i++) {
+		int res = fscanf(file, "%31[^\t]\t%31[^\t]\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%d\t%d\n",
+			id, idparent, &clickable, &min.x, &min.y, &max.x, &max.y, &aMin.x, &aMin.y, &aMax.x, &aMax.y, &anchorOrigin, &isPanel
+		);
+
+		if (res == 0) {
+			fprintf(stderr, "Error reading line %d from the file\n", i + 1);
+			continue;
+		}
+
+		UICreateElement(id, UIFindElement(idparent), clickable, min, max, aMin, aMax, anchorOrigin, isPanel);
+	}
+
+	fclose(file);
+}
 
 void UIInit()
 {
-	UINextElementSlot = 0;
 	UDialogueCreate();
 }
 
@@ -133,7 +172,7 @@ void UIHide(UIElement* c)
 		c->OnHide(c);
 }
 
-UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin, bool isMainPanel)
+UIElement* UICreateElement(char* ID, UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin, bool isMainPanel)
 {
 	UIElement e = (UIElement){
 		.Parent = parent,
@@ -144,6 +183,9 @@ UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vecto
 		.OnDraw = NULL,
 		.IsMainPanel = isMainPanel
 	};
+
+	strcpy_s(e.ID, 32, ID);
+	e.Hash = ToHash(e.ID);
 
 	if (e.Parent == NULL)
 		e.ParentRect = UICreateRect(0, 0, GetScreenWidth(), GetScreenHeight());
@@ -211,4 +253,17 @@ Rect UICreateRect(float x1, float y1, float x2, float y2)
 	};
 
 	return r;
+}
+
+
+UIElement* UIFindElement(char* ID)
+{
+	for (int i = 0; i < UINextElementSlot; i++)
+	{
+		UIElement* c = &UIElementList[i];
+		if (strcmp(ID, c->ID) == 0)
+			return c;
+	}
+
+	return NULL;
 }

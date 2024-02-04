@@ -13,6 +13,9 @@ typedef struct UIElement
 	struct UIElement* Parent;
 	struct UIElement* Children[64];
 
+	char* ID[32];
+	unsigned long Hash;
+
 	Rect Rect;
 	Rect ParentRect;
 
@@ -41,6 +44,8 @@ UIElement* UICurrentSelected;
 UIElement* UICurrentHovered;
 
 bool UIIsVisible; //dialogues, popups, etc
+
+void UILoadData();
 void UIInit();
 void UISetSelection(UIElement* c);
 void UIUpdate();
@@ -50,4 +55,5 @@ void UIHide(UIElement* c);
 
 Rect UICreateRect(float x1, float y1, float x2, float y2);
 
-UIElement* UICreateElement(UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin, bool isMainPanel);
+UIElement* UICreateElement(char* ID, UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin, bool isMainPanel);
+UIElement* UIFindElement(char* ID);
