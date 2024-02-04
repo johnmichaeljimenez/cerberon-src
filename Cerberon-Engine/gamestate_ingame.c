@@ -24,7 +24,6 @@ void IngameInit()
 
 void IngameOnLoad()
 {
-	UIInit();
 	CursorChange(CURSORSTATE_IngameInteractReticle);
 	LoadResources();
 	RendererInit();
@@ -38,6 +37,7 @@ void IngameOnLoad()
 	CameraSetTarget(PlayerEntity.Position, true);
 	RendererPostInitialize();
 	TimeInit();
+	UIInit();
 }
 
 void IngameOnUnload()

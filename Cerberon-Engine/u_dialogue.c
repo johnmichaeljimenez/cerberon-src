@@ -2,38 +2,23 @@
 #include "ui_manager.h"
 #include "u_dialogue.h"
 #include "utils.h"
+#include <rlgl.h>
 
 static UIElement* uiDialogueBG;
 static UIElement* uiDialogueText;
 static UIElement* uiDialogueButton;
 
+static float t;
+
 void UDialogueCreate()
 {
-	uiDialogueBG = UICreateElement(NULL, false,
-		(Vector2){ 64, 128 },
-		(Vector2){ 64, 12 },
-		(Vector2){ 1, 0 },
-		(Vector2){ 1, 1 },
-		false, true
-	);
-
-	uiDialogueText = UICreateElement(uiDialogueBG, false,
-		(Vector2){ 12, 12 },
-		(Vector2){ 12, 12 },
-		(Vector2){ 1, 1 },
-		(Vector2){ 1, 1 },
-		false, false
-	);
-
-	uiDialogueButton = UICreateElement(uiDialogueBG, true,
-		(Vector2){ -32, -16 },
-		(Vector2){ 64, 32 },
-		(Vector2){ 1, 1 },
-		(Vector2){ 0, 0 },
-		true, false
-	);
+	uiDialogueBG = UIFindElement("DialogueBG");
+	uiDialogueText = UIFindElement("DialogueText");
+	uiDialogueButton = UIFindElement("DialogueButton");
 
 	uiDialogueBG->OnDraw = UDialogueDraw;
+	uiDialogueBG->OnShow = UDialogueShow;
+	uiDialogueBG->OnHide = UDialogueHide;
 }
 
 void UDialogueUpdate(UIElement* u)
@@ -43,12 +28,12 @@ void UDialogueUpdate(UIElement* u)
 
 void UDialogueShow(UIElement* u)
 {
-
+	t = 0;
 }
 
 void UDialogueHide(UIElement* u)
 {
-
+	t = 0;
 }
 
 void UDialogueDraw(UIElement* u)

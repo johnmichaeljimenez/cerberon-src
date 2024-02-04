@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "memory.h"
 #include "time.h"
+#include "ui_manager.h"
 
 //TODO: investigate memory leakage from logfile report
 void LoadResources()
@@ -48,6 +49,8 @@ void LoadResources()
 	FlashlightTexture = GetTextureResource(ToHash("vfx-flashlight"));
 
 	LoadAnimationPack("res/animations.pak");
+
+	UILoadData();
 }
 
 void UnloadResources()
