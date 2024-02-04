@@ -1,0 +1,3 @@
+DialogueBG	-	0	128	256	128	12	1	0	1	1	0	1
+DialogueText	DialogueBG	0	12	12	12	12	1	1	1	1	0	0
+DialogueButton	DialogueBG	1	-32	-16	64	32	1	1	0	0	1	0

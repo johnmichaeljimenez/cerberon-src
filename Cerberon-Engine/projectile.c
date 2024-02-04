@@ -66,10 +66,8 @@ void ProjectileUpdate()
 		if (!p->_isAlive)
 			continue;
 
-		p->_lifeTime -= TICKRATE;
-		if (p->_lifeTime <= 0)
+		if (DecrementTimer(&p->_lifeTime, 0, 1, true))
 		{
-			p->_lifeTime = 0;
 			p->_isAlive = false;
 			continue;
 		}

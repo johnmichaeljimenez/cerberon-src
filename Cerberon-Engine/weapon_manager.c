@@ -87,19 +87,13 @@ void WeaponUpdate(Weapon* w)
 {
 	if (w->_fireTimer > 0)
 	{
-		w->_fireTimer -= TICKRATE;
-		if (w->_fireTimer <= 0)
-			w->_fireTimer = 0;
+		DecrementTimer(&w->_fireTimer, 0, 1, true);
 	}
 
 	if (w->_reloadTimer > 0)
 	{
-		w->_reloadTimer -= TICKRATE;
-		if (w->_reloadTimer <= 0)
-		{
-			w->_reloadTimer = 0;
+		if (DecrementTimer(&w->_reloadTimer, 0, 1, true))
 			w->OnReload(w);
-		}
 	}
 }
 

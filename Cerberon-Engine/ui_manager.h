@@ -1,17 +1,23 @@
 #pragma once
 
+typedef struct Rect
+{
+	Vector2 Min;
+	Vector2 Max;
+	Rectangle Rectangle;
+	Vector2 Position;
+} Rect;
+
 typedef struct UIElement
 {
 	struct UIElement* Parent;
 	struct UIElement* Children[64];
 
-	Rectangle InRect;
-	Rectangle OutRect;
+	char* ID[32];
+	unsigned long Hash;
 
-	bool AnchorLeft;
-	bool AnchorRight;
-	bool AnchorUp;
-	bool AnchorDown;
+	Rect Rect;
+	Rect ParentRect;
 
 	bool IsValid;
 	bool IsVisible;
@@ -20,6 +26,8 @@ typedef struct UIElement
 	bool Clickable;
 	bool Selected;
 	bool Hovered;
+
+	bool IsMainPanel;
 
 	void(*OnDeselect)(struct UIElement* c);
 	void(*OnSelect)(struct UIElement* c);
@@ -36,6 +44,8 @@ UIElement* UICurrentSelected;
 UIElement* UICurrentHovered;
 
 bool UIIsVisible; //dialogues, popups, etc
+
+void UILoadData();
 void UIInit();
 void UISetSelection(UIElement* c);
 void UIUpdate();
@@ -43,4 +53,7 @@ void UIDraw();
 void UIShow(UIElement* c);
 void UIHide(UIElement* c);
 
-UIElement UICreateElement(void(*onShow)(UIElement* p), void(*onHide)(UIElement* p), void(*onDraw)(UIElement* p));
+Rect UICreateRect(float x1, float y1, float x2, float y2);
+
+UIElement* UICreateElement(char* ID, UIElement* parent, bool clickable, Vector2 min, Vector2 max, Vector2 anchorMin, Vector2 anchorMax, bool anchorOnlyOrigin, bool isMainPanel);
+UIElement* UIFindElement(char* ID);

@@ -27,14 +27,15 @@ void TimeInit()
 void TimeUpdate()
 {
 	float d = GetCurrentTimeOfDay();
-	CurrentTimeOfDay += TICKRATE;
-	if (CurrentTimeOfDay >= MaxTimePerDay)
+
+	if (IncrementTimer(&CurrentTimeOfDay, MaxTimePerDay, 1, true))
+	{
 		CurrentTimeOfDay = 0;
+	}
 
 	_currentTimeIndex = (int)floorf(d * 16);
 
-	lerpColorAmount += TICKRATE;
-	if (lerpColorAmount >= maxSegment)
+	if (IncrementTimer(&lerpColorAmount, maxSegment, 1, true))
 	{
 		lerpColorAmount = 0;
 		_previousAmbientColor = _currentAmbientColor;

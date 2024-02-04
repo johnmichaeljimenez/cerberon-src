@@ -43,7 +43,7 @@ void TriggerUpdate()
 
 		if (t->Cooldown > 0 && t->_timer > 0)
 		{
-			t->_timer -= TICKRATE;
+			DecrementTimer(&t->_timer, 0, 1, true);
 			continue;
 		}
 
