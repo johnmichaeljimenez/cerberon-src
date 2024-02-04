@@ -19,3 +19,5 @@ Color LerpColor(Color a, Color b, float t);
 bool StartsWith(const char* pre, const char* str);
 float GetRandomValueFloat(float min, float max);
 void DrawTextRect(const char* text, Rectangle rec, float fontSize, bool wordWrap, Color tint);
+bool IncrementTimer(float* n, float max, float speed, bool clamp);
+bool DecrementTimer(float* n, float min, float speed, bool clamp);

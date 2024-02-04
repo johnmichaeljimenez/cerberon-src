@@ -2,6 +2,7 @@
 #include <raymath.h>
 #include "utils.h"
 #include <math.h>
+#include "time.h"
 
 Vector2 Vector2RotateAround(Vector2 position, Vector2 origin, float rotation)
 {
@@ -268,4 +269,32 @@ void DrawTextRect(const char* text, Rectangle rec, float fontSize, bool wordWrap
 
         if ((textOffsetX != 0) || (codepoint != ' ')) textOffsetX += glyphWidth;  // avoid leading spaces
     }
+}
+
+bool IncrementTimer(float* n, float max, float speed, bool clamp)
+{
+    *n += TICKRATE * speed;
+    if (*n >= max)
+    {
+        if (clamp)
+            *n = max;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool DecrementTimer(float* n, float min, float speed, bool clamp)
+{
+    *n -= TICKRATE * speed;
+    if (*n <= min)
+    {
+        if (clamp)
+            *n = min;
+
+        return true;
+    }
+
+    return false;
 }

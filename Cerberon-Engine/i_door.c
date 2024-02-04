@@ -5,6 +5,7 @@
 #include "interaction.h"
 #include "mapdata_manager.h"
 #include "time.h"
+#include "utils.h"
 #include "renderer.h"
 
 void LoadDoors()
@@ -62,9 +63,7 @@ void DoorUpdate(Interactable* i)
 	if (d->_timer <= 0)
 		return;
 
-	d->_timer -= TICKRATE;
-	if (d->_timer <= 0)
-		d->_timer = 0;
+	DecrementTimer(&d->_timer, 0, 1, true);
 
 	Vector2 openPos = Vector2Scale(Vector2Rotate((Vector2) { 1, 0 }, (i->Rotation + 90)* DEG2RAD), d->Length / 1.25);
 	openPos = Vector2Add(i->Position, openPos);

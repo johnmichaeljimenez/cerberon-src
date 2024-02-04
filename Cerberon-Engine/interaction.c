@@ -61,7 +61,7 @@ void CheckInteraction()
 
 		if (a->Delay > 0 && a->DelayTimer > 0)
 		{
-			a->DelayTimer -= TICKRATE;
+			DecrementTimer(&a->DelayTimer, 0, 1, true);
 		}
 
 		if (!a->ChainActivated)
