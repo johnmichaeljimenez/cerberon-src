@@ -10,6 +10,11 @@ static UIElement* uiDialogueButton;
 
 static float t;
 
+static void OnDialogueClick(UIElement* e)
+{
+	UIHide(uiDialogueBG);
+}
+
 void UDialogueCreate()
 {
 	uiDialogueBG = UIFindElement("DialogueBG");
@@ -19,6 +24,8 @@ void UDialogueCreate()
 	uiDialogueBG->OnDraw = UDialogueDraw;
 	uiDialogueBG->OnShow = UDialogueShow;
 	uiDialogueBG->OnHide = UDialogueHide;
+
+	uiDialogueButton->OnClick = OnDialogueClick;
 }
 
 void UDialogueUpdate(UIElement* u)

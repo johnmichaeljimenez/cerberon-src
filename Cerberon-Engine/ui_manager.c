@@ -98,6 +98,9 @@ void UIUpdate()
 
 		UICurrentHovered = newHovered;
 		UICurrentHovered->Hovered = true;
+
+		if (IsMouseButtonPressed(0) && UICurrentHovered->OnClick != NULL)
+			UICurrentHovered->OnClick(UICurrentHovered);
 	}
 
 	if (IsKeyPressed(KEY_Q))
