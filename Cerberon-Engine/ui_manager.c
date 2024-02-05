@@ -102,15 +102,6 @@ void UIUpdate()
 		if (IsMouseButtonPressed(0) && UICurrentHovered->OnClick != NULL)
 			UICurrentHovered->OnClick(UICurrentHovered);
 	}
-
-	if (IsKeyPressed(KEY_Q))
-	{
-		UIElement* p = &UIElementList[0];
-		if (p->IsOpen)
-			UIHide(p);
-		else
-			UIShow(p);
-	}
 }
 
 void UIDraw()

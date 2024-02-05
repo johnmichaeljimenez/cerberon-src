@@ -7,6 +7,7 @@
 #include "memory.h"
 #include "time.h"
 #include "ui_manager.h"
+#include "dialogue_manager.h"
 
 //TODO: investigate memory leakage from logfile report
 void LoadResources()
@@ -51,6 +52,7 @@ void LoadResources()
 	LoadAnimationPack("res/animations.pak");
 
 	UILoadData();
+	DialogueInit();
 }
 
 void UnloadResources()

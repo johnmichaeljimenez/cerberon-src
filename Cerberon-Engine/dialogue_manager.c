@@ -11,6 +11,15 @@ void DialogueInit()
 	DialogueCount = 0;
 	DialogueSize = 512;
 	DialogueList = MCalloc(DialogueSize, sizeof(Dialogue), "Dialogue List");
+
+	Dialogue test = (Dialogue){
+		.ID = "test",
+		.IsValid = true,
+		.Message = "<Test Dialogue>"
+	};
+
+	DialogueList[0] = test;
+	DialogueCount++;
 }
 
 void DialogueShow(char* id)
