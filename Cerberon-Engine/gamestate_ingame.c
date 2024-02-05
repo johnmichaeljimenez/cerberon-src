@@ -13,6 +13,7 @@
 #include "weapon_manager.h"
 #include "projectile.h"
 #include "ui_manager.h"
+#include "dialogue_manager.h"
 
 void IngameInit()
 {
@@ -61,6 +62,9 @@ void IngameOnUpdate()
 	RendererUpdate();
 	TimeUpdate();
 	UIUpdate();
+
+	if (IsKeyDown(KEY_TAB))
+		DialogueShow("test");
 
 	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);
