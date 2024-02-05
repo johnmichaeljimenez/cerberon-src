@@ -4,7 +4,6 @@
 #include "utils.h"
 #include <rlgl.h>
 
-static UIElement* uiDialogueBG;
 static UIElement* uiDialogueText;
 static UIElement* uiDialogueButton;
 
@@ -12,18 +11,18 @@ static float t;
 
 static void OnDialogueClick(UIElement* e)
 {
-	UIHide(uiDialogueBG);
+	UIHide(UDialoguePanel);
 }
 
 void UDialogueCreate()
 {
-	uiDialogueBG = UIFindElement("DialogueBG");
+	UDialoguePanel = UIFindElement("DialogueBG");
 	uiDialogueText = UIFindElement("DialogueText");
 	uiDialogueButton = UIFindElement("DialogueButton");
 
-	uiDialogueBG->OnDraw = UDialogueDraw;
-	uiDialogueBG->OnShow = UDialogueShow;
-	uiDialogueBG->OnHide = UDialogueHide;
+	UDialoguePanel->OnDraw = UDialogueDraw;
+	UDialoguePanel->OnShow = UDialogueShow;
+	UDialoguePanel->OnHide = UDialogueHide;
 
 	uiDialogueButton->OnClick = OnDialogueClick;
 }
@@ -54,6 +53,6 @@ void UDialogueDraw(UIElement* u)
 		u->Hovered? 1 : 0
 	), 12, 300, 15, WHITE);*/
 
-	DrawTextRect("Hello!", uiDialogueText->Rect.Rectangle, 12, true, WHITE);
+	DrawTextRect(UDialogueText, uiDialogueText->Rect.Rectangle, 12, true, WHITE);
 	DrawRectangleRec(uiDialogueButton->Rect.Rectangle, uiDialogueButton->Hovered ? RED : WHITE);
 }

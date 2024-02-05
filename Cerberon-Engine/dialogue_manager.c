@@ -3,6 +3,8 @@
 #include "dialogue_manager.h"
 #include "memory.h"
 #include <string.h>
+#include "ui_manager.h"
+#include "u_dialogue.h"
 
 void DialogueInit()
 {
@@ -21,7 +23,8 @@ void DialogueShow(char* id)
 
 		if (strcmp(id, d->ID) == 0)
 		{
-
+			strcpy_s(UDialogueText, 256, d->Message);
+			UIShow(UDialoguePanel);
 			return;
 		}
 	}
