@@ -28,7 +28,7 @@ void UILoadData()
 	int isPanel = 0;
 
 	for (int i = 0; i < lineCount; i++) {
-		int res = fscanf(file, "%31[^\t]\t%31[^\t]\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%d\t%d\n",
+		int res = fscanf(file, "%32[^\t]\t%32[^\t]\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%d\t%d\n",
 			id, idparent, &clickable, &min.x, &min.y, &max.x, &max.y, &aMin.x, &aMin.y, &aMax.x, &aMax.y, &anchorOrigin, &isPanel
 		);
 
