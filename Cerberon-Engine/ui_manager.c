@@ -82,7 +82,13 @@ void UIUpdate()
 			continue;
 
 		c->Hovered = false;
-		if (!c->IsValid || !c->IsVisible || !c->Clickable || (!c->IsOpen && c->IsMainPanel))
+		if (!c->IsValid || !c->IsVisible || (!c->IsOpen && c->IsMainPanel))
+			continue;
+		
+		if (c->OnUpdate != NULL)
+			c->OnUpdate(c);
+
+		if (!c->Clickable)
 			continue;
 
 		if (CheckCollisionPointRec(mousePos, c->Rect.Rectangle))

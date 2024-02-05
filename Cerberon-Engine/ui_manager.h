@@ -35,6 +35,7 @@ typedef struct UIElement
 	void(*OnDraw)(struct UIElement* c);
 	void(*OnShow)(struct UIElement* c);
 	void(*OnHide)(struct UIElement* c);
+	void(*OnUpdate)(struct UIElement* c);
 } UIElement;
 
 UIElement* UICurrentElement;
