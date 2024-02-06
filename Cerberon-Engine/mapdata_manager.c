@@ -269,6 +269,7 @@ void LoadMap(char* filename, MapData* map)
 
 			fread(&t.Position.x, sizeof(float), 1, file);
 			fread(&t.Position.y, sizeof(float), 1, file);
+			fread(&t.Height, sizeof(float), 1, file);
 			fread(&t.Rotation, sizeof(float), 1, file);
 			fread(&t.Scale.x, sizeof(float), 1, file);
 			fread(&t.Scale.y, sizeof(float), 1, file);
