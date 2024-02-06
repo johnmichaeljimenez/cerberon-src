@@ -1,5 +1,5 @@
 #ifndef InventoryMaxSize
-#define InventoryMaxSize 8
+#define InventoryMaxSize 32
 #endif // !InventoryMaxSize
 
 #pragma once
@@ -17,7 +17,7 @@ typedef struct InventoryContainer
 InventoryContainer InventoryPlayer;
 InventoryContainer InventoryPlayerBack;
 
-void InventoryInit(InventoryContainer* in);
+void InventoryInit(InventoryContainer* in, int maxCount);
 void InventoryUnload(InventoryContainer* in);
 bool InventoryAdd(InventoryContainer* i, ItemPickup* item);
 void InventoryUse(InventoryContainer* i, ItemPickup* item);

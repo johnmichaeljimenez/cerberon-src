@@ -42,13 +42,14 @@ bool InventoryAdd(InventoryContainer* ic, ItemPickup* item)
 	return false;
 }
 
-void InventoryInit(InventoryContainer* in)
+void InventoryInit(InventoryContainer* in, int maxCount)
 {
 	for (int i = 0; i < InventoryMaxSize; i++)
 	{
 		in->Items[i] = NULL;
 	}
 
+	in->InventoryMaxCount = maxCount;
 	in->CurrentSelectedIndex = -1;
 }
 
