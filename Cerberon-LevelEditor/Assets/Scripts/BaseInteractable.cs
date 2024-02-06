@@ -17,7 +17,8 @@ public enum InteractableSubType
     ItemMedkit,
     ItemFlashlight,
     ItemCash,
-    ItemWeaponPistol
+    ItemWeaponPistol,
+    ItemBackpack
 }
 
 public class BaseInteractable : BaseObject
