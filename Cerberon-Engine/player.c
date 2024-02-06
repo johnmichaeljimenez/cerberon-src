@@ -107,6 +107,7 @@ void PlayerInit(PlayerCharacter* p)
 
 void PlayerUnload(PlayerCharacter* p)
 {
+	InventoryUnload(&InventoryPlayerBack);
 	InventoryUnload(&InventoryPlayer);
 }
 
