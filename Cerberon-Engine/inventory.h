@@ -10,7 +10,7 @@
 typedef struct InventoryContainer
 {
 	ItemPickup* Items[InventoryMaxSize];
-	int InventoryMaxCount;
+	int MaxCount;
 	int CurrentSelectedIndex;
 } InventoryContainer;
 

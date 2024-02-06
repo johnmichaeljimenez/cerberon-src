@@ -4,7 +4,7 @@ bool InventoryAdd(InventoryContainer* ic, ItemPickup* item)
 {
 	ItemPickup** a = ic->Items;
 
-	for (int i = 0; i < InventoryMaxSize; i++)
+	for (int i = 0; i < ic->MaxCount; i++)
 	{
 		ItemPickup* ip = a[i];
 		if (ip == NULL || ip->ItemStatusType == ITEMSTATUSTYPE_None) //empty slot
@@ -49,7 +49,7 @@ void InventoryInit(InventoryContainer* in, int maxCount)
 		in->Items[i] = NULL;
 	}
 
-	in->InventoryMaxCount = maxCount;
+	in->MaxCount = maxCount;
 	in->CurrentSelectedIndex = -1;
 }
 
@@ -74,7 +74,7 @@ void InventoryDraw(InventoryContainer* i)
 
 ItemPickup* InventoryGetItem(InventoryContainer* ic, InteractableSubType itemType)
 {
-	for (int i = 0; i < InventoryMaxSize; i++)
+	for (int i = 0; i < ic->MaxCount; i++)
 	{
 		if (ic->Items[i] != NULL && ic->Items[i]->Interactable != NULL && ic->Items[i]->Interactable->InteractableSubType == itemType)
 			return ic->Items[i];
