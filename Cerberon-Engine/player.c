@@ -92,7 +92,7 @@ void PlayerInit(PlayerCharacter* p)
 		.CurrentWeapon = NULL
 	};
 
-	InventoryInit(&InventoryPlayer);
+	InventoryInit(&InventoryPlayer, 8);
 	lastPos = p->Position;
 	footstepInterval = (p->CollisionRadius * 1.8f);
 	footstepInterval *= footstepInterval;
