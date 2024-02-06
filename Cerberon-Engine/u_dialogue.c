@@ -3,11 +3,15 @@
 #include "u_dialogue.h"
 #include "utils.h"
 #include <rlgl.h>
+#include <string.h>
 
 static UIElement* uiDialogueText;
 static UIElement* uiDialogueButton;
 
 static float t;
+static int n;
+static bool animate;
+static char display[256];
 
 static void OnDialogueClick(UIElement* e)
 {
@@ -23,28 +27,49 @@ void UDialogueCreate()
 	UDialoguePanel->OnDraw = UDialogueDraw;
 	UDialoguePanel->OnShow = UDialogueShow;
 	UDialoguePanel->OnHide = UDialogueHide;
+	UDialoguePanel->OnUpdate = UDialogueUpdate;
 
 	uiDialogueButton->OnClick = OnDialogueClick;
 }
 
 void UDialogueUpdate(UIElement* u)
 {
+	if (animate && t > 0 && DecrementTimer(&t, 0, 1, false))
+	{
+		t = 0.008;
+		if (UDialogueText[n] == 0)
+		{
+			display[n] = 0;
+			animate = false;
+			return;
+		}
 
+		display[n] = UDialogueText[n];
+		if (display[n] == '.' || display[n] == '?')
+			t = 0.1;
+
+		n++;
+	}
 }
 
 void UDialogueShow(UIElement* u)
 {
-	t = 0;
+	t = 0.1;
+	n = 0;
+	animate = true;
+
+	memset(display, 0, 255);
 }
 
 void UDialogueHide(UIElement* u)
 {
 	t = 0;
+	n = 0;
 }
 
 void UDialogueDraw(UIElement* u)
 {
-	DrawRectangleRec(u->Rect.Rectangle, (Color){255,255,255, 50});
+	DrawRectangleRec(u->Rect.Rectangle, (Color) { 255, 255, 255, 50 });
 
 	/*u = uiDialogueText;
 	DrawText(TextFormat("%.2f, %.2f %.2f, %.2f = %.2f, %.2f, %.2f, %.2f %d",
@@ -53,6 +78,6 @@ void UDialogueDraw(UIElement* u)
 		u->Hovered? 1 : 0
 	), 12, 300, 15, WHITE);*/
 
-	DrawTextRect(UDialogueText, uiDialogueText->Rect.Rectangle, 12, true, WHITE);
+	DrawTextRect(display, uiDialogueText->Rect.Rectangle, 12, true, WHITE);
 	DrawRectangleRec(uiDialogueButton->Rect.Rectangle, uiDialogueButton->Hovered ? RED : WHITE);
 }

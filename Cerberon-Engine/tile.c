@@ -74,6 +74,13 @@ void TilesInit()
 
 void TilesDrawSingle(Tile* t)
 {
+	Vector2 pos = Vector2Zero();
+	if (fabsf(t->Height) > 0)
+	{
+		pos = CameraGetParallaxPosition(t->Position, t->Height);
+		pos = Vector2Subtract(pos, t->Position);
+	}
+
 	rlSetTexture(t->_textureResource->Texture.id);
 	rlBegin(RL_QUADS);
 
@@ -82,7 +89,7 @@ void TilesDrawSingle(Tile* t)
 	for (int j = 0; j < 4; j++)
 	{
 		rlTexCoord2f(t->_uvPoints[j].x, t->_uvPoints[j].y);
-		rlVertex2f(t->_meshPoints[j].x, t->_meshPoints[j].y);
+		rlVertex2f(t->_meshPoints[j].x + pos.x, t->_meshPoints[j].y + pos.y);
 	}
 
 	rlEnd();

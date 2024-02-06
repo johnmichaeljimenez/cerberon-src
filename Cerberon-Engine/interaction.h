@@ -14,7 +14,8 @@ typedef enum InteractableSubType
 	INTERACTABLESUB_ItemMedkit,
 	INTERACTABLESUB_ItemFlashlight,
 	INTERACTABLESUB_ItemCash,
-	INTERACTABLESUB_ItemWeaponPistol
+	INTERACTABLESUB_ItemWeaponPistol,
+	INTERACTABLESUB_ItemBackpack,
 } InteractableSubType;
 
 typedef struct Interactable

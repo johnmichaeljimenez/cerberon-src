@@ -5,6 +5,7 @@ typedef struct Tile
 {
 	Vector2 Position;
 	float Rotation;
+	float Height;
 	Vector2 Scale;
 	char* TextureID[32];
 	int SortIndex;

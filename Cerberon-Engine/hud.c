@@ -16,7 +16,7 @@ void DrawHUD()
 	DrawRectangleLines(4, 4, 120, 15, WHITE);
 
 	//inventory
-	for (int i = 0; i < InventoryMaxSize; i++)
+	for (int i = 0; i < InventoryPlayer.MaxCount; i++)
 	{
 		float y = 24 + (i * 32) + (i * 4);
 

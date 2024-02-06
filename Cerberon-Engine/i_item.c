@@ -48,6 +48,13 @@ void LoadItems()
 			ItemList[n].OnPickup = OnWeaponPickup;
 		}
 
+		if (in->InteractableSubType == INTERACTABLESUB_ItemBackpack)
+		{
+			ItemList[n].CurrentMaxAmount = 1;
+			ItemList[n].OnUse = NULL;
+			ItemList[n].OnPickup = OnBackpackPickup;
+		}
+
 		in->DataIndex = n;
 
 		RenderObject* r = CreateRenderObject(RENDERLAYER_Entity, 0, (Rectangle) { 0, 0, 0, 0 }, (void*)in, ItemDraw, NULL);
@@ -137,4 +144,9 @@ bool OnFlashlightUse(ItemPickup* i)
 bool OnWeaponPickup(ItemPickup* i)
 {
 	PlayerAddWeapon(WeaponGive(WEAPONTYPE_Pistol, 12, 50), i);
+}
+
+bool OnBackpackPickup(ItemPickup* i)
+{
+	//PlayerAddWeapon(WeaponGive(WEAPONTYPE_Pistol, 12, 50), i);
 }

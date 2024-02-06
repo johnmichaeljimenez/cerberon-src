@@ -45,3 +45,4 @@ bool Pickup(ItemPickup* i);
 bool OnMedkitUse(ItemPickup* i);
 bool OnFlashlightUse(ItemPickup* i);
 bool OnWeaponPickup(ItemPickup* i);
+bool OnBackpackPickup(ItemPickup* i);
