@@ -93,6 +93,8 @@ void PlayerInit(PlayerCharacter* p)
 	};
 
 	InventoryInit(&InventoryPlayer, 8);
+	InventoryInit(&InventoryPlayerBack, 16);
+
 	lastPos = p->Position;
 	footstepInterval = (p->CollisionRadius * 1.8f);
 	footstepInterval *= footstepInterval;
