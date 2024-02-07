@@ -2,10 +2,11 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "ui_manager.h"
-#include "u_dialogue.h"
 #include <string.h>
 #include "utils.h"
 #include <stdio.h>
+#include "u_dialogue.h"
+#include "u_backpack.h"
 
 void UILoadData()
 {
@@ -46,6 +47,7 @@ void UILoadData()
 void UIInit()
 {
 	UDialogueCreate();
+	UBackpackCreate();
 }
 
 void UISetSelection(UIElement* c)

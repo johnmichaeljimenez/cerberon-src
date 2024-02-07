@@ -4,6 +4,6 @@
 #include "inventory.h"
 #include "player.h"
 
-void UBackpackCreate(UIElement* e);
+void UBackpackCreate();
 void UBackpackShow(UIElement* e);
 void UBackpackDraw(UIElement* e);
