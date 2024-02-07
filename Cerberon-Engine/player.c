@@ -207,6 +207,17 @@ void PlayerUpdate(PlayerCharacter* p)
 			}
 		}
 	}
+	else
+	{
+		if (InputGetMousePressed(MOUSE_BUTTON_RIGHT) && InventoryPlayer.CurrentSelectedIndex >= 0)
+		{
+			ItemPickup* i = InventoryPlayer.Items[InventoryPlayer.CurrentSelectedIndex];
+			if (i != NULL && i->ItemStatusType == ITEMSTATUSTYPE_OnInventory && i->CurrentAmount > 0)
+			{
+				InventoryUse(&InventoryPlayer, i);
+			}
+		}
+	}
 
 	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit, p->IsCrouching? 2 : 1);
 
