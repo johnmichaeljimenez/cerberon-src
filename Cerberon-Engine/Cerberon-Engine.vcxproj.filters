@@ -150,6 +150,9 @@
     <ClCompile Include="dialogue_manager.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="u_backpack.c">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -250,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="dialogue_manager.h">
       <Filter>Source Files\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="u_backpack.h">
+      <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

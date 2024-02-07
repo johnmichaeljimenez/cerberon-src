@@ -51,7 +51,7 @@ void LoadItems()
 		if (in->InteractableSubType == INTERACTABLESUB_ItemBackpack)
 		{
 			ItemList[n].CurrentMaxAmount = 1;
-			ItemList[n].OnUse = NULL;
+			ItemList[n].OnUse = OnBackpackUse;
 			ItemList[n].OnPickup = OnBackpackPickup;
 		}
 
@@ -148,5 +148,10 @@ bool OnWeaponPickup(ItemPickup* i)
 
 bool OnBackpackPickup(ItemPickup* i)
 {
-	//PlayerAddWeapon(WeaponGive(WEAPONTYPE_Pistol, 12, 50), i);
+	InventoryHasPlayerBackpack = true;
+}
+
+bool OnBackpackUse(ItemPickup* i)
+{
+
 }

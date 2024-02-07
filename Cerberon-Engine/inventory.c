@@ -64,7 +64,8 @@ void InventoryUnload(InventoryContainer* in)
 
 void InventoryUse(InventoryContainer* i, ItemPickup* item)
 {
-	
+	if (item->OnUse != NULL)
+		item->OnUse(item);
 }
 
 void InventoryDraw(InventoryContainer* i)

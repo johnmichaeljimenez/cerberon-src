@@ -16,6 +16,7 @@ typedef struct InventoryContainer
 
 InventoryContainer InventoryPlayer;
 InventoryContainer InventoryPlayerBack;
+bool InventoryHasPlayerBackpack;
 
 void InventoryInit(InventoryContainer* in, int maxCount);
 void InventoryUnload(InventoryContainer* in);
