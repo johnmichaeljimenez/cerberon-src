@@ -44,6 +44,12 @@ void DialogueInit()
 
 void DialogueShow(char* id, void(*onDone)())
 {
+	bool hasDialogue = false;
+
+	DialogueCurrentIndex = 0;
+	DialogueCurrentCount = 0;
+	DialogueCurrentItem = NULL;
+
 	for (int i = 0; i < DialogueCount; i++)
 	{
 		Dialogue* d = &DialogueList[i];
@@ -52,9 +58,15 @@ void DialogueShow(char* id, void(*onDone)())
 
 		if (strcmp(id, d->ID) == 0)
 		{
-			strcpy_s(UDialogueText, 256, d->Message);
-			UIShow(UDialoguePanel);
-			return;
+			DialogueCurrentList[DialogueCurrentCount] = d;
+			DialogueCurrentCount++;
+			hasDialogue = true;
 		}
+	}
+
+	if (hasDialogue)
+	{
+		DialogueCurrentItem = DialogueCurrentList[0];
+		UIShow(UDialoguePanel);
 	}
 }

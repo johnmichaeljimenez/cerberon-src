@@ -2,6 +2,7 @@
 #include "ui_manager.h"
 #include "u_dialogue.h"
 #include "utils.h"
+#include "dialogue_manager.h"
 #include <rlgl.h>
 #include <string.h>
 
@@ -13,9 +14,27 @@ static int n;
 static bool animate;
 static char display[256];
 
+static void Refresh()
+{
+	strcpy_s(display, 256, DialogueCurrentItem);
+	t = 0.1;
+	n = 0;
+	animate = true;
+
+	memset(display, 0, 255);
+}
+
 static void OnDialogueClick(UIElement* e)
 {
-	UIHide(UDialoguePanel);
+	DialogueCurrentIndex++;
+	if (DialogueCurrentIndex >= DialogueCurrentCount)
+	{
+		UIHide(UDialoguePanel);
+		return;
+	}
+
+	DialogueCurrentItem = DialogueCurrentList[DialogueCurrentIndex];
+	Refresh();
 }
 
 void UDialogueCreate()
@@ -37,14 +56,14 @@ void UDialogueUpdate(UIElement* u)
 	if (animate && t > 0 && DecrementTimer(&t, 0, 1, false))
 	{
 		t = 0.008;
-		if (UDialogueText[n] == 0)
+		if (DialogueCurrentItem->Message[n] == 0)
 		{
 			display[n] = 0;
 			animate = false;
 			return;
 		}
 
-		display[n] = UDialogueText[n];
+		display[n] = DialogueCurrentItem->Message[n];
 		if (display[n] == '.' || display[n] == '?')
 			t = 0.1;
 
@@ -54,11 +73,7 @@ void UDialogueUpdate(UIElement* u)
 
 void UDialogueShow(UIElement* u)
 {
-	t = 0.1;
-	n = 0;
-	animate = true;
-
-	memset(display, 0, 255);
+	Refresh();
 }
 
 void UDialogueHide(UIElement* u)
