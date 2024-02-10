@@ -20,6 +20,7 @@ void UILoadData()
 	Vector2 min = Vector2One(), max = Vector2One(), aMin = Vector2One(), aMax = Vector2One();
 	int anchorOrigin = 0;
 	int isPanel = 0;
+	UINextElementSlot = 0;
 
 	int i = 0;
 	while (fgets(buffer, sizeof(buffer), file) != NULL) {
@@ -229,6 +230,8 @@ UIElement* UICreateElement(char* ID, UIElement* parent, bool clickable, Vector2 
 
 	UIElementList[UINextElementSlot] = e;
 	UINextElementSlot++;
+
+	TraceLog(LOG_INFO, "CREATED %s %d %s", e.ID, UINextElementSlot - 1, e.Parent == NULL? "<NULL>" : e.Parent->ID);
 
 	return &UIElementList[UINextElementSlot - 1];
 }

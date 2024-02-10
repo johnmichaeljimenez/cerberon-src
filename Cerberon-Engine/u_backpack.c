@@ -5,7 +5,7 @@
 #include "u_backpack.h"
 
 static UIElement* UBackpackBG;
-static UIElement* UBackpackSlots[1];
+static UIElement* UBackpackSlots[16];
 
 void UBackpackCreate()
 {
