@@ -42,7 +42,7 @@ void DialogueInit()
 	fclose(file);
 }
 
-void DialogueShow(char* id)
+void DialogueShow(char* id, void(*onDone)())
 {
 	for (int i = 0; i < DialogueCount; i++)
 	{

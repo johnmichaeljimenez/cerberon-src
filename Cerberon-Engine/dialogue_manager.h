@@ -12,4 +12,4 @@ int DialogueSize;
 int DialogueCount;
 
 void DialogueInit();
-void DialogueShow(char* id);
+void DialogueShow(char* id, void(*onDone)());
