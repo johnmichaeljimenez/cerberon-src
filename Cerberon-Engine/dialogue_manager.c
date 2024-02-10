@@ -1,7 +1,7 @@
+#pragma warning(disable:4996)
 #include <raylib.h>
 #include <raymath.h>
 #include "dialogue_manager.h"
-#pragma warning(disable:4996)
 #include "memory.h"
 #include <string.h>
 #include "ui_manager.h"
@@ -49,6 +49,7 @@ void DialogueShow(char* id, void(*onDone)())
 	DialogueCurrentIndex = 0;
 	DialogueCurrentCount = 0;
 	DialogueCurrentItem = NULL;
+	DialogueCurrentOnDone = NULL;
 
 	for (int i = 0; i < DialogueCount; i++)
 	{
@@ -66,6 +67,7 @@ void DialogueShow(char* id, void(*onDone)())
 
 	if (hasDialogue)
 	{
+		DialogueCurrentOnDone = onDone;
 		DialogueCurrentItem = DialogueCurrentList[0];
 		UIShow(UDialoguePanel);
 	}

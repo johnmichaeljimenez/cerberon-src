@@ -29,6 +29,9 @@ static void OnDialogueClick(UIElement* e)
 	DialogueCurrentIndex++;
 	if (DialogueCurrentIndex >= DialogueCurrentCount)
 	{
+		if (DialogueCurrentOnDone != NULL)
+			DialogueCurrentOnDone();
+
 		UIHide(UDialoguePanel);
 		return;
 	}
