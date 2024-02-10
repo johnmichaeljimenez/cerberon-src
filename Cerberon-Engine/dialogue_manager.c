@@ -15,19 +15,17 @@ void DialogueInit()
 
 	char buffer[100];
 
-	DialogueSize = 0;
-	while (fgets(buffer, sizeof(buffer), file) != NULL) {
-		DialogueSize++;
-	}
-
 	DialogueSize = 512;
 	DialogueList = MCalloc(DialogueSize, sizeof(Dialogue), "Dialogue List");
 
-	fseek(file, 0, SEEK_SET);
+	int i = 0;
+	while (fgets(buffer, sizeof(buffer), file) != NULL) {
+		if (buffer[0] == '\n' || buffer[0] == '\0') {
+			continue;
+		}
 
-	for (int i = 0; i < DialogueSize; i++) {
 		Dialogue d;
-		int res = fscanf(file, "%16[^\t]\t%256[^\t]\n",
+		int res = sscanf(buffer, "%16[^\t]\t%256[^\t]\n",
 			&d.ID, &d.Message
 		);
 
@@ -38,6 +36,7 @@ void DialogueInit()
 
 		DialogueList[i] = d;
 		DialogueCount++;
+		i++;
 	}
 
 	fclose(file);

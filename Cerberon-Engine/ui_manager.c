@@ -10,16 +10,9 @@
 
 void UILoadData()
 {
-	FILE* file = fopen("res/data/gui_layout.tsv", "rb");
+	FILE* file = fopen("res/data/gui_layout.tsv", "r");
 
-	int lineCount = 0;
 	char buffer[100];
-
-	while (fgets(buffer, sizeof(buffer), file) != NULL) {
-		lineCount++;
-	}
-
-	fseek(file, 0, SEEK_SET);
 
 	char id[32];
 	char idparent[32];
@@ -28,8 +21,13 @@ void UILoadData()
 	int anchorOrigin = 0;
 	int isPanel = 0;
 
-	for (int i = 0; i < lineCount; i++) {
-		int res = fscanf(file, "%32[^\t]\t%32[^\t]\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%d\t%d\n",
+	int i = 0;
+	while (fgets(buffer, sizeof(buffer), file) != NULL) {
+		if (buffer[0] == '\n' || buffer[0] == '\0') {
+			continue;
+		}
+
+		int res = sscanf(buffer, "%32[^\t]\t%32[^\t]\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%d\t%d\n",
 			id, idparent, &clickable, &min.x, &min.y, &max.x, &max.y, &aMin.x, &aMin.y, &aMax.x, &aMax.y, &anchorOrigin, &isPanel
 		);
 
@@ -39,6 +37,7 @@ void UILoadData()
 		}
 
 		UICreateElement(id, UIFindElement(idparent), clickable, min, max, aMin, aMax, anchorOrigin, isPanel);
+		i++;
 	}
 
 	fclose(file);
@@ -86,7 +85,7 @@ void UIUpdate()
 		c->Hovered = false;
 		if (!c->IsValid || !c->IsVisible || (!c->IsOpen && c->IsMainPanel))
 			continue;
-		
+
 		if (c->OnUpdate != NULL)
 			c->OnUpdate(c);
 
@@ -231,7 +230,7 @@ UIElement* UICreateElement(char* ID, UIElement* parent, bool clickable, Vector2 
 	UIElementList[UINextElementSlot] = e;
 	UINextElementSlot++;
 
-	return &UIElementList[UINextElementSlot-1];
+	return &UIElementList[UINextElementSlot - 1];
 }
 
 Rect UICreateRect(float x1, float y1, float x2, float y2)
@@ -250,8 +249,8 @@ Rect UICreateRect(float x1, float y1, float x2, float y2)
 	};
 
 	r.Position = (Vector2){
-		.x = (x1+x2)/2,
-		.y = (y1+y2)/2
+		.x = (x1 + x2) / 2,
+		.y = (y1 + y2) / 2
 	};
 
 	return r;
