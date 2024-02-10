@@ -1,4 +1,26 @@
 DialogueBG	-	0	128	256	128	12	1	0	1	1	0	1
 DialogueText	DialogueBG	0	12	12	12	12	1	1	1	1	0	0
 DialogueButton	DialogueBG	1	-32	-16	64	32	1	1	0	0	1	0
-InventoryBG	-	0	-64	0	128	600	1	-1	0	0	1	0
+
+
+InventoryBG	-	0	32	32	32	32	1	1	0	1	0	1
+
+InventorySlot1	InventoryBG	1	16	16	32	32	-1	-1	0	0	1	0
+InventorySlot2	InventoryBG	1	48	16	32	32	-1	-1	0	0	1	0
+InventorySlot3	InventoryBG	1	80	16	32	32	-1	-1	0	0	1	0
+InventorySlot4	InventoryBG	1	112	16	32	32	-1	-1	0	0	1	0
+
+InventorySlot5	InventoryBG	1	16	48	32	32	-1	-1	0	0	1	0
+InventorySlot6	InventoryBG	1	48	48	32	32	-1	-1	0	0	1	0
+InventorySlot7	InventoryBG	1	80	48	32	32	-1	-1	0	0	1	0
+InventorySlot8	InventoryBG	1	112	48	32	32	-1	-1	0	0	1	0
+
+InventorySlot9	InventoryBG	1	16	80	32	32	-1	-1	0	0	1	0
+InventorySlot10	InventoryBG	1	48	80	32	32	-1	-1	0	0	1	0
+InventorySlot11	InventoryBG	1	80	80	32	32	-1	-1	0	0	1	0
+InventorySlot12	InventoryBG	1	112	80	32	32	-1	-1	0	0	1	0
+
+InventorySlot13	InventoryBG	1	16	112	32	32	-1	-1	0	0	1	0
+InventorySlot14	InventoryBG	1	48	112	32	32	-1	-1	0	0	1	0
+InventorySlot15	InventoryBG	1	80	112	32	32	-1	-1	0	0	1	0
+InventorySlot16	InventoryBG	1	112	112	32	32	-1	-1	0	0	1	0
