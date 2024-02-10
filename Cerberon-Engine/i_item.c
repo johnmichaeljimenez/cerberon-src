@@ -8,6 +8,7 @@
 #include "renderer.h"
 #include "utils.h"
 #include "weapon_manager.h"
+#include "ui_manager.h"
 
 void LoadItems()
 {
@@ -153,5 +154,5 @@ bool OnBackpackPickup(ItemPickup* i)
 
 bool OnBackpackUse(ItemPickup* i)
 {
-
+	UIShow(UIFindElement("InventoryBG"));
 }

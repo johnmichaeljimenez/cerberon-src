@@ -11,5 +11,11 @@ Dialogue* DialogueList;
 int DialogueSize;
 int DialogueCount;
 
+Dialogue* DialogueCurrentItem;
+Dialogue* DialogueCurrentList[32];
+int DialogueCurrentCount;
+int DialogueCurrentIndex;
+void(*DialogueCurrentOnDone)();
+
 void DialogueInit();
-void DialogueShow(char* id);
+void DialogueShow(char* id, void(*onDone)());

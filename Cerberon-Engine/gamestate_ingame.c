@@ -64,7 +64,7 @@ void IngameOnUpdate()
 	UIUpdate();
 
 	if (IsKeyDown(KEY_TAB))
-		DialogueShow("test");
+		DialogueShow("test", NULL);
 
 	if (InputGetPressed(INPUTACTIONTYPE_UIBack))
 		SetGameState(&GameStateMainMenu);

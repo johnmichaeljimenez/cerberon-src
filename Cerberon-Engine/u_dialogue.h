@@ -2,7 +2,6 @@
 #include "ui_manager.h"
 
 UIElement* UDialoguePanel;
-char UDialogueText[256];
 
 void UDialogueCreate();
 void UDialogueUpdate(UIElement* u);

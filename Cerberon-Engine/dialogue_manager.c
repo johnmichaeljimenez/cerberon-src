@@ -1,7 +1,7 @@
+#pragma warning(disable:4996)
 #include <raylib.h>
 #include <raymath.h>
 #include "dialogue_manager.h"
-#pragma warning(disable:4996)
 #include "memory.h"
 #include <string.h>
 #include "ui_manager.h"
@@ -15,19 +15,17 @@ void DialogueInit()
 
 	char buffer[100];
 
-	DialogueSize = 0;
-	while (fgets(buffer, sizeof(buffer), file) != NULL) {
-		DialogueSize++;
-	}
-
 	DialogueSize = 512;
 	DialogueList = MCalloc(DialogueSize, sizeof(Dialogue), "Dialogue List");
 
-	fseek(file, 0, SEEK_SET);
+	int i = 0;
+	while (fgets(buffer, sizeof(buffer), file) != NULL) {
+		if (buffer[0] == '\n' || buffer[0] == '\0') {
+			continue;
+		}
 
-	for (int i = 0; i < DialogueSize; i++) {
 		Dialogue d;
-		int res = fscanf(file, "%16[^\t]\t%256[^\t]\n",
+		int res = sscanf(buffer, "%16[^\t]\t%256[^\t]\n",
 			&d.ID, &d.Message
 		);
 
@@ -38,13 +36,21 @@ void DialogueInit()
 
 		DialogueList[i] = d;
 		DialogueCount++;
+		i++;
 	}
 
 	fclose(file);
 }
 
-void DialogueShow(char* id)
+void DialogueShow(char* id, void(*onDone)())
 {
+	bool hasDialogue = false;
+
+	DialogueCurrentIndex = 0;
+	DialogueCurrentCount = 0;
+	DialogueCurrentItem = NULL;
+	DialogueCurrentOnDone = NULL;
+
 	for (int i = 0; i < DialogueCount; i++)
 	{
 		Dialogue* d = &DialogueList[i];
@@ -53,9 +59,16 @@ void DialogueShow(char* id)
 
 		if (strcmp(id, d->ID) == 0)
 		{
-			strcpy_s(UDialogueText, 256, d->Message);
-			UIShow(UDialoguePanel);
-			return;
+			DialogueCurrentList[DialogueCurrentCount] = d;
+			DialogueCurrentCount++;
+			hasDialogue = true;
 		}
+	}
+
+	if (hasDialogue)
+	{
+		DialogueCurrentOnDone = onDone;
+		DialogueCurrentItem = DialogueCurrentList[0];
+		UIShow(UDialoguePanel);
 	}
 }
