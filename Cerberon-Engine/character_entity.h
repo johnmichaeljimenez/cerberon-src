@@ -16,10 +16,14 @@ typedef struct CharacterEntity
 	int Hitpoints;
 	bool IsDead;
 
+	int Index;
+	bool IsValid;
+
 	void* Data;
 	void(*OnSpawn)(struct CharacterEntity* c);
 	void(*OnDespawn)(struct CharacterEntity* c);
 	void(*OnUpdate)(struct CharacterEntity* c);
+	void(*OnLateUpdate)(struct CharacterEntity* c);
 	void(*OnDeath)(struct CharacterEntity* c);
 } CharacterEntity;
 
@@ -29,7 +33,7 @@ CharacterEntity* CharacterEntityList;
 
 void CharacterInit();
 void CharacterUnload();
-void CharacterUpdate(CharacterEntity* c);
-CharacterEntity CharacterSpawn(Vector2 pos, float rot, float radius, int hp, void* data);
+void CharacterUpdate();
+CharacterEntity* CharacterSpawn(Vector2 pos, float rot, float radius, int hp, void* data);
 CharacterEntity CharacterOnSpawn(CharacterEntity* c);
 CharacterEntity CharacterOnDespawn(CharacterEntity* c);
