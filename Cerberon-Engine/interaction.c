@@ -66,7 +66,7 @@ void CheckInteraction()
 
 		if (!a->ChainActivated)
 		{
-			if (Vector2DistanceSqr(a->Position, PlayerEntity.Position) > (PlayerEntity.InteractionRadius * PlayerEntity.InteractionRadius))
+			if (Vector2DistanceSqr(a->Position, PlayerEntity->Position) > (PlayerData.InteractionRadius * PlayerData.InteractionRadius))
 				continue;
 
 			a->Hovered = CheckCollisionCircles(a->Position, a->Radius, CameraGetMousePosition(), 64);
@@ -75,7 +75,7 @@ void CheckInteraction()
 			{
 				CursorChange(CURSORSTATE_IngameInteractHover);
 				LinecastHit hit;
-				Linecast(PlayerEntity.Position, a->Position, &hit, PlayerEntity.IsCrouching? 2 : 1);
+				Linecast(PlayerEntity->Position, a->Position, &hit, PlayerData.IsCrouching? 2 : 1);
 				if (hit.Hit && Vector2DistanceSqr(hit.To, a->Position) > 16)
 				{
 					a->Hovered = false;

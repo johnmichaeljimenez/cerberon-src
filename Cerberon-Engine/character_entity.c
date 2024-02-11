@@ -2,16 +2,20 @@
 #include "character_entity.h"
 #include "memory.h"
 #include <raymath.h>
+#include "player.h"
 
 void CharacterInit()
 {
 	CharacterEntityListSize = 64;
 	CharacterEntityCount = 0;
 	CharacterEntityList = MCalloc(CharacterEntityListSize, sizeof(CharacterEntity), "Character List");
+
+	PlayerEntity = CharacterSpawn(Vector2Zero(), 0, 64, 100, &PlayerData, PlayerInit, PlayerUpdate, PlayerLateUpdate, NULL);
 }
 
 void CharacterUnload()
 {
+	CharacterOnDespawn(PlayerEntity);
 	MFree(CharacterEntityList, CharacterEntityListSize, sizeof(CharacterEntity), "Character List");
 }
 
@@ -38,7 +42,7 @@ void CharacterUpdate()
 	}
 }
 
-CharacterEntity* CharacterSpawn(Vector2 pos, float rot, float radius, int hp, void* data)
+CharacterEntity* CharacterSpawn(Vector2 pos, float rot, float radius, int hp, void* data, void(*onSpawn)(CharacterEntity* c), void(*onUpdate)(CharacterEntity* c), void(*onLateUpdate)(CharacterEntity* c), void(*onDeath)(CharacterEntity* c))
 {
 	CharacterEntity c = { 0 };
 	c.Position = pos;
@@ -46,22 +50,26 @@ CharacterEntity* CharacterSpawn(Vector2 pos, float rot, float radius, int hp, vo
 	c.IsDead = false;
 	c.ColliderRadius = radius;
 
+	c.OnSpawn = onSpawn;
+	c.OnUpdate = onUpdate;
+	c.OnLateUpdate = onLateUpdate;
+	c.OnDeath = onDeath;
+
 	c.Index = CharacterEntityCount;
 	c.IsValid = true;
 
-
-
 	CharacterEntityList[CharacterEntityCount] = c;
+	CharacterEntity* i = &CharacterEntityList[CharacterEntityCount];
+	if (i->OnSpawn != NULL)
+		i->OnSpawn(i);
+	i->IsValid = true;
+
 	CharacterEntityCount++;
-	return &CharacterEntityList[CharacterEntityCount];
+
+	return i;
 }
 
-CharacterEntity CharacterOnSpawn(CharacterEntity* c)
-{
-
-}
-
-CharacterEntity CharacterOnDespawn(CharacterEntity* c)
+void CharacterOnDespawn(CharacterEntity* c)
 {
 	if (c->OnDespawn != NULL)
 		c->OnDespawn(c);

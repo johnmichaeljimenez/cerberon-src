@@ -12,6 +12,7 @@ typedef struct CharacterEntity
 
 	float ColliderRadius;
 	bool HasCollider;
+	float MovementSpeed;
 
 	int Hitpoints;
 	bool IsDead;
@@ -34,9 +35,8 @@ CharacterEntity* CharacterEntityList;
 void CharacterInit();
 void CharacterUnload();
 void CharacterUpdate();
-CharacterEntity* CharacterSpawn(Vector2 pos, float rot, float radius, int hp, void* data);
-CharacterEntity CharacterOnSpawn(CharacterEntity* c);
-CharacterEntity CharacterOnDespawn(CharacterEntity* c);
+CharacterEntity* CharacterSpawn(Vector2 pos, float rot, float radius, int hp, void* data, void(*onSpawn)(CharacterEntity* c), void(*onUpdate)(CharacterEntity* c), void(*onLateUpdate)(CharacterEntity* c), void(*onDeath)(CharacterEntity* c));
+void CharacterOnDespawn(CharacterEntity* c);
 void CharacterRotate(CharacterEntity* c, float dir);
 Vector2 CharacterGetForward(CharacterEntity* c, float length);
 

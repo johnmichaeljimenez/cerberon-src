@@ -107,7 +107,7 @@ void ItemDraw(Interactable* i)
 	EndShaderMode();
 }
 
-bool ItemInteract(Interactable* i, PlayerCharacter* p)
+bool ItemInteract(Interactable* i, CharacterEntity* p)
 {
 	ItemPickup* ip = &ItemList[i->DataIndex];
 	return Pickup(ip);

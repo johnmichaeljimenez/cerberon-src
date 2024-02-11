@@ -3,6 +3,7 @@
 #include <raymath.h>
 #include "player.h"
 #include "interaction.h"
+#include "character_entity.h"
 
 typedef enum ItemStatusType
 {
@@ -38,7 +39,7 @@ void ItemUpdate(Interactable* i);
 void ItemLateUpdate(Interactable* i);
 void ItemDraw(Interactable* i);
 
-bool ItemInteract(Interactable* i, PlayerCharacter* p);
+bool ItemInteract(Interactable* i, struct CharacterEntity* p);
 
 void ItemDestroy(ItemPickup* i);
 bool Pickup(ItemPickup* i);

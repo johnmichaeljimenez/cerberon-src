@@ -36,8 +36,7 @@ void IngameOnLoad()
 	InteractionInit();
 	ProjectileInit();
 	CharacterInit();
-	PlayerInit(&PlayerEntity);
-	CameraSetTarget(PlayerEntity.Position, true);
+	CameraSetTarget(PlayerEntity->Position, true);
 	RendererPostInitialize();
 	TimeInit();
 	UIInit();
@@ -58,10 +57,8 @@ void IngameOnUpdate()
 {
 	CursorChange(CURSORSTATE_IngameInteractReticle);
 	UpdateMap(CurrentMapData);
-	PlayerUpdate(&PlayerEntity);
 	CharacterUpdate();
 	ProjectileUpdate();
-	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
 	RendererUpdate();
 	TimeUpdate();

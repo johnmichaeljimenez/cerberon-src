@@ -155,7 +155,7 @@ void UpdateLights(RenderTexture* screenRenderTexture, RenderTexture* effectsRend
 	DrawPlayerVision();
 
 	Color green = (Color){ 0,255,0,255 };
-	DrawCircleGradient(PlayerEntity.Position.x, PlayerEntity.Position.y, 150, green, BLACK);
+	DrawCircleGradient(PlayerEntity->Position.x, PlayerEntity->Position.y, 150, green, BLACK);
 	//DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 128, green, BLACK);
 	DrawCircleGradient(CameraGetMousePosition().x, CameraGetMousePosition().y, 256, green, BLACK);
 	EndBlendMode();
@@ -192,7 +192,7 @@ void DrawShadows(Light* light, bool useBounds, bool visionMode)
 			if (!visionMode)
 				continue;
 
-			if (!PlayerEntity.IsCrouching)
+			if (!PlayerData.IsCrouching)
 				continue;
 		}
 
