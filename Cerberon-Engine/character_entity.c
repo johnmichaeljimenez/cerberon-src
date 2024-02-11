@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include "character_entity.h"
 #include "memory.h"
+#include <raymath.h>
 
 void CharacterInit()
 {
@@ -71,4 +72,16 @@ CharacterEntity CharacterOnDespawn(CharacterEntity* c)
 	}
 
 	c->IsValid = false;
+}
+
+void CharacterRotate(CharacterEntity* p, float dir)
+{
+	p->Rotation = dir;
+	p->Direction.x = cosf(p->Rotation);
+	p->Direction.y = sinf(p->Rotation);
+}
+
+Vector2 CharacterGetForward(CharacterEntity* p, float length)
+{
+	return Vector2Add(p->Position, Vector2Scale(p->Direction, length));
 }

@@ -37,3 +37,5 @@ void CharacterUpdate();
 CharacterEntity* CharacterSpawn(Vector2 pos, float rot, float radius, int hp, void* data);
 CharacterEntity CharacterOnSpawn(CharacterEntity* c);
 CharacterEntity CharacterOnDespawn(CharacterEntity* c);
+void CharacterRotate(CharacterEntity* p, float dir);
+Vector2 CharacterGetForward(CharacterEntity* p, float length);
