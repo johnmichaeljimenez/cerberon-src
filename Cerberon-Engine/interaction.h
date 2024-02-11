@@ -29,6 +29,11 @@ typedef struct Interactable
 	int Count;
 	float Delay;
 
+	char ParamID[16];
+	float ParamFloat;
+	int ParamInt;
+	bool ParamBool;
+
 	float Radius;
 	InteractableType InteractableType;
 	int InteractableSubType;
