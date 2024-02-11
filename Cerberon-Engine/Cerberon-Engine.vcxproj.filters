@@ -153,6 +153,9 @@
     <ClCompile Include="u_backpack.c">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="character_entity.c">
+      <Filter>Source Files\gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -256,6 +259,9 @@
     </ClInclude>
     <ClInclude Include="u_backpack.h">
       <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="character_entity.h">
+      <Filter>Source Files\gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
