@@ -190,7 +190,7 @@ void LoadMap(char* filename, MapData* map)
 			fread(&in.Delay, sizeof(float), 1, file);
 			fread(&in.OneShot, sizeof(bool), 1, file);
 
-			fread(&in.ParamID, sizeof(char), 32, file);
+			fread(&in.ParamID, sizeof(char), 16, file);
 			fread(&in.ParamFloat, sizeof(float), 1, file);
 			fread(&in.ParamInt, sizeof(int), 1, file);
 			fread(&in.ParamBool, sizeof(bool), 1, file);
