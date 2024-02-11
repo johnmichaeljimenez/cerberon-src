@@ -14,6 +14,7 @@
 #include "projectile.h"
 #include "ui_manager.h"
 #include "dialogue_manager.h"
+#include "character_entity.h"
 
 void IngameInit()
 {
@@ -34,8 +35,8 @@ void IngameOnLoad()
 	WeaponInitData();
 	InteractionInit();
 	ProjectileInit();
-	PlayerInit(&PlayerEntity);
-	CameraSetTarget(PlayerEntity.Position, true);
+	CharacterInit();
+	CameraSetTarget(PlayerEntity->Position, true);
 	RendererPostInitialize();
 	TimeInit();
 	UIInit();
@@ -46,6 +47,7 @@ void IngameOnUnload()
 	InteractionUnload();
 	UnloadLight();
 	PlayerUnload(&PlayerEntity);
+	CharacterUnload();
 	UnloadMap();
 	RendererUnload();
 	UnloadResources();
@@ -55,9 +57,8 @@ void IngameOnUpdate()
 {
 	CursorChange(CURSORSTATE_IngameInteractReticle);
 	UpdateMap(CurrentMapData);
-	PlayerUpdate(&PlayerEntity);
+	CharacterUpdate();
 	ProjectileUpdate();
-	PlayerLateUpdate(&PlayerEntity);
 	CameraUpdate();
 	RendererUpdate();
 	TimeUpdate();

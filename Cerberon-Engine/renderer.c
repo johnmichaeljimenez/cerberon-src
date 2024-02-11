@@ -262,7 +262,6 @@ void RendererDraw()
 	if (debugEnabled)
 		_DrawDebug();
 
-	PlayerDrawHUD(&PlayerEntity);
 	//DrawDebugTime();
 	DrawHUD();
 

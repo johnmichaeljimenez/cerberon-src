@@ -38,23 +38,12 @@ static float legAngleRange = 60;
 
 static bool canStand = true;
 
-static void OnAttackHit()
-{
-	if (attackAnimation.CurrentFrame == 6)
-		TraceLog(LOG_INFO, "HIT!");
-}
-
-static void OnAttackEnd()
-{
-	//AnimationPlayerPlay(&idleAnimation, false, &currentAnimation, false);
-}
-
-void PlayerInit(PlayerCharacter* p)
+void PlayerInit(CharacterEntity* p)
 {
 	playerAnimation = (AnimationPlayerGroup){ 0 };
 	idleAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_idle")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
 	moveAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_move")), AnimationFlag_Physics | AnimationFlag_CanAttack, NULL, NULL, NULL, 24);
-	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), AnimationFlag_DisableMovement, NULL, OnAttackHit, OnAttackEnd, 24);
+	attackAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_attack")), AnimationFlag_DisableMovement, NULL, NULL, NULL, 24);
 	handgunShootAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_handgun_fire")), AnimationFlag_None, NULL, NULL, NULL, 24);
 	handgunReloadAnimation = AnimationPlayerCreate(&playerAnimation, GetAnimationResource(ToHash("player_handgun_reload")), AnimationFlag_None, NULL, NULL, NULL, 24);
 
@@ -76,15 +65,16 @@ void PlayerInit(PlayerCharacter* p)
 	p->Position = CurrentMapData->PlayerPosition;
 	p->Rotation = CurrentMapData->PlayerRotation;
 	p->Direction = (Vector2){ 1, 0 };
-	p->CollisionRadius = 32;
-	p->InteractionRadius = 180;
+	p->ColliderRadius = 32;
 	p->MovementSpeed = 150;
-	p->CameraOffset = 300;
 
 	p->IsDead = false;
 	p->Hitpoints = 100;
 
-	p->IsCrouching = false;
+	PlayerData.InteractionRadius = 180;
+	PlayerData.CameraOffset = 300;
+	PlayerData.IsCrouching = false;
+
 	canStand = true;
 
 	PlayerWeaponContainer = (WeaponContainer){
@@ -97,7 +87,7 @@ void PlayerInit(PlayerCharacter* p)
 	InventoryHasPlayerBackpack = false;
 
 	lastPos = p->Position;
-	footstepInterval = (p->CollisionRadius * 1.8f);
+	footstepInterval = (p->ColliderRadius * 1.8f);
 	footstepInterval *= footstepInterval;
 
 	AnimationPlayerPlay(&playerAnimation, &idleAnimation);
@@ -106,18 +96,13 @@ void PlayerInit(PlayerCharacter* p)
 	CreateRenderObject(RENDERLAYER_Entity, 999, (Rectangle) { 0, 0, 0, 0 }, (void*)p, PlayerDraw, PlayerDrawDebug);
 }
 
-void PlayerUnload(PlayerCharacter* p)
+void PlayerUnload(CharacterEntity* p)
 {
 	InventoryUnload(&InventoryPlayerBack);
 	InventoryUnload(&InventoryPlayer);
 }
 
-Vector2 PlayerGetForward(PlayerCharacter* p, float length)
-{
-	return Vector2Add(p->Position, Vector2Scale(p->Direction, length));
-}
-
-void PlayerUpdate(PlayerCharacter* p)
+void PlayerUpdate(CharacterEntity* p)
 {
 	if (p->IsDead)
 	{
@@ -131,11 +116,11 @@ void PlayerUpdate(PlayerCharacter* p)
 
 	if (!HasFlag(currentAnimation->Flags, AnimationFlag_DisableMovement))
 	{
-		if (InputGetKeyPressed(KEY_LEFT_CONTROL) && (!p->IsCrouching || canStand))
-			p->IsCrouching = !p->IsCrouching;
+		if (InputGetKeyPressed(KEY_LEFT_CONTROL) && (!PlayerData.IsCrouching || canStand))
+			PlayerData.IsCrouching = !PlayerData.IsCrouching;
 
 		movementInput = InputGetMovement();
-		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed * (p->IsCrouching? 0.3 : 1));
+		Vector2 vel = Vector2Scale(movementInput, p->MovementSpeed * (PlayerData.IsCrouching? 0.3 : 1));
 		vel = Vector2Scale(vel, GetFrameTime());
 		p->Position = Vector2Add(p->Position, vel);
 
@@ -155,12 +140,12 @@ void PlayerUpdate(PlayerCharacter* p)
 	}
 
 	//collision here
-	MoveBody(&p->Position, p->CollisionRadius, p->IsCrouching, &canStand);
+	MoveBody(&p->Position, p->ColliderRadius, PlayerData.IsCrouching, &canStand);
 
 	if (fabsf(movementInput.x) > 0 || fabsf(movementInput.y) > 0)
 	{
 		AnimationPlayerPlay(&playerLegAnimation, &legMoveAnimation);
-		if (!p->IsCrouching && Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
+		if (!PlayerData.IsCrouching && Vector2DistanceSqr(lastPos, p->Position) > footstepInterval)
 		{
 			AudioPlay(ToHash(TextFormat("%d", GetRandomValue(0, 8))), p->Position);
 			lastPos = p->Position;
@@ -193,8 +178,8 @@ void PlayerUpdate(PlayerCharacter* p)
 			{
 				if (PlayerWeaponContainer.CurrentWeapon->OnFire != NULL)
 				{
-					Vector2 dir = Vector2Normalize(Vector2Subtract(PlayerGetForward(p, 1), p->Position));
-					if (PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir, p->IsCrouching? 2 : 1))
+					Vector2 dir = Vector2Normalize(Vector2Subtract(CharacterGetForward(p, 1), p->Position));
+					if (PlayerWeaponContainer.CurrentWeapon->OnFire(PlayerWeaponContainer.CurrentWeapon, p->Position, dir, PlayerData.IsCrouching? 2 : 1))
 					{
 						AnimationPlayerPlay(&playerAnimation, &handgunShootAnimation);
 					}
@@ -219,20 +204,20 @@ void PlayerUpdate(PlayerCharacter* p)
 		}
 	}
 
-	Linecast(p->Position, PlayerGetForward(p, 1300), &lineHit, p->IsCrouching? 2 : 1);
+	Linecast(p->Position, CharacterGetForward(p, 1300), &lineHit, PlayerData.IsCrouching? 2 : 1);
 
-	PlayerRotate(p, rot);
-	PlayerFlashlight->Position = PlayerEntity.Position;
+	CharacterRotate(p, rot);
+	PlayerFlashlight->Position = PlayerEntity->Position;
 	UpdateLightBounds(&PlayerFlashlight);
 
 	if (IsKeyPressed(KEY_G))
 	{
-		PlayerApplyDamage(p, 32);
+		CharacterTakeDamage(p, 32);
 	}
 
 	if (IsKeyPressed(KEY_H))
 	{
-		PlayerHeal(p, 26);
+		CharacterHeal(p, 26);
 	}
 
 	SelectInventoryItem(&InventoryPlayer);
@@ -241,7 +226,7 @@ void PlayerUpdate(PlayerCharacter* p)
 		WeaponUpdate(PlayerWeaponContainer.CurrentWeapon);
 }
 
-void PlayerLateUpdate(PlayerCharacter* p)
+void PlayerLateUpdate(CharacterEntity* p)
 {
 	Vector2 targPos = Vector2Subtract(CameraGetMousePosition(), p->Position);
 	targPos = Vector2Add(p->Position, Vector2ClampValue(targPos, 0, UIIsVisible? 50 : 300));
@@ -252,12 +237,12 @@ void PlayerLateUpdate(PlayerCharacter* p)
 	AnimationPlayerUpdate(playerLegAnimation.CurrentAnimation);
 }
 
-void PlayerDraw(PlayerCharacter* p)
+void PlayerDraw(CharacterEntity* p)
 {
 	TextureResource* t = playerAnimation.CurrentAnimation->Clip->SpriteFrames[playerAnimation.CurrentAnimation->CurrentFrame];
 	TextureResource* t2 = playerLegAnimation.CurrentAnimation->Clip->SpriteFrames[playerLegAnimation.CurrentAnimation->CurrentFrame];
 
-	DrawBlobShadow(p->Position, p->CollisionRadius * 1.5, 255);
+	DrawBlobShadow(p->Position, p->ColliderRadius * 1.5, 255);
 
 	float halfLegAngle = (legAngleRange / 2) * DEG2RAD;
 	legAngle = ClampRelativeAngle(legAngle, p->Rotation, -halfLegAngle, halfLegAngle);
@@ -266,7 +251,7 @@ void PlayerDraw(PlayerCharacter* p)
 	DrawSprite(t, p->Position, p->Rotation, 0.6, (Vector2) { -0.15, 0.1 }, WHITE);
 }
 
-void PlayerDrawDebug(PlayerCharacter* p)
+void PlayerDrawDebug(CharacterEntity* p)
 {
 	if (p->IsDead)
 		return;
@@ -277,21 +262,8 @@ void PlayerDrawDebug(PlayerCharacter* p)
 		DrawCircleV(lineHit.To, 3, RED);
 	}
 
-	DrawCircleLines(p->Position.x, p->Position.y, p->CollisionRadius, GREEN);
-	DrawLineV(p->Position, PlayerGetForward(p, p->CollisionRadius), GREEN);
-}
-
-void PlayerDrawHUD(PlayerCharacter* p)
-{
-
-}
-
-
-void PlayerRotate(PlayerCharacter* p, float dir)
-{
-	p->Rotation = dir;
-	p->Direction.x = cosf(p->Rotation);
-	p->Direction.y = sinf(p->Rotation);
+	DrawCircleLines(p->Position.x, p->Position.y, p->ColliderRadius, GREEN);
+	DrawLineV(p->Position, CharacterGetForward(p, p->ColliderRadius), GREEN);
 }
 
 void DrawPlayerFlashlight(Light* l)
@@ -305,7 +277,7 @@ void DrawPlayerFlashlight(Light* l)
 	if (isFlashlightOn)
 	{
 		DrawCircleGradient(l->Position.x, l->Position.y, 80, color, BLACK);
-		DrawSprite(FlashlightTexture, l->Position, PlayerEntity.Rotation + (90 * DEG2RAD), 2, (Vector2) { 0, 0.5 }, color2);
+		DrawSprite(FlashlightTexture, l->Position, PlayerEntity->Rotation + (90 * DEG2RAD), 2, (Vector2) { 0, 0.5 }, color2);
 	}
 	else
 	{
@@ -320,7 +292,7 @@ void DrawPlayerVision()
 {
 	//BeginBlendMode(BLEND_ADDITIVE);
 	Color red = (Color){ 255, 0, 0, 255 };
-	Vector2 pos = PlayerEntity.Position;
+	Vector2 pos = PlayerEntity->Position;
 
 	DrawCircleGradient(pos.x, pos.y, 100, red, ColorAlpha(red, 0));
 	//DrawCircleGradient(pos.x, pos.y, 128, red, BLACK);
@@ -332,47 +304,16 @@ void DrawPlayerVision()
 	float halfAngle = angle / 2;
 	Vector2 v2, v3;
 
-	v2 = Vector2Rotate((Vector2) { 1, 0 }, PlayerEntity.Rotation + (halfAngle * DEG2RAD));
+	v2 = Vector2Rotate((Vector2) { 1, 0 }, PlayerEntity->Rotation + (halfAngle * DEG2RAD));
 	v2 = Vector2Add(pos, Vector2Scale(v2, length));
 
-	v3 = Vector2Rotate((Vector2) { 1, 0 }, PlayerEntity.Rotation - (halfAngle * DEG2RAD));
+	v3 = Vector2Rotate((Vector2) { 1, 0 }, PlayerEntity->Rotation - (halfAngle * DEG2RAD));
 	v3 = Vector2Add(pos, Vector2Scale(v3, length));
 
 	DrawTriangle(pos, v2, v3, red);
 
 	//EndBlendMode();
 }
-
-
-void PlayerApplyDamage(PlayerCharacter* p, int amount)
-{
-	if (p->IsDead)
-		return;
-
-	p->Hitpoints -= amount;
-	TraceLog(LOG_INFO, "PLAYER HIT! -%d, %d/%d", amount, p->Hitpoints, 100);
-	if (p->Hitpoints <= 0)
-	{
-		p->Hitpoints = 0;
-		p->IsDead = true;
-	}
-}
-
-
-void PlayerHeal(PlayerCharacter* p, int amount)
-{
-	if (p->IsDead)
-		return;
-
-	p->Hitpoints += amount;
-	if (p->Hitpoints > 100)
-	{
-		p->Hitpoints = 100;
-	}
-
-	TraceLog(LOG_INFO, "PLAYER HEAL! +%d, %d/%d", amount, p->Hitpoints, 100);
-}
-
 
 void SelectInventoryItem(InventoryContainer* in)
 {

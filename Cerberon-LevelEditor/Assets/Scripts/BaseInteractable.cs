@@ -33,6 +33,11 @@ public class BaseInteractable : BaseObject
     protected virtual int Count => 1;
     protected virtual int Flags => 0;
 
+    protected virtual string ParamID => "";
+    protected virtual float ParamFloat => 0f;
+    protected virtual int ParamInt => 0;
+    protected virtual bool ParamBool => false;
+
     public override void Export(List<byte> array)
     {
         var targetName = gameObject.name;
@@ -51,6 +56,10 @@ public class BaseInteractable : BaseObject
         array.AddRange(Encoding.ASCII.GetBytes(target.ToFixedLength(32)));
         array.AddRange(BitConverter.GetBytes(Delay));
         array.AddRange(BitConverter.GetBytes(OneShot));
+        array.AddRange(Encoding.ASCII.GetBytes(ParamID.ToFixedLength(16)));
+        array.AddRange(BitConverter.GetBytes(ParamFloat));
+        array.AddRange(BitConverter.GetBytes(ParamInt));
+        array.AddRange(BitConverter.GetBytes(ParamBool));
     }
 
     private void OnDrawGizmos()

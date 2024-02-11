@@ -136,6 +136,7 @@
     <ClCompile Include="asset_manager.c" />
     <ClCompile Include="audio_manager.c" />
     <ClCompile Include="dialogue_manager.c" />
+    <ClCompile Include="character_entity.c" />
     <ClCompile Include="projectile.c" />
     <ClCompile Include="camera.c" />
     <ClCompile Include="collision.c" />
@@ -172,6 +173,7 @@
     <ClInclude Include="animation_player.h" />
     <ClInclude Include="asset_manager.h" />
     <ClInclude Include="audio_manager.h" />
+    <ClInclude Include="character_entity.h" />
     <ClInclude Include="dialogue_manager.h" />
     <ClInclude Include="projectile.h" />
     <ClInclude Include="camera.h" />

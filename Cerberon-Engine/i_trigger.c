@@ -47,7 +47,7 @@ void TriggerUpdate()
 			continue;
 		}
 
-		Vector2 playerPos = PlayerEntity.Position;
+		Vector2 playerPos = PlayerEntity->Position;
 
 		bool inside = false;
 		for (int j = 0; j < t->ColliderCount; j++)

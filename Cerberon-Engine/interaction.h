@@ -29,6 +29,11 @@ typedef struct Interactable
 	int Count;
 	float Delay;
 
+	char ParamID[16];
+	float ParamFloat;
+	int ParamInt;
+	bool ParamBool;
+
 	float Radius;
 	InteractableType InteractableType;
 	int InteractableSubType;
@@ -45,7 +50,7 @@ typedef struct Interactable
 	void (*OnUpdate)(struct Interactable* i);
 	void (*OnLateUpdate)(struct Interactable* i);
 	void (*OnDraw)(struct Interactable* i);
-	bool (*OnInteract)(struct Interactable* i, PlayerCharacter* p);
+	bool (*OnInteract)(struct Interactable* i, CharacterEntity* p);
 
 } Interactable;
 

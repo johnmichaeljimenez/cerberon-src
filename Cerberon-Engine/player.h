@@ -2,42 +2,31 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "asset_manager.h"
+#include "character_entity.h"
 
-typedef struct PlayerCharacter
+typedef struct PlayerCharacterData
 {
-	Vector2 Position;
-	float Rotation;
-	Vector2 Direction;
-
 	float MovementSpeed;
-	float CollisionRadius;
 	float InteractionRadius;
 	float CameraOffset;
 
-	int Hitpoints;
-	bool IsDead;
-
 	bool IsCrouching;
 
-} PlayerCharacter;
+} PlayerCharacterData;
 
-PlayerCharacter PlayerEntity;
+PlayerCharacterData PlayerData;
+CharacterEntity* PlayerEntity;
 struct Light* PlayerFlashlight;
 
-void PlayerInit(PlayerCharacter* p);
-void PlayerUnload(PlayerCharacter* p);
-void PlayerUpdate(PlayerCharacter* p);
-void PlayerLateUpdate(PlayerCharacter* p);
-void PlayerDraw(PlayerCharacter* p);
-void PlayerDrawDebug(PlayerCharacter* p);
-void PlayerDrawHUD(PlayerCharacter* p);
+void PlayerInit(CharacterEntity* p);
+void PlayerUnload(CharacterEntity* p);
+void PlayerUpdate(CharacterEntity* p);
+void PlayerLateUpdate(CharacterEntity* p);
+void PlayerDraw(CharacterEntity* p);
+void PlayerDrawDebug(CharacterEntity* p);
 
 void SelectInventoryItem(struct InventoryContainer* in);
-void PlayerApplyDamage(PlayerCharacter* p, int amount);
-void PlayerHeal(PlayerCharacter* p, int amount);
 void PlayerAddWeapon(struct Weapon w, struct ItemPickup* i);
 
-void PlayerRotate(PlayerCharacter* p, float dir);
-Vector2 PlayerGetForward(PlayerCharacter* p, float length);
 void DrawPlayerFlashlight(struct Light* l);
 void DrawPlayerVision();
