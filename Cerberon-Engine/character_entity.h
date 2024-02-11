@@ -37,5 +37,8 @@ void CharacterUpdate();
 CharacterEntity* CharacterSpawn(Vector2 pos, float rot, float radius, int hp, void* data);
 CharacterEntity CharacterOnSpawn(CharacterEntity* c);
 CharacterEntity CharacterOnDespawn(CharacterEntity* c);
-void CharacterRotate(CharacterEntity* p, float dir);
-Vector2 CharacterGetForward(CharacterEntity* p, float length);
+void CharacterRotate(CharacterEntity* c, float dir);
+Vector2 CharacterGetForward(CharacterEntity* c, float length);
+
+void CharacterTakeDamage(CharacterEntity* c, float amt);
+void CharacterHeal(CharacterEntity* c, float amt);

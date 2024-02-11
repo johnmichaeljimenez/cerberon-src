@@ -74,14 +74,43 @@ CharacterEntity CharacterOnDespawn(CharacterEntity* c)
 	c->IsValid = false;
 }
 
-void CharacterRotate(CharacterEntity* p, float dir)
+void CharacterRotate(CharacterEntity* c, float dir)
 {
-	p->Rotation = dir;
-	p->Direction.x = cosf(p->Rotation);
-	p->Direction.y = sinf(p->Rotation);
+	c->Rotation = dir;
+	c->Direction.x = cosf(c->Rotation);
+	c->Direction.y = sinf(c->Rotation);
 }
 
-Vector2 CharacterGetForward(CharacterEntity* p, float length)
+Vector2 CharacterGetForward(CharacterEntity* c, float length)
 {
-	return Vector2Add(p->Position, Vector2Scale(p->Direction, length));
+	return Vector2Add(c->Position, Vector2Scale(c->Direction, length));
+}
+
+void CharacterTakeDamage(CharacterEntity* c, float amt)
+{
+	if (c->IsDead)
+		return;
+
+	c->Hitpoints -= amt;
+
+	if (c->Hitpoints <= 0)
+	{
+		c->Hitpoints = 0;
+		c->IsDead = true;
+
+		if (c->OnDeath != NULL)
+			c->OnDeath(c);
+	}
+}
+
+void CharacterHeal(CharacterEntity* c, float amt)
+{
+	if (c->IsDead)
+		return;
+
+	c->Hitpoints += amt;
+	if (c->Hitpoints > 100)
+	{
+		c->Hitpoints = 100;
+	}
 }
