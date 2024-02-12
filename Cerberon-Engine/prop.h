@@ -25,3 +25,12 @@ typedef struct Prop
 	char ID[16];
 	struct PropComponent Components[16];
 } Prop;
+
+int PropListMaxSize;
+int PropListCount;
+Prop* PropList;
+
+Prop* PropCreate(char* ID, Vector2 pos, float rot);
+void PropInit();
+void PropUnload();
+void PropUpdate();
