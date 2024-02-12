@@ -160,6 +160,7 @@
     <ClCompile Include="memory.c" />
     <ClCompile Include="overlay.c" />
     <ClCompile Include="player.c" />
+    <ClCompile Include="prop.c" />
     <ClCompile Include="renderer.c" />
     <ClCompile Include="tile.c" />
     <ClCompile Include="time.c" />
@@ -197,6 +198,7 @@
     <ClInclude Include="memory.h" />
     <ClInclude Include="overlay.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="prop.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="time.h" />
