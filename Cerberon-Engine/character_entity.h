@@ -20,6 +20,8 @@ typedef struct CharacterEntity
 	int Index;
 	bool IsValid;
 
+	int Faction;
+
 	void* Data;
 	void(*OnSpawn)(struct CharacterEntity* c);
 	void(*OnDespawn)(struct CharacterEntity* c);
