@@ -11,6 +11,8 @@ using UnityEngine;
 
 public class PrefabExporter : MonoBehaviour
 {
+    private const float MAP_SCALE = 64.0f;
+    private const float MAP_SCALE_Y = -64.0f;
     private const string prefabDir = "Prefabs/Props";
 
     [MenuItem("Tools/Export PREFAB file")]
@@ -74,6 +76,20 @@ public class PrefabExporter : MonoBehaviour
 
     private static void WriteComponent(Component c, List<byte> data)
     {
+        data.AddRange(BitConverter.GetBytes(c.transform.localPosition.x * MAP_SCALE));
+        data.AddRange(BitConverter.GetBytes(c.transform.localPosition.y * MAP_SCALE_Y));
+        data.AddRange(BitConverter.GetBytes(c.transform.localPosition.z * MAP_SCALE));
+        data.AddRange(BitConverter.GetBytes(-c.transform.localEulerAngles.z));
 
+        if (c is SpriteRenderer spriteRenderer)
+        {
+            data.AddRange(spriteRenderer.sprite.name.ToFixedLength(32));
+            data.AddRange(BitConverter.GetBytes(Mathf.Max(c.transform.localScale.x, c.transform.localScale.y)));
+            data.AddRange(BitConverter.GetBytes(spriteRenderer.sortingOrder));
+            data.AddRange(BitConverter.GetBytes(spriteRenderer.color.r));
+            data.AddRange(BitConverter.GetBytes(spriteRenderer.color.g));
+            data.AddRange(BitConverter.GetBytes(spriteRenderer.color.b));
+            return;
+        }
     }
 }
