@@ -67,6 +67,7 @@ void PlayerInit(CharacterEntity* p)
 	p->Direction = (Vector2){ 1, 0 };
 	p->ColliderRadius = 32;
 	p->MovementSpeed = 150;
+	p->Faction = 0;
 
 	p->IsDead = false;
 	p->Hitpoints = 100;
