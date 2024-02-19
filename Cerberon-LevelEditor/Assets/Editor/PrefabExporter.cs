@@ -91,5 +91,18 @@ public class PrefabExporter : MonoBehaviour
             data.AddRange(BitConverter.GetBytes(spriteRenderer.color.b));
             return;
         }
+
+        if (c is BoxCollider2D box)
+        {
+            data.AddRange(BitConverter.GetBytes(box.size.x));
+            data.AddRange(BitConverter.GetBytes(box.size.y));
+            return;
+        }
+
+        if (c is CircleCollider2D circle)
+        {
+            data.AddRange(BitConverter.GetBytes(circle.radius));
+            return;
+        }
     }
 }
