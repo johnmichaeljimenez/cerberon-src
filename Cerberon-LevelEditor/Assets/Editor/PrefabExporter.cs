@@ -85,10 +85,23 @@ public class PrefabExporter : MonoBehaviour
         {
             data.AddRange(spriteRenderer.sprite.name.ToFixedLength(32));
             data.AddRange(BitConverter.GetBytes(Mathf.Max(c.transform.localScale.x, c.transform.localScale.y)));
+
+            var sortingGroup = 0;
+            if (spriteRenderer.sortingLayerName == "Ground")
+                sortingGroup = 0;
+            else if (spriteRenderer.sortingLayerName == "Entity")
+                sortingGroup = 1;
+            else if (spriteRenderer.sortingLayerName == "Wall")
+                sortingGroup = 2;
+            else if (spriteRenderer.sortingLayerName == "Overlay")
+                sortingGroup = 3;
+
+            data.AddRange(BitConverter.GetBytes(sortingGroup));
             data.AddRange(BitConverter.GetBytes(spriteRenderer.sortingOrder));
             data.AddRange(BitConverter.GetBytes(spriteRenderer.color.r));
             data.AddRange(BitConverter.GetBytes(spriteRenderer.color.g));
             data.AddRange(BitConverter.GetBytes(spriteRenderer.color.b));
+
             return;
         }
 
