@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Unity.Plastic.Newtonsoft.Json.Converters;
 using Unity.Plastic.Newtonsoft.Json.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -14,6 +15,16 @@ public class PrefabExporter : MonoBehaviour
     private const float MAP_SCALE = 64.0f;
     private const float MAP_SCALE_Y = -64.0f;
     private const string prefabDir = "Prefabs/Props";
+
+    public enum PrefabComponentType
+    {
+        Sprite,
+        SpriteTiled,
+        BoxCollider,
+        CircleCollider,
+        EdgeCollider,
+        Light
+    }
 
     [MenuItem("Tools/Export PREFAB file")]
     static void DoSomething()
@@ -56,7 +67,7 @@ public class PrefabExporter : MonoBehaviour
         foreach (var obj in objects)
         {
             //object name
-            data.AddRange(Encoding.ASCII.GetBytes(obj.Key.name.ToFixedLength(32)));
+            data.AddRange(Encoding.ASCII.GetBytes(obj.Key.name.ToFixedLength(16)));
 
             //component count
             data.AddRange(BitConverter.GetBytes(obj.Value.Count));
@@ -83,6 +94,7 @@ public class PrefabExporter : MonoBehaviour
 
         if (c is SpriteRenderer spriteRenderer)
         {
+            data.AddRange(BitConverter.GetBytes((int)PrefabComponentType.Sprite));
             data.AddRange(spriteRenderer.sprite.name.ToFixedLength(32));
             data.AddRange(BitConverter.GetBytes(Mathf.Max(c.transform.localScale.x, c.transform.localScale.y)));
 
@@ -107,6 +119,7 @@ public class PrefabExporter : MonoBehaviour
 
         if (c is BoxCollider2D box)
         {
+            data.AddRange(BitConverter.GetBytes((int)PrefabComponentType.BoxCollider));
             data.AddRange(BitConverter.GetBytes(box.size.x));
             data.AddRange(BitConverter.GetBytes(box.size.y));
             return;
@@ -114,6 +127,7 @@ public class PrefabExporter : MonoBehaviour
 
         if (c is CircleCollider2D circle)
         {
+            data.AddRange(BitConverter.GetBytes((int)PrefabComponentType.CircleCollider));
             data.AddRange(BitConverter.GetBytes(circle.radius));
             return;
         }
