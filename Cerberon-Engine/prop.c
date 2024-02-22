@@ -24,6 +24,7 @@ void PropInit()
 
 		for (int j = 0; j < p.ComponentCount; j++)
 		{
+			PropComponent c = { 0 };
 
 		}
 
