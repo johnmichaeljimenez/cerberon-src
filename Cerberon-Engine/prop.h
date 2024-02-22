@@ -17,7 +17,7 @@ typedef struct PropSpriteComponent
 	unsigned long Hash;
 	float Scale;
 	int SortingGroup;
-	int SortingLayer;
+	int SortingOrder;
 	Color Tint;
 } PropSpriteComponent;
 

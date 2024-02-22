@@ -3,6 +3,7 @@
 #include "prop.h"
 #include "memory.h"
 #include <stdio.h>
+#include "utils.h"
 
 Prop* PropCreate(char* ID, Vector2 pos, float rot)
 {
@@ -25,7 +26,34 @@ void PropInit()
 		for (int j = 0; j < p.ComponentCount; j++)
 		{
 			PropComponent c = { 0 };
+			fread(&c.Position.x, sizeof(float), 1, file);
+			fread(&c.Position.y, sizeof(float), 1, file);
+			fread(&c.Height, sizeof(float), 1, file);
+			fread(&c.Rotation, sizeof(float), 1, file);
+			fread(&c.Type, sizeof(int), 1, file);
 
+			if (c.Type == PROPCOMPONENTTYPE_Sprite)
+			{
+				PropSpriteComponent d = { 0 };
+				float r, g, b;
+				fread(&d.ID, sizeof(char), 32, file);
+				fread(&d.Scale, sizeof(float), 1, file);
+				fread(&d.SortingGroup, sizeof(int), 1, file);
+				fread(&d.SortingOrder, sizeof(int), 1, file);
+				fread(&r, sizeof(float), 1, file);
+				fread(&g, sizeof(float), 1, file);
+				fread(&b, sizeof(float), 1, file);
+
+				r *= 255;
+				g *= 255;
+				b *= 255;
+
+				d.Tint = (Color){ r, g, b, 255 };
+				d.Hash = ToHash(d.ID);
+				c.Data = &d;
+			}
+
+			p.Components[j] = c;
 		}
 
 		PropList[i] = p;
