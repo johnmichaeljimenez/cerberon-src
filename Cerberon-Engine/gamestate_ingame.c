@@ -15,6 +15,7 @@
 #include "ui_manager.h"
 #include "dialogue_manager.h"
 #include "character_entity.h"
+#include "prop.h"
 
 void IngameInit()
 {
@@ -31,6 +32,7 @@ void IngameOnLoad()
 	RendererInit();
 	CameraInit();
 	InitLight();
+	PropInit();
 	InitMap();
 	WeaponInitData();
 	InteractionInit();
@@ -45,6 +47,7 @@ void IngameOnLoad()
 void IngameOnUnload()
 {
 	InteractionUnload();
+	PropUnload();
 	UnloadLight();
 	PlayerUnload(&PlayerEntity);
 	CharacterUnload();
@@ -59,6 +62,7 @@ void IngameOnUpdate()
 	UpdateMap(CurrentMapData);
 	CharacterUpdate();
 	ProjectileUpdate();
+	PropUpdate();
 	CameraUpdate();
 	RendererUpdate();
 	TimeUpdate();

@@ -20,14 +20,12 @@ typedef struct PropComponent
 
 typedef struct Prop
 {
-	Vector2 Position;
-	float Rotation;
 	char ID[16];
+	int ComponentCount;
 	struct PropComponent Components[16];
 } Prop;
 
 int PropListMaxSize;
-int PropListCount;
 Prop* PropList;
 
 Prop* PropCreate(char* ID, Vector2 pos, float rot);
