@@ -71,7 +71,7 @@ public class PrefabExporter : MonoBehaviour
 
             //component count
             data.AddRange(BitConverter.GetBytes(obj.Value.Count));
-            if (obj.Value.Count > 0)
+            if (obj.Value.Count == 0)
                 continue;
 
             foreach (var item in obj.Value)
@@ -95,7 +95,7 @@ public class PrefabExporter : MonoBehaviour
         if (c is SpriteRenderer spriteRenderer)
         {
             data.AddRange(BitConverter.GetBytes((int)PrefabComponentType.Sprite));
-            data.AddRange(spriteRenderer.sprite.name.ToFixedLength(32));
+            data.AddRange(Encoding.ASCII.GetBytes(spriteRenderer.sprite.name.ToFixedLength(32)));
             data.AddRange(BitConverter.GetBytes(Mathf.Max(c.transform.localScale.x, c.transform.localScale.y)));
 
             var sortingGroup = 0;
