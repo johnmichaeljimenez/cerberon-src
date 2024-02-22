@@ -52,6 +52,14 @@ void PropInit()
 				d.Hash = ToHash(d.ID);
 				c.Data = &d;
 			}
+			else if (c.Type == PROPCOMPONENTTYPE_BoxCollider)
+			{
+				PropBoxColliderComponent d = { 0 };
+				fread(&d.Size.x, sizeof(float), 1, file);
+				fread(&d.Size.y, sizeof(float), 1, file);
+
+				c.Data = &d;
+			}
 
 			p.Components[j] = c;
 		}

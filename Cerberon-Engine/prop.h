@@ -21,6 +21,11 @@ typedef struct PropSpriteComponent
 	Color Tint;
 } PropSpriteComponent;
 
+typedef struct PropBoxColliderComponent
+{
+	Vector2 Size
+} PropBoxColliderComponent;
+
 typedef struct PropComponent
 {
 	Vector2 Position;
