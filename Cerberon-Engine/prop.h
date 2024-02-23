@@ -11,23 +11,40 @@ typedef enum PropComponentType
 	PROPCOMPONENTTYPE_Light
 } PropComponentType;
 
+typedef struct PropSpriteComponent
+{
+	char ID[32];
+	unsigned long Hash;
+	float Scale;
+	int SortingGroup;
+	int SortingOrder;
+	Color Tint;
+} PropSpriteComponent;
+
+typedef struct PropBoxColliderComponent
+{
+	Vector2 Size
+} PropBoxColliderComponent;
+
 typedef struct PropComponent
 {
+	Vector2 Position;
+	float Height;
+	float Rotation;
+
 	PropComponentType Type;
 	void* Data;
 	void(*OnInit)(struct Prop* p, struct PropComponent* c);
-};
+} PropComponent;
 
 typedef struct Prop
 {
-	Vector2 Position;
-	float Rotation;
 	char ID[16];
+	int ComponentCount;
 	struct PropComponent Components[16];
 } Prop;
 
 int PropListMaxSize;
-int PropListCount;
 Prop* PropList;
 
 Prop* PropCreate(char* ID, Vector2 pos, float rot);

@@ -156,6 +156,9 @@
     <ClCompile Include="character_entity.c">
       <Filter>Source Files\gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="prop.c">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -262,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="character_entity.h">
       <Filter>Source Files\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="prop.h">
+      <Filter>Source Files\data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

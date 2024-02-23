@@ -38,11 +38,17 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Tile
-    uniqueID: 293997579
-    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 293997579
+    locked: 0
+  - name: Entity
+    uniqueID: 2139719541
+    locked: 0
+  - name: Wall
+    uniqueID: 860406287
     locked: 0
   - name: Overlay
     uniqueID: 1038687685
