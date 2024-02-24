@@ -23,8 +23,13 @@ typedef struct PropSpriteComponent
 
 typedef struct PropBoxColliderComponent
 {
-	Vector2 Size
+	Vector2 Size;
 } PropBoxColliderComponent;
+
+typedef struct PropCircleColliderComponent
+{
+	float Radius;
+} PropCircleColliderComponent;
 
 typedef struct PropComponent
 {
