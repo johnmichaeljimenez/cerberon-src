@@ -60,6 +60,13 @@ void PropInit()
 
 				c.Data = &d;
 			}
+			else if (c.Type == PROPCOMPONENTTYPE_CircleCollider)
+			{
+				PropCircleColliderComponent d = { 0 };
+				fread(&d.Radius, sizeof(float), 1, file);
+
+				c.Data = &d;
+			}
 
 			p.Components[j] = c;
 		}
