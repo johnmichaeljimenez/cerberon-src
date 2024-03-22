@@ -2,6 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public enum MapDataTypes
+{
+    LevelBoxCollider,
+    LevelCircleCollider,
+    LevelWallCollider,
+    Tile,
+    Light,
+    Door
+}
+
 public abstract class BaseObject : MonoBehaviour
 {
     public const float MAP_SCALE = 64.0f;

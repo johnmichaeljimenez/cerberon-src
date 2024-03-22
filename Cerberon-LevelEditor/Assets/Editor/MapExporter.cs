@@ -5,10 +5,10 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.IO;
 using System;
-using ProtoBuf;
-using ProtoBuf.Meta;
-using static MapExporter;
 using System.IO.Compression;
+using System.Linq;
+using Unity.Plastic.Newtonsoft.Json;
+using static Codice.Client.BaseCommands.Import.Commit;
 
 public class MapExporter : MonoBehaviour
 {
@@ -41,35 +41,25 @@ public class MapExporter : MonoBehaviour
         if (string.IsNullOrEmpty(fname))
             return;
 
-        var model = RuntimeTypeModel.Default;
-        model.Add<Vector2Surrogate>();
-        model.Add<Vector2>(false).SetSurrogate(typeof(Vector2Surrogate));
 
-        var mapData = new MapData();
-        mapData.PlayerPosition = new Vector2(player.position.x * MAP_SCALE, player.position.y * MAP_SCALE_Y);
-        mapData.PlayerRotation = player.eulerAngles.z;
+        string DEF_TYPE = "$t";
+        string ENC_TYPE = "_jsonType";
 
-        using (var i = new FileStream(fname, FileMode.OpenOrCreate))
+        var settings = new JsonSerializerSettings
         {
-            using (var gzip = new GZipStream(i, CompressionMode.Compress))
-            {
-                Serializer.Serialize(gzip, mapData);
-            }
-        }
+            TypeNameHandling = TypeNameHandling.None,
+            NullValueHandling = NullValueHandling.Ignore
+        };
 
-        //var data = new List<byte>();
-        //data.AddRange(BitConverter.GetBytes(player.position.x * MAP_SCALE));
-        //data.AddRange(BitConverter.GetBytes(player.position.y * MAP_SCALE_Y));
-        //data.AddRange(BitConverter.GetBytes(player.eulerAngles.z));
+        var data = new LevelData()
+        {
+            PlayerPosition = new System.Numerics.Vector2(player.position.x, player.position.y),
+            PlayerRotation = player.eulerAngles.z
+        };
 
-        //Export<BaseWall>(root, data);
-        //Export<BaseInteractable>(root, data);
-        //Export<LightObject>(root, data);
-        //Export<TileObject>(root, data);
-        //Export<TriggerObject>(root, data);
-        //Export<OverlayObject>(root, data);
+        var str = JsonConvert.SerializeObject(data, Formatting.Indented, settings).Replace(DEF_TYPE, ENC_TYPE);
 
-        //File.WriteAllBytes(fname, data.ToArray());
+        File.WriteAllText(fname, str);
         EditorUtility.DisplayDialog("Success!", $"Map exported to {fname}", "OK");
     }
 
@@ -84,31 +74,10 @@ public class MapExporter : MonoBehaviour
         }
     }
 
-    [ProtoContract]
-    public class MapData
+    [Serializable]
+    public class LevelData
     {
-        [ProtoMember(1)]
-        public Vector2 PlayerPosition;
-        [ProtoMember(2)]
+        public System.Numerics.Vector2 PlayerPosition;
         public float PlayerRotation;
-
-        [ProtoMember(3)]
-        public List<BaseWall> Walls;
-    }
-
-    [ProtoContract]
-    public struct Vector2Surrogate
-    {
-        [ProtoMember(1)]
-        public float X { get; set; }
-
-        [ProtoMember(2)]
-        public float Y { get; set; }
-
-        public static implicit operator Vector2(Vector2Surrogate vector) =>
-            new Vector2(vector.X, vector.Y);
-
-        public static implicit operator Vector2Surrogate(Vector2 vector) =>
-            new Vector2Surrogate { X = vector.x, Y = vector.y };
     }
 }
