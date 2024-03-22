@@ -22,6 +22,7 @@ public class LevelData
     public float PlayerRotation;
 
     public List<ICollider> MapColliders;
+    public List<TileData> Tiles;
 }
 
 public abstract class BaseObject : MonoBehaviour
