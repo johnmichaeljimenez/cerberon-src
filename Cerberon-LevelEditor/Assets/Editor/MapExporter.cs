@@ -57,12 +57,13 @@ public class MapExporter : MonoBehaviour
         var data = new LevelData()
         {
             PlayerPosition = new System.Numerics.Vector2(player.position.x * MAP_SCALE, player.position.y * MAP_SCALE_Y),
-            PlayerRotation = player.eulerAngles.z * MAP_SCALE,
+            PlayerRotation = -player.eulerAngles.z * Mathf.Deg2Rad,
 
             MapColliders = ExportList<BaseWall, ICollider>(root)
         };
 
         var str = JsonConvert.SerializeObject(data, Formatting.Indented, settings);//.Replace(DEF_TYPE, ENC_TYPE);
+        //str = str.Replace("Assembly-CSharp", "cerberon-src");
 
         File.WriteAllText(fname, str);
         EditorUtility.DisplayDialog("Success!", $"Map exported to {fname}", "OK");
