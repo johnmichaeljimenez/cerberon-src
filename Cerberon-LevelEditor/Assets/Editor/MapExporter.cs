@@ -8,7 +8,8 @@ using System;
 using System.IO.Compression;
 using System.Linq;
 using Unity.Plastic.Newtonsoft.Json;
-using static Codice.Client.BaseCommands.Import.Commit;
+using System.Runtime.Serialization;
+using Unity.Plastic.Newtonsoft.Json.Serialization;
 
 public class MapExporter : MonoBehaviour
 {
@@ -42,42 +43,47 @@ public class MapExporter : MonoBehaviour
             return;
 
 
-        string DEF_TYPE = "$t";
-        string ENC_TYPE = "_jsonType";
+        //string DEF_TYPE = "$t";
+        //string ENC_TYPE = "_jsonType";
 
         var settings = new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.None,
-            NullValueHandling = NullValueHandling.Ignore
+            TypeNameHandling = TypeNameHandling.Auto,
+            NullValueHandling = NullValueHandling.Ignore,
+            //TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+            SerializationBinder = new CustomBinder()
         };
 
         var data = new LevelData()
         {
-            PlayerPosition = new System.Numerics.Vector2(player.position.x, player.position.y),
-            PlayerRotation = player.eulerAngles.z
+            PlayerPosition = new System.Numerics.Vector2(player.position.x * MAP_SCALE, player.position.y * MAP_SCALE_Y),
+            PlayerRotation = player.eulerAngles.z * MAP_SCALE,
+
+            MapColliders = ExportList<BaseWall, ICollider>(root)
         };
 
-        var str = JsonConvert.SerializeObject(data, Formatting.Indented, settings).Replace(DEF_TYPE, ENC_TYPE);
+        var str = JsonConvert.SerializeObject(data, Formatting.Indented, settings);//.Replace(DEF_TYPE, ENC_TYPE);
 
         File.WriteAllText(fname, str);
         EditorUtility.DisplayDialog("Success!", $"Map exported to {fname}", "OK");
     }
 
-    static void Export<T>(Transform root, List<byte> array) where T : BaseObject
+    private static List<T2> ExportList<T1, T2>(Transform root) where T1 : BaseObject
     {
-        var objects = root.GetComponentsInChildren<T>();
-
-        array.AddRange(BitConverter.GetBytes(objects.Length));
-        foreach (var i in objects)
-        {
-            i.Export(array);
-        }
+        return root.GetComponentsInChildren<T1>().Select(p => p.Export()).Cast<T2>().ToList();
     }
 
-    [Serializable]
-    public class LevelData
+    public class CustomBinder : ISerializationBinder
     {
-        public System.Numerics.Vector2 PlayerPosition;
-        public float PlayerRotation;
+        public void BindToName(Type serializedType, out string assemblyName, out string typeName)
+        {
+            assemblyName = null;
+            typeName = serializedType.FullName;
+        }
+
+        public Type BindToType(string assemblyName, string typeName)
+        {
+            return Type.GetType(typeName);
+        }
     }
 }

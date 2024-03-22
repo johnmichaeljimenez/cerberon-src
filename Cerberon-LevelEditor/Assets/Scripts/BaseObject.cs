@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,12 +14,22 @@ public enum MapDataTypes
     Door
 }
 
+
+[Serializable]
+public class LevelData
+{
+    public System.Numerics.Vector2 PlayerPosition;
+    public float PlayerRotation;
+
+    public List<ICollider> MapColliders;
+}
+
 public abstract class BaseObject : MonoBehaviour
 {
     public const float MAP_SCALE = 64.0f;
     public const float MAP_SCALE_Y = -64.0f;
 
-    public virtual void Export(List<byte> array)
+    public virtual object Export()
     {
         throw new System.NotImplementedException();
     }
