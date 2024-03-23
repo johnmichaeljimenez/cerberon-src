@@ -9,7 +9,7 @@ public class LightSource
     public float Scale;
     public string LightSpriteID;
     public bool CastShadows;
-    public Color Color;
+    public Color LightColor;
 }
 
 public class BaseLight : BaseObject
@@ -27,7 +27,7 @@ public class BaseLight : BaseObject
             Rotation = -transform.eulerAngles.z * Mathf.Deg2Rad,
             Scale = Mathf.Max(transform.localScale.x, transform.localScale.y) * MAP_SCALE,
             CastShadows = CastShadows,
-            Color = new Color(spr.color.r, spr.color.g, spr.color.b, spr.color.a)
+            LightColor = new Color(spr.color.r, spr.color.g, spr.color.b, spr.color.a)
         };
     }
 }

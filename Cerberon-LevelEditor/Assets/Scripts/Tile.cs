@@ -9,6 +9,7 @@ public class TileData
     public float Angle;
     public string SpriteID;
     public float Depth;
+    public int SortingIndex;
 }
 
 public class Tile : BaseObject
@@ -23,7 +24,8 @@ public class Tile : BaseObject
             Position = new System.Numerics.Vector2(transform.position.x * MAP_SCALE, transform.position.y * MAP_SCALE_Y),
             Angle = -transform.eulerAngles.z * Mathf.Deg2Rad,
             Scale = new System.Numerics.Vector2(spr.size.x * MAP_SCALE, spr.size.y * MAP_SCALE),
-            Depth = 0
+            Depth = 0,
+            SortingIndex = spr.sortingOrder
         };
     }
 }
