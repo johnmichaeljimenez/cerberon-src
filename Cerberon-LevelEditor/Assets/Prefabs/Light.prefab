@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6182229757396615357}
   - component: {fileID: 3396459121168737899}
-  - component: {fileID: 3311507478493618114}
+  - component: {fileID: 8151861188879422764}
   m_Layer: 6
   m_Name: Light
   m_TagString: Untagged
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3311507478493618114
+--- !u!114 &8151861188879422764
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,8 +94,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2668864059224465623}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc3a911aac9454f47ab158233a2bef19, type: 3}
+  m_Script: {fileID: 11500000, guid: 7629578a55d73304ba0c5d95e89a88e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: 1
-  castShadows: 0
+  CastShadows: 0

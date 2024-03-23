@@ -14,6 +14,19 @@ public enum MapDataTypes
     Door
 }
 
+[Serializable]
+public struct Color
+{
+    public byte R, G, B, A;
+
+    public Color(float r, float g, float b, float a)
+    {
+        R = (byte)(r * 255);
+        G = (byte)(g * 255);
+        B = (byte)(b * 255);
+        A = (byte)(a * 255);
+    }
+}
 
 [Serializable]
 public class LevelData
@@ -23,6 +36,7 @@ public class LevelData
 
     public List<ICollider> MapColliders;
     public List<TileData> Tiles;
+    public List<LightSource> Lights;
 }
 
 public abstract class BaseObject : MonoBehaviour

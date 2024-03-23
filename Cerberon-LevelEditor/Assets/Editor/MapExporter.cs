@@ -59,7 +59,8 @@ public class MapExporter : MonoBehaviour
             PlayerRotation = -player.eulerAngles.z * Mathf.Deg2Rad,
 
             MapColliders = ExportList<BaseWall, ICollider>(root),
-            Tiles = ExportList<Tile, TileData>(root)
+            Tiles = ExportList<Tile, TileData>(root),
+            Lights = ExportList<BaseLight, LightSource>(root)
         };
 
         var str = JsonConvert.SerializeObject(data, Formatting.Indented, settings);//.Replace(DEF_TYPE, ENC_TYPE);
