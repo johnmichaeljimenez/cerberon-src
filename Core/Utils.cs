@@ -2,21 +2,22 @@ namespace Main.Core;
 
 public static class Utils
 {
-	//how do I either automatically fully allow or deny properties in a class to be serialized?
-	public static JsonSerializerSettings settings = new()
+	public static string ToJson(object obj, bool onlySaveData = false)
 	{
-		ObjectCreationHandling = ObjectCreationHandling.Replace,
-		TypeNameHandling = TypeNameHandling.Auto,
-		NullValueHandling = NullValueHandling.Ignore
-	};
-
-	public static void FromJson<T>(this T obj, string json) where T : class
-	{
-		JsonConvert.PopulateObject(json, obj, settings);
+		return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+		{
+			ContractResolver = new SaveContractResolver(onlySaveData),
+			Formatting = Formatting.Indented,
+			TypeNameHandling = TypeNameHandling.Auto, //temporary (I know this is dangerous)
+			NullValueHandling = NullValueHandling.Ignore
+		});
 	}
 
-	public static string ToJson<T>(this T obj)
+	public static void FromJson(this object obj, string json)
 	{
-		return JsonConvert.SerializeObject(obj, settings);
+		JsonConvert.PopulateObject(json, obj, new JsonSerializerSettings
+		{
+			TypeNameHandling = TypeNameHandling.Auto //temporary (I know this is dangerous)
+		});
 	}
 }

@@ -1,4 +1,5 @@
 using Main.Core;
+using Main.Gameplay.Entities;
 
 namespace Main.Gameplay;
 
@@ -6,33 +7,35 @@ public class GameplayState : IGameState
 {
 	public readonly GameplayOptions options;
 
-	public GameplayState()
-	{
-		World.InitRegistry();
-	}
+	public World CurrentWorld { get; private set; }
 
 	public GameplayState(GameplayOptions options)
 	{
+		World.InitRegistry();
 		this.options = options;
 	}
 
 	public void Enter()
 	{
+		CurrentWorld = new World();
+		CurrentWorld.Init();
 		
+		CurrentWorld.SpawnEntity<PlayerEntity>();
 	}
 
 	public void Exit()
 	{
-		
+		CurrentWorld.Dispose();
 	}
 
 	public void Update(float dt)
 	{
-		
+		CurrentWorld.Update(dt);
 	}
+
 	public void Draw()
 	{
-		
+		CurrentWorld.Draw();
 	}
 
 	public void DrawImGui()

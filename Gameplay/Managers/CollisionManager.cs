@@ -1,3 +1,6 @@
+//DISCLAIMER: This entire CollisionManager.cs is LLM-generated. Will remake this from scratch once I will actuall use it and once I tested this one to be working
+//but basically I just want it to have 3 public functions for collide-and-slide for AABB only, as well as circle (character) to line (level props), and also line-line (simple raycast)
+
 namespace Main.Gameplay;
 
 public abstract class ColliderBody

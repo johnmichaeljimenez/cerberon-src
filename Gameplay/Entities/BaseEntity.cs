@@ -1,6 +1,7 @@
+using System.Runtime.Serialization;
 using Main.Core;
 
-namespace Main.Gameplay;
+namespace Main.Gameplay.Entities;
 
 public abstract class BaseEntity : IDisposable
 {
@@ -11,14 +12,32 @@ public abstract class BaseEntity : IDisposable
 	public Vector2 Position { get; set; }
 
 	[JsonProperty]
-	public bool IsActive { get; set; }
+	public bool IsActive { get; set; } = true;
 
+	private string _currentSpriteID;
 	[JsonProperty]
-	public Sprite CurrentSprite { get; set; }
+	public string CurrentSpriteID
+	{
+		get => _currentSpriteID;
+		set
+		{
+			if (_currentSpriteID == value) return;
+			_currentSpriteID = value;
+			CurrentSprite = AssetManager.GetSprite(value);
+		}
+	}
+
+	[JsonIgnore]
+	public Sprite CurrentSprite { get; private set; }
 
 	public bool IsDestroyed { get; private set; }
 
 	public BaseEntity()
+	{
+
+	}
+
+	public virtual void Init()
 	{
 
 	}
@@ -48,5 +67,11 @@ public abstract class BaseEntity : IDisposable
 		Dispose();
 
 		return true;
+	}
+
+	[OnDeserialized]
+	protected virtual void OnDeserialized(StreamingContext _)
+	{
+		CurrentSprite = AssetManager.GetSprite(_currentSpriteID);
 	}
 }

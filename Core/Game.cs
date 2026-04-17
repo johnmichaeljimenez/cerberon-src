@@ -15,7 +15,7 @@ public class Game
 {
     public static Game Instance { get; private set; }
 
-    private const int VirtualWidth = 800;
+    private const int VirtualWidth = 800; //hardcoded for now, might be actual 1080p by default (or at least 720p)
     private const int VirtualHeight = 450;
     private RenderTexture2D _target;
 
@@ -44,14 +44,17 @@ public class Game
 
     public void End()
     {
+        currentState?.Exit();
+
         rlImGui.Shutdown();
         AssetManager.Dispose();
         Raylib.UnloadRenderTexture(_target);
         Raylib.CloseWindow();
     }
 
-    private void Update(float dt)
+    private void Update(float dt, float scale, Vector2 offset)
     {
+        InputManager.Update(scale, offset);
         currentState.Update(dt);
 
         if (nextState != null)
@@ -61,6 +64,8 @@ public class Game
             currentState?.Enter();
             nextState = null;
         }
+
+        Camera.Update(dt);
     }
 
     public void GoToIngame()
@@ -122,9 +127,12 @@ public class Game
         {
             float scale = RenderingManager.GetScale(VirtualWidth, VirtualHeight);
             Vector2 offset = RenderingManager.GetOffset(VirtualWidth, VirtualHeight, scale);
-            InputManager.Update(scale, offset);
-            Time.Update(Update);
 
+            Time.Update(fixedDt =>
+            {
+                Update(fixedDt, scale, offset);
+            });
+            
             Draw(scale, offset);
         }
     }
