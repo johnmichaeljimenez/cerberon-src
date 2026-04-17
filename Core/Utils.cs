@@ -20,4 +20,12 @@ public static class Utils
 			TypeNameHandling = TypeNameHandling.Auto //temporary (I know this is dangerous)
 		});
 	}
+
+	public static float ToDirection(this Vector2 from, Vector2 to)
+	{
+		var delta = to - from;
+		var angleRadians = (float)Math.Atan2(delta.Y, delta.X);
+		var angleDegrees = angleRadians * 180 / (float)Math.PI;
+		return (angleDegrees + 360) % 360;
+	}
 }

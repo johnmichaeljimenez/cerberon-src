@@ -30,6 +30,7 @@ public abstract class BaseEntity : IDisposable
 	[JsonIgnore]
 	public Sprite CurrentSprite { get; private set; }
 
+	[JsonIgnore]
 	public bool IsDestroyed { get; private set; }
 
 	public BaseEntity()

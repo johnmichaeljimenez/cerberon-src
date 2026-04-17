@@ -36,7 +36,10 @@ public class World : IDisposable //aka Level loader
 
 	public void Init()
 	{
-
+		foreach (var i in Entities)
+		{
+			i.Init();
+		}
 	}
 
 	public void Update(float dt)
@@ -78,6 +81,8 @@ public class World : IDisposable //aka Level loader
 
 	public void Draw()
 	{
+		Raylib.DrawCircle(0, 0, 1, Color.Blue); //world origin sample
+
 		foreach (var i in Entities)
 		{
 			if (i.IsDestroyed || !i.IsActive)

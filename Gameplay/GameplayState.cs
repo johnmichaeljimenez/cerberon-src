@@ -17,7 +17,7 @@ public class GameplayState : IGameState
 
 	public void Enter()
 	{
-		CurrentWorld = new World();
+		CurrentWorld = SampleWorld.GetSampleWorldData(); //while I am too lazy to make a JSON
 		CurrentWorld.Init();
 		
 		CurrentWorld.SpawnEntity<PlayerEntity>();
@@ -36,6 +36,8 @@ public class GameplayState : IGameState
 	public void Draw()
 	{
 		CurrentWorld.Draw();
+
+		Raylib.DrawCircleV(InputManager.MouseWorldPosition, 1, Color.Green);
 	}
 
 	public void DrawImGui()
@@ -47,5 +49,5 @@ public class GameplayState : IGameState
 
 public class GameplayOptions
 {
-	//not sure what to put here tbh that I NEED immediately for any game genre (not arcade or puzzle, of course). what do you think?
+	//difficulty, current save slot, is debug mode, and anything that I will need later
 }

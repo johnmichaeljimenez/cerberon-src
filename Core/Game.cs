@@ -28,10 +28,9 @@ public class Game
     public Game()
     {
         Instance = this;
-        Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
+        Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
         Raylib.InitWindow(800, 450, "Raylib-cs Letterbox");
         Raylib.MaximizeWindow();
-        Raylib.SetTargetFPS(120);
         AssetManager.Init();
         Camera = new(VirtualWidth, VirtualHeight);
 
@@ -54,7 +53,7 @@ public class Game
 
     private void Update(float dt, float scale, Vector2 offset)
     {
-        InputManager.Update(scale, offset);
+        InputManager.Update(scale, offset, Camera.Camera);
         currentState.Update(dt);
 
         if (nextState != null)
@@ -132,7 +131,7 @@ public class Game
             {
                 Update(fixedDt, scale, offset);
             });
-            
+
             Draw(scale, offset);
         }
     }
