@@ -1,6 +1,3 @@
-using System.Numerics;
-using Raylib_cs;
-
 namespace Main.Core;
 
 public class RenderingManager
