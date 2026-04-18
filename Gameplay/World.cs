@@ -23,6 +23,9 @@ public class World : IDisposable //aka Level loader
 
 	private static readonly Dictionary<string, Type> entityRegistry = new();
 
+	[JsonIgnore]
+	protected GameplayState gameplayState { get; private set; }
+
 	private int _nextID;
 	public static void InitRegistry()
 	{
@@ -34,11 +37,13 @@ public class World : IDisposable //aka Level loader
 		}
 	}
 
-	public void Init()
+	public void Init(GameplayState gameplayState)
 	{
+		this.gameplayState = gameplayState;
+
 		foreach (var i in Entities)
 		{
-			i.Init();
+			i.Init(gameplayState);
 		}
 	}
 
@@ -81,14 +86,12 @@ public class World : IDisposable //aka Level loader
 
 	public void Draw()
 	{
-		Raylib.DrawCircle(0, 0, 1, Color.Blue); //world origin sample
-
 		foreach (var i in Entities)
 		{
 			if (i.IsDestroyed || !i.IsActive)
 				continue;
 
-			i.Draw();
+			i.Draw(); //sorting is a tomorrow's problem
 		}
 	}
 
@@ -124,7 +127,7 @@ public class World : IDisposable //aka Level loader
 		obj.ID = _nextID;
 		_nextID++; //frequently spawned objects like bullets and particles will not be included in save serialization, and this ensures that IDs do not collide without slow checks
 
-		obj.Init();
+		obj.Init(gameplayState);
 
 		toAddEntities.Add(obj);
 		return obj;
@@ -139,5 +142,18 @@ public class World : IDisposable //aka Level loader
 	protected void OnDeserialized(StreamingContext _)
 	{
 		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
+	}
+
+	public void DrawDebug()
+	{
+		Raylib.DrawCircle(0, 0, 1, Color.Blue); //world origin sample
+
+		foreach (var i in Entities)
+		{
+			if (i.IsDestroyed || !i.IsActive)
+				continue;
+
+			i.DrawDebug();
+		}
 	}
 }

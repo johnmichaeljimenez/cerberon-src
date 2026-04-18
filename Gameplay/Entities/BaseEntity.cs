@@ -33,14 +33,12 @@ public abstract class BaseEntity : IDisposable
 	[JsonIgnore]
 	public bool IsDestroyed { get; private set; }
 
-	public BaseEntity()
+	[JsonIgnore]
+	protected GameplayState gameplayState { get; private set; }
+
+	public virtual void Init(GameplayState gameplayState)
 	{
-
-	}
-
-	public virtual void Init()
-	{
-
+		this.gameplayState = gameplayState;
 	}
 
 	public virtual void Update(float dt)
@@ -74,5 +72,10 @@ public abstract class BaseEntity : IDisposable
 	protected virtual void OnDeserialized(StreamingContext _)
 	{
 		CurrentSprite = AssetManager.GetSprite(_currentSpriteID);
+	}
+
+	public virtual void DrawDebug()
+	{
+		
 	}
 }

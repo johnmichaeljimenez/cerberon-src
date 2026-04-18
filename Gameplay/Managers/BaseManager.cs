@@ -10,22 +10,29 @@ public abstract class BaseManager : IDisposable
 	// CameraManager (bounds and framing, as main menu doesnt need those stuff)
 	// CollisionManager (which already exists)
 
-	public BaseManager()
+	protected GameplayState gameplayState { get; private set; }
+
+	public BaseManager(GameplayState gameplayState)
+	{
+		this.gameplayState = gameplayState;
+	}
+
+	public virtual void Dispose()
 	{
 
 	}
 
-	public void Dispose()
+	public virtual void Update(float dt)
+	{
+
+	}
+	
+	public virtual void Init()
 	{
 
 	}
 
-	public void Update()
-	{
-
-	}
-
-	public void Draw()
+	public virtual void DrawImGui()
 	{
 
 	}

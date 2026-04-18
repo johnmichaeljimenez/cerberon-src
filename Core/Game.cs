@@ -29,14 +29,13 @@ public class Game
     {
         Instance = this;
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
-        Raylib.InitWindow(800, 450, "Raylib-cs Letterbox");
+        Raylib.InitWindow(VirtualWidth, VirtualHeight, "Raylib-cs Letterbox");
         Raylib.MaximizeWindow();
+        _target = Raylib.LoadRenderTexture(VirtualWidth, VirtualHeight);
+
         AssetManager.Init();
         Camera = new(VirtualWidth, VirtualHeight);
-
         rlImGui.Setup(true);
-
-        _target = Raylib.LoadRenderTexture(VirtualWidth, VirtualHeight);
 
         currentState = new MenuState();
     }
@@ -109,7 +108,7 @@ public class Game
                     ImGui.SeparatorText("Assets");
                     AssetManager.OnDrawImGui();
 
-                    ImGui.SliderFloat("Zoom", ref Camera.Camera.Zoom, 0.01f, 64f);
+                    ImGui.SliderFloat("Zoom", ref Camera.Camera.Zoom, 0.01f, Sprite.PIXELS_PER_UNIT);
                 }
                 ImGui.End();
             }

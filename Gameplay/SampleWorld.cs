@@ -14,6 +14,12 @@ public static class SampleWorld
 			Size = new(2, 5)
 		});
 
+		world.Entities.Add(new WallEntity()
+		{
+			Position = new(-3, -4),
+			Size = new(15, 6)
+		});
+
 		return world;
 	}
 }

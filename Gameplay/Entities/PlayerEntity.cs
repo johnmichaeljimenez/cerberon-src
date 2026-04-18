@@ -5,11 +5,12 @@ namespace Main.Gameplay.Entities;
 public class PlayerEntity : BaseEntity
 {
 	private float facingAngle;
+	private Vector2 laserHit;
 
-	//basic soldier with movement and direction input for now (no need for collision as it's just simple entity test)
-	public override void Init()
+	//basic soldier with movement and direction input for now
+	public override void Init(GameplayState gameplayState)
 	{
-		base.Init();
+		base.Init(gameplayState);
 
 		CurrentSpriteID = "soldier";
 	}
@@ -20,16 +21,22 @@ public class PlayerEntity : BaseEntity
 
 		var speed = 8f;
 		var rotSpeed = 8f;
-		Position += InputManager.GetMovement() * speed * dt;
+		var vel = InputManager.Movement * speed * dt;
+		gameplayState.GetManager<CollisionManager>().Move(Position, 1, ref vel); //super smooth and accurate collision detection and resolution
+		Position += vel;
 
-		facingAngle = Raymath.LerpAngle(facingAngle, Position.ToDirection(InputManager.MouseWorldPosition) + 90, dt * rotSpeed); //+90 is temporary, will use true 0-degree neutral angle (+X) on sprites
+		facingAngle = Raymath.LerpAngle(facingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
 
-		if (InputManager.IsKeyDown(KeyboardKey.Space))
-			Game.Instance.Camera.Follow(Position, 3f);
+		Game.Instance.Camera.Follow(Position, 3f);
 	}
 
 	public override void Draw()
 	{
-		CurrentSprite.Draw(Position, rotation: facingAngle, origin: new Vector2(0.45f, 0.75f));
+		CurrentSprite.Draw(Position, rotation: facingAngle, origin: new Vector2(0.25f, 0.5f));
+	}
+
+	public override void DrawDebug()
+	{
+		Raylib.DrawCircleLinesV(Position, 1, Color.Green);
 	}
 }
