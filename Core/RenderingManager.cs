@@ -1,3 +1,5 @@
+using Main.Effects;
+
 namespace Main.Core;
 
 public class RenderingManager
@@ -14,6 +16,9 @@ public class RenderingManager
 
     public static Vector2 GetOffset(int virtualWidth, int virtualHeight, float scale) =>
         new((Raylib.GetScreenWidth() - (virtualWidth * scale)) * 0.5f, (Raylib.GetScreenHeight() - (virtualHeight * scale)) * 0.5f);
+
+
+    private static int lightTextLoc;
 
     public static void LoadPostShader()
     {
@@ -53,6 +58,7 @@ public class RenderingManager
         }
 
         PostShader = Raylib.LoadShader(null, POST_FX);
+        lightTextLoc = Raylib.GetShaderLocation(PostShader, "lightTex");
     }
 
     public static void UnloadPostShader()
@@ -83,7 +89,11 @@ public class RenderingManager
     public static void DrawToScreen(RenderTexture2D target, float scale, Vector2 offset, int virtualWidth, int virtualHeight)
     {
         if (PostShader.Id != 0)
+        {
+            LightingSystem.Draw();
             Raylib.BeginShaderMode(PostShader);
+            Raylib.SetShaderValueTexture(PostShader, lightTextLoc, LightingSystem.RenderTexture.Texture);
+        }
 
         Rectangle source = new(0, 0, target.Texture.Width, -target.Texture.Height);
         Rectangle dest = new(offset.X, offset.Y, virtualWidth * scale, virtualHeight * scale);

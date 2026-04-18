@@ -1,3 +1,4 @@
+using Main.Effects;
 using Main.Gameplay;
 
 namespace Main.Core;
@@ -35,7 +36,10 @@ public class Game
         RenderingManager.LoadPostShader();
 
         AssetManager.Init();
+
         Camera = new(VirtualWidth, VirtualHeight);
+        LightingSystem.Init(VirtualWidth, VirtualHeight);
+        
         rlImGui.Setup(true);
 
         currentState = new MenuState();
@@ -45,6 +49,7 @@ public class Game
     {
         currentState?.Exit();
 
+        LightingSystem.Dispose();
         RenderingManager.UnloadPostShader();
         rlImGui.Shutdown();
         AssetManager.Dispose();
@@ -116,7 +121,7 @@ public class Game
                         else
                             PauseHandler.Pause("test");
                     }
-                    
+
                     ImGui.SeparatorText("Assets");
                     AssetManager.OnDrawImGui();
 

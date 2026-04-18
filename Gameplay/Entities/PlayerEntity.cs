@@ -1,10 +1,12 @@
 using Main.Core;
+using Main.Effects;
 
 namespace Main.Gameplay.Entities;
 
 public class PlayerEntity : CharacterEntity
 {
 	private Vector2 laserHit;
+	private Light lightSelf;
 
 	//basic soldier with movement and direction input for now
 	public override void Init(GameplayState gameplayState)
@@ -13,6 +15,7 @@ public class PlayerEntity : CharacterEntity
 
 		CurrentSpriteID = "soldier";
 		Game.Instance.Camera.Follow(Position);
+		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, Color.Gray, 30);
 	}
 
 	public override void Update(float dt, float udt)
@@ -25,15 +28,16 @@ public class PlayerEntity : CharacterEntity
 	public override void LateUpdate(float dt, float udt)
 	{
 		base.LateUpdate(dt, udt);
-		
+
 		float rotSpeed = 8;
 		FacingAngle = Raymath.LerpAngle(FacingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
 
 		var d = 0f;
 		gameplayState.GetManager<CollisionManager>().Linecast(Position, Position + (FacingDirection * 100), out d);
-			laserHit = Position + (FacingDirection * d);
+		laserHit = Position + (FacingDirection * d);
 
 		Game.Instance.Camera.Follow(Position, 3f);
+		lightSelf.Position = Position;
 	}
 
 	public override void Draw()
@@ -42,5 +46,12 @@ public class PlayerEntity : CharacterEntity
 
 		Raylib.DrawLineV(Position, laserHit, Color.Red);
 		Raylib.DrawCircleV(laserHit, 0.3f, Color.Red);
+	}
+
+	public override void Dispose()
+	{
+		base.Dispose();
+
+		LightingSystem.RemoveLight(lightSelf);
 	}
 }

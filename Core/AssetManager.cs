@@ -19,6 +19,7 @@ public class Sprite : IDisposable
 		var originNorm = origin ?? (Vector2.One * 0.5f);
 
 		//render everything as fixed pixels per unit as I don't want to make art that has mismatched pixel density anyway even if the assets are not pixel art
+		//i may be no artist, but I had exp in making pixel art and non-pixel art game assets and for me mismatched line art density is eyesore and amateur-level
 		var destW = ((float)Width / PIXELS_PER_UNIT) * scale;
 		var destH = ((float)Height / PIXELS_PER_UNIT) * scale;
 

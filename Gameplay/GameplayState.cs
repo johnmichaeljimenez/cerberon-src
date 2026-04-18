@@ -1,4 +1,5 @@
 using Main.Core;
+using Main.Effects;
 using Main.Gameplay.Entities;
 using Main.Gameplay.Managers;
 
@@ -19,6 +20,7 @@ public class GameplayState : IGameState
 		World.InitRegistry();
 		this.options = options;
 
+		LightingSystem.Clear();
 		AddManager<CollisionManager>();
 		AddManager<PlayerManager>();
 
@@ -50,6 +52,8 @@ public class GameplayState : IGameState
 		{
 			i.Value.Dispose();
 		}
+		
+		LightingSystem.Clear();
 	}
 
 	public void Update(float dt, float udt)
