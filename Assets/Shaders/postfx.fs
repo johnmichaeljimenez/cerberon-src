@@ -28,11 +28,14 @@ vec3 invert(vec3 col)
 }
 
 void main() {
-	vec4 texelColor = texture(texture0, fragTexCoord);
+    vec2 uv = fragTexCoord.xy;
+    uv *=  1.0 - uv.yx;
+    float vig = uv.x*uv.y * 15.0;
+    vig = pow(vig, 1.0);
+
+    vec3 screenColor = texture(texture0, fragTexCoord).rgb;
+	vec3 lightColor = texture(lightTex, fragTexCoord).rgb;
+    vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2)); //basic light
 	
-	vec4 lightColor = texture(lightTex, fragTexCoord);
-	lightColor.rgb *= 2;
-	lightColor.rgb = contrast(lightColor.rgb, 2);
-	
-	finalColor = texelColor * lightColor; //basic light
+	finalColor = vec4(texelColor * vig, 1);
 }

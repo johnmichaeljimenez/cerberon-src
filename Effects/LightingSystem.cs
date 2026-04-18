@@ -7,14 +7,20 @@ public class Light
 	public Sprite Sprite { get; set; }
 	public Vector2 Position { get; set; }
 	public Color Color { get; set; }
+	public float Rotation { get; set; }
+	public Vector2 Origin { get; set; }
 	public float Scale { get; set; }
 	public bool Enabled { get; set; }
 
-	public Light(Sprite sprite, Vector2 position, Color color, float scale = 1, bool enabled = true)
+	public Light(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null)
 	{
+		var org = origin ?? new(0.5f, 0.5f);
+
 		Sprite = sprite;
 		Position = position;
 		Color = color;
+		Rotation = rotation;
+		Origin = org;
 		Scale = scale;
 		Enabled = enabled;
 	}
@@ -30,11 +36,14 @@ public static class LightingSystem //simple additive lighting only, no shadows o
 	{
 		RenderTexture = Raylib.LoadRenderTexture(width, height);
 		Raylib.SetTextureFilter(RenderTexture.Texture, TextureFilter.Bilinear);
+
+		Raylib.SetTextureFilter(AssetManager.GetSprite("light").Texture, TextureFilter.Bilinear);
+		Raylib.SetTextureFilter(AssetManager.GetSprite("flashlight").Texture, TextureFilter.Bilinear);
 	}
 
-	public static Light AddLight(Sprite sprite, Vector2 position, Color color, float scale = 1, bool enabled = true)
+	public static Light AddLight(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null)
 	{
-		var light = new Light(sprite, position, color, scale, enabled);
+		var light = new Light(sprite, position, color, rotation, scale, enabled, origin);
 		lights.Add(light);
 
 		return light;
@@ -60,7 +69,7 @@ public static class LightingSystem //simple additive lighting only, no shadows o
 			if (!i.Enabled)
 				continue;
 
-			i.Sprite.Draw(i.Position, tint: i.Color, scale: i.Scale);
+			i.Sprite.Draw(i.Position, tint: i.Color, rotation: i.Rotation, origin: i.Origin, scale: i.Scale);
 		}
 
 		Raylib.EndBlendMode();
