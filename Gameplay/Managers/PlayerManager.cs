@@ -13,7 +13,9 @@ public class PlayerManager : BaseManager
 
 	public void SpawnPlayer(Vector2 position)
 	{
-		PlayerCharacter = gameplayState.CurrentWorld.SpawnEntity<PlayerEntity>();
-		PlayerCharacter.Position = position;
+		PlayerCharacter = gameplayState.CurrentWorld.SpawnEntity<PlayerEntity>((e) =>
+		{
+			e.Position = position;
+		});
 	}
 }

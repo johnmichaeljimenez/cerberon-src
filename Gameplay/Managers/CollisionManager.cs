@@ -12,7 +12,7 @@ public class Wall
 
 public class CollisionManager : BaseManager
 {
-	private readonly List<Wall> walls = new();
+	private readonly List<Wall> walls = new(); //static walls, the most dynamic it can do is to enable/disable, no real movable stuff
 
 	public CollisionManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -31,7 +31,7 @@ public class CollisionManager : BaseManager
 		walls.Add(AddWall(new Vector2(pos.X, pos.Y + size.Y), pos));
 	}
 
-	//do clockwise order when making polygons
+	//do clockwise order when making polygons to make them point outward, otherwise do it inward for maximum level boundaries
 	public Wall AddWall(Vector2 from, Vector2 to)
 	{
 		var wall = new Wall
@@ -78,7 +78,7 @@ public class CollisionManager : BaseManager
 		{
 			Vector2 d = proposed - w.Midpoint;
 
-			if (Vector2.Dot(w.Normal, d) > 0f)
+			if (Vector2.Dot(w.Normal, d) > 0f) //backface culling optimizes it and also ensures that it doesn't do collision checks on stray walls. 99% of walls must be enclosed as polygons (whether normal or inverted polygons).
 			{
 				Vector2 closest = GetClosestPointOnSegment(w.From, w.To, proposed);
 				Vector2 cv = closest - proposed;

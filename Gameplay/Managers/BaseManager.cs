@@ -7,7 +7,7 @@ public abstract class BaseManager : IDisposable
 	//so far I only think of:
 	// PlayerManager (so everyone can reference the player character)
 	// EventManager (ex. player got hit and HUD needs to be notified to update healthbar)
-	// CameraManager (bounds and framing, as main menu doesnt need those stuff)
+	// CameraManager (screenshake, bounds and framing, as main menu doesnt need those stuff)
 	// CollisionManager (which already exists)
 
 	protected GameplayState gameplayState { get; private set; }
@@ -22,7 +22,7 @@ public abstract class BaseManager : IDisposable
 
 	}
 
-	public virtual void Update(float dt)
+	public virtual void Update(float dt, float udt)
 	{
 
 	}

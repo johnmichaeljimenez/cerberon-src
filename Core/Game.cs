@@ -5,7 +5,7 @@ namespace Main.Core;
 public interface IGameState
 {
     void Enter();
-    void Update(float dt);
+    void Update(float dt, float udt);
     void Draw();
     void Exit();
     void DrawImGui();
@@ -32,6 +32,7 @@ public class Game
         Raylib.InitWindow(VirtualWidth, VirtualHeight, "Raylib-cs Letterbox");
         Raylib.MaximizeWindow();
         _target = Raylib.LoadRenderTexture(VirtualWidth, VirtualHeight);
+        RenderingManager.LoadPostShader();
 
         AssetManager.Init();
         Camera = new(VirtualWidth, VirtualHeight);
@@ -44,16 +45,17 @@ public class Game
     {
         currentState?.Exit();
 
+        RenderingManager.UnloadPostShader();
         rlImGui.Shutdown();
         AssetManager.Dispose();
         Raylib.UnloadRenderTexture(_target);
         Raylib.CloseWindow();
     }
 
-    private void Update(float dt, float scale, Vector2 offset)
+    private void Update(float dt, float udt, float scale, Vector2 offset)
     {
         InputManager.Update(scale, offset, Camera.Camera);
-        currentState.Update(dt);
+        currentState.Update(dt, udt);
 
         if (nextState != null)
         {
@@ -64,6 +66,7 @@ public class Game
         }
 
         Camera.Update(dt);
+        RenderingManager.Update();
     }
 
     public void GoToIngame()
@@ -85,7 +88,7 @@ public class Game
     {
         Raylib.BeginTextureMode(_target);
         {
-            Raylib.ClearBackground(Color.RayWhite);
+            Raylib.ClearBackground(Color.Gray);
 
             Raylib.BeginMode2D(Camera.Camera);
             currentState.Draw();
@@ -105,6 +108,15 @@ public class Game
                     ImGui.SeparatorText(currentState.GetType().Name);
                     currentState.DrawImGui();
 
+                    ImGui.Text($"Paused? {PauseHandler.IsPaused}");
+                    if (ImGui.Button("Pause"))
+                    {
+                        if (PauseHandler.IsPaused)
+                            PauseHandler.Unpause("test");
+                        else
+                            PauseHandler.Pause("test");
+                    }
+                    
                     ImGui.SeparatorText("Assets");
                     AssetManager.OnDrawImGui();
 
@@ -126,9 +138,9 @@ public class Game
             float scale = RenderingManager.GetScale(VirtualWidth, VirtualHeight);
             Vector2 offset = RenderingManager.GetOffset(VirtualWidth, VirtualHeight, scale);
 
-            Time.Update(fixedDt =>
+            Time.Update((fixedDt, unscaledFixedDt) =>
             {
-                Update(fixedDt, scale, offset);
+                Update(fixedDt, unscaledFixedDt, scale, offset);
             });
 
             Draw(scale, offset);

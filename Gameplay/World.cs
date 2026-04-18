@@ -5,12 +5,19 @@ using Newtonsoft.Json;
 
 namespace Main.Gameplay;
 
+public struct WorldSettings //struct so that it cannot be null
+{
+	public Vector2 PlayerSpawnPoint;
+}
+
 [Serializable]
 public class World : IDisposable //aka Level loader
 {
 	//similar to Quake's worldspawn
 	//World + other entities must be fully (at least 95%) serializable as JSON.
 	//I will not make my own level editor, because I can make my own private Unity editor script and import/export the said JSON there.
+
+	public WorldSettings WorldSettings = new();
 
 	[JsonProperty]
 	public List<BaseEntity> Entities { get; set; } = new();
@@ -40,6 +47,7 @@ public class World : IDisposable //aka Level loader
 	public void Init(GameplayState gameplayState)
 	{
 		this.gameplayState = gameplayState;
+		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
 
 		foreach (var i in Entities)
 		{
@@ -47,7 +55,7 @@ public class World : IDisposable //aka Level loader
 		}
 	}
 
-	public void Update(float dt)
+	public void Update(float dt, float udt)
 	{
 		foreach (var i in Entities)
 		{
@@ -60,9 +68,27 @@ public class World : IDisposable //aka Level loader
 			if (!i.IsActive)
 				continue;
 
-			i.Update(dt);
+			i.Update(dt, udt);
+		}
+	}
+
+	public void LateUpdate(float dt, float udt)
+	{
+		foreach (var i in Entities)
+		{
+			if (i.IsDestroyed)
+			{
+				toRemoveEntities.Add(i);
+				continue;
+			}
+
+			if (!i.IsActive)
+				continue;
+
+			i.LateUpdate(dt, udt);
 		}
 
+		//do the finalization on the last step of update+late update loop of the world
 		if (toAddEntities.Count > 0)
 		{
 			foreach (var i in toAddEntities)
@@ -110,12 +136,12 @@ public class World : IDisposable //aka Level loader
 		toRemoveEntities.Clear();
 	}
 
-	public T SpawnEntity<T>() where T : BaseEntity
+	public T SpawnEntity<T>(Action<T> onSpawn = null) where T : BaseEntity
 	{
-		return SpawnEntity<T>(typeof(T).Name);
+		return SpawnEntity<T>(typeof(T).Name, onSpawn);
 	}
 
-	public T SpawnEntity<T>(string objectTypeName) where T : BaseEntity
+	public T SpawnEntity<T>(string objectTypeName, Action<T> onSpawn = null) where T : BaseEntity
 	{
 		if (!entityRegistry.TryGetValue(objectTypeName, out Type? type) || type == null || !typeof(T).IsAssignableFrom(type))
 			throw new InvalidOperationException($"Unknown entity type: {objectTypeName}");
@@ -127,6 +153,7 @@ public class World : IDisposable //aka Level loader
 		obj.ID = _nextID;
 		_nextID++; //frequently spawned objects like bullets and particles will not be included in save serialization, and this ensures that IDs do not collide without slow checks
 
+		onSpawn?.Invoke(obj); //set custom data here before Init() triggers
 		obj.Init(gameplayState);
 
 		toAddEntities.Add(obj);
@@ -136,12 +163,6 @@ public class World : IDisposable //aka Level loader
 	public bool DespawnEntity(BaseEntity e)
 	{
 		return e.Despawn();
-	}
-
-	[OnDeserialized]
-	protected void OnDeserialized(StreamingContext _)
-	{
-		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
 	}
 
 	public void DrawDebug()
@@ -154,6 +175,15 @@ public class World : IDisposable //aka Level loader
 				continue;
 
 			i.DrawDebug();
+		}
+	}
+
+	public void DrawImGui()
+	{
+		ImGui.Text($"Entity count: {Entities.Count}");
+		foreach (var i in Entities)
+		{
+			ImGui.Text($"[#{i.ID}] {i.GetType().Name}  |  {i.Position}");
 		}
 	}
 }

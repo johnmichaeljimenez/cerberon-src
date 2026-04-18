@@ -2,9 +2,8 @@ using Main.Core;
 
 namespace Main.Gameplay.Entities;
 
-public class PlayerEntity : BaseEntity
+public class PlayerEntity : CharacterEntity
 {
-	private float facingAngle;
 	private Vector2 laserHit;
 
 	//basic soldier with movement and direction input for now
@@ -13,30 +12,35 @@ public class PlayerEntity : BaseEntity
 		base.Init(gameplayState);
 
 		CurrentSpriteID = "soldier";
+		Game.Instance.Camera.Follow(Position);
 	}
 
-	public override void Update(float dt)
+	public override void Update(float dt, float udt)
 	{
-		base.Update(dt);
+		base.Update(dt, udt);
 
-		var speed = 8f;
-		var rotSpeed = 8f;
-		var vel = InputManager.Movement * speed * dt;
-		gameplayState.GetManager<CollisionManager>().Move(Position, 1, ref vel); //super smooth and accurate collision detection and resolution
-		Position += vel;
+		velocity = InputManager.Movement * MovementSpeed;
+	}
 
-		facingAngle = Raymath.LerpAngle(facingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
+	public override void LateUpdate(float dt, float udt)
+	{
+		base.LateUpdate(dt, udt);
+		
+		float rotSpeed = 8;
+		FacingAngle = Raymath.LerpAngle(FacingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
+
+		var d = 0f;
+		gameplayState.GetManager<CollisionManager>().Linecast(Position, Position + (FacingDirection * 100), out d);
+			laserHit = Position + (FacingDirection * d);
 
 		Game.Instance.Camera.Follow(Position, 3f);
 	}
 
 	public override void Draw()
 	{
-		CurrentSprite.Draw(Position, rotation: facingAngle, origin: new Vector2(0.25f, 0.5f));
-	}
+		base.Draw();
 
-	public override void DrawDebug()
-	{
-		Raylib.DrawCircleLinesV(Position, 1, Color.Green);
+		Raylib.DrawLineV(Position, laserHit, Color.Red);
+		Raylib.DrawCircleV(laserHit, 0.3f, Color.Red);
 	}
 }

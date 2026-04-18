@@ -39,7 +39,7 @@ public class GameplayState : IGameState
 		CurrentWorld = SampleWorld.GetSampleWorldData(); //while I am too lazy to make a JSON
 		CurrentWorld.Init(this);
 
-		GetManager<PlayerManager>().SpawnPlayer(Vector2.Zero);
+		GetManager<PlayerManager>().SpawnPlayer(CurrentWorld.WorldSettings.PlayerSpawnPoint);
 	}
 
 	public void Exit()
@@ -52,14 +52,16 @@ public class GameplayState : IGameState
 		}
 	}
 
-	public void Update(float dt)
+	public void Update(float dt, float udt)
 	{
-		CurrentWorld.Update(dt);
+		CurrentWorld.Update(dt, udt);
 
 		foreach (var i in managers)
 		{
-			i.Value.Update(dt);
+			i.Value.Update(dt, udt);
 		}
+		
+		CurrentWorld.LateUpdate(dt, udt);
 	}
 
 	public void Draw()
@@ -84,6 +86,8 @@ public class GameplayState : IGameState
 			Game.Instance.GoToMenu();
 
 		ImGui.Checkbox("Draw Debug", ref drawDebug);
+
+		CurrentWorld.DrawImGui();
 
 		foreach (var i in managers)
 		{

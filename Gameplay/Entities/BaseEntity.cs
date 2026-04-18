@@ -41,7 +41,12 @@ public abstract class BaseEntity : IDisposable
 		this.gameplayState = gameplayState;
 	}
 
-	public virtual void Update(float dt)
+	public virtual void Update(float dt, float udt)
+	{
+
+	}
+
+	public virtual void LateUpdate(float dt, float udt)
 	{
 
 	}

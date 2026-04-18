@@ -12,7 +12,7 @@ public class MenuState : IGameState
 
 	}
 
-	public void Update(float dt)
+	public void Update(float dt, float udt)
 	{
 
 	}
