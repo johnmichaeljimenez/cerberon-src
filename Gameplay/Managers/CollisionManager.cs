@@ -55,16 +55,24 @@ public class CollisionManager : BaseManager
 		bodies.Remove(body);
 	}
 
-	public void AddWalls(Vector2 pos, Vector2 size, List<Wall> walls)
+	public void AddWalls(Vector2 pos, Vector2 size, List<Wall> walls, bool invert = false)
 	{
+		Wall Add(Vector2 a, Vector2 b) => invert ? AddWall(b, a) : AddWall(a, b);
+
 		// Top wall
-		walls.Add(AddWall(pos, new Vector2(pos.X + size.X, pos.Y)));
+		walls.Add(Add(pos, new Vector2(pos.X + size.X, pos.Y)));
 		// Right wall
-		walls.Add(AddWall(new Vector2(pos.X + size.X, pos.Y), new Vector2(pos.X + size.X, pos.Y + size.Y)));
+		walls.Add(Add(
+			new Vector2(pos.X + size.X, pos.Y),
+			new Vector2(pos.X + size.X, pos.Y + size.Y)));
 		// Bottom wall
-		walls.Add(AddWall(new Vector2(pos.X + size.X, pos.Y + size.Y), new Vector2(pos.X, pos.Y + size.Y)));
+		walls.Add(Add(
+			new Vector2(pos.X + size.X, pos.Y + size.Y),
+			new Vector2(pos.X, pos.Y + size.Y)));
 		// Left wall
-		walls.Add(AddWall(new Vector2(pos.X, pos.Y + size.Y), pos));
+		walls.Add(Add(
+			new Vector2(pos.X, pos.Y + size.Y),
+			pos));
 	}
 
 	//do clockwise order when making polygons to make them point outward, otherwise do it inward for maximum level boundaries

@@ -21,12 +21,17 @@ public static class Utils
 		});
 	}
 
-	public static float ToDirection(this Vector2 from, Vector2 to)
+	public static float ToDirection(this Vector2 delta)
 	{
-		var delta = to - from;
 		var angleRadians = (float)Math.Atan2(delta.Y, delta.X);
 		var angleDegrees = angleRadians * 180 / (float)Math.PI;
 		return (angleDegrees + 360) % 360;
+	}
+
+	public static float ToDirection(this Vector2 from, Vector2 to)
+	{
+		var delta = to - from;
+		return ToDirection(delta);
 	}
 
 	public static void DrawLineEx(Vector2 from, Vector2 to, Vector2 mid, Vector2 normal, Color color)

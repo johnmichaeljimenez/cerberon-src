@@ -5,13 +5,15 @@ using Main.Gameplay.Entities;
 
 public static class SampleWorld
 {
-    public static World GetSampleWorldData()
+    public static World GetSampleWorldData() //i am too lazy to make a JSON level right now, I'll go back on it once I have a proper minimum game loop
     {
         var world = new World()
         {
             WorldSettings = new()
             {
-                PlayerSpawnPoint = new(10, -15) // +Y = downward
+                PlayerSpawnPoint = new(10, -15), // +Y = downward
+                WorldSize = new(120, 120),
+                AmbientColor = new(40, 40, 80)
             }
         };
 
@@ -28,9 +30,9 @@ public static class SampleWorld
             Size = new(15, 6)
         });
 
-        world.Entities.Add(new ZombieEntity()
+        world.Entities.Add(new ZombieSpawner()
         {
-            Position = new(-10, 10),
+            Position = new(15, -20),
             FacingAngle = 90
         });
 

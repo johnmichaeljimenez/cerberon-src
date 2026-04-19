@@ -146,7 +146,7 @@ public class Game
             float scale = RenderingManager.GetScale(VirtualWidth, VirtualHeight);
             Vector2 offset = RenderingManager.GetOffset(VirtualWidth, VirtualHeight, scale);
 
-            InputManager.Update(scale, offset, Camera.Camera); //press events are not captured reliably on 60hz loop
+            InputManager.Update(scale, offset, Camera.Camera); //press events are not captured reliably on 60hz loop, that's why it's here
             Time.Update((fixedDt, unscaledFixedDt) =>
             {
                 Update(fixedDt, unscaledFixedDt, scale, offset);

@@ -39,7 +39,7 @@ public static class InputManager
         Movement = (dir.X != 0 || dir.Y != 0) ? Raymath.Vector2Normalize(dir) : dir;
 
         ActionDown = Raylib.IsMouseButtonDown(MouseButton.Left);
-        ActionJustPressed |= Raylib.IsMouseButtonPressed(MouseButton.Left); //i don't know what is this but it made the render loop -> fixed loop synchronization work
+        ActionJustPressed |= Raylib.IsMouseButtonPressed(MouseButton.Left); //this "latch" mechanism made the render loop -> fixed loop synchronization work
 
         FlashlightJustPressed |= Raylib.IsKeyPressed(KeyboardKey.F);
         Weapon1JustPressed |= Raylib.IsKeyPressed(KeyboardKey.One);

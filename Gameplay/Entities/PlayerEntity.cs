@@ -48,7 +48,7 @@ public class Gun
 	}
 }
 
-public class PlayerEntity : CharacterEntity
+public class PlayerEntity : CharacterEntity //put all of them here for now, component architecture is a tomorrow's problem if i can mow down zombies right now with this code
 {
 	public readonly List<Gun> guns = new() //total hardcoded for now
 	{
@@ -115,7 +115,7 @@ public class PlayerEntity : CharacterEntity
 				currentGun.DoReload();
 		}
 
-		if (fireTimer <= 0 && reloadTimer <= 0) //temporary if-else chain for now
+		if (fireTimer <= 0 && reloadTimer <= 0) //temporary if-else chain for now (FSMs are not needed yet)
 		{
 			if (InputManager.Weapon1JustPressed)
 			{

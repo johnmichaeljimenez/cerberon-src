@@ -20,7 +20,7 @@ public class Sprite : IDisposable
 
 		//render everything as fixed pixels per unit as I don't want to make art that has mismatched pixel density anyway even if the assets are not pixel art
 		//i may be no artist, but I had exp in making pixel art and non-pixel art game assets and for me mismatched line art density is eyesore and amateur-level
-		var destW = ((float)Width / PIXELS_PER_UNIT) * scale;
+		var destW = ((float)Width / PIXELS_PER_UNIT) * scale; //TODO: precalc on sprite load
 		var destH = ((float)Height / PIXELS_PER_UNIT) * scale;
 
 		var originPix = new Vector2(originNorm.X * destW, originNorm.Y * destH);
@@ -46,7 +46,7 @@ public static class AssetManager
 
 	//load everything in Assets for now regardless of where level they will be used. later I'll add an Update() function that stores the pending asset paths in a queue then timeslice them via Game's Update loop (true Raylib frames loop).
 	//no multithreading bs as I need main thread to load textures, so I'll just do "load 10 png this frame then do the remaining 10 on next frame". good for loading screens too
-	//my assets will (and should) not reach ~100mb anyway. and i believe that in the games that I will make, I will not exceed 300 sprites in a single view (even if identical/shared sprites).
+	//my assets will (and should) not reach ~100mb anyway. and i believe that in the games that I will make, I will not exceed 300 sprites in a single camera view (even if identical/shared sprites).
 	//no sprite atlas support as I don't need that and I am too lazy to make one (there's no real reliable way to make one nowadays that are engine-agnostic without manual work), but I know the REAL benefits of it from my work experience
 
 	public static void Init()

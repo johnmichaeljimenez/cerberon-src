@@ -29,12 +29,14 @@ public class Light
 public static class LightingSystem //simple additive lighting only, no shadows or any fancy stuff for now
 {
 	public static RenderTexture2D RenderTexture { get; private set; }
+	public static Color AmbientLightColor { get; set; }
+	public const float SCALE = 2.0f;
 
 	private static readonly List<Light> lights = new();
 
 	public static void Init(int width, int height)
 	{
-		RenderTexture = Raylib.LoadRenderTexture(width, height);
+		RenderTexture = Raylib.LoadRenderTexture((int)(width / SCALE), (int)(height / SCALE));
 		Raylib.SetTextureFilter(RenderTexture.Texture, TextureFilter.Bilinear);
 
 		Raylib.SetTextureFilter(AssetManager.GetSprite("light").Texture, TextureFilter.Bilinear);
@@ -59,10 +61,14 @@ public static class LightingSystem //simple additive lighting only, no shadows o
 		if (lights.Count == 0)
 			return;
 
+		var cam = Game.Instance.Camera.Camera;
+		cam.Offset = new Vector2(RenderTexture.Texture.Width, RenderTexture.Texture.Height) / 2f;
+		cam.Zoom /= SCALE; //optimization and it ironically makes the lighting look better (non-HD means players fill the gaps by their imagination)
+
 		Raylib.BeginTextureMode(RenderTexture);
-		Raylib.BeginMode2D(Game.Instance.Camera.Camera);
+		Raylib.BeginMode2D(cam);
 		Raylib.BeginBlendMode(BlendMode.Additive);
-		Raylib.ClearBackground(Color.Black);
+		Raylib.ClearBackground(AmbientLightColor);
 
 		foreach (var i in lights)
 		{

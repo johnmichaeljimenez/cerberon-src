@@ -31,7 +31,7 @@ void main() {
     vec2 uv = fragTexCoord.xy;
     uv *=  1.0 - uv.yx;
     float vig = uv.x*uv.y * 15.0;
-    vig = pow(vig, 1.0);
+    vig = pow(vig, 1.1);
 
     vec3 screenColor = texture(texture0, fragTexCoord).rgb;
 	vec3 lightColor = texture(lightTex, fragTexCoord).rgb;

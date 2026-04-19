@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using Main.Core;
+using Main.Effects;
 using Main.Gameplay.Entities;
 using Newtonsoft.Json;
 
@@ -9,6 +10,8 @@ namespace Main.Gameplay;
 public struct WorldSettings //struct so that it cannot be null
 {
 	public Vector2 PlayerSpawnPoint;
+	public Color AmbientColor;
+	public Vector2 WorldSize; //intentionally closed-space world
 }
 
 [Serializable]
@@ -37,6 +40,8 @@ public class World : IDisposable //aka Level loader
 	[JsonIgnore]
 	protected GameplayState gameplayState { get; private set; }
 
+	private readonly List<Wall> worldBounds = new();
+
 	private int _nextID;
 	public static void InitRegistry()
 	{
@@ -58,6 +63,9 @@ public class World : IDisposable //aka Level loader
 			OnAdd(i);
 			i.Init(gameplayState);
 		}
+
+		gameplayState.GetManager<CollisionManager>().AddWalls(-WorldSettings.WorldSize * 0.5f, WorldSettings.WorldSize, worldBounds, true);
+		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
 	}
 
 	public void Update(float dt, float udt)
@@ -130,6 +138,11 @@ public class World : IDisposable //aka Level loader
 
 	public void Dispose()
 	{
+		foreach (var i in worldBounds)
+		{
+			gameplayState.GetManager<CollisionManager>().RemoveWall(i);
+		}
+
 		DisposeAllEntities();
 	}
 
@@ -145,7 +158,7 @@ public class World : IDisposable //aka Level loader
 
 	public T SpawnEntity<T>(Action<T> onSpawn = null) where T : BaseEntity
 	{
-		return SpawnEntity<T>(typeof(T).Name, onSpawn);
+		return SpawnEntity(typeof(T).Name, onSpawn);
 	}
 
 	public T SpawnEntity<T>(string objectTypeName, Action<T> onSpawn = null) where T : BaseEntity
@@ -183,6 +196,11 @@ public class World : IDisposable //aka Level loader
 
 			i.DrawDebug();
 		}
+
+		foreach (var i in worldBounds)
+		{
+			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Colors.RED);
+		}
 	}
 
 	public void DrawImGui()
@@ -196,7 +214,7 @@ public class World : IDisposable //aka Level loader
 
 	private void OnAdd(BaseEntity e)
 	{
-		if (e is CharacterEntity c)
+		if (e is CharacterEntity c) //TODO: maybe make a custom list class that has events on add and remove for consistency
 			CharacterEntities.Add(c);
 	}
 

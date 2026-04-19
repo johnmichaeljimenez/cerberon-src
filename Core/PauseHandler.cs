@@ -3,7 +3,7 @@ namespace Main.Core;
 public static class PauseHandler
 {
 	public static bool IsPaused { get; private set; }
-	private static readonly HashSet<string> pauseList = new();
+	private static readonly HashSet<string> pauseList = new(); //used not only for pause menu but also for ex. dialogues, inventory, or even millisecond hitstops during combat
 
 	public static void Pause(string id)
 	{

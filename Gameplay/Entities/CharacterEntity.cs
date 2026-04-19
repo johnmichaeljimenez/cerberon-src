@@ -13,11 +13,11 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	[JsonIgnore]
 	public virtual Teams Team => Teams.Player;
 	[JsonProperty]
-	public float MovementSpeed { get; private set; } = 8.0f;
+	public float MovementSpeed { get; protected set; } = 8.0f;
 	[JsonProperty]
-	public float Radius { get; private set; } = 1.0f;
+	public float Radius { get; protected set; } = 1.0f;
 	[JsonProperty]
-	public int MaxHP { get; private set; } = 100;
+	public int MaxHP { get; protected set; } = 100;
 
 	[JsonIgnore]
 	public float FacingAngle { get; set; }
