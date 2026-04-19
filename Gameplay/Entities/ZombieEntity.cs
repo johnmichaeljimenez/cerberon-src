@@ -10,4 +10,11 @@ public class ZombieEntity : CharacterEntity //TODO: add character-character coll
 
 		CurrentSpriteID = "soldier";
 	}
+
+	protected override void OnDeath()
+	{
+		base.OnDeath();
+
+		Despawn();
+	}
 }

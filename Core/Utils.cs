@@ -48,6 +48,8 @@ public static class Colors
 	public static readonly Color RED = new Color(255, 0, 0);
 	public static readonly Color GREEN = new Color(0, 255, 0);
 	public static readonly Color BLUE = new Color(0, 0, 255);
+	public static readonly Color WHITE = new Color(255, 255, 255);
+	public static readonly Color YELLOW = new Color(255, 255, 0);
 
 	public static Color Multiply(this Color c, float r = 1.0f, float g = 1.0f, float b = 1.0f)
 	{

@@ -1,5 +1,6 @@
 namespace Main.Core;
 
+//i don't care about rebinding for now. and if I ever care of it, at least I just need to fix this script and worry about it in far future instead
 public static class InputManager
 {
     const float DEADZONE = 0.15f;
@@ -7,9 +8,15 @@ public static class InputManager
     public static bool HasGamepad => Raylib.IsGamepadAvailable(0);
     public static Vector2 MousePosition { get; private set; }
     public static Vector2 MouseWorldPosition { get; private set; }
-    public static Vector2 Movement { get; private set; }
 
-    internal static void Update(float scale, Vector2 offset, Camera2D camera)
+    public static Vector2 Movement { get; private set; }
+    public static bool ActionDown { get; private set; }
+    public static bool ActionJustPressed { get; private set; }
+    public static bool FlashlightJustPressed { get; private set; }
+    public static bool Weapon1JustPressed { get; private set; }
+    public static bool Weapon2JustPressed { get; private set; }
+
+    public static void Update(float scale, Vector2 offset, Camera2D camera)
     {
         Vector2 rawPos = Raylib.GetMousePosition();
         MousePosition = (rawPos - offset) / scale;
@@ -29,11 +36,24 @@ public static class InputManager
         };
 
         Movement = (dir.X != 0 || dir.Y != 0) ? Raymath.Vector2Normalize(dir) : dir;
+
+        ActionDown = Raylib.IsMouseButtonDown(MouseButton.Left);
+        ActionJustPressed |= Raylib.IsMouseButtonPressed(MouseButton.Left); //i don't know what is this but it made the render loop -> fixed loop synchronization work
+
+        FlashlightJustPressed |= Raylib.IsKeyPressed(KeyboardKey.F);
+        Weapon1JustPressed |= Raylib.IsKeyPressed(KeyboardKey.One);
+        Weapon2JustPressed |= Raylib.IsKeyPressed(KeyboardKey.Two);
     }
 
-    //i don't care about rebinding for now. and if I ever care of it, at least I just need to fix this script and worry about it in far future instead
-    public static bool IsKeyDown(KeyboardKey key) => Raylib.IsKeyDown(key);
-    public static bool IsKeyPressed(KeyboardKey key) => Raylib.IsKeyPressed(key);
+    public static void LateUpdate()
+    {
+        //consume all pending active inputs here
 
-    public static bool IsMouseButtonDown(MouseButton button) => Raylib.IsMouseButtonDown(button);
+        ActionJustPressed = false;
+        FlashlightJustPressed = false;
+        Weapon1JustPressed = false;
+        Weapon2JustPressed = false;
+    }
+
+    public static bool IsKeyDown(KeyboardKey key) => Raylib.IsKeyDown(key);
 }

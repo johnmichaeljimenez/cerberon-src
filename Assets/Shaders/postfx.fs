@@ -37,7 +37,7 @@ void main() {
 	vec3 lightColor = texture(lightTex, fragTexCoord).rgb;
 	lightColor = contrast(lightColor, 1.1);
 	
-    vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2)); //basic light
+    vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2)); //basic light with intentional overblown lights
 	
 	finalColor = vec4(texelColor * vig, 1);
 }

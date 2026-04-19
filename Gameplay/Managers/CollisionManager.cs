@@ -1,4 +1,5 @@
 using Main.Gameplay;
+using Main.Gameplay.Entities;
 using Main.Gameplay.Managers;
 
 public class Wall
@@ -23,15 +24,35 @@ public class CircleBody
 {
 	public Vector2 Position;
 	public float Radius;
+	public BaseEntity SourceEntity;
 }
 
 public class CollisionManager : BaseManager
 {
 	private readonly List<Wall> walls = new(); //static walls, the most dynamic it can do is to enable/disable, no real movable stuff
+	private readonly List<CircleBody> bodies = new();
 
 	public CollisionManager(GameplayState gameplayState) : base(gameplayState)
 	{
 
+	}
+
+	public CircleBody AddBody(Vector2 pos, float radius, BaseEntity sourceEntity)
+	{
+		var body = new CircleBody()
+		{
+			Position = pos,
+			Radius = radius,
+			SourceEntity = sourceEntity
+		};
+
+		bodies.Add(body);
+		return body;
+	}
+
+	public void RemoveBody(CircleBody body)
+	{
+		bodies.Remove(body);
 	}
 
 	public void AddWalls(Vector2 pos, Vector2 size, List<Wall> walls)
@@ -112,12 +133,13 @@ public class CollisionManager : BaseManager
 		return collided;
 	}
 
-	public bool Move(CircleBody body, IEnumerable<CircleBody> otherBodies, ref Vector2 velocity)
+	//TODO: merge with Move() above
+	public bool MoveRepelBody(CircleBody body, ref Vector2 velocity)
 	{
 		Vector2 proposed = body.Position + velocity;
 		bool collided = false;
 
-		foreach (var other in otherBodies)
+		foreach (var other in bodies)
 		{
 			if (body == other) continue;
 
@@ -140,7 +162,7 @@ public class CollisionManager : BaseManager
 		return collided;
 	}
 
-	public bool Linecast(Vector2 from, Vector2 to, out LinecastHit hitInfo, CircleBody fromBody = null, IEnumerable<CircleBody> bodies = null)
+	public bool Linecast(Vector2 from, Vector2 to, out LinecastHit hitInfo, CircleBody fromBody = null)
 	{
 		hitInfo = new LinecastHit
 		{
@@ -155,12 +177,11 @@ public class CollisionManager : BaseManager
 		}
 
 		float totalLength = MathF.Sqrt(totalLengthSq);
-		Vector2 rayDir = (to - from) / totalLength;  // unit vector from -> to
+		Vector2 rayDir = (to - from) / totalLength;
 
 		float minDistSq = float.MaxValue;
 		bool hasHit = false;
 
-		// Walls - keeping your exact backface culling check (dir = from - to)
 		Vector2 dirForCulling = from - to;
 		foreach (var w in walls)
 		{
@@ -182,7 +203,6 @@ public class CollisionManager : BaseManager
 			}
 		}
 
-		// Circle bodies (skips self, finds closest intersection along the segment)
 		if (bodies != null)
 		{
 			foreach (var other in bodies)
@@ -190,7 +210,7 @@ public class CollisionManager : BaseManager
 				if (other == null || other == fromBody) continue;
 
 				Vector2 oc = from - other.Position;
-				float a = 1f; // rayDir is normalized
+				float a = 1f;
 				float b = 2f * Vector2.Dot(rayDir, oc);
 				float c = Vector2.Dot(oc, oc) - other.Radius * other.Radius;
 
@@ -278,5 +298,22 @@ public class CollisionManager : BaseManager
 
 		return x >= minX - 0.0001f && x <= maxX + 0.0001f &&
 			   y >= minY - 0.0001f && y <= maxY + 0.0001f;
+	}
+
+	public override void DrawImGui()
+	{
+		base.DrawImGui();
+
+		ImGui.SeparatorText("Collision");
+		ImGui.Text($"Wall count: {walls.Count}");
+		ImGui.Text($"Body count: {bodies.Count}");
+	}
+
+	public override void Dispose()
+	{
+		base.Dispose();
+
+		walls.Clear();
+		bodies.Clear();
 	}
 }

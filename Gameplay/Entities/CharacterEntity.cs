@@ -40,11 +40,14 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		base.Init(gameplayState);
 
 		HP = MaxHP;
-		CollisionBody = new()
-		{
-			Position = Position,
-			Radius = Radius
-		};
+		CollisionBody = gameplayState.GetManager<CollisionManager>().AddBody(Position, Radius, this);
+	}
+
+	public override void Dispose()
+	{
+		base.Dispose();
+
+		gameplayState.GetManager<CollisionManager>().RemoveBody(CollisionBody);
 	}
 
 	public override void LateUpdate(float dt, float udt)
@@ -56,7 +59,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 			var cm = gameplayState.GetManager<CollisionManager>();
 			var vel = velocity * dt;
 			cm.Move(CollisionBody, ref vel); //super smooth and accurate collision detection and resolution
-			cm.Move(CollisionBody, gameplayState.CurrentWorld.CharacterEntities.Select(p => p.CollisionBody), ref vel); //Select is temporary
+			cm.MoveRepelBody(CollisionBody, ref vel);
 			Position += vel;
 			CollisionBody.Position = Position;
 		}
@@ -79,6 +82,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 			return;
 
 		HP -= amt;
+		Log.Send($"HIT: {amt} -> {HP}/{MaxHP}");
 		if (HP <= 0)
 		{
 			HP = 0;

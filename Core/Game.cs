@@ -39,7 +39,7 @@ public class Game
 
         Camera = new(VirtualWidth, VirtualHeight);
         LightingSystem.Init(VirtualWidth, VirtualHeight);
-        
+
         rlImGui.Setup(true);
 
         currentState = new MenuState();
@@ -59,7 +59,6 @@ public class Game
 
     private void Update(float dt, float udt, float scale, Vector2 offset)
     {
-        InputManager.Update(scale, offset, Camera.Camera);
         currentState.Update(dt, udt);
 
         if (nextState != null)
@@ -72,6 +71,8 @@ public class Game
 
         Camera.Update(dt);
         RenderingManager.Update();
+
+        InputManager.LateUpdate();
     }
 
     public void GoToIngame()
@@ -108,7 +109,9 @@ public class Game
 
             rlImGui.Begin();
             {
-                ImGui.Begin("Debug");
+                Log.DrawImGui();
+
+                if (ImGui.Begin("Debug"))
                 {
                     ImGui.SeparatorText(currentState.GetType().Name);
                     currentState.DrawImGui();
@@ -126,8 +129,8 @@ public class Game
                     AssetManager.OnDrawImGui();
 
                     ImGui.SliderFloat("Zoom", ref Camera.Camera.Zoom, 0.01f, Sprite.PIXELS_PER_UNIT);
+                    ImGui.End();
                 }
-                ImGui.End();
             }
             rlImGui.End();
 
@@ -143,6 +146,7 @@ public class Game
             float scale = RenderingManager.GetScale(VirtualWidth, VirtualHeight);
             Vector2 offset = RenderingManager.GetOffset(VirtualWidth, VirtualHeight, scale);
 
+            InputManager.Update(scale, offset, Camera.Camera); //press events are not captured reliably on 60hz loop
             Time.Update((fixedDt, unscaledFixedDt) =>
             {
                 Update(fixedDt, unscaledFixedDt, scale, offset);
