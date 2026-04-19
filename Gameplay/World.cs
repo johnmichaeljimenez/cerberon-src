@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.Serialization;
+using Main.Core;
 using Main.Gameplay.Entities;
 using Newtonsoft.Json;
 
@@ -20,7 +21,10 @@ public class World : IDisposable //aka Level loader
 	public WorldSettings WorldSettings = new();
 
 	[JsonProperty]
-	public List<BaseEntity> Entities { get; set; } = new();
+	public List<BaseEntity> Entities { get; private set; } = new();
+
+	[JsonProperty]
+	public List<CharacterEntity> CharacterEntities { get; private set; } = new();
 
 	[JsonIgnore]
 	private readonly List<BaseEntity> toAddEntities = new();
@@ -51,6 +55,7 @@ public class World : IDisposable //aka Level loader
 
 		foreach (var i in Entities)
 		{
+			OnAdd(i);
 			i.Init(gameplayState);
 		}
 	}
@@ -94,6 +99,7 @@ public class World : IDisposable //aka Level loader
 			foreach (var i in toAddEntities)
 			{
 				Entities.Add(i);
+				OnAdd(i);
 			}
 
 			toAddEntities.Clear();
@@ -104,6 +110,7 @@ public class World : IDisposable //aka Level loader
 			foreach (var i in toRemoveEntities)
 			{
 				Entities.Remove(i);
+				OnRemove(i);
 			}
 
 			toRemoveEntities.Clear();
@@ -167,7 +174,7 @@ public class World : IDisposable //aka Level loader
 
 	public void DrawDebug()
 	{
-		Raylib.DrawCircle(0, 0, 1, Color.Blue); //world origin sample
+		Raylib.DrawCircle(0, 0, 1, Colors.BLUE); //world origin sample
 
 		foreach (var i in Entities)
 		{
@@ -185,5 +192,17 @@ public class World : IDisposable //aka Level loader
 		{
 			ImGui.Text($"[#{i.ID}] {i.GetType().Name}  |  {i.Position}");
 		}
+	}
+
+	private void OnAdd(BaseEntity e)
+	{
+		if (e is CharacterEntity c)
+			CharacterEntities.Add(c);
+	}
+
+	private void OnRemove(BaseEntity e)
+	{
+		if (e is CharacterEntity c)
+			CharacterEntities.Remove(c);
 	}
 }

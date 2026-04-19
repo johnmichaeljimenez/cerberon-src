@@ -22,7 +22,7 @@ public class MenuState : IGameState
 		AssetManager.GetSprite("birdie").Draw(new System.Numerics.Vector2(0, 0));
 
 		//reference point check (to see that camera and birdie is at 0,0 with proper origin)
-		Raylib.DrawCircle(0, 0, 1, Color.Red);
+		Raylib.DrawCircle(0, 0, 1, Colors.RED);
 	}
 
 	public void DrawImGui()

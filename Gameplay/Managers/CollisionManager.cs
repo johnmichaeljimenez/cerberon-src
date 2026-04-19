@@ -10,6 +10,21 @@ public class Wall
 	public float Length { get; set; }
 }
 
+public struct LinecastHit
+{
+	public Wall Wall;
+	public CircleBody Body;
+	public float Distance;
+	public Vector2 From;
+	public Vector2 HitPosition;
+}
+
+public class CircleBody
+{
+	public Vector2 Position;
+	public float Radius;
+}
+
 public class CollisionManager : BaseManager
 {
 	private readonly List<Wall> walls = new(); //static walls, the most dynamic it can do is to enable/disable, no real movable stuff
@@ -69,9 +84,9 @@ public class CollisionManager : BaseManager
 	/// if (collision.Move(pos, myRadius, ref delta))
 	///     // optional: handle hit event
 	/// myPosition += delta;
-	public bool Move(Vector2 position, float radius, ref Vector2 velocity)
+	public bool Move(CircleBody body, ref Vector2 velocity)
 	{
-		Vector2 proposed = position + velocity;
+		Vector2 proposed = body.Position + velocity;
 		bool collided = false;
 
 		foreach (var w in walls)
@@ -84,38 +99,72 @@ public class CollisionManager : BaseManager
 				Vector2 cv = closest - proposed;
 				float cd = cv.Length();
 
-				if (cd <= radius && cd > 0.00001f)
+				if (cd <= body.Radius && cd > 0.00001f)
 				{
 					Vector2 pushDir = Vector2.Normalize(cv);
-					proposed += pushDir * (cd - radius);
+					proposed += pushDir * (cd - body.Radius);
 					collided = true;
 				}
 			}
 		}
 
-		velocity = proposed - position;
+		velocity = proposed - body.Position;
 		return collided;
 	}
 
-	public bool Linecast(Vector2 from, Vector2 to, out float distance)
+	public bool Move(CircleBody body, IEnumerable<CircleBody> otherBodies, ref Vector2 velocity)
 	{
-		distance = Vector2.Distance(from, to);
-		bool hit = false;
-		float minDistSq = float.MaxValue;
+		Vector2 proposed = body.Position + velocity;
+		bool collided = false;
 
-		Vector2 dir = from - to;
-		float lenSq = dir.LengthSquared();
-		if (lenSq < 0.0001f)
+		foreach (var other in otherBodies)
 		{
-			distance = 0f;
+			if (body == other) continue;
+
+			Vector2 delta = proposed - other.Position;
+			float distSq = delta.LengthSquared();
+			float minDistance = body.Radius + other.Radius;
+
+			if (distSq < minDistance * minDistance && distSq > 0.00001f)
+			{
+				float dist = MathF.Sqrt(distSq);
+				Vector2 pushDir = delta / dist;
+
+				proposed = other.Position + pushDir * minDistance;
+				collided = true;
+			}
+		}
+
+		velocity = proposed - body.Position;
+
+		return collided;
+	}
+
+	public bool Linecast(Vector2 from, Vector2 to, out LinecastHit hitInfo, CircleBody fromBody = null, IEnumerable<CircleBody> bodies = null)
+	{
+		hitInfo = new LinecastHit
+		{
+			From = from
+		};
+
+		float totalLengthSq = Vector2.DistanceSquared(from, to);
+		if (totalLengthSq < 0.0001f)
+		{
+			hitInfo.Distance = 0f;
 			return false;
 		}
 
-		dir = Vector2.Normalize(dir);
+		float totalLength = MathF.Sqrt(totalLengthSq);
+		Vector2 rayDir = (to - from) / totalLength;  // unit vector from -> to
 
-		foreach (var w in walls) //optimization like spatial hashing is a future me's problem (I have full exp on that)
+		float minDistSq = float.MaxValue;
+		bool hasHit = false;
+
+		// Walls - keeping your exact backface culling check (dir = from - to)
+		Vector2 dirForCulling = from - to;
+		foreach (var w in walls)
 		{
-			if (Vector2.Dot(w.Normal, dir) > 0f)
+			if (Vector2.Dot(w.Normal, dirForCulling) > 0f)
 			{
 				if (TryGetLineIntersection(from, to, w.From, w.To, out Vector2 intersection))
 				{
@@ -123,18 +172,62 @@ public class CollisionManager : BaseManager
 					if (distSq < minDistSq)
 					{
 						minDistSq = distSq;
-						hit = true;
+						hasHit = true;
+						hitInfo.Wall = w;
+						hitInfo.Body = null;
+						hitInfo.HitPosition = intersection;
+						hitInfo.Distance = MathF.Sqrt(distSq);
 					}
 				}
 			}
 		}
 
-		if (hit)
+		// Circle bodies (skips self, finds closest intersection along the segment)
+		if (bodies != null)
 		{
-			distance = MathF.Sqrt(minDistSq);
-			return true;
+			foreach (var other in bodies)
+			{
+				if (other == null || other == fromBody) continue;
+
+				Vector2 oc = from - other.Position;
+				float a = 1f; // rayDir is normalized
+				float b = 2f * Vector2.Dot(rayDir, oc);
+				float c = Vector2.Dot(oc, oc) - other.Radius * other.Radius;
+
+				float discriminant = b * b - 4 * a * c;
+				if (discriminant >= 0f)
+				{
+					float sqrtDisc = MathF.Sqrt(discriminant);
+					float t1 = (-b - sqrtDisc) / (2 * a);
+					float t2 = (-b + sqrtDisc) / (2 * a);
+
+					float t = float.MaxValue;
+					if (t1 >= 0f && t1 <= totalLength) t = t1;
+					if (t2 >= 0f && t2 <= totalLength && t2 < t) t = t2;
+
+					if (t < float.MaxValue)
+					{
+						float distSqThis = t * t;
+						if (distSqThis < minDistSq)
+						{
+							minDistSq = distSqThis;
+							hasHit = true;
+							Vector2 hitPos = from + rayDir * t;
+							hitInfo.Wall = null;
+							hitInfo.Body = other;
+							hitInfo.HitPosition = hitPos;
+							hitInfo.Distance = t;
+						}
+					}
+				}
+			}
 		}
 
+		if (hasHit)
+			return true;
+
+		hitInfo.Distance = totalLength;
+		hitInfo.HitPosition = to;
 		return false;
 	}
 

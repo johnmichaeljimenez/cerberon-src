@@ -37,7 +37,7 @@ public class WallEntity : BaseEntity //simple solid rectangular blocker
 
 		foreach (var i in walls)
 		{
-			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Color.Red);
+			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Colors.RED);
 		}
 	}
 }

@@ -35,6 +35,8 @@ void main() {
 
     vec3 screenColor = texture(texture0, fragTexCoord).rgb;
 	vec3 lightColor = texture(lightTex, fragTexCoord).rgb;
+	lightColor = contrast(lightColor, 1.1);
+	
     vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2)); //basic light
 	
 	finalColor = vec4(texelColor * vig, 1);

@@ -34,7 +34,7 @@ public static class SampleWorld
 			FacingAngle = 90
 		});
 
-		LightingSystem.AddLight(AssetManager.GetSprite("light"), new(-20, 10), Color.Red, 30);
+		LightingSystem.AddLight(AssetManager.GetSprite("light"), new(-20, 10), Colors.RED, 0, 30);
 
 		var n = 1;
 		foreach (var i in world.Entities)

@@ -5,7 +5,7 @@ namespace Main.Gameplay.Entities;
 
 public class PlayerEntity : CharacterEntity
 {
-	private Vector2 laserHit;
+	private LinecastHit laserHit;
 	private Light lightSelf;
 	private Light flashLight;
 
@@ -17,7 +17,7 @@ public class PlayerEntity : CharacterEntity
 		CurrentSpriteID = "soldier";
 		Game.Instance.Camera.Follow(Position);
 		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, Color.DarkGray, 0, 10);
-		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.DarkGray, FacingAngle, 10, true, new(0f, 0.5f));
+		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, true, new(0f, 0.5f));
 	}
 
 	public override void Update(float dt, float udt)
@@ -25,32 +25,32 @@ public class PlayerEntity : CharacterEntity
 		base.Update(dt, udt);
 
 		velocity = InputManager.Movement * MovementSpeed;
+
+		gameplayState.GetManager<CollisionManager>().Linecast(Position, Position + (FacingDirection * 100), out laserHit, CollisionBody, gameplayState.CurrentWorld.CharacterEntities.Select(p => p.CollisionBody)); //select is temporary
 	}
 
 	public override void LateUpdate(float dt, float udt)
 	{
 		base.LateUpdate(dt, udt);
 
-		float rotSpeed = 8;
+		float rotSpeed = 12;
 		FacingAngle = Raymath.LerpAngle(FacingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
-
-		var d = 0f;
-		gameplayState.GetManager<CollisionManager>().Linecast(Position, Position + (FacingDirection * 100), out d);
-		laserHit = Position + (FacingDirection * d);
 
 		Game.Instance.Camera.Follow(Position, 3f);
 
 		lightSelf.Position = Position;
 		flashLight.Position = Position;
-		flashLight.Rotation = Raymath.LerpAngle(flashLight.Rotation, FacingAngle, dt * 6);
+		flashLight.Rotation = Raymath.LerpAngle(flashLight.Rotation, FacingAngle, dt * rotSpeed);
 	}
 
 	public override void Draw()
 	{
 		base.Draw();
 
-		Raylib.DrawLineV(Position, laserHit, Color.Red);
-		Raylib.DrawCircleV(laserHit, 0.3f, Color.Red);
+		Raylib.DrawLineV(Position, laserHit.HitPosition, Colors.RED.Fade(laserHit.Body != null ? 1 : 0.4f));
+
+		if (laserHit.Body != null)
+			Raylib.DrawCircleV(laserHit.HitPosition, 0.3f, Colors.RED);
 	}
 
 	public override void Dispose()

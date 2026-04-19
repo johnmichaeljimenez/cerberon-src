@@ -81,7 +81,7 @@ public class GameplayState : IGameState
 	public void DrawDebug()
 	{
 		CurrentWorld.DrawDebug();
-		Raylib.DrawCircleLinesV(InputManager.MouseWorldPosition, 0.5f, Color.Green);
+		Raylib.DrawCircleLinesV(InputManager.MouseWorldPosition, 0.5f, Colors.GREEN);
 	}
 
 	public void DrawImGui()
