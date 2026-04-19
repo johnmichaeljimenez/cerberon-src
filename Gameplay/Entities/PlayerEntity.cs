@@ -15,6 +15,22 @@ public class Gun
 	public int CurrentAmmo;
 	public int CurrentMaxAmmo;
 
+
+
+	public Gun(string name, int damage, float firingRate,
+			   int magSize, int maxAmmo, float reloadTime)
+	{
+		Name = name;
+		Damage = damage;
+		FiringRate = firingRate;
+		MagSize = magSize;
+		MaxAmmo = maxAmmo;
+		ReloadTime = reloadTime;
+
+		CurrentAmmo = MagSize;
+		CurrentMaxAmmo = MaxAmmo;
+	}
+
 	public bool CanReload()
 	{
 		return CurrentAmmo < MagSize && CurrentMaxAmmo > 0;
@@ -27,6 +43,8 @@ public class Gun
 		int ammoToAdd = Math.Min(MagSize - CurrentAmmo, CurrentMaxAmmo);
 		CurrentAmmo += ammoToAdd;
 		CurrentMaxAmmo -= ammoToAdd;
+
+		Log.Send($"Reloaded: ({CurrentAmmo}/{CurrentMaxAmmo})");
 	}
 }
 
@@ -34,25 +52,8 @@ public class PlayerEntity : CharacterEntity
 {
 	public readonly List<Gun> guns = new() //total hardcoded for now
 	{
-		new Gun()
-		{
-			Name = "Sig Sauer",
-			Damage = 15,
-			FiringRate = 0f, // FiringRate <= 0 means tap to shoot
-			MagSize = 15,
-			MaxAmmo = 60,
-			ReloadTime = 1.4f
-		},
-
-		new Gun()
-		{
-			Name = "AK-47",
-			Damage = 30,
-			FiringRate = 0.15f,
-			MagSize = 30,
-			MaxAmmo = 120,
-			ReloadTime = 2
-		}
+		new Gun("Sig Sauer", 15, 0f, 15, 60, 1.4f),
+		new Gun("AK-47", 30, 0.1f, 30, 120, 2f),
 	};
 
 	private LinecastHit laserHit;
@@ -62,7 +63,8 @@ public class PlayerEntity : CharacterEntity
 	private Light muzzleFlash;
 	private bool flashLightOn;
 
-	private int currentWeaponIndex;
+	private int currentGunIndex;
+	private Gun currentGun => guns[currentGunIndex];
 	private float fireTimer;
 	private float reloadTimer;
 
@@ -103,19 +105,53 @@ public class PlayerEntity : CharacterEntity
 			flashLight.Enabled = flashLightOn;
 		}
 
-		if (InputManager.ActionJustPressed)
+		if (fireTimer > 0)
+			fireTimer -= dt;
+
+		if (reloadTimer > 0)
 		{
-			Log.Send("Shoot");
+			reloadTimer -= dt;
+			if (reloadTimer <= 0)
+				currentGun.DoReload();
+		}
 
-			if (muzzleFlash != null)
+		if (fireTimer <= 0 && reloadTimer <= 0) //temporary if-else chain for now
+		{
+			if (InputManager.Weapon1JustPressed)
 			{
-				LightingSystem.RemoveLight(muzzleFlash);
+				currentGunIndex = 0;
+				Log.Send($"Switched to: {currentGun.Name}");
 			}
+			else if (InputManager.Weapon2JustPressed)
+			{
+				currentGunIndex = 1;
+				Log.Send($"Switched to: {currentGun.Name}");
+			}
+			else if (InputManager.ReloadJustPressed && currentGun.CanReload())
+			{
+				reloadTimer = currentGun.ReloadTime;
+				Log.Send($"Reloading...");
+			}
+			else if (currentGun.CurrentAmmo > 0)
+			{
+				if ((currentGun.FiringRate <= 0 && InputManager.ActionJustPressed) || (currentGun.FiringRate > 0 && InputManager.ActionDown))
+				{
+					if (muzzleFlash != null)
+					{
+						LightingSystem.RemoveLight(muzzleFlash);
+					}
 
-			muzzleFlash = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new(80, 30, 0), 0, 14);
+					muzzleFlash = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new(80, 30, 0), 0, 14);
 
-			if (laserHit.Body != null && laserHit.Body.SourceEntity is ZombieEntity z)
-				z.ApplyDamage(40);
+					if (laserHit.Body != null && laserHit.Body.SourceEntity is ZombieEntity z)
+						z.ApplyDamage(currentGun.Damage);
+
+					currentGun.CurrentAmmo -= 1;
+					Log.Send($"Shoot ({currentGun.CurrentAmmo}/{currentGun.CurrentMaxAmmo})");
+					if (currentGun.FiringRate > 0 && currentGun.CurrentAmmo > 0)
+						fireTimer = currentGun.FiringRate;
+				}
+			}
 		}
 	}
 

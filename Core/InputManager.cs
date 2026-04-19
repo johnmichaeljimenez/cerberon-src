@@ -15,6 +15,7 @@ public static class InputManager
     public static bool FlashlightJustPressed { get; private set; }
     public static bool Weapon1JustPressed { get; private set; }
     public static bool Weapon2JustPressed { get; private set; }
+    public static bool ReloadJustPressed { get; private set; }
 
     public static void Update(float scale, Vector2 offset, Camera2D camera)
     {
@@ -43,6 +44,7 @@ public static class InputManager
         FlashlightJustPressed |= Raylib.IsKeyPressed(KeyboardKey.F);
         Weapon1JustPressed |= Raylib.IsKeyPressed(KeyboardKey.One);
         Weapon2JustPressed |= Raylib.IsKeyPressed(KeyboardKey.Two);
+        ReloadJustPressed |= Raylib.IsKeyPressed(KeyboardKey.R);
     }
 
     public static void LateUpdate()
@@ -53,6 +55,7 @@ public static class InputManager
         FlashlightJustPressed = false;
         Weapon1JustPressed = false;
         Weapon2JustPressed = false;
+        ReloadJustPressed = false;
     }
 
     public static bool IsKeyDown(KeyboardKey key) => Raylib.IsKeyDown(key);
