@@ -211,41 +211,38 @@ public class CollisionManager : BaseManager
 			}
 		}
 
-		if (bodies != null)
+		foreach (var other in bodies)
 		{
-			foreach (var other in bodies)
+			if (other == null || other == fromBody) continue;
+
+			Vector2 oc = from - other.Position;
+			float a = 1f;
+			float b = 2f * Vector2.Dot(rayDir, oc);
+			float c = Vector2.Dot(oc, oc) - other.Radius * other.Radius;
+
+			float discriminant = b * b - 4 * a * c;
+			if (discriminant >= 0f)
 			{
-				if (other == null || other == fromBody) continue;
+				float sqrtDisc = MathF.Sqrt(discriminant);
+				float t1 = (-b - sqrtDisc) / (2 * a);
+				float t2 = (-b + sqrtDisc) / (2 * a);
 
-				Vector2 oc = from - other.Position;
-				float a = 1f;
-				float b = 2f * Vector2.Dot(rayDir, oc);
-				float c = Vector2.Dot(oc, oc) - other.Radius * other.Radius;
+				float t = float.MaxValue;
+				if (t1 >= 0f && t1 <= totalLength) t = t1;
+				if (t2 >= 0f && t2 <= totalLength && t2 < t) t = t2;
 
-				float discriminant = b * b - 4 * a * c;
-				if (discriminant >= 0f)
+				if (t < float.MaxValue)
 				{
-					float sqrtDisc = MathF.Sqrt(discriminant);
-					float t1 = (-b - sqrtDisc) / (2 * a);
-					float t2 = (-b + sqrtDisc) / (2 * a);
-
-					float t = float.MaxValue;
-					if (t1 >= 0f && t1 <= totalLength) t = t1;
-					if (t2 >= 0f && t2 <= totalLength && t2 < t) t = t2;
-
-					if (t < float.MaxValue)
+					float distSqThis = t * t;
+					if (distSqThis < minDistSq)
 					{
-						float distSqThis = t * t;
-						if (distSqThis < minDistSq)
-						{
-							minDistSq = distSqThis;
-							hasHit = true;
-							Vector2 hitPos = from + rayDir * t;
-							hitInfo.Wall = null;
-							hitInfo.Body = other;
-							hitInfo.HitPosition = hitPos;
-							hitInfo.Distance = t;
-						}
+						minDistSq = distSqThis;
+						hasHit = true;
+						Vector2 hitPos = from + rayDir * t;
+						hitInfo.Wall = null;
+						hitInfo.Body = other;
+						hitInfo.HitPosition = hitPos;
+						hitInfo.Distance = t;
 					}
 				}
 			}

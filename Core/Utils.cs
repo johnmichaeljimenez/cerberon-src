@@ -38,12 +38,8 @@ public static class Utils
 	{
 		Raylib.DrawLineV(from, to, color);
 
-		float length = normal.Length();
-		if (length > 0)
-		{
-			normal = new Vector2(normal.X / length * 0.5f, normal.Y / length * 0.5f);
-			Raylib.DrawLineV(mid, new Vector2(mid.X + normal.X, mid.Y + normal.Y), color);
-		}
+		normal = new Vector2(normal.X * 0.5f, normal.Y * 0.5f);
+		Raylib.DrawLineV(mid, new Vector2(mid.X + normal.X, mid.Y + normal.Y), color);
 	}
 }
 
