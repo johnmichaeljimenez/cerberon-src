@@ -33,8 +33,13 @@ jobs:
       run: >
         dotnet publish cerberon-src.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:IncludeAllContentForSelfExtract=true -p:AssemblyName=Cerberon -o ./publish
 
+    - name: Copy Assets folder
+      run: Copy-Item -Path ./Assets -Destination ./publish/Assets -Recurse -Force
+
     - name: Verify Build
-      run: Test-Path ./publish/Cerberon.exe -PathType Leaf
+      run: |
+        Test-Path ./publish/Cerberon.exe -PathType Leaf
+        Test-Path ./publish/Assets -PathType Container
 
     - name: Zip Build
       run: Compress-Archive -Path ./publish/* -DestinationPath cerberon-win64.zip
