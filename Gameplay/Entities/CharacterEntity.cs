@@ -76,10 +76,20 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		Raylib.DrawCircleLinesV(Position + (FacingDirection * 0.6f), 0.3f, Colors.GREEN);
 	}
 
-	public void ApplyDamage(int amt)
+	public bool Heal(int amt)
 	{
 		if (isDead)
-			return;
+			return false;
+
+		HP += amt;
+		HP = Math.Min(HP, MaxHP);
+		return true;
+	}
+
+	public bool ApplyDamage(int amt)
+	{
+		if (isDead)
+			return false;
 
 		HP -= amt;
 		Log.Send($"HIT: {amt} -> {HP}/{MaxHP}");
@@ -89,6 +99,8 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 			isDead = true;
 			OnDeath();
 		}
+
+		return true;
 	}
 
 	protected virtual void OnDeath()
