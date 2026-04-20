@@ -1,0 +1,49 @@
+name: Build and Push to Itch.io
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        cache: true
+
+    - name: Restore dependencies
+      run: dotnet restore cerberon-src.csproj
+
+    - name: Build & Publish (Release)
+      run: dotnet publish cerberon-src.csproj -c Release -r win-x64 --self-contained -o ./publish
+
+    - name: Verify Build
+      run: Test-Path ./publish/cerberon-src.exe -PathType Leaf
+
+    - name: Zip Build
+      run: Compress-Archive -Path ./publish/* -DestinationPath cerberon-win64.zip
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Game-Release
+        path: cerberon-win64.zip
+        retention-days: 7
+
+    - name: Setup Butler
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: remarkablegames/setup-butler@v2
+
+    - name: Push to Itch.io
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: butler push ./publish rateater93/zombie-shooter:win64 --userversion ${{ github.run_number }}
+      env:
+        BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
