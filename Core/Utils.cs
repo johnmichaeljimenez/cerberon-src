@@ -41,6 +41,18 @@ public static class Utils
 		normal = new Vector2(normal.X * 0.5f, normal.Y * 0.5f);
 		Raylib.DrawLineV(mid, new Vector2(mid.X + normal.X, mid.Y + normal.Y), color);
 	}
+
+	public static bool Countdown(ref float t, float dt) //i just feel like using ref
+	{
+		t -= dt;
+		if (t <= 0)
+		{
+			t = 0;
+			return true;
+		}
+
+		return false;
+	}
 }
 
 public static class Colors
