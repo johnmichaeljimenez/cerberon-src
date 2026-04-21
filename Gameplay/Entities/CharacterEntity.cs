@@ -30,6 +30,8 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	[JsonIgnore]
 	public CircleBody CollisionBody { get; private set; }
 
+	public Animator Animator { get; protected set; }
+
 	public Vector2 FacingDirection => new Vector2(
 		MathF.Cos(FacingAngle * MathF.PI / 180f),
 		MathF.Sin(FacingAngle * MathF.PI / 180f)
@@ -63,11 +65,19 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 			Position += vel;
 			CollisionBody.Position = Position;
 		}
+
+		if (Animator != null)
+		{
+			Animator.Update(dt, udt);
+			var spr = Animator.GetFrameSprite();
+			if (spr != null)
+				CurrentSprite = Animator.GetFrameSprite();
+		}
 	}
 
 	public override void Draw()
 	{
-		CurrentSprite.Draw(Position, rotation: FacingAngle, origin: new Vector2(0.25f, 0.5f));
+		CurrentSprite.Draw(Position, rotation: FacingAngle, origin: new Vector2(0.3f, 0.7f));
 	}
 
 	public override void DrawDebug()

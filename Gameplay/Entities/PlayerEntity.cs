@@ -48,7 +48,7 @@ public class Gun
 	}
 }
 
-public class PlayerEntity : CharacterEntity //put all of them here for now, component architecture is a tomorrow's problem if i can mow down zombies right now with this code
+public class PlayerEntity : CharacterEntity //put all of them here for now, component architecture is a tomorrow's problem if i can mow down zombies right now with this code. if this is a god class then call this project mt. olympus for now
 {
 	public readonly List<Gun> guns = new() //total hardcoded for now
 	{
@@ -72,10 +72,13 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 	{
 		base.Init(gameplayState);
 
-		CurrentSpriteID = "soldier";
+		Animator = new Animator("player-idle", "player-move");
+		CurrentSpriteID = "player/idle/idle (1)";
 		Game.Instance.Camera.Follow(Position);
 		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, Color.DarkGray, 0, 10);
 		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f));
+
+		Animator.Play("player-idle");
 	}
 
 	public override void Update(float dt, float udt)
@@ -166,6 +169,11 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 		flashLight.Position = Position;
 		flashLight.Rotation = Raymath.LerpAngle(flashLight.Rotation, FacingAngle, dt * rotSpeed); //intentional delay
 
+		if (velocity.LengthSquared() > 0.1f)
+			Animator.Play("player-move");
+		else
+			Animator.Play("player-idle");
+
 		Game.Instance.Camera.Follow(Position, 3f);
 	}
 
@@ -188,5 +196,11 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 
 		LightingSystem.RemoveLight(flashLight);
 		LightingSystem.RemoveLight(lightSelf);
+	}
+
+	protected override void OnDeath()
+	{
+		base.OnDeath();
+		IsActive = false; //TODO: spawn a player death animation false entity
 	}
 }

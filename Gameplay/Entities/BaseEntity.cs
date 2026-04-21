@@ -28,7 +28,7 @@ public abstract class BaseEntity : IDisposable
 	}
 
 	[JsonIgnore]
-	public Sprite CurrentSprite { get; private set; }
+	public Sprite CurrentSprite { get; protected set; }
 
 	[JsonIgnore]
 	public bool IsDestroyed { get; private set; }
