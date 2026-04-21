@@ -13,7 +13,15 @@ public static class Utils
 		});
 	}
 
-	public static void FromJson(this object obj, string json)
+	public static T FromJson<T>(this string json)
+	{
+		return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings(){
+			NullValueHandling = NullValueHandling.Ignore,
+			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+		});
+	}
+
+	public static void FromJsonPopulate(this object obj, string json)
 	{
 		JsonConvert.PopulateObject(json, obj, new JsonSerializerSettings
 		{

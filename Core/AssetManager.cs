@@ -52,20 +52,33 @@ public static class AssetManager
 
 	public static void Init()
 	{
-		string assetsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/Sprites");
+		var assetsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
 
-		if (!Directory.Exists(assetsPath))
+		var animationFile = Path.Combine(assetsPath, "animations.json");
+		if (File.Exists(animationFile))
 		{
-			Console.WriteLine($"Warning: Assets folder not found at {assetsPath}");
+			animations.Clear();
+			var entries = File.ReadAllText(animationFile).FromJson<Dictionary<string, Animation>>();
+			foreach (var i in entries)
+			{
+				animations.Add(i.Key, i.Value);
+			}
+		}
+
+		var spritesPath = Path.Combine(assetsPath, "Sprites");
+
+		if (!Directory.Exists(spritesPath))
+		{
+			Log.Send($"Warning: Assets folder not found at {spritesPath}");
 			return;
 		}
 
-		string[] files = Directory.GetFiles(assetsPath, "*.png", SearchOption.AllDirectories);
+		var files = Directory.GetFiles(spritesPath, "*.png", SearchOption.AllDirectories);
 
-		foreach (string file in files)
+		foreach (var file in files)
 		{
-			string relativePath = Path.GetRelativePath(assetsPath, file);
-			string key = Path.ChangeExtension(relativePath, null).Replace('\\', '/');
+			var relativePath = Path.GetRelativePath(spritesPath, file);
+			var key = Path.ChangeExtension(relativePath, null).Replace('\\', '/');
 
 			Texture2D tex = Raylib.LoadTexture(file);
 
@@ -91,6 +104,11 @@ public static class AssetManager
 		};
 
 		Raylib.UnloadImage(chk);
+
+		foreach (var i in animations)
+		{
+			i.Value.Init();
+		}
 	}
 
 	public static Animation GetAnimation(string name)
