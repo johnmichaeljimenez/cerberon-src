@@ -23,6 +23,7 @@ public class GameplayState : IGameState
 		LightingSystem.Clear();
 		AddManager<CollisionManager>();
 		AddManager<PlayerManager>();
+		AddManager<GameplayManager>();
 
 		foreach (var i in managers)
 		{

@@ -61,6 +61,13 @@ public static class Utils
 
 		return false;
 	}
+
+	public static TDisposable AddTo<TDisposable>(this TDisposable disposable, List<IDisposable> bag)
+        where TDisposable : IDisposable
+    {
+        bag.Add(disposable);
+        return disposable;
+    }
 }
 
 public static class Colors

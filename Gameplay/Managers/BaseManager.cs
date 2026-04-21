@@ -11,6 +11,7 @@ public abstract class BaseManager : IDisposable
 	// CollisionManager (which already exists)
 
 	protected GameplayState gameplayState { get; private set; }
+	protected readonly List<IDisposable> disposables = new();
 
 	public BaseManager(GameplayState gameplayState)
 	{
@@ -19,7 +20,7 @@ public abstract class BaseManager : IDisposable
 
 	public virtual void Dispose()
 	{
-
+		disposables.ForEach(p => p?.Dispose());
 	}
 
 	public virtual void Update(float dt, float udt)

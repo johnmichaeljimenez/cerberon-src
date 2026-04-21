@@ -1,3 +1,4 @@
+using Main.Core;
 using Main.Gameplay.Entities;
 
 namespace Main.Gameplay.Managers;
@@ -5,6 +6,8 @@ namespace Main.Gameplay.Managers;
 public class PlayerManager : BaseManager
 {
 	public PlayerEntity PlayerCharacter { get; private set; }
+
+	public readonly Signal<PlayerEntity> OnPlayerDeath = new();
 
 	public PlayerManager(GameplayState gameplayState) : base(gameplayState)
 	{
