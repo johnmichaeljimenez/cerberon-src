@@ -65,6 +65,7 @@ public class Game
         {
             currentState?.Exit();
             currentState = nextState;
+            PauseHandler.Clear();
             currentState?.Enter();
             nextState = null;
         }
@@ -78,6 +79,11 @@ public class Game
     public void GoToIngame()
     {
         SetState(new GameplayState(new GameplayOptions()));
+    }
+
+    public void RestartGame()
+    {
+        SetState(new GameplayState(new()));
     }
 
     public void GoToMenu()

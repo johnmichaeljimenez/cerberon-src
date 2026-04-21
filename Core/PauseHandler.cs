@@ -17,6 +17,12 @@ public static class PauseHandler
 			UpdatePause();
 	}
 
+	public static void Clear()
+	{
+		pauseList.Clear();
+		UpdatePause();
+	}
+
 	private static void UpdatePause()
 	{
 		IsPaused = pauseList.Count > 0;
