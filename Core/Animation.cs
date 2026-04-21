@@ -1,9 +1,10 @@
 namespace Main.Core;
 
+[Serializable]
 public class Animation //this is the "asset"
 {
-	public const int FRAMES_PER_SECOND = 8;
-	public const float ANIMATION_FPS = 1.0f / (float)FRAMES_PER_SECOND;
+	public const int FRAMES_PER_SECOND = 16;
+	public const float FRAME_RATE = 1.0f / (float)FRAMES_PER_SECOND;
 
 	[JsonProperty]
 	public string Name { get; private set; }
@@ -11,17 +12,40 @@ public class Animation //this is the "asset"
 	public List<string> Frames { get; private set; } = new();
 	[JsonProperty]
 	public int LoopStartIndex { get; private set; } = -1; //-1 = non-looping, 0 = loop from start, >= 0 loop from any frame (useful for animations with "enter" frames)
+
+
+	[JsonIgnore]
+	public List<Sprite> Sprites { get; private set; } = new();
+
+	public void Init()
+	{
+		Sprites.Clear();
+		Sprites.AddRange(Frames.Select(AssetManager.GetSprite));
+
+		var n = 0;
+		foreach (var i in Frames)
+		{
+			if (string.IsNullOrEmpty(i))
+			{
+				Sprites[n] = null; //override null as invisible frame on purpose
+			}
+
+			n++;
+		}
+	}
 }
 
 public class Animator //this is the "instance" using those said "assets"
 {
 	public readonly Dictionary<string, Animation> Animations = new();
-	public readonly Dictionary<Animation, List<Sprite>> SpriteFrames = new();
 
 	public bool IsPlaying { get; private set; }
 	private Animation currentAnimation;
+	private string nextAnimationName;
 	private int frameIndex;
 	private float timer;
+
+	public float NormalizedTime { get; private set; }
 
 	public Animator(params string[] animationNames)
 	{
@@ -34,22 +58,7 @@ public class Animator //this is the "instance" using those said "assets"
 			Animations.Add(i.Name, i);
 		}
 
-		SpriteFrames.Clear();
-		foreach (var i in Animations.Values)
-		{
-			SpriteFrames[i] = new();
-
-			Sprite prevSprite = AssetManager.MissingSprite;
-
-			var n = 0;
-			foreach (var j in i.Frames)
-			{
-				var sprite = string.IsNullOrEmpty(j) ? null : //null = invisible frame on purpose
-															AssetManager.GetSprite(j);
-
-				SpriteFrames[i].Add(sprite);
-			}
-		}
+		Reset();
 	}
 
 	public void Update(float dt, float udt) //unscaled is for later use
@@ -58,7 +67,7 @@ public class Animator //this is the "instance" using those said "assets"
 			return;
 
 		timer += dt;
-		if (timer >= Animation.ANIMATION_FPS)
+		if (timer >= Animation.FRAME_RATE)
 		{
 			timer = 0;
 			frameIndex++;
@@ -76,17 +85,27 @@ public class Animator //this is the "instance" using those said "assets"
 				}
 			}
 		}
+
+		NormalizedTime = (float)frameIndex / (float)currentAnimation.Frames.Count;
+		
+		if (!IsPlaying)
+		{
+			if (nextAnimationName != null)
+			{
+				Play(nextAnimationName, true);
+			}
+		}
 	}
 
 	public Sprite GetFrameSprite()
 	{
-		if (currentAnimation == null || SpriteFrames[currentAnimation].Count == 0)
+		if (currentAnimation == null || currentAnimation.Sprites.Count == 0)
 			return null; //intended to be null (not missing)
 
-		return SpriteFrames[currentAnimation][frameIndex];
+		return currentAnimation.Sprites[frameIndex];
 	}
 
-	public void Play(string animationName, bool forceRestart = false)
+	public void Play(string animationName, bool forceRestart = false, string nextAnimationName = null) //nextAnimationName will be commonly used (ex. attack to idle) without coding massive amount of FSM handling
 	{
 		if (!Animations.TryGetValue(animationName, out var anim))
 			throw new ArgumentException($"Animation '{animationName}' not found.");
@@ -96,6 +115,7 @@ public class Animator //this is the "instance" using those said "assets"
 
 		Reset();
 		currentAnimation = anim;
+		this.nextAnimationName = nextAnimationName; //lazy check
 		IsPlaying = true;
 	}
 
@@ -109,5 +129,7 @@ public class Animator //this is the "instance" using those said "assets"
 		timer = 0;
 		IsPlaying = false;
 		frameIndex = 0;
+		nextAnimationName = null;
+		NormalizedTime = 0;
 	}
 }
