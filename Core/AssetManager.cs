@@ -42,6 +42,7 @@ public class Sprite : IDisposable
 public static class AssetManager
 {
 	private static readonly Dictionary<string, Sprite> sprites = new();
+	private static readonly Dictionary<string, Animation> animations = new();
 	public static Sprite MissingSprite { get; private set; }
 
 	//load everything in Assets for now regardless of where level they will be used. later I'll add an Update() function that stores the pending asset paths in a queue then timeslice them via Game's Update loop (true Raylib frames loop).
@@ -51,7 +52,7 @@ public static class AssetManager
 
 	public static void Init()
 	{
-		string assetsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
+		string assetsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/Sprites");
 
 		if (!Directory.Exists(assetsPath))
 		{
@@ -90,6 +91,14 @@ public static class AssetManager
 		};
 
 		Raylib.UnloadImage(chk);
+	}
+
+	public static Animation GetAnimation(string name)
+	{
+		if (animations.TryGetValue(name, out var animation))
+			return animation;
+
+		return null; //TODO: add placeholder animation
 	}
 
 	public static Sprite GetSprite(string name)
