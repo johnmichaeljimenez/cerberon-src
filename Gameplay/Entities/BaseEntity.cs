@@ -36,6 +36,8 @@ public abstract class BaseEntity : IDisposable
 	[JsonIgnore]
 	protected GameplayState gameplayState { get; private set; }
 
+	protected readonly List<IDisposable> disposables = new();
+
 	//due to how the lifecycle works, constructor is not recommended to use for public-facing values, but it's not totally banned like in Unity
 
 	public virtual void Init(GameplayState gameplayState)
@@ -61,7 +63,7 @@ public abstract class BaseEntity : IDisposable
 
 	public virtual void Dispose()
 	{
-
+		disposables.ForEach(p => p?.Dispose());
 	}
 
 	public virtual bool Despawn()

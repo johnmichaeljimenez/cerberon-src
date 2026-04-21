@@ -22,8 +22,10 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	[JsonIgnore]
 	public float FacingAngle { get; set; }
 
-	protected int HP;
-	protected bool isDead;
+	[JsonIgnore]
+	public int HP { get; private set; }
+	[JsonIgnore]
+	public bool IsDead { get; private set; }
 
 	protected Vector2 velocity;
 
@@ -88,7 +90,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public bool Heal(int amt)
 	{
-		if (isDead)
+		if (IsDead)
 			return false;
 
 		HP += amt;
@@ -98,7 +100,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public bool ApplyDamage(int amt)
 	{
-		if (isDead)
+		if (IsDead)
 			return false;
 
 		HP -= amt;
@@ -106,7 +108,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		if (HP <= 0)
 		{
 			HP = 0;
-			isDead = true;
+			IsDead = true;
 			OnDeath();
 		}
 

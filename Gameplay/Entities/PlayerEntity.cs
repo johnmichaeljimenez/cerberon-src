@@ -1,5 +1,6 @@
 using Main.Core;
 using Main.Effects;
+using Main.Gameplay.Managers;
 
 namespace Main.Gameplay.Entities;
 
@@ -202,5 +203,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 	{
 		base.OnDeath();
 		IsActive = false; //TODO: spawn a player death animation false entity
+
+		gameplayState.GetManager<PlayerManager>().OnPlayerDeath.Publish(this);
 	}
 }
