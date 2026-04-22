@@ -195,7 +195,8 @@ public class CollisionManager : BaseManager
 		{
 			if (Vector2.Dot(w.Normal, dirForCulling) > 0f)
 			{
-				if (TryGetLineIntersection(from, to, w.From, w.To, out Vector2 intersection))
+				Vector2 intersection = default;
+				if (Raylib.CheckCollisionLines(from, to, w.From, w.To, ref intersection)) //I didn't know this is already available for Raylib-cs
 				{
 					float distSq = Vector2.DistanceSquared(from, intersection);
 					if (distSq < minDistSq)
@@ -265,44 +266,6 @@ public class CollisionManager : BaseManager
 		float t = Vector2.Dot(p - a, ab) / abLenSq;
 		t = Math.Clamp(t, 0f, 1f);
 		return a + ab * t;
-	}
-
-	private static bool TryGetLineIntersection(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2, out Vector2 intersection)
-	{
-		intersection = Vector2.Zero;
-
-		float A1 = a2.Y - a1.Y;
-		float B1 = a1.X - a2.X;
-		float C1 = A1 * a1.X + B1 * a1.Y;
-
-		float A2 = b2.Y - b1.Y;
-		float B2 = b1.X - b2.X;
-		float C2 = A2 * b1.X + B2 * b1.Y;
-
-		float det = A1 * B2 - A2 * B1;
-		if (Math.Abs(det) < 0.00001f) return false;
-
-		float x = (B2 * C1 - B1 * C2) / det;
-		float y = (A1 * C2 - A2 * C1) / det;
-
-		if (IsPointOnSegment(a1, a2, x, y) && IsPointOnSegment(b1, b2, x, y))
-		{
-			intersection = new Vector2(x, y);
-			return true;
-		}
-
-		return false;
-	}
-
-	private static bool IsPointOnSegment(Vector2 p1, Vector2 p2, float x, float y)
-	{
-		float minX = Math.Min(p1.X, p2.X);
-		float maxX = Math.Max(p1.X, p2.X);
-		float minY = Math.Min(p1.Y, p2.Y);
-		float maxY = Math.Max(p1.Y, p2.Y);
-
-		return x >= minX - 0.0001f && x <= maxX + 0.0001f &&
-			   y >= minY - 0.0001f && y <= maxY + 0.0001f;
 	}
 
 	public override void DrawImGui()
