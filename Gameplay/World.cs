@@ -4,6 +4,7 @@ using Main.Core;
 using Main.Effects;
 using Main.Gameplay.Entities;
 using Main.Gameplay.Managers;
+using Main.Helpers;
 using Newtonsoft.Json;
 
 namespace Main.Gameplay;
@@ -59,7 +60,7 @@ public class World : IDisposable //aka Level loader
 		this.gameplayState = gameplayState;
 		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
 
-		gameplayState.GetManager<WaypointManager>().Bake(Entities.Where(p => p is WallEntity).Cast<WallEntity>().Select(p => p.RectangleBounds), 1.1f); //TODO: add "is solid" property for entities once static props are implemented
+		gameplayState.GetManager<WaypointManager>().Bake(Entities.Where(p => p is WallEntity).Cast<WallEntity>().Select(p => p.RectangleBounds), WorldSettings.WorldSize, 1.5f); //TODO: add "is solid" property for entities once static props are implemented
 
 		foreach (var i in Entities)
 		{

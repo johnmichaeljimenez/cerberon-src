@@ -1,3 +1,5 @@
+using Main.Helpers;
+
 namespace Main.Core;
 
 public class MenuState : IGameState
