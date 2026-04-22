@@ -16,9 +16,11 @@ public class ZombieEntity : CharacterEntity
 	{
 		base.Init(gameplayState);
 
-		CurrentSpriteID = "soldier";
+		Animator = new Animator("zombie-idle", "zombie-move");
 		MovementSpeed = 4.0f;
 		attackTimer = attackRate;
+		
+		Animator.Play("zombie-idle");
 	}
 
 	public override void Update(float dt, float udt)
@@ -44,6 +46,16 @@ public class ZombieEntity : CharacterEntity
 		}
 
 		FacingAngle = Raymath.LerpAngle(FacingAngle, d.ToDirection(), dt * 8);
+	}
+
+	public override void LateUpdate(float dt, float udt)
+	{
+		base.LateUpdate(dt, udt);
+		
+		if (velocity.LengthSquared() > 0.1f)
+			Animator.Play("zombie-move");
+		else
+			Animator.Play("zombie-idle");
 	}
 
 	protected override void OnDeath()
