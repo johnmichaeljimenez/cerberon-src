@@ -33,6 +33,11 @@ public abstract class BaseManager : IDisposable
 
 	}
 
+	public virtual void DrawDebug()
+	{
+
+	}
+
 	public virtual void DrawImGui()
 	{
 

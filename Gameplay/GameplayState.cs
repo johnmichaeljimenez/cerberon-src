@@ -24,6 +24,7 @@ public class GameplayState : IGameState
 		AddManager<CollisionManager>();
 		AddManager<PlayerManager>();
 		AddManager<GameplayManager>();
+		AddManager<WaypointManager>();
 
 		foreach (var i in managers)
 		{
@@ -83,6 +84,11 @@ public class GameplayState : IGameState
 	{
 		CurrentWorld.DrawDebug();
 		Raylib.DrawCircleLinesV(InputManager.MouseWorldPosition, 0.5f, Colors.GREEN);
+
+		foreach (var i in managers)
+		{
+			i.Value.DrawDebug();
+		}
 	}
 
 	public void DrawImGui()

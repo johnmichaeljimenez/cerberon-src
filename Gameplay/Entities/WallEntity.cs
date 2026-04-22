@@ -7,6 +7,12 @@ public class WallEntity : BaseEntity //simple solid rectangular blocker
 	[JsonProperty]
 	public Vector2 Size = Vector2.One;
 
+	public Rectangle RectangleBounds => new Rectangle()
+	{
+		Position = Position,
+		Size = Size
+	};
+
 	private readonly List<Wall> walls = new();
 
 	public override void Init(GameplayState gameplayState)
