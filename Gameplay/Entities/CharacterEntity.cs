@@ -79,7 +79,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public override void Draw()
 	{
-		CurrentSprite.Draw(Position, rotation: FacingAngle, origin: new Vector2(0.3f, 0.7f));
+		CurrentSprite?.Draw(Position, rotation: FacingAngle, origin: new Vector2(0.3f, 0.7f));
 	}
 
 	public override void DrawDebug()
