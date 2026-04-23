@@ -49,43 +49,51 @@ public class WaypointManager : BaseManager
 		return nearest;
 	}
 
-	public Vector2 GetNodePosition(Vector2 origin, int depth = 2) //useful for "crawling" the map and picking reasonable and reachable positions from point of origin
+	public Vector2 GetNodePosition(Vector2 origin, float minDistance = 10f, float maxDistance = 20f) //useful for "crawling" the map and picking reasonable and reachable positions from point of origin
 	{
 		var start = GetNearestVisibleNode(origin);
 
 		if (start == null)
 			return origin;
 
-		if (depth <= 0)
-			return start.Position;
+		float minDistSq = minDistance * minDistance;
+		float maxDistSq = maxDistance * maxDistance;
 
-		var visited = new HashSet<Node> { start }; //TODO: try to reuse collections
-		var frontier = new List<Node> { start };
+		var visited = new HashSet<Node> { start };
+		var queue = new Queue<Node>();
+		queue.Enqueue(start);
 
-		for (int d = 0; d < depth; d++)
+		var candidates = new List<Node>(); //TODO: try to reuse collections
+
+		float distSq = Vector2.DistanceSquared(start.Position, origin);
+		if (distSq >= minDistSq && distSq <= maxDistSq)
 		{
-			var next = new List<Node>();
-
-			foreach (var node in frontier)
-			{
-				foreach (var neighbour in node.Connections)
-				{
-					if (visited.Add(neighbour))
-						next.Add(neighbour);
-				}
-			}
-
-			if (next.Count == 0)
-				break;
-
-			frontier = next;
+			candidates.Add(start);
 		}
 
-		var candidates = visited.Where(n => n != start).ToList();
+		while (queue.Count > 0)
+		{
+			var current = queue.Dequeue();
+
+			foreach (var neighbour in current.Connections)
+			{
+				if (visited.Add(neighbour))
+				{
+					queue.Enqueue(neighbour);
+
+					distSq = Vector2.DistanceSquared(neighbour.Position, origin);
+					if (distSq >= minDistSq && distSq <= maxDistSq)
+					{
+						candidates.Add(neighbour);
+					}
+				}
+			}
+		}
+
 		if (candidates.Count == 0)
 			return start.Position;
 
-		var rnd = new Random();
+		var rnd = new Random(); //TODO: make a proper Random static class
 		Node chosen = candidates[rnd.Next(candidates.Count)];
 
 		return chosen.Position;

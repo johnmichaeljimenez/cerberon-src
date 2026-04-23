@@ -16,7 +16,7 @@ namespace Main.Helpers
             int[,] grid = new int[gridWidth, gridHeight];
             List<Vector2> points = new List<Vector2>();
             List<Vector2> active = new List<Vector2>();
-            Random rng = new Random();
+            Random rng = new Random();  //TODO: make a proper Random static class
 
             Vector2 first = regionSize * 0.5f;
             points.Add(first);
