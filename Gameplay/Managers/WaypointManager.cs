@@ -49,51 +49,55 @@ public class WaypointManager : BaseManager
 		return nearest;
 	}
 
-	public Vector2 GetNodePosition(Vector2 origin, float minDistance = 10f, float maxDistance = 20f) //useful for "crawling" the map and picking reasonable and reachable positions from point of origin
+	public Vector2 GetNodePosition(Vector2 origin, float minDistance = 10f, float maxDistance = 20f) //useful for "crawling" the map and picking reasonable and reachable positions from point of origin (uses real travel distance, not euclidean)
 	{
 		var start = GetNearestVisibleNode(origin);
 
 		if (start == null)
 			return origin;
 
-		float minDistSq = minDistance * minDistance;
-		float maxDistSq = maxDistance * maxDistance;
+		var originToStart = Vector2.Distance(origin, start.Position);
 
+		var distFromStart = new Dictionary<Node, float> { [start] = 0f }; //TODO: try to reuse collections
+		var queue = new PriorityQueue<Node, float>();
+		queue.Enqueue(start, 0f);
+
+		var candidates = new List<Node>();
 		var visited = new HashSet<Node> { start };
-		var queue = new Queue<Node>();
-		queue.Enqueue(start);
 
-		var candidates = new List<Node>(); //TODO: try to reuse collections
-
-		float distSq = Vector2.DistanceSquared(start.Position, origin);
-		if (distSq >= minDistSq && distSq <= maxDistSq)
-		{
+		var totalDist = originToStart;
+		if (totalDist >= minDistance && totalDist <= maxDistance)
 			candidates.Add(start);
-		}
 
 		while (queue.Count > 0)
 		{
 			var current = queue.Dequeue();
+			float currentDistFromStart = distFromStart[current];
 
 			foreach (var neighbour in current.Connections)
 			{
-				if (visited.Add(neighbour))
-				{
-					queue.Enqueue(neighbour);
+				if (!visited.Add(neighbour))
+					continue;
 
-					distSq = Vector2.DistanceSquared(neighbour.Position, origin);
-					if (distSq >= minDistSq && distSq <= maxDistSq)
-					{
-						candidates.Add(neighbour);
-					}
-				}
+				float edgeDist = Vector2.Distance(current.Position, neighbour.Position);
+				float newDistFromStart = currentDistFromStart + edgeDist;
+
+				distFromStart[neighbour] = newDistFromStart;
+
+				float totalPathDist = originToStart + newDistFromStart;
+
+				if (totalPathDist >= minDistance && totalPathDist <= maxDistance)
+					candidates.Add(neighbour);
+
+				if (totalPathDist <= maxDistance)
+					queue.Enqueue(neighbour, newDistFromStart);
 			}
 		}
 
 		if (candidates.Count == 0)
 			return start.Position;
 
-		var rnd = new Random(); //TODO: make a proper Random static class
+		var rnd = new Random(); // TODO: proper Random static class
 		Node chosen = candidates[rnd.Next(candidates.Count)];
 
 		return chosen.Position;
