@@ -8,7 +8,18 @@ public class Sprite : IDisposable
 
 	public string Name;
 	public Texture2D Texture;
-	public int Width, Height;
+	public int Width {get; private set;}
+	public int Height {get; private set;}
+	public Vector2 UnitSize { get; private set; }
+
+	public Sprite(string name, Texture2D texture2D)
+	{
+		Name = name;
+		Texture = texture2D;
+		Width = texture2D.Width;
+		Height = texture2D.Height;
+		UnitSize = new((float)Width / PIXELS_PER_UNIT, (float)Height / PIXELS_PER_UNIT);
+	}
 
 	public void Dispose()
 	{
@@ -22,8 +33,9 @@ public class Sprite : IDisposable
 
 		//render everything as fixed pixels per unit as I don't want to make art that has mismatched pixel density anyway even if the assets are not pixel art
 		//i may be no artist, but I had exp in making pixel art and non-pixel art game assets and for me mismatched line art density is eyesore and amateur-level
-		var destW = ((float)Width / PIXELS_PER_UNIT) * scale; //TODO: precalc on sprite load
-		var destH = ((float)Height / PIXELS_PER_UNIT) * scale;
+
+		var destW = UnitSize.X * scale;
+		var destH = UnitSize.Y * scale;
 
 		var originPix = new Vector2(originNorm.X * destW, originNorm.Y * destH);
 		var pivotPix = position;
@@ -86,26 +98,13 @@ public static class AssetManager
 
 			Texture2D tex = Raylib.LoadTexture(file);
 
-			sprites[key] = new Sprite
-			{
-				Name = key,
-				Texture = tex,
-				Width = tex.Width,
-				Height = tex.Height
-			};
-
+			sprites[key] = new Sprite(key, tex);
 			Console.WriteLine($"Loaded asset: {key}");
 		}
 
 		var chk = Raylib.GenImageChecked(128, 128, 4, 4, Color.Black, Color.Magenta);
 		var chkTex = Raylib.LoadTextureFromImage(chk);
-		MissingSprite = new Sprite()
-		{
-			Name = "%missing%",
-			Width = chkTex.Width,
-			Height = chkTex.Height,
-			Texture = chkTex
-		};
+		MissingSprite = new Sprite("%missing%", chkTex);
 
 		Raylib.UnloadImage(chk);
 
