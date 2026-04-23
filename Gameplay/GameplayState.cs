@@ -26,6 +26,7 @@ public class GameplayState : IGameState
 		AddManager<PlayerManager>();
 		AddManager<GameplayManager>();
 		AddManager<WaypointManager>();
+		AddManager<AIDirectorManager>();
 
 		foreach (var i in managers)
 		{
