@@ -8,85 +8,57 @@ public static class SampleWorld
 {
     public static World GetSampleWorldData()
     {
+        var lightSprite = AssetManager.GetSprite("light");
         var world = new World()
         {
             WorldSettings = new()
             {
-                PlayerSpawnPoint = new(10, -15),   // +Y = downward
-                WorldSize = new(120, 120),
-                AmbientColor = new(40, 40, 80)
+                PlayerSpawnPoint = new(25, 31),
+                WorldSize = new(160, 160),
+                AmbientColor = new(10, 10, 20)
             }
         };
 
-        // ---------- Warehouse outer walls ----------
-        // Bottom wall
-        world.Entities.Add(new WallEntity()
-        {
-            Position = new(-60, 60),   // top‑left corner
-            Size = new(120, 2)         // width, height
-        });
-        // Top wall
-        world.Entities.Add(new WallEntity()
-        {
-            Position = new(-60, -62),
-            Size = new(120, 2)
-        });
-        // Left wall
-        world.Entities.Add(new WallEntity()
-        {
-            Position = new(-62, -60),
-            Size = new(2, 120)
-        });
-        // Right wall
-        world.Entities.Add(new WallEntity()
-        {
-            Position = new(60, -60),
-            Size = new(2, 120)
-        });
+        world.Entities.Add(new WallEntity { Position = new(-66.0f, -48.0f), Size = new(6.0f, 96.0f) });
+        world.Entities.Add(new WallEntity { Position = new(69.0f, -78.0f), Size = new(6.0f, 126.0f) });
+        world.Entities.Add(new WallEntity { Position = new(0.0f, -78.0f), Size = new(69.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-66.0f, 45.0f), Size = new(36.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(0.0f, 45.0f), Size = new(75.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-30.0f, 63.0f), Size = new(9.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-60.0f, -48.0f), Size = new(30.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-30.0f, -24.0f), Size = new(30.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-36.0f, -48.0f), Size = new(6.0f, 15.0f) });
+        world.Entities.Add(new WallEntity { Position = new(0.0f, -27.0f), Size = new(6.0f, 9.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-36.0f, 48.0f), Size = new(6.0f, 21.0f) });
+        world.Entities.Add(new WallEntity { Position = new(0.0f, 48.0f), Size = new(6.0f, 21.0f) });
+        world.Entities.Add(new WallEntity { Position = new(0.0f, -12.0f), Size = new(6.0f, 24.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-36.0f, 12.0f), Size = new(6.0f, 18.0f) });
+        world.Entities.Add(new WallEntity { Position = new(45.0f, -12.0f), Size = new(6.0f, 24.0f) });
+        world.Entities.Add(new WallEntity { Position = new(6.0f, -24.0f), Size = new(45.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(0.0f, 21.0f), Size = new(6.0f, 9.0f) });
+        world.Entities.Add(new WallEntity { Position = new(6.0f, 6.0f), Size = new(12.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(6.0f, 21.0f), Size = new(12.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(24.0f, 21.0f), Size = new(21.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(24.0f, 6.0f), Size = new(21.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(45.0f, 21.0f), Size = new(6.0f, 15.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-36.0f, 36.0f), Size = new(6.0f, 9.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-36.0f, -27.0f), Size = new(6.0f, 33.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-9.0f, 63.0f), Size = new(9.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-60.0f, 21.0f), Size = new(15.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-18.0f, -6.0f), Size = new(6.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-18.0f, 39.0f), Size = new(6.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(0.0f, 36.0f), Size = new(6.0f, 9.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-39.0f, 21.0f), Size = new(3.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(0.0f, -72.0f), Size = new(6.0f, 39.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-30.0f, -42.0f), Size = new(30.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-60.0f, -15.0f), Size = new(15.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(-39.0f, -15.0f), Size = new(3.0f, 6.0f) });
+        world.Entities.Add(new WallEntity { Position = new(45.0f, 42.0f), Size = new(6.0f, 3.0f) });
 
-        // ---------- Interior “shelf” walls ----------
-        // Central aisle (vertical)
-        world.Entities.Add(new WallEntity()
-        {
-            Position = new(0, -50),
-            Size = new(2, 100)
-        });
+        LightingSystem.AddLight(lightSprite, new(-14.5f, 22), Colors.WHITE.Fade(0.8f), 0, 64, castShadows: true);
+        LightingSystem.AddLight(lightSprite, new(22, 36), Colors.WHITE.Fade(0.8f), 0, 64, castShadows: true);
+        LightingSystem.AddLight(lightSprite, new(-38, 33), Colors.WHITE.Fade(0.8f), 0, 64, castShadows: true);
 
-        // Two horizontal cross‑beams (like loading docks)
-        world.Entities.Add(new WallEntity()
-        {
-            Position = new(-40, -20),
-            Size = new(80, 2)
-        });
-        world.Entities.Add(new WallEntity()
-        {
-            Position = new(-40, 20),
-            Size = new(80, 2)
-        });
-
-        // ---------- Zombie spawner (keep original) ----------
-        world.Entities.Add(new ZombieSpawner()
-        {
-            Position = new(15, -20),
-            FacingAngle = 90
-        });
-
-        // ---------- Warehouse lighting ----------
-        // Ceiling lights spaced every ~30 units along the top row
-        var lightSprite = AssetManager.GetSprite("light");
-        var lightColor = Colors.WHITE;   // neutral warehouse lighting
-
-        // left‑side ceiling light
-        LightingSystem.AddLight(lightSprite, new(-45, -55), lightColor, 0, 30);
-        // centre‑ceiling light
-        LightingSystem.AddLight(lightSprite, new(0, -55), lightColor, 0, 30);
-        // right‑side ceiling light
-        LightingSystem.AddLight(lightSprite, new(45, -55), lightColor, 0, 30);
-
-        // Optional floor‑level safety light near the entrance
-        LightingSystem.AddLight(lightSprite, new(10, -10), Colors.YELLOW, 0, 20);
-
-        // ---------- Assign IDs ----------
         var n = 1;
         foreach (var i in world.Entities)
         {
