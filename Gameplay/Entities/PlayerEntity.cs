@@ -70,6 +70,8 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 	private float fireTimer;
 	private float reloadTimer;
 
+	private float fsTimer = 0; //test
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
@@ -171,9 +173,20 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 		flashLight.Rotation = Raymath.LerpAngle(flashLight.Rotation, FacingAngle, dt * rotSpeed); //intentional delay
 
 		if (velocity.LengthSquared() > 0.1f)
+		{
 			Animator.Play("player-move");
+			fsTimer += dt;
+
+			if (fsTimer >= 0.4f)
+			{
+				AudioHandler.PlaySound("fs/rock");
+				fsTimer = 0;
+			} 
+		}
 		else
+		{
 			Animator.Play("player-idle");
+		}
 
 		Game.Instance.Camera.Follow(Position, 3f);
 	}
