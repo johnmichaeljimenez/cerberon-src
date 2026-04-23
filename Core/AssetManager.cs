@@ -56,6 +56,8 @@ public static class AssetManager
 	{
 		var assetsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
 
+		AudioHandler.Init(Path.Combine(assetsPath, "Audio"));
+
 		var animationFile = Path.Combine(assetsPath, "animations.json");
 		if (File.Exists(animationFile))
 		{
@@ -138,6 +140,8 @@ public static class AssetManager
 
 		MissingSprite.Dispose();
 		sprites.Clear();
+
+		AudioHandler.Unload();
 	}
 
 	public static void OnDrawImGui()
