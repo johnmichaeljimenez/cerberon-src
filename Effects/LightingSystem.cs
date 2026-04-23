@@ -67,6 +67,12 @@ public class Shadow
 
 public class Light : IDisposable
 {
+	public enum VisionEffects
+	{
+		Light,
+		VisionOnly,
+	}
+
 	public Sprite Sprite { get; set; }
 	public Vector2 Position { get; set; }
 	public Color Color { get; set; }
@@ -74,13 +80,14 @@ public class Light : IDisposable
 	public Vector2 Origin { get; set; }
 	public float Scale { get; set; }
 	public bool Enabled { get; set; }
+	public VisionEffects VisionEffect { get; set; }
 
 	public bool CastShadows { get; set; }
 	public RenderTexture2D? ShadowRenderTexture { get; private set; }
 	public Camera2D? ShadowCamera { get; private set; }
 	private const float SHADOW_MAP_RESOLUTION = 256f;
 
-	public Light(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, bool castShadows = false)
+	public Light(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, bool castShadows = false, VisionEffects visionEffect = VisionEffects.Light)
 	{
 		var org = origin ?? new(0.5f, 0.5f);
 
@@ -91,6 +98,7 @@ public class Light : IDisposable
 		Origin = org;
 		Scale = scale;
 		Enabled = enabled;
+		VisionEffect = visionEffect;
 		CastShadows = castShadows;
 
 		if (CastShadows)
@@ -121,26 +129,35 @@ public class Light : IDisposable
 
 public static class LightingSystem
 {
-	public static RenderTexture2D RenderTexture { get; private set; }
+	public static RenderTexture2D LightingRenderTexture { get; private set; }
+	public static RenderTexture2D VisionRenderTexture { get; private set; }
 	public static Color AmbientLightColor { get; set; }
 	public const float SCALE = 2.0f;
 
 	private static readonly List<Light> lights = new();
 	private static readonly List<Shadow> shadows = new();
+	private static readonly List<Light> visionLights = new();
 
 	public static void Init(int width, int height)
 	{
-		RenderTexture = Raylib.LoadRenderTexture((int)(width / SCALE), (int)(height / SCALE));
-		Raylib.SetTextureFilter(RenderTexture.Texture, TextureFilter.Bilinear);
+		LightingRenderTexture = Raylib.LoadRenderTexture((int)(width / SCALE), (int)(height / SCALE));
+		Raylib.SetTextureFilter(LightingRenderTexture.Texture, TextureFilter.Bilinear);
+
+		VisionRenderTexture = Raylib.LoadRenderTexture((int)(width / SCALE), (int)(height / SCALE));
+		Raylib.SetTextureFilter(VisionRenderTexture.Texture, TextureFilter.Bilinear);
 
 		Raylib.SetTextureFilter(AssetManager.GetSprite("light").Texture, TextureFilter.Bilinear);
 		Raylib.SetTextureFilter(AssetManager.GetSprite("flashlight").Texture, TextureFilter.Bilinear);
 	}
 
-	public static Light AddLight(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, bool castShadows = false)
+	public static Light AddLight(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, bool castShadows = false, Light.VisionEffects visionEffect = Light.VisionEffects.Light)
 	{
 		var light = new Light(sprite, position, color, rotation, scale, enabled, origin, castShadows);
-		lights.Add(light);
+
+		if (visionEffect == Light.VisionEffects.Light)
+			lights.Add(light);
+		else if (visionEffect == Light.VisionEffects.VisionOnly)
+			visionLights.Add(light);
 
 		return light;
 	}
@@ -148,7 +165,12 @@ public static class LightingSystem
 	public static void RemoveLight(Light light)
 	{
 		light.Dispose();
-		lights.Remove(light);
+
+		if (lights.Contains(light))
+			lights.Remove(light);
+
+		if (visionLights.Contains(light))
+			visionLights.Remove(light);
 	}
 
 	public static Shadow AddShadow(Vector2 position, Vector2 size)
@@ -164,16 +186,9 @@ public static class LightingSystem
 		shadows.Remove(shadow);
 	}
 
-	public static void Draw()
+	private static void DrawLights(Camera2D cam, RenderTexture2D tex, List<Light> l, Color bgColor)
 	{
-		if (lights.Count == 0)
-			return;
-
-		var cam = Game.Instance.Camera.Camera;
-		cam.Offset = new Vector2(RenderTexture.Texture.Width, RenderTexture.Texture.Height) / 2f;
-		cam.Zoom /= SCALE; //optimization and it ironically makes the lighting look better (non-HD means players fill the gaps by their imagination)
-
-		foreach (var i in lights)
+		foreach (var i in l)
 		{
 			if (!i.Enabled)
 				continue;
@@ -205,12 +220,12 @@ public static class LightingSystem
 			}
 		}
 
-		Raylib.BeginTextureMode(RenderTexture);
+		Raylib.BeginTextureMode(tex);
 		Raylib.BeginMode2D(cam);
 		Raylib.BeginBlendMode(BlendMode.Additive);
-		Raylib.ClearBackground(AmbientLightColor);
+		Raylib.ClearBackground(bgColor);
 
-		foreach (var i in lights)
+		foreach (var i in l)
 		{
 			if (!i.Enabled)
 				continue;
@@ -245,10 +260,24 @@ public static class LightingSystem
 		Raylib.EndTextureMode();
 	}
 
+	public static void Draw()
+	{
+		if (lights.Count == 0)
+			return;
+
+		var cam = Game.Instance.Camera.Camera;
+		cam.Offset = new Vector2(LightingRenderTexture.Texture.Width, LightingRenderTexture.Texture.Height) / 2f;
+		cam.Zoom /= SCALE; //optimization and it ironically makes the lighting look better (non-HD means players fill the gaps by their imagination)
+
+		DrawLights(cam, LightingRenderTexture, lights, AmbientLightColor);
+		DrawLights(cam, VisionRenderTexture, visionLights, Color.Black);
+	}
+
 	public static void Dispose()
 	{
 		Clear();
-		Raylib.UnloadRenderTexture(RenderTexture);
+		Raylib.UnloadRenderTexture(VisionRenderTexture);
+		Raylib.UnloadRenderTexture(LightingRenderTexture);
 	}
 
 	public static void Clear()

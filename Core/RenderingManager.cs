@@ -19,6 +19,7 @@ public class RenderingManager
 
 
     private static int lightTextLoc;
+    private static int visionTextLoc;
 
     public static void LoadPostShader()
     {
@@ -59,6 +60,7 @@ public class RenderingManager
 
         PostShader = Raylib.LoadShader(null, POST_FX);
         lightTextLoc = Raylib.GetShaderLocation(PostShader, "lightTex");
+        visionTextLoc = Raylib.GetShaderLocation(PostShader, "visionTex");
     }
 
     public static void UnloadPostShader()
@@ -92,7 +94,8 @@ public class RenderingManager
         {
             LightingSystem.Draw();
             Raylib.BeginShaderMode(PostShader);
-            Raylib.SetShaderValueTexture(PostShader, lightTextLoc, LightingSystem.RenderTexture.Texture);
+            Raylib.SetShaderValueTexture(PostShader, lightTextLoc, LightingSystem.LightingRenderTexture.Texture);
+            Raylib.SetShaderValueTexture(PostShader, visionTextLoc, LightingSystem.VisionRenderTexture.Texture);
         }
 
         Rectangle source = new(0, 0, target.Texture.Width, -target.Texture.Height);

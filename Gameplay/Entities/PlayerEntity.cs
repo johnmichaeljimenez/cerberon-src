@@ -60,6 +60,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 
 	private LinecastHit laserHit;
 	private Light lightSelf;
+	private Light lightSelfVision;
 	private Light flashLight;
 
 	private Light muzzleFlash;
@@ -78,8 +79,9 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 
 		Animator = new Animator("player-idle", "player-move");
 		Game.Instance.Camera.Follow(Position);
-		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new (20, 20, 20), 0, 8);
-		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f), true);
+		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new (30, 30, 30), 0, 8);
+		lightSelfVision = LightingSystem.AddLight(AssetManager.GetSprite("vision-cone"), Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), true, Light.VisionEffects.VisionOnly);
+		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f), true); //redundant shadow but it is what it is
 
 		Animator.Play("player-idle");
 	}
@@ -169,6 +171,8 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 		FacingAngle = Raymath.LerpAngle(FacingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
 
 		lightSelf.Position = Position;
+		lightSelfVision.Position = Position;
+		lightSelfVision.Rotation = FacingAngle;
 		flashLight.Position = Position;
 		flashLight.Rotation = Raymath.LerpAngle(flashLight.Rotation, FacingAngle, dt * rotSpeed); //intentional delay
 
@@ -209,6 +213,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 			LightingSystem.RemoveLight(muzzleFlash);
 
 		LightingSystem.RemoveLight(flashLight);
+		LightingSystem.RemoveLight(lightSelfVision);
 		LightingSystem.RemoveLight(lightSelf);
 	}
 
