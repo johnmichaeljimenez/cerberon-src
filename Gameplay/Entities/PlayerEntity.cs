@@ -78,8 +78,8 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 
 		Animator = new Animator("player-idle", "player-move");
 		Game.Instance.Camera.Follow(Position);
-		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, Color.DarkGray, 0, 10);
-		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f));
+		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new (20, 20, 20), 0, 8);
+		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f), true);
 
 		Animator.Play("player-idle");
 	}
