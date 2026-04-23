@@ -80,8 +80,8 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 		Animator = new Animator("player-idle", "player-move");
 		Game.Instance.Camera.Follow(Position);
 		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new (30, 30, 30), 0, 8);
-		lightSelfVision = LightingSystem.AddLight(AssetManager.GetSprite("vision-cone"), Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), true, Light.VisionEffects.VisionOnly);
-		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f), true); //redundant shadow but it is what it is
+		lightSelfVision = LightingSystem.AddLight(AssetManager.GetSprite("vision-cone"), Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), Light.ShadowTypes.Dynamic, Light.VisionEffects.VisionOnly);
+		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f), Light.ShadowTypes.Dynamic); //redundant shadow but it is what it is
 
 		Animator.Play("player-idle");
 	}

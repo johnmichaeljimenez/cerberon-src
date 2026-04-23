@@ -55,9 +55,9 @@ public static class SampleWorld
         world.Entities.Add(new WallEntity { Position = new(-39.0f, -15.0f), Size = new(3.0f, 6.0f) });
         world.Entities.Add(new WallEntity { Position = new(45.0f, 42.0f), Size = new(6.0f, 3.0f) });
 
-        LightingSystem.AddLight(lightSprite, new(-14.5f, 22), Colors.WHITE.Fade(0.8f), 0, 64, castShadows: true);
-        LightingSystem.AddLight(lightSprite, new(22, 36), Colors.WHITE.Fade(0.8f), 0, 64, castShadows: true);
-        LightingSystem.AddLight(lightSprite, new(-38, 33), Colors.WHITE.Fade(0.8f), 0, 64, castShadows: true);
+        LightingSystem.AddLight(lightSprite, new(-14.5f, 22), Colors.WHITE.Fade(0.8f), 0, 64, shadowType: Light.ShadowTypes.Static);
+        LightingSystem.AddLight(lightSprite, new(22, 36), Colors.WHITE.Fade(0.8f), 0, 64, shadowType: Light.ShadowTypes.Static);
+        LightingSystem.AddLight(lightSprite, new(-38, 33), Colors.WHITE.Fade(0.8f), 0, 64, shadowType: Light.ShadowTypes.Static);
 
         var n = 1;
         foreach (var i in world.Entities)

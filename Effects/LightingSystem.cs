@@ -73,6 +73,13 @@ public class Light : IDisposable
 		VisionOnly,
 	}
 
+	public enum ShadowTypes
+	{
+		None,
+		Static, //one-shot generation
+		Dynamic
+	}
+
 	public Sprite Sprite { get; set; }
 	public Vector2 Position { get; set; }
 	public Color Color { get; set; }
@@ -82,12 +89,32 @@ public class Light : IDisposable
 	public bool Enabled { get; set; }
 	public VisionEffects VisionEffect { get; set; }
 
-	public bool CastShadows { get; set; }
+	public ShadowTypes ShadowType { get; set; }
 	public RenderTexture2D? ShadowRenderTexture { get; private set; }
 	public Camera2D? ShadowCamera { get; private set; }
 	private const float SHADOW_MAP_RESOLUTION = 256f;
+	private bool updatedShadow;
 
-	public Light(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, bool castShadows = false, VisionEffects visionEffect = VisionEffects.Light)
+	public bool ShouldUpdateShadow()
+	{
+		if (ShadowType == ShadowTypes.Dynamic)
+		return true;
+
+		if (ShadowType == ShadowTypes.Static)
+		{
+			if (!updatedShadow)
+			{
+				updatedShadow = true;
+				return true;
+			}
+
+			return false;
+		}
+
+		return false;
+	}
+
+	public Light(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, ShadowTypes shadowType = Light.ShadowTypes.None, VisionEffects visionEffect = VisionEffects.Light)
 	{
 		var org = origin ?? new(0.5f, 0.5f);
 
@@ -99,9 +126,9 @@ public class Light : IDisposable
 		Scale = scale;
 		Enabled = enabled;
 		VisionEffect = visionEffect;
-		CastShadows = castShadows;
+		ShadowType = shadowType;
 
-		if (CastShadows)
+		if (shadowType != ShadowTypes.None)
 		{
 			int rtSize = (int)SHADOW_MAP_RESOLUTION; //TODO: use world unity dynamic resolution (bigger light = bigger RT)
 
@@ -150,9 +177,9 @@ public static class LightingSystem
 		Raylib.SetTextureFilter(AssetManager.GetSprite("flashlight").Texture, TextureFilter.Bilinear);
 	}
 
-	public static Light AddLight(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, bool castShadows = false, Light.VisionEffects visionEffect = Light.VisionEffects.Light)
+	public static Light AddLight(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, Light.ShadowTypes shadowType = Light.ShadowTypes.None, Light.VisionEffects visionEffect = Light.VisionEffects.Light)
 	{
-		var light = new Light(sprite, position, color, rotation, scale, enabled, origin, castShadows);
+		var light = new Light(sprite, position, color, rotation, scale, enabled, origin, shadowType);
 
 		if (visionEffect == Light.VisionEffects.Light)
 			lights.Add(light);
@@ -193,11 +220,11 @@ public static class LightingSystem
 			if (!i.Enabled)
 				continue;
 
-			if (!i.CastShadows)
+			if (i.ShadowType == Light.ShadowTypes.None)
 				continue;
 
 			//nested render texture drawings are not allowed, so shadows first
-			if (i.ShadowRenderTexture.HasValue && i.ShadowCamera.HasValue) //TODO: add hasUpdated flag for light and shadow
+			if (i.ShadowRenderTexture.HasValue && i.ShadowCamera.HasValue && i.ShouldUpdateShadow())
 			{
 				var rt = i.ShadowRenderTexture.Value;
 				var lightCam = i.ShadowCamera.Value;
@@ -230,7 +257,7 @@ public static class LightingSystem
 			if (!i.Enabled)
 				continue;
 
-			if (!i.CastShadows)
+			if (i.ShadowType == Light.ShadowTypes.None)
 			{
 				i.Sprite.Draw(i.Position, tint: i.Color, rotation: i.Rotation, origin: i.Origin, scale: i.Scale);
 				continue;
