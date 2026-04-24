@@ -10,22 +10,31 @@ uniform sampler2D visionTex;
 uniform vec4 colDiffuse;
 out vec4 finalColor;
 
-vec3 contrast(vec3 col, float amt)
+const int bayer4x4[16] = int[16](
+     0,  8,  2, 10,
+    12,  4, 14,  6,
+     3, 11,  1,  9,
+    15,  7, 13,  5
+);
+
+float bayer4x4_lookup(int x, int y)
 {
-	return vec3(
-		pow(col.r, amt),
-		pow(col.g, amt),
-		pow(col.b, amt)
-	);
+    int ix = x & 3;
+    int iy = y & 3;
+    int idx = iy * 4 + ix;
+    return float(bayer4x4[idx]) / 16.0;
 }
 
-vec3 invert(vec3 col)
+float ditherOffset(vec2 uv)
 {
-	return vec3(
-		1.0 - col.r,
-		1.0 - col.g,
-		1.0 - col.b
-	);
+    ivec2 texSize = textureSize(texture0, 0);
+    ivec2 pix = ivec2(floor(uv * vec2(texSize)));
+    return (bayer4x4_lookup(pix.x, pix.y) - 0.5) / 255.0;
+}
+
+vec3 contrast(vec3 col, float factor)
+{
+    return (col - 0.5) * factor + 0.5;
 }
 
 void main() {
@@ -44,5 +53,8 @@ void main() {
     vec3 screenGrayColor = vec3(lum, lum, lum);
 	
 	vec3 finColor = mix(screenGrayColor, texelColor, visColor.r);
+	float dither = ditherOffset(fragTexCoord);
+	finColor += dither; //remove color banding
+	
 	finalColor = vec4(finColor * vig, 1);
 }
