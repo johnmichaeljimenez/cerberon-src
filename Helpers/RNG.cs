@@ -19,10 +19,9 @@ public static class RNG
 
 	public static bool Chance(float percentage)
 	{
-		if (percentage <= 0f) return false;
-		if (percentage >= 100f) return true;
+		percentage = Raymath.Clamp01(percentage);
 		
-		var roll = rng.NextDouble() * 100.0;
+		var roll = rng.NextDouble();
 		return roll < percentage;
 	}
 };
