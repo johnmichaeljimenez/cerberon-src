@@ -56,7 +56,7 @@ public class GameplayState : IGameState
 		{
 			i.Value.Dispose();
 		}
-		
+
 		LightingSystem.Clear();
 	}
 
@@ -68,14 +68,14 @@ public class GameplayState : IGameState
 		{
 			i.Value.Update(dt, udt);
 		}
-		
+
 		CurrentWorld.LateUpdate(dt, udt);
 	}
 
 	public void Draw()
 	{
 		CurrentWorld.Draw();
-		
+
 		if (drawDebug)
 		{
 			DrawDebug();
@@ -95,16 +95,43 @@ public class GameplayState : IGameState
 
 	public void DrawImGui()
 	{
-		if (ImGui.Button("Menu"))
-			Game.Instance.GoToMenu();
-
-		ImGui.Checkbox("Draw Debug", ref drawDebug);
-
-		CurrentWorld.DrawImGui();
-
-		foreach (var i in managers)
+		if (ImGui.BeginTabBar("Gameplay"))
 		{
-			i.Value.DrawImGui();
+			if (ImGui.BeginTabItem("Main"))
+			{
+				if (ImGui.Button("Menu"))
+					Game.Instance.GoToMenu();
+
+				ImGui.Checkbox("Draw Debug", ref drawDebug);
+
+				ImGui.Text($"Paused? {PauseHandler.IsPaused}");
+				if (ImGui.Button("Pause"))
+				{
+					if (PauseHandler.IsPaused)
+						PauseHandler.Unpause("test");
+					else
+						PauseHandler.Pause("test");
+				}
+
+				ImGui.EndTabItem();
+			}
+
+			if (ImGui.BeginTabItem("World"))
+			{
+				CurrentWorld.DrawImGui();
+				ImGui.EndTabItem();
+			}
+
+			foreach (var i in managers)
+			{
+				if (ImGui.BeginTabItem(i.Key.Name.Replace("Manager", "")))
+				{
+					i.Value.DrawImGui();
+					ImGui.EndTabItem();
+				}
+			}
+
+			ImGui.EndTabBar();
 		}
 	}
 

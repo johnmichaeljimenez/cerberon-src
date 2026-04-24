@@ -121,20 +121,15 @@ public class Game
                 {
                     ImGui.SeparatorText(currentState.GetType().Name);
                     currentState.DrawImGui();
+                    
+                    ImGui.End();
+                }
 
-                    ImGui.Text($"Paused? {PauseHandler.IsPaused}");
-                    if (ImGui.Button("Pause"))
-                    {
-                        if (PauseHandler.IsPaused)
-                            PauseHandler.Unpause("test");
-                        else
-                            PauseHandler.Pause("test");
-                    }
-
+                if (ImGui.Begin("Assets"))
+                {
                     ImGui.SeparatorText("Assets");
                     AssetManager.OnDrawImGui();
 
-                    ImGui.SliderFloat("Zoom", ref Camera.Camera.Zoom, 0.01f, Sprite.PIXELS_PER_UNIT);
                     ImGui.End();
                 }
             }
