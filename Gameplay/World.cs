@@ -28,8 +28,8 @@ public class World : IDisposable //aka Level loader
 	[JsonProperty]
 	public List<BaseEntity> Entities { get; private set; } = new();
 
-	[JsonProperty]
-	public List<CharacterEntity> CharacterEntities { get; private set; } = new();
+	[JsonIgnore]
+	public readonly Dictionary<string, List<BaseEntity>> EntityGroups = new();
 
 	[JsonIgnore]
 	private readonly List<BaseEntity> toAddEntities = new();
@@ -218,13 +218,29 @@ public class World : IDisposable //aka Level loader
 
 	private void OnAdd(BaseEntity e)
 	{
-		if (e is CharacterEntity c) //TODO: maybe make a custom list class that has events on add and remove for consistency
-			CharacterEntities.Add(c);
+		foreach (var i in e.Groups)
+		{
+			if (!EntityGroups.ContainsKey(i))
+				EntityGroups[i] = new();
+
+			EntityGroups[i].Add(e);
+		}
 	}
 
 	private void OnRemove(BaseEntity e)
 	{
-		if (e is CharacterEntity c)
-			CharacterEntities.Remove(c);
+		foreach (var i in e.Groups)
+		{
+			if (EntityGroups.ContainsKey(i) && EntityGroups[i].Contains(e))
+				EntityGroups[i].Remove(e);
+		}
+	}
+
+	public List<BaseEntity> GetEntitiesByGroup(string groupName)
+	{
+		if (!EntityGroups.ContainsKey(groupName))
+			return new(); //TODO: optimize
+
+		return EntityGroups[groupName];
 	}
 }
