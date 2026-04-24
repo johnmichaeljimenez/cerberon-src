@@ -14,10 +14,26 @@ public class ItemPickupEntity : BaseEntity
 	}
 
 	[JsonProperty]
-	public ItemTypes ItemType { get; private set; }
+	public ItemTypes ItemType { get; set; }
 
 	[JsonProperty]
-	public int Amount { get; private set; }
+	public int Amount { get; set; }
+
+	public override void Init(GameplayState gameplayState)
+	{
+		base.Init(gameplayState);
+
+		if (ItemType == ItemTypes.Health)
+		{
+			Groups.Add("health");
+		}
+		else
+		{
+			Groups.Add("ammo");
+		}
+
+		Log.Send($"Spawned item: {ItemType} at {Position}");
+	}
 
 	public override void Update(float dt, float udt)
 	{
@@ -31,6 +47,19 @@ public class ItemPickupEntity : BaseEntity
 
 			if (ItemType == ItemTypes.Health)
 				pickedUp = player.Heal(Amount);
+
+			//TODO: cleanup
+			if (ItemType == ItemTypes.AmmoAK)
+			{
+				player.guns.FirstOrDefault(p => p.Name == "AK-47").CurrentMaxAmmo += Amount; 
+				pickedUp = true;
+			}
+
+			if (ItemType == ItemTypes.AmmoSIG)
+			{
+				player.guns.FirstOrDefault(p => p.Name == "Sig Sauer").CurrentMaxAmmo += Amount;
+				pickedUp = true;
+			}
 
 			if (pickedUp)
 				Despawn();

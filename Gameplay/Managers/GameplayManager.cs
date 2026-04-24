@@ -8,7 +8,7 @@ public class GameplayManager : BaseManager
 {
 	public float GameTime => _gameTime;
 	private float _gameTime;
-	public readonly float MaxGameTime = 60f; //temporary hardcoded
+	public readonly float MaxGameTime = 300f; //temporary hardcoded
 
 	public bool Running { get; private set; }
 

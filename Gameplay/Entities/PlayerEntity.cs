@@ -30,7 +30,7 @@ public class Gun
 		ReloadTime = reloadTime;
 
 		CurrentAmmo = MagSize;
-		CurrentMaxAmmo = MaxAmmo;
+		CurrentMaxAmmo = MaxAmmo/4;
 	}
 
 	public bool CanReload()

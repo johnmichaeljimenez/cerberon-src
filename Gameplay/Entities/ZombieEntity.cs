@@ -1,7 +1,6 @@
 using Main.Core;
 using Main.Gameplay.Managers;
 using Main.Helpers;
-using static Main.Gameplay.Managers.WaypointManager;
 
 namespace Main.Gameplay.Entities;
 
@@ -34,7 +33,7 @@ public class ZombieEntity : CharacterEntity
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
 
 		var d = player.Position - Position;
-		if (d.Length() <= 2f)
+		if (d.Length() <= 3f)
 		{
 			if (!player.IsDead && Utils.Countdown(ref attackTimer, dt))
 			{
@@ -48,28 +47,36 @@ public class ZombieEntity : CharacterEntity
 		else
 		{
 			var w = gameplayState.GetManager<WaypointManager>();
-			if (nodes.Count == 0) //change the path only when the current path is reached for immersion, but will add cooldown for frequency control
+			if (w.IsVisible(Position, player.Position)) //go straight to player if directly visible (not true FOV yet)
 			{
-				w.Move(Position, player.Position, nodes);
+				if (nodes.Count > 0)
+					nodes.Clear();
 			}
-
-			if (nodes.Count > 0)
+			else
 			{
-				var nd = nodes[0] - Position;
-				if (nd.Length() <= 2f)
+				if (nodes.Count == 0) //change the path only when the current path is reached for immersion, but will add cooldown for frequency control
 				{
-					nodes.RemoveAt(0);
-					if (nodes.Count == 0)
-					{
-						w.Move(Position, player.Position, nodes);
-					}
-					else
-					{
-						nd = nodes[0] - Position;
-					}
+					w.Move(Position, player.Position, nodes);
 				}
 
-				d = nd;
+				if (nodes.Count > 0)
+				{
+					var nd = nodes[0] - Position;
+					if (nd.Length() <= 2f)
+					{
+						nodes.RemoveAt(0);
+						if (nodes.Count == 0)
+						{
+							w.Move(Position, player.Position, nodes);
+						}
+						else
+						{
+							nd = nodes[0] - Position;
+						}
+					}
+
+					d = nd;
+				}
 			}
 
 			velocity = Raymath.Vector2Lerp(velocity, Raymath.Vector2Normalize(d) * MovementSpeed, dt * 10);
@@ -95,13 +102,13 @@ public class ZombieEntity : CharacterEntity
 		Despawn();
 	}
 
-	public override void DrawDebug()
-	{
-		base.DrawDebug();
+	// public override void DrawDebug()
+	// {
+	// 	base.DrawDebug();
 
-		for (int i = 0; i < nodes.Count - 1; i++)
-		{
-			Raylib.DrawLineEx(nodes[i], nodes[i + 1], 2, Colors.YELLOW);
-		}
-	}
+	// 	for (int i = 0; i < nodes.Count - 1; i++)
+	// 	{
+	// 		Raylib.DrawLineEx(nodes[i], nodes[i + 1], 2, Colors.YELLOW);
+	// 	}
+	// }
 }
