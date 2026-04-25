@@ -241,6 +241,7 @@ public static class AudioHandler
 			source.Update(ListenerPosition);
 			
 		activeAudioSources.Add(source);
+		Raylib.SetSoundPitch(sound, RNG.Range(0.9f, 1.1f));
 
 		nextAliasIndex[individualKey] = (index + 1) % aliases.Count;
 		return true;
