@@ -24,6 +24,8 @@ public class Game
 
     public CameraController Camera { get; private set; }
 
+    private bool showIMGUI;
+
     public Game()
     {
         Instance = this;
@@ -116,27 +118,30 @@ public class Game
             RenderingManager.DrawToScreen(_target);
             UIManager.Draw();
 
-            rlImGui.Begin();
+            if (showIMGUI)
             {
-                Log.DrawImGui();
-
-                if (ImGui.Begin("Debug"))
+                rlImGui.Begin();
                 {
-                    ImGui.SeparatorText(currentState.GetType().Name);
-                    currentState.DrawImGui();
+                    Log.DrawImGui();
 
-                    ImGui.End();
+                    if (ImGui.Begin("Debug"))
+                    {
+                        ImGui.SeparatorText(currentState.GetType().Name);
+                        currentState.DrawImGui();
+
+                        ImGui.End();
+                    }
+
+                    if (ImGui.Begin("Assets"))
+                    {
+                        ImGui.SeparatorText("Assets");
+                        AssetManager.OnDrawImGui();
+
+                        ImGui.End();
+                    }
                 }
-
-                if (ImGui.Begin("Assets"))
-                {
-                    ImGui.SeparatorText("Assets");
-                    AssetManager.OnDrawImGui();
-
-                    ImGui.End();
-                }
+                rlImGui.End();
             }
-            rlImGui.End();
 
             Raylib.DrawFPS(4, 4);
         }
@@ -157,6 +162,10 @@ public class Game
             {
                 Update(fixedDt, unscaledFixedDt, scale, offset);
             });
+
+
+            if (Raylib.IsKeyPressed(KeyboardKey.F1))
+                showIMGUI = !showIMGUI;
 
             Draw();
         }
