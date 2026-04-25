@@ -1,5 +1,6 @@
 using Main.Effects;
 using Main.Gameplay;
+using Main.UI;
 
 namespace Main.Core;
 
@@ -15,9 +16,6 @@ public interface IGameState
 public class Game
 {
     public static Game Instance { get; private set; }
-
-    private const int VirtualWidth = 800; //hardcoded for now, might be actual 1080p by default (or at least 720p)
-    private const int VirtualHeight = 450;
     private RenderTexture2D _target;
 
     private IGameState currentState;
@@ -30,24 +28,27 @@ public class Game
     {
         Instance = this;
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
-        Raylib.InitWindow(VirtualWidth, VirtualHeight, "Raylib-cs Letterbox");
+        Raylib.InitWindow(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT, "Raylib-cs Letterbox");
         Raylib.MaximizeWindow();
-        _target = Raylib.LoadRenderTexture(VirtualWidth, VirtualHeight);
+        _target = Raylib.LoadRenderTexture(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
         RenderingManager.LoadPostShader();
 
         AssetManager.Init();
 
-        Camera = new(VirtualWidth, VirtualHeight);
-        LightingSystem.Init(VirtualWidth, VirtualHeight);
+        Camera = new(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
+        LightingSystem.Init(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
 
         rlImGui.Setup(true);
 
         currentState = new MenuState();
+
+        UIManager.Init();
     }
 
     public void End()
     {
         currentState?.Exit();
+        UIManager.Dispose();
 
         LightingSystem.Dispose();
         RenderingManager.UnloadPostShader();
@@ -97,7 +98,7 @@ public class Game
         nextState = state;
     }
 
-    private void Draw(float scale, Vector2 offset)
+    private void Draw()
     {
         Raylib.BeginTextureMode(_target);
         {
@@ -112,7 +113,8 @@ public class Game
         Raylib.BeginDrawing();
         {
             Raylib.ClearBackground(Color.Black);
-            RenderingManager.DrawToScreen(_target, scale, offset, VirtualWidth, VirtualHeight);
+            RenderingManager.DrawToScreen(_target);
+            UIManager.Draw();
 
             rlImGui.Begin();
             {
@@ -145,8 +147,9 @@ public class Game
     {
         while (!Raylib.WindowShouldClose())
         {
-            float scale = RenderingManager.GetScale(VirtualWidth, VirtualHeight);
-            Vector2 offset = RenderingManager.GetOffset(VirtualWidth, VirtualHeight, scale);
+            RenderingManager.UpdateLayout();
+            float scale = RenderingManager.Scale;
+            Vector2 offset = RenderingManager.Offset;
 
             AudioHandler.Update();
             InputManager.Update(scale, offset, Camera.Camera); //press events are not captured reliably on 60hz loop, that's why it's here
@@ -155,7 +158,7 @@ public class Game
                 Update(fixedDt, unscaledFixedDt, scale, offset);
             });
 
-            Draw(scale, offset);
+            Draw();
         }
     }
 }

@@ -4,19 +4,18 @@ namespace Main.Core;
 
 public class RenderingManager
 {
+    public const int VIRTUAL_WIDTH = 800; //hardcoded for now, might be actual 1080p by default (or at least 720p)
+    public const int VIRTUAL_HEIGHT = 450;
+
     const string POST_FX = "Assets/Shaders/postfx.fs";
 
     public static Shader PostShader { get; private set; }
 
-    public static float GetScale(int virtualWidth, int virtualHeight) =>
-        Math.Min((float)Raylib.GetScreenWidth() / virtualWidth, (float)Raylib.GetScreenHeight() / virtualHeight);
-
-    public static Vector2 GetOffset(int virtualWidth, int virtualHeight, float scale) =>
-        new((Raylib.GetScreenWidth() - (virtualWidth * scale)) * 0.5f, (Raylib.GetScreenHeight() - (virtualHeight * scale)) * 0.5f);
-
-
     private static int lightTextLoc;
     private static int visionTextLoc;
+
+    public static float Scale;
+    public static Vector2 Offset;
 
     public static void LoadPostShader()
     {
@@ -47,7 +46,25 @@ public class RenderingManager
         }
     }
 
-    public static void DrawToScreen(RenderTexture2D target, float scale, Vector2 offset, int virtualWidth, int virtualHeight)
+    public static Rectangle GetRect(Vector2 pos, Vector2 size)
+    {
+        var scaledPos = pos * Scale;
+        var scaledSize = size * Scale;
+        
+        scaledPos += Offset;
+        // scaledPos = new Vector2(MathF.Round(scaledPos.X), MathF.Round(scaledPos.Y));
+        // scaledSize = new Vector2(MathF.Round(scaledSize.X), MathF.Round(scaledSize.Y));
+
+        return new Rectangle(scaledPos, scaledSize);
+    }
+
+    public static void UpdateLayout()
+    {
+        Scale = Math.Min((float)Raylib.GetScreenWidth() / VIRTUAL_WIDTH, (float)Raylib.GetScreenHeight() / VIRTUAL_HEIGHT);
+        Offset = new((Raylib.GetScreenWidth() - (VIRTUAL_WIDTH * Scale)) * 0.5f, (Raylib.GetScreenHeight() - (VIRTUAL_HEIGHT * Scale)) * 0.5f);
+    }
+
+    public static void DrawToScreen(RenderTexture2D target)
     {
         if (PostShader.Id != 0)
         {
@@ -58,7 +75,7 @@ public class RenderingManager
         }
 
         Rectangle source = new(0, 0, target.Texture.Width, -target.Texture.Height);
-        Rectangle dest = new(offset.X, offset.Y, virtualWidth * scale, virtualHeight * scale);
+        Rectangle dest = new(Offset.X, Offset.Y, VIRTUAL_WIDTH * Scale, VIRTUAL_HEIGHT * Scale);
         Raylib.DrawTexturePro(target.Texture, source, dest, Vector2.Zero, 0.0f, Color.White);
 
         if (PostShader.Id != 0)
