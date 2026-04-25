@@ -6,9 +6,6 @@ public class RenderingManager
 {
     const string POST_FX = "Assets/Shaders/postfx.fs";
 
-    private static FileSystemWatcher? _shaderWatcher;
-    private static bool _shaderReloadRequested;
-
     public static Shader PostShader { get; private set; }
 
     public static float GetScale(int virtualWidth, int virtualHeight) =>
@@ -23,34 +20,10 @@ public class RenderingManager
 
     public static void LoadPostShader()
     {
-        SetupShaderWatcher();
-        ReloadShader();
+        ReloadShader(AssetWatcher.Add(POST_FX, ReloadShader));
     }
 
-    private static void SetupShaderWatcher() //hot-reload for super fast iteration
-    {
-        if (_shaderWatcher != null) return;
-
-        string relativePath = POST_FX;
-        string fullPath = Path.GetFullPath(relativePath);
-        string directory = Path.GetDirectoryName(fullPath)!;
-        string fileName = Path.GetFileName(fullPath);
-
-        _shaderWatcher = new FileSystemWatcher(directory, fileName)
-        {
-            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime | NotifyFilters.Size,
-            EnableRaisingEvents = true
-        };
-
-        _shaderWatcher.Changed += OnShaderChanged;
-    }
-
-    private static void OnShaderChanged(object sender, FileSystemEventArgs e)
-    {
-        _shaderReloadRequested = true;
-    }
-
-    private static void ReloadShader()
+    private static void ReloadShader(string shader)
     {
         if (PostShader.Id != 0)
         {
@@ -58,33 +31,19 @@ public class RenderingManager
             PostShader = default;
         }
 
-        PostShader = Raylib.LoadShader(null, POST_FX);
+        PostShader = Raylib.LoadShaderFromMemory(null, shader);
         lightTextLoc = Raylib.GetShaderLocation(PostShader, "lightTex");
         visionTextLoc = Raylib.GetShaderLocation(PostShader, "visionTex");
     }
 
     public static void UnloadPostShader()
     {
-        if (_shaderWatcher != null)
-        {
-            _shaderWatcher.EnableRaisingEvents = false;
-            _shaderWatcher.Dispose();
-            _shaderWatcher = null;
-        }
+        AssetWatcher.Remove(POST_FX);
 
         if (PostShader.Id != 0)
         {
             Raylib.UnloadShader(PostShader);
             PostShader = default;
-        }
-    }
-
-    public static void Update()
-    {
-        if (_shaderReloadRequested)
-        {
-            _shaderReloadRequested = false; //threading-related stuff
-            ReloadShader();
         }
     }
 

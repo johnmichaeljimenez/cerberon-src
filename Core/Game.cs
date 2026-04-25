@@ -54,6 +54,7 @@ public class Game
         rlImGui.Shutdown();
         AssetManager.Dispose();
         Raylib.UnloadRenderTexture(_target);
+        AssetWatcher.Dispose();
         Raylib.CloseWindow();
     }
 
@@ -71,8 +72,8 @@ public class Game
         }
 
         Camera.Update(dt);
-        RenderingManager.Update();
 
+        AssetWatcher.Update();
         InputManager.LateUpdate();
     }
 
