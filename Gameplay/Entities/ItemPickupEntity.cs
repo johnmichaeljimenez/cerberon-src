@@ -62,7 +62,10 @@ public class ItemPickupEntity : BaseEntity
 			}
 
 			if (pickedUp)
+			{
+				AudioHandler.PlaySound("generic/item-pickup");
 				Despawn();
+			}
 		}
 	}
 

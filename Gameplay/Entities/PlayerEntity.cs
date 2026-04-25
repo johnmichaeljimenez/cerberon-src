@@ -17,10 +17,12 @@ public class Gun
 	public int CurrentAmmo;
 	public int CurrentMaxAmmo;
 
+	public string AudioWeaponName;
+
 
 
 	public Gun(string name, int damage, float firingRate,
-			   int magSize, int maxAmmo, float reloadTime)
+			   int magSize, int maxAmmo, float reloadTime, string audioWeaponName)
 	{
 		Name = name;
 		Damage = damage;
@@ -28,9 +30,10 @@ public class Gun
 		MagSize = magSize;
 		MaxAmmo = maxAmmo;
 		ReloadTime = reloadTime;
+		AudioWeaponName = audioWeaponName;
 
 		CurrentAmmo = MagSize;
-		CurrentMaxAmmo = MaxAmmo/4;
+		CurrentMaxAmmo = MaxAmmo / 4;
 	}
 
 	public bool CanReload()
@@ -54,8 +57,8 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 {
 	public readonly List<Gun> guns = new() //total hardcoded for now
 	{
-		new Gun("Sig Sauer", 15, 0f, 15, 60, 1.4f),
-		new Gun("AK-47", 30, 0.1f, 30, 120, 2f),
+		new Gun("Sig Sauer", 15, 0f, 15, 60, 1.3f, "handgun"),
+		new Gun("AK-47", 30, 0.1f, 30, 120, 1.4f, "rifle"),
 	};
 
 	private LinecastHit laserHit;
@@ -81,7 +84,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 
 		Animator = new Animator("player-idle", "player-move");
 		Game.Instance.Camera.Follow(Position);
-		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new (30, 30, 30), 0, 8);
+		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new(30, 30, 30), 0, 8);
 		lightSelfVision = LightingSystem.AddLight(AssetManager.GetSprite("vision-cone"), Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), Light.ShadowTypes.Dynamic, Light.VisionEffects.VisionOnly);
 		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f), Light.ShadowTypes.Dynamic); //redundant shadow but it is what it is
 
@@ -131,21 +134,36 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 			{
 				currentGunIndex = 0;
 				Log.Send($"Switched to: {currentGun.Name}");
+				AudioHandler.PlaySound("weapon/generic/equip");
 			}
 			else if (InputManager.Weapon2JustPressed)
 			{
 				currentGunIndex = 1;
 				Log.Send($"Switched to: {currentGun.Name}");
+				AudioHandler.PlaySound("weapon/generic/equip");
 			}
 			else if (InputManager.ReloadJustPressed && currentGun.CanReload())
 			{
 				reloadTimer = currentGun.ReloadTime;
+				AudioHandler.PlaySound($"weapon/{currentGun.AudioWeaponName}/reload");
 				Log.Send($"Reloading...");
 			}
-			else if (currentGun.CurrentAmmo > 0)
+			else if (
+				(currentGun.CurrentAmmo == 0 && InputManager.ActionJustPressed) ||
+				(currentGun.CurrentAmmo > 0 && (
+					(currentGun.FiringRate <= 0 && InputManager.ActionJustPressed) ||
+					(currentGun.FiringRate > 0 && InputManager.ActionDown)
+				))
+			)
 			{
-				if ((currentGun.FiringRate <= 0 && InputManager.ActionJustPressed) || (currentGun.FiringRate > 0 && InputManager.ActionDown))
+				if (currentGun.CurrentAmmo == 0)
 				{
+					AudioHandler.PlaySound("weapon/generic/dryfire");
+				}
+				else
+				{
+					AudioHandler.PlaySound($"weapon/{currentGun.AudioWeaponName}/fire");
+
 					if (muzzleFlash != null)
 					{
 						LightingSystem.RemoveLight(muzzleFlash);
@@ -187,7 +205,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 			{
 				AudioHandler.PlaySound("fs/rock");
 				fsTimer = 0;
-			} 
+			}
 		}
 		else
 		{
