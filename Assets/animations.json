@@ -110,6 +110,6 @@
 			"zombie/attack/attack (8)",
 			"zombie/attack/attack (9)"
 		],
-		"LoopStartIndex": 0
+		"LoopStartIndex": -1
 	}
 }

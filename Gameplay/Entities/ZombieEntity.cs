@@ -15,15 +15,40 @@ public class ZombieEntity : CharacterEntity
 
 	private readonly List<Vector2> nodes = new();
 
+	private float fsTimer = 0;
+	private bool isAttacking; //TODO: use proper FSM later
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
 
-		Animator = new Animator("zombie-idle", "zombie-move");
+		Animator = new Animator("zombie-idle", "zombie-move", "zombie-attack");
 		MovementSpeed = 4.0f;
 		attackTimer = attackRate;
 
 		Animator.Play("zombie-idle");
+
+		Animator.OnAnimationEnd = (animation) =>
+		{
+			if (animation != "zombie-attack")
+				return;
+
+			isAttacking = false;
+		};
+
+		Animator.OnFrameChanged = (animation, index, t) =>
+		{
+			if (animation != "zombie-attack" || index != 5) //guaranteed to be frame-perfect than using normalized time
+				return;
+
+			var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+			var d = player.Position - Position;
+			if (!player.IsDead && d.Length() <= 3f)
+			{
+				attackTimer = attackRate;
+				player.ApplyDamage(attackDamage);
+			}
+		};
 	}
 
 	public override void Update(float dt, float udt)
@@ -31,18 +56,22 @@ public class ZombieEntity : CharacterEntity
 		base.Update(dt, udt);
 
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
-
 		var d = player.Position - Position;
-		if (d.Length() <= 3f)
-		{
-			if (!player.IsDead && Utils.Countdown(ref attackTimer, dt))
-			{
-				attackTimer = attackRate;
-				player.ApplyDamage(attackDamage);
-			}
 
+		if (isAttacking)
+		{
+			FacingAngle = Raymath.LerpAngle(FacingAngle, d.ToDirection(), dt * 8);
+			return;
+		}
+
+		if (d.Length() <= 4f)
+		{
 			nodes.Clear();
 			velocity = Raymath.Vector2Lerp(velocity, Vector2.Zero, dt * 10);
+
+			isAttacking = true;
+			velocity = Vector2.Zero;
+			Animator.Play("zombie-attack");
 		}
 		else
 		{
@@ -88,11 +117,24 @@ public class ZombieEntity : CharacterEntity
 	public override void LateUpdate(float dt, float udt)
 	{
 		base.LateUpdate(dt, udt);
+		if (isAttacking)
+			return;
 
 		if (velocity.LengthSquared() > 0.1f)
+		{
 			Animator.Play("zombie-move");
+			fsTimer += dt;
+
+			if (fsTimer >= 0.4f)
+			{
+				AudioHandler.PlaySound("fs/rock", Position);
+				fsTimer = 0;
+			}
+		}
 		else
+		{
 			Animator.Play("zombie-idle");
+		}
 	}
 
 	protected override void OnDeath()
