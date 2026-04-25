@@ -35,6 +35,9 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public Animator Animator { get; protected set; }
 
+	[JsonIgnore]
+	public Vector2 Origin { get; set; } = Vector2.One * 0.5f;
+
 	public Vector2 FacingDirection => new Vector2(
 		MathF.Cos(FacingAngle * MathF.PI / 180f),
 		MathF.Sin(FacingAngle * MathF.PI / 180f)
@@ -80,7 +83,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public override void Draw()
 	{
-		CurrentSprite?.Draw(Position, rotation: FacingAngle, origin: new Vector2(0.3f, 0.7f));
+		CurrentSprite?.Draw(Position, rotation: FacingAngle, origin: Origin);
 	}
 
 	public override void DrawDebug()

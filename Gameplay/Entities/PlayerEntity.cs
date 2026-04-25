@@ -77,6 +77,8 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 	{
 		base.Init(gameplayState);
 
+		Origin = new Vector2(0.3f, 0.7f);
+
 		Animator = new Animator("player-idle", "player-move");
 		Game.Instance.Camera.Follow(Position);
 		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new (30, 30, 30), 0, 8);
