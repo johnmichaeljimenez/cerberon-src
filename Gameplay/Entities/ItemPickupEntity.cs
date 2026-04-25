@@ -41,7 +41,7 @@ public class ItemPickupEntity : BaseEntity
 
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
 		var d = (player.Position - Position);
-		if (d.Length() <= 0.5f)
+		if (d.Length() <= 1.5f)
 		{
 			var pickedUp = false;
 
