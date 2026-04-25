@@ -1,0 +1,5 @@
+ID	Position	Size	Visible
+test-bg	0, 0	800, 450	0
+b1	4, 4	32, 32	1
+b1	4, 45	32, 32	1
+b1	4, 85	32, 32	1
