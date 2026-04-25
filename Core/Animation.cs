@@ -47,6 +47,10 @@ public class Animator //this is the "instance" using those said "assets"
 
 	public float NormalizedTime { get; private set; }
 
+	public Action<string, int, float> OnFrameChanged { get; set; }
+	public Action<string> OnAnimationBegin { get; set; }
+	public Action<string> OnAnimationEnd { get; set; }
+
 	public Animator(params string[] animationNames)
 	{
 		if (animationNames.Length == 0)
@@ -71,23 +75,28 @@ public class Animator //this is the "instance" using those said "assets"
 		{
 			timer = 0;
 			frameIndex++;
+			NormalizedTime = (float)frameIndex / (float)currentAnimation.Frames.Count;
+
+			OnFrameChanged?.Invoke(currentAnimation.Name, frameIndex, NormalizedTime);
 
 			if (frameIndex >= currentAnimation.Frames.Count) //this loop runs at fixed 60hz (not fps), so it's guaranteed to be consistent anyway. dt = 1 / 60 constant
 			{
 				if (currentAnimation.LoopStartIndex >= 0)
 				{
 					frameIndex = currentAnimation.LoopStartIndex;
+					NormalizedTime = (float)frameIndex / (float)currentAnimation.Frames.Count;
 				}
 				else
 				{
+					OnAnimationEnd?.Invoke(currentAnimation.Name);
 					frameIndex = currentAnimation.Frames.Count - 1;
+					NormalizedTime = 1.0f;
+
 					IsPlaying = false;
 				}
 			}
 		}
 
-		NormalizedTime = (float)frameIndex / (float)currentAnimation.Frames.Count;
-		
 		if (!IsPlaying)
 		{
 			if (nextAnimationName != null)
@@ -117,6 +126,9 @@ public class Animator //this is the "instance" using those said "assets"
 		currentAnimation = anim;
 		this.nextAnimationName = nextAnimationName; //lazy check
 		IsPlaying = true;
+		NormalizedTime = 0f;
+		
+		OnAnimationBegin?.Invoke(animationName);
 	}
 
 	public void Stop()
