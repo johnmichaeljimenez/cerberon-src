@@ -33,7 +33,7 @@ public class Game
         Raylib.InitWindow(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT, "Raylib-cs Letterbox");
         Raylib.MaximizeWindow();
         _target = Raylib.LoadRenderTexture(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
-        RenderingManager.LoadPostShader();
+        RenderingManager.Init();
 
         AssetManager.Init();
 

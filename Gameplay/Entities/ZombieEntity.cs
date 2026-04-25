@@ -144,6 +144,13 @@ public class ZombieEntity : CharacterEntity
 		Despawn();
 	}
 
+	public override void Draw()
+	{
+		RenderingManager.BeginMaskedShader();
+		base.Draw();
+		Raylib.EndShaderMode();
+	}
+
 	// public override void DrawDebug()
 	// {
 	// 	base.DrawDebug();

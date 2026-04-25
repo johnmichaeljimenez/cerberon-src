@@ -10,16 +10,28 @@ public class RenderingManager
     const string POST_FX = "Assets/Shaders/postfx.fs";
 
     public static Shader PostShader { get; private set; }
+    public static Shader SpriteMasked { get; private set; }
 
-    private static int lightTextLoc;
-    private static int visionTextLoc;
+    private static int lightTexLoc;
+    private static int visionTexLoc;
+
+    private static int maskVisionTexLoc;
 
     public static float Scale;
     public static Vector2 Offset;
 
-    public static void LoadPostShader()
+    public static void Init()
     {
+        SpriteMasked = Raylib.LoadShader(null, "Assets/Shaders/sprite-masked.fs");
+        maskVisionTexLoc = Raylib.GetShaderLocation(SpriteMasked, "visionTex");
+
         ReloadShader(AssetWatcher.Add(POST_FX, ReloadShader));
+    }
+
+    public static void BeginMaskedShader() //TODO: add a proper sprite rendering system
+    {
+		Raylib.BeginShaderMode(SpriteMasked);
+		Raylib.SetShaderValueTexture(SpriteMasked, maskVisionTexLoc, LightingSystem.VisionRenderTexture.Texture);
     }
 
     private static void ReloadShader(string shader)
@@ -31,13 +43,19 @@ public class RenderingManager
         }
 
         PostShader = Raylib.LoadShaderFromMemory(null, shader);
-        lightTextLoc = Raylib.GetShaderLocation(PostShader, "lightTex");
-        visionTextLoc = Raylib.GetShaderLocation(PostShader, "visionTex");
+        lightTexLoc = Raylib.GetShaderLocation(PostShader, "lightTex");
+        visionTexLoc = Raylib.GetShaderLocation(PostShader, "visionTex");
     }
 
     public static void UnloadPostShader()
     {
         AssetWatcher.Remove(POST_FX);
+
+        if (SpriteMasked.Id != 0)
+        {
+            Raylib.UnloadShader(SpriteMasked);
+            SpriteMasked = default;
+        }
 
         if (PostShader.Id != 0)
         {
@@ -70,8 +88,8 @@ public class RenderingManager
         {
             LightingSystem.Draw();
             Raylib.BeginShaderMode(PostShader);
-            Raylib.SetShaderValueTexture(PostShader, lightTextLoc, LightingSystem.LightingRenderTexture.Texture);
-            Raylib.SetShaderValueTexture(PostShader, visionTextLoc, LightingSystem.VisionRenderTexture.Texture);
+            Raylib.SetShaderValueTexture(PostShader, lightTexLoc, LightingSystem.LightingRenderTexture.Texture);
+            Raylib.SetShaderValueTexture(PostShader, visionTexLoc, LightingSystem.VisionRenderTexture.Texture);
         }
 
         Rectangle source = new(0, 0, target.Texture.Width, -target.Texture.Height);
