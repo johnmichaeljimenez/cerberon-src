@@ -1,13 +1,47 @@
+using Main.Helpers;
+
 namespace Main.Core;
+
+public class AudioSource
+{
+	public Sound Sound;
+	public float Time;
+	public bool IsSpatial;
+	public Vector2 Position;
+	public float Radius = 40;
+
+	public void Update(Vector2 listener)
+	{
+		var d = listener - Position;
+		var distance = d.Length();
+
+		var volume = 1.0f - Raymath.Clamp01(distance / Radius); //linear for now
+		if (volume <= 0.01f) volume = 0f;
+
+		float pan = 0.5f;
+		if (distance > 0.001f)
+		{
+			var dir = Raymath.Vector2Normalize(d);
+			pan = 0.5f + dir.X * 0.5f;
+		}
+
+		Raylib.SetSoundVolume(Sound, volume);
+		Raylib.SetSoundPan(Sound, pan); //0 = full left, 0.5 = center, 1 = full right
+	}
+}
 
 public static class AudioHandler
 {
 	private const int ALIAS_COUNT = 10;
 
+	private static readonly List<AudioSource> activeAudioSources = new();
+	private static readonly Dictionary<string, float> soundLengths = new();
 	private static readonly Dictionary<string, Sound> soundAssets = new();
 	private static readonly Dictionary<string, List<Sound>> soundAliases = new();
 	private static readonly Dictionary<string, int> nextAliasIndex = new();
 	private static readonly Dictionary<string, List<string>> soundVariations = new();
+
+	public static Vector2 ListenerPosition { get; set; }
 
 	//soundAssets -> soundAliases -> soundVariations
 
@@ -15,6 +49,24 @@ public static class AudioHandler
 	{
 		Raylib.InitAudioDevice();
 		LoadAllSounds(path);
+	}
+
+	public static void Update()
+	{
+		for (int i = activeAudioSources.Count - 1; i >= 0; i--)
+		{
+			var a = activeAudioSources[i];
+			if (Utils.Countdown(ref a.Time, Time.DeltaTime))
+			{
+				activeAudioSources.RemoveAt(i);
+				continue;
+			}
+
+			if (!a.IsSpatial)
+				continue;
+
+			a.Update(ListenerPosition);
+		}
 	}
 
 	public static void Unload()
@@ -96,6 +148,8 @@ public static class AudioHandler
 				Sound source = Raylib.LoadSound(filePath);
 				RegisterSound(individualKey, source);
 				variationKeys.Add(individualKey);
+
+				soundLengths.Add(individualKey, ((float)source.FrameCount / (float)source.Stream.SampleRate) + 0.5f); //padding
 			}
 
 			soundVariations[groupKey] = variationKeys;
@@ -152,24 +206,42 @@ public static class AudioHandler
 		nextAliasIndex[key] = 0;
 	}
 
-	public static bool PlaySound(string key)
+	public static bool PlaySound(string key, Vector2? position = null)
 	{
 		if (soundVariations.TryGetValue(key, out var variations) && variations.Count > 0)
 		{
 			string chosen = variations[Random.Shared.Next(variations.Count)];
-			return PlayIndividual(chosen);
+			return PlayIndividual(chosen, position);
 		}
 
-		return PlayIndividual(key);
+		return PlayIndividual(key, position);
 	}
 
-	private static bool PlayIndividual(string individualKey)
+	private static bool PlayIndividual(string individualKey, Vector2? position)
 	{
 		if (!soundAliases.TryGetValue(individualKey, out var aliases) || aliases.Count == 0)
 			return false;
 
-		int index = nextAliasIndex.GetValueOrDefault(individualKey, 0);
+		var index = nextAliasIndex.GetValueOrDefault(individualKey, 0);
+		var sound = aliases[index];
+
 		Raylib.PlaySound(aliases[index]);
+		Raylib.SetSoundPan(sound, 0.5f);
+		Raylib.SetSoundVolume(sound, 1.0f);
+
+		var source = new AudioSource()
+		{
+			Sound = sound,
+			Time = soundLengths[individualKey],
+			IsSpatial = position.HasValue,
+			Position = position ?? Vector2.Zero
+		};
+
+		if (source.IsSpatial)
+			source.Update(ListenerPosition);
+			
+		activeAudioSources.Add(source);
+
 		nextAliasIndex[individualKey] = (index + 1) % aliases.Count;
 		return true;
 	}

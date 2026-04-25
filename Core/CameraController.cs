@@ -20,6 +20,8 @@ public class CameraController
 
 	public void Update(float dt)
 	{
+		AudioHandler.ListenerPosition = Camera.Target;
+
 		//runs at fixed update (from Game) but still super smooth and accurate (unlike Cinemachine where simple camera teleporting needs complex code), but I don't know why tbh, it's like black magic for real
 		if (followSpeed > 0)
 			Camera.Target = Vector2.Lerp(Camera.Target, followTarget, followSpeed * dt);

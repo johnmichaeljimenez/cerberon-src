@@ -121,7 +121,7 @@ public class Game
                 {
                     ImGui.SeparatorText(currentState.GetType().Name);
                     currentState.DrawImGui();
-                    
+
                     ImGui.End();
                 }
 
@@ -147,6 +147,7 @@ public class Game
             float scale = RenderingManager.GetScale(VirtualWidth, VirtualHeight);
             Vector2 offset = RenderingManager.GetOffset(VirtualWidth, VirtualHeight, scale);
 
+            AudioHandler.Update();
             InputManager.Update(scale, offset, Camera.Camera); //press events are not captured reliably on 60hz loop, that's why it's here
             Time.Update((fixedDt, unscaledFixedDt) =>
             {
