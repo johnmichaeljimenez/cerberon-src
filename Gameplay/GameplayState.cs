@@ -14,7 +14,7 @@ public class GameplayState : IGameState
 
 	public World CurrentWorld { get; private set; }
 
-	private bool drawDebug = true;
+	private bool drawDebug = false;
 
 	public GameplayState(GameplayOptions options)
 	{

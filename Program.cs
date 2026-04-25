@@ -5,6 +5,7 @@ namespace Main;
 
 public class Program
 {
+    [STAThread]
     public static void Main()
     {
         var game = new Game();
