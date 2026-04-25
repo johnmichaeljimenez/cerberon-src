@@ -50,6 +50,7 @@ public class Gun
 		CurrentMaxAmmo -= ammoToAdd;
 
 		Log.Send($"Reloaded: ({CurrentAmmo}/{CurrentMaxAmmo})");
+		AudioHandler.PlaySound("weapon/generic/ready");
 	}
 }
 
@@ -114,6 +115,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 
 		if (InputManager.FlashlightJustPressed)
 		{
+			AudioHandler.PlaySound("generic/flashlight-toggle");
 			flashLightOn = !flashLightOn;
 			flashLight.Enabled = flashLightOn;
 		}
@@ -149,7 +151,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 				Log.Send($"Reloading...");
 			}
 			else if (
-				(currentGun.CurrentAmmo == 0 && InputManager.ActionJustPressed) ||
+				(currentGun.CurrentAmmo == 0 && InputManager.ActionJustPressed) || //guaranteed tap-to-shoot for dryfire
 				(currentGun.CurrentAmmo > 0 && (
 					(currentGun.FiringRate <= 0 && InputManager.ActionJustPressed) ||
 					(currentGun.FiringRate > 0 && InputManager.ActionDown)
