@@ -232,7 +232,9 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 			Animator.Play("player-idle");
 		}
 
-		Game.Instance.Camera.Follow(Position, 3f);
+		var target = InputManager.MouseWorldPosition - Position;
+		target = Position + Raymath.Vector2ClampValue(target, 0, 5);
+		Game.Instance.Camera.Follow(target, 2f);
 	}
 
 	public override void Draw()
