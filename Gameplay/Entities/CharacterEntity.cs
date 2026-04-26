@@ -1,4 +1,5 @@
 using Main.Core;
+using Main.Effects;
 using Main.Helpers;
 
 namespace Main.Gameplay.Entities;
@@ -107,6 +108,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		if (IsDead)
 			return false;
 
+		DecalSystem.Paint(Position);
 		HP -= amt;
 		Log.Send($"HIT: {amt} -> {HP}/{MaxHP}");
 		if (HP <= 0)
@@ -121,6 +123,6 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	protected virtual void OnDeath()
 	{
-
+		DecalSystem.Paint(Position);
 	}
 }

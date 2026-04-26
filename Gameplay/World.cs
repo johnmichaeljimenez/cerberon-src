@@ -70,6 +70,8 @@ public class World : IDisposable //aka Level loader
 
 		gameplayState.GetManager<CollisionManager>().AddWalls(-WorldSettings.WorldSize * 0.5f, WorldSettings.WorldSize, worldBounds, true);
 		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
+
+		DecalSystem.Init(Vector2.Zero, WorldSettings.WorldSize);
 	}
 
 	public void Update(float dt, float udt)
@@ -134,6 +136,8 @@ public class World : IDisposable //aka Level loader
 
 	public void Draw()
 	{
+		DecalSystem.Draw();
+
 		foreach (var i in Entities)
 		{
 			if (i.IsDestroyed || !i.IsActive)
@@ -150,6 +154,7 @@ public class World : IDisposable //aka Level loader
 			gameplayState.GetManager<CollisionManager>().RemoveWall(i);
 		}
 
+		DecalSystem.Dispose();
 		DisposeAllEntities();
 	}
 
