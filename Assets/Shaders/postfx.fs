@@ -7,6 +7,8 @@ uniform sampler2D texture0;
 uniform sampler2D lightTex;
 uniform sampler2D visionTex;
 
+const float blurRadius = 1.5;
+
 uniform vec4 colDiffuse;
 out vec4 finalColor;
 
@@ -37,6 +39,25 @@ vec3 contrast(vec3 col, float factor)
     return (col - 0.5) * factor + 0.5;
 }
 
+vec3 blur(sampler2D tex, vec2 uv, float radius)
+{
+    vec2 texelSize = 1.0 / vec2(textureSize(tex, 0));
+    vec3 color = vec3(0.0);
+    float weightSum = 0.0;
+
+    for (int x = -2; x <= 2; ++x)
+    {
+        for (int y = -2; y <= 2; ++y)
+        {
+            float weight = exp(-(x*x + y*y) / (2.0 * radius * radius)); // Gaussian falloff
+            vec2 offset = vec2(x, y) * texelSize * radius;
+            color += texture(tex, uv + offset).rgb * weight;
+            weightSum += weight;
+        }
+    }
+    return color / weightSum;
+}
+
 void main() {
     vec2 uv = fragTexCoord.xy;
     uv *=  1.0 - uv.yx;
@@ -44,16 +65,22 @@ void main() {
     vig = pow(vig, 1.1);
 
     vec3 screenColor = texture(texture0, fragTexCoord).rgb;
+    vec3 blurColor = blur(texture0, fragTexCoord, blurRadius); //focus blur effect
 	vec3 lightColor = texture(lightTex, fragTexCoord).rgb;
 	vec3 visColor = texture(visionTex, fragTexCoord).rgb;
+
 	lightColor = contrast(lightColor, 1.1);
+    vec3 lightBlur = blur(lightTex, fragTexCoord, 2.5).rgb;
+    lightBlur = contrast(lightBlur, 5); //bloom
 	
     vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2)); //basic light with intentional overblown lights
-    float lum = pow(dot(texelColor, vec3(0.299, 0.587, 0.114)), 3);
+    float lum = pow(dot(blurColor, vec3(0.299, 0.587, 0.114)), 3);
     vec3 screenGrayColor = vec3(lum, lum, lum);
 	
 	vec3 finColor = mix(screenGrayColor, texelColor, visColor.r);
 	float dither = ditherOffset(fragTexCoord);
+
+    finColor += lightBlur * 0.1;
 	finColor += dither; //remove color banding
 	
 	finalColor = vec4(finColor * vig, 1);
