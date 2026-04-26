@@ -21,7 +21,8 @@ public static class Utils
 		var settings = new JsonSerializerSettings()
 		{
 			NullValueHandling = NullValueHandling.Ignore,
-			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+			DefaultValueHandling = DefaultValueHandling.Populate,
+			ObjectCreationHandling = ObjectCreationHandling.Replace,
 			Converters = { new EntityJsonConverter() }
 		};
 

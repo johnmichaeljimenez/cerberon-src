@@ -1,4 +1,4 @@
-using System.Runtime.Serialization;
+using System.ComponentModel;
 using Main.Core;
 
 namespace Main.Gameplay.Entities;
@@ -12,6 +12,7 @@ public abstract class BaseEntity : IDisposable
 	public Vector2 Position { get; set; }
 
 	[JsonProperty]
+	[DefaultValue(true)]
 	public bool IsActive { get; set; } = true;
 
 	private string _currentSpriteID;

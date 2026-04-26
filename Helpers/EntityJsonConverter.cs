@@ -17,18 +17,23 @@ public class EntityJsonConverter : JsonConverter<BaseEntity>
 			throw new JsonSerializationException("Entity is missing the 'Type' property.");
 
 		Type? entityType = World.GetRegisteredEntityType(typeStr);
-
 		if (entityType == null)
 			throw new JsonSerializationException($"Unknown entity type: {typeStr}");
 
-		BaseEntity entity = (BaseEntity)Activator.CreateInstance(entityType)!;
+		jo.Remove("Type");
 
 		using (var jr = jo.CreateReader())
 		{
-			serializer.Populate(jr, entity);
-		}
+			var innerSettings = new JsonSerializerSettings
+			{
+				DefaultValueHandling = DefaultValueHandling.Populate,
+				ObjectCreationHandling = ObjectCreationHandling.Replace,
+				NullValueHandling = NullValueHandling.Ignore,
+				ContractResolver = serializer.ContractResolver
+			};
 
-		return entity;
+			return (BaseEntity)JsonSerializer.Create(innerSettings).Deserialize(jr, entityType)!;
+		}
 	}
 
 	public override void WriteJson(JsonWriter writer, BaseEntity? value, JsonSerializer serializer)
