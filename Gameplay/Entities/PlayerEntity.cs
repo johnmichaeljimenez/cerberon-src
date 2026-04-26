@@ -50,7 +50,6 @@ public class Gun
 		CurrentMaxAmmo -= ammoToAdd;
 
 		Log.Send($"Reloaded: ({CurrentAmmo}/{CurrentMaxAmmo})");
-		AudioHandler.PlaySound("weapon/generic/ready");
 	}
 }
 
@@ -74,6 +73,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 	private Gun currentGun => guns[currentGunIndex];
 	private float fireTimer;
 	private float reloadTimer;
+	private bool isIraqiReload;
 
 	private float fsTimer = 0; //test
 
@@ -83,7 +83,7 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 
 		Origin = new Vector2(0.3f, 0.7f);
 
-		Animator = new Animator("player-idle", "player-move");
+		Animator = new Animator("player-idle", "player-move"); //TODO: add player weapon-specific animations
 		Game.Instance.Camera.Follow(Position);
 		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new(30, 30, 30), 0, 8);
 		lightSelfVision = LightingSystem.AddLight(AssetManager.GetSprite("vision-cone"), Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), Light.ShadowTypes.Dynamic, Light.VisionEffects.VisionOnly);
@@ -127,7 +127,14 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 		{
 			reloadTimer -= dt;
 			if (reloadTimer <= 0)
+			{
 				currentGun.DoReload();
+
+				if (!isIraqiReload)
+					AudioHandler.PlaySound("weapon/generic/ready");
+
+				isIraqiReload = false;
+			}
 		}
 
 		if (fireTimer <= 0 && reloadTimer <= 0) //temporary if-else chain for now (FSMs are not needed yet)
@@ -146,8 +153,19 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 			}
 			else if (InputManager.ReloadJustPressed && currentGun.CanReload())
 			{
-				reloadTimer = currentGun.ReloadTime;
-				AudioHandler.PlaySound($"weapon/{currentGun.AudioWeaponName}/reload");
+				//I just feel like adding Iraqi reload here because it's cheap and cool tbh ("sometimes a cigar is just a cigar" of game design)
+
+				//how it works:
+				//if a weapon is an auto and mag is empty, hold the trigger while reloading to make the reload faster
+				//IRL equivalent of holding the charging handle ready while loading the new mag
+				//this game has no charging handle for guns, so trigger is the closest alternative
+				isIraqiReload = currentGun.FiringRate > 0 && currentGun.CurrentAmmo == 0 && InputManager.ActionDown;
+				reloadTimer = currentGun.ReloadTime * (isIraqiReload ? 0.6f : 1); //40% is OK enough
+
+				if (isIraqiReload)
+					AudioHandler.PlaySound($"weapon/generic/reloadfast");
+				else
+					AudioHandler.PlaySound($"weapon/{currentGun.AudioWeaponName}/reload");
 				Log.Send($"Reloading...");
 			}
 			else if (
