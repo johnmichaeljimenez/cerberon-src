@@ -132,6 +132,10 @@ public class World : IDisposable //aka Level loader
 		DecalSystem.Init(Vector2.Zero, WorldSettings.WorldSize);
 
 		Sprites.Clear();
+		
+		if (EnvironmentSprites == null)
+			EnvironmentSprites = new();
+
 		foreach (var i in EnvironmentSprites)
 		{
 			i.Init();
@@ -338,5 +342,12 @@ public class World : IDisposable //aka Level loader
 			return new(); //TODO: optimize
 
 		return EntityGroups[groupName];
+	}
+
+	public static Type? GetRegisteredEntityType(string name)
+	{
+		if (entityRegistry.TryGetValue(name, out var type))
+			return type;
+		return null;
 	}
 }

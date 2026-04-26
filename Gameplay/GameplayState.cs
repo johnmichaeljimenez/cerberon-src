@@ -42,7 +42,8 @@ public class GameplayState : IGameState
 
 	public void Enter()
 	{
-		CurrentWorld = SampleWorld.GetSampleWorldData(); //while I am too lazy to make a JSON
+		string jsonText = File.ReadAllText("Assets/Levels/SampleScene.json"); //test
+		CurrentWorld = jsonText.FromJson<World>();
 		CurrentWorld.Init(this);
 
 		GetManager<PlayerManager>().SpawnPlayer(CurrentWorld.WorldSettings.PlayerSpawnPoint);

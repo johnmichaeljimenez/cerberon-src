@@ -1,0 +1,405 @@
+{
+  "WorldSettings": {
+    "PlayerSpawnPoint": {
+      "X": 22.02,
+      "Y": 36.78
+    },
+    "WorldSize": {
+      "X": 160.0,
+      "Y": 160.0
+    },
+    "AmbientColor": {
+      "R": 31,
+      "G": 31,
+      "B": 31,
+      "A": 255
+    }
+  },
+  "Entities": [
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -66.0,
+        "Y": -48.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 96.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 69.0,
+        "Y": -78.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 126.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 0.0,
+        "Y": -78.0
+      },
+      "Size": {
+        "X": 69.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -66.0,
+        "Y": 45.0
+      },
+      "Size": {
+        "X": 36.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 0.0,
+        "Y": 45.0
+      },
+      "Size": {
+        "X": 75.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -30.0,
+        "Y": 63.0
+      },
+      "Size": {
+        "X": 9.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -60.0,
+        "Y": -48.0
+      },
+      "Size": {
+        "X": 30.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -30.0,
+        "Y": -24.0
+      },
+      "Size": {
+        "X": 30.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -36.0,
+        "Y": -48.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 15.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 0.0,
+        "Y": -27.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 9.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -36.0,
+        "Y": 48.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 21.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 0.0,
+        "Y": 48.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 21.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 0.0,
+        "Y": -12.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 24.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -36.0,
+        "Y": 12.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 18.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 45.0,
+        "Y": -12.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 24.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 6.0,
+        "Y": -24.0
+      },
+      "Size": {
+        "X": 45.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 0.0,
+        "Y": 21.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 9.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 6.0,
+        "Y": 6.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 6.0,
+        "Y": 21.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 24.0,
+        "Y": 21.0
+      },
+      "Size": {
+        "X": 21.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 24.0,
+        "Y": 6.0
+      },
+      "Size": {
+        "X": 21.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 45.0,
+        "Y": 21.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 15.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -36.0,
+        "Y": 36.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 9.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -36.0,
+        "Y": -27.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 33.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -9.0,
+        "Y": 63.0
+      },
+      "Size": {
+        "X": 9.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -60.0,
+        "Y": 21.0
+      },
+      "Size": {
+        "X": 15.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -18.0,
+        "Y": -6.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -18.0,
+        "Y": 39.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 0.0,
+        "Y": 36.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 9.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -39.0,
+        "Y": 21.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 0.0,
+        "Y": -72.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 39.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -30.0,
+        "Y": -42.0
+      },
+      "Size": {
+        "X": 30.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -60.0,
+        "Y": -15.0
+      },
+      "Size": {
+        "X": 15.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -39.0,
+        "Y": -15.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 6.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 45.0,
+        "Y": 42.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 3.0
+      }
+    }
+  ]
+}

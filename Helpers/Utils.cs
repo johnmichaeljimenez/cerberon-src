@@ -10,26 +10,27 @@ public static class Utils
 		{
 			ContractResolver = new SaveContractResolver(onlySaveData),
 			Formatting = Formatting.Indented,
-			TypeNameHandling = TypeNameHandling.Auto, //temporary (I know this is dangerous)
-			NullValueHandling = NullValueHandling.Ignore
+			TypeNameHandling = TypeNameHandling.None,
+			NullValueHandling = NullValueHandling.Ignore,
+			Converters = { new EntityJsonConverter() }
 		});
 	}
 
 	public static T FromJson<T>(this string json)
 	{
-		return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings()
+		var settings = new JsonSerializerSettings()
 		{
 			NullValueHandling = NullValueHandling.Ignore,
-			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
-		});
+			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+			Converters = { new EntityJsonConverter() }
+		};
+
+		return JsonConvert.DeserializeObject<T>(json, settings);
 	}
 
 	public static void FromJsonPopulate(this object obj, string json)
 	{
-		JsonConvert.PopulateObject(json, obj, new JsonSerializerSettings
-		{
-			TypeNameHandling = TypeNameHandling.Auto //temporary (I know this is dangerous)
-		});
+		JsonConvert.PopulateObject(json, obj, new());
 	}
 
 	public static float ToDirection(this Vector2 delta)

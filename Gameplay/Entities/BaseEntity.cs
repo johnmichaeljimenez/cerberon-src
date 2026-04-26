@@ -45,6 +45,7 @@ public abstract class BaseEntity : IDisposable
 	public virtual void Init(GameplayState gameplayState)
 	{
 		this.gameplayState = gameplayState;
+		CurrentSprite = AssetManager.GetSprite(_currentSpriteID);
 		Groups.Add(GetType().Name);
 	}
 
@@ -80,11 +81,6 @@ public abstract class BaseEntity : IDisposable
 		return true;
 	}
 
-	[OnDeserialized]
-	protected virtual void OnDeserialized(StreamingContext _)
-	{
-		CurrentSprite = AssetManager.GetSprite(_currentSpriteID);
-	}
 
 	public virtual void DrawDebug()
 	{

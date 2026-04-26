@@ -8,8 +8,8 @@ public class Sprite : IDisposable
 
 	public string Name;
 	public Texture2D Texture;
-	public int Width {get; private set;}
-	public int Height {get; private set;}
+	public int Width { get; private set; }
+	public int Height { get; private set; }
 	public Vector2 UnitSize { get; private set; }
 
 	public Sprite(string name, Texture2D texture2D)
@@ -51,7 +51,7 @@ public class Sprite : IDisposable
 
 		Raylib.DrawTexturePro(Texture, srcRect, destRect, originPix, rotation, tintColor);
 	}
-	
+
 	public void DrawTiled(Vector2 position, Vector2 tileSize, float rotation = 0, Color? tint = null)
 	{
 		var tintColor = tint ?? Color.White;
@@ -146,6 +146,9 @@ public static class AssetManager
 
 	public static Sprite GetSprite(string name)
 	{
+		if (string.IsNullOrWhiteSpace(name))
+			return null; //intentional null
+
 		if (sprites.TryGetValue(name, out var sprite))
 			return sprite;
 
