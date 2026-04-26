@@ -92,6 +92,34 @@ public static class Utils
 			new Vector2(rect.Position.X, rect.Position.Y + rect.Size.Y)
 		};
 	}
+
+	public static Rectangle Enclose(Vector2 from, Vector2 to)
+	{
+		var x = Math.Min(from.X, to.X);
+		var y = Math.Min(from.Y, to.Y);
+		var width = Math.Abs(from.X - to.X);
+		var height = Math.Abs(from.Y - to.Y);
+
+		return new Rectangle(x, y, width, height);
+	}
+
+	public static List<Rectangle> GetChunkRectangles(this Rectangle worldArea, float chunkWidth, float chunkHeight)
+	{
+		var chunks = new List<Rectangle>();
+
+		for (var y = worldArea.Y; y < worldArea.Y + worldArea.Height; y += chunkHeight)
+		{
+			for (var x = worldArea.X; x < worldArea.X + worldArea.Width; x += chunkWidth)
+			{
+				var w = Math.Min(chunkWidth, worldArea.X + worldArea.Width - x);
+				var h = Math.Min(chunkHeight, worldArea.Y + worldArea.Height - y);
+
+				chunks.Add(new Rectangle(x, y, w, h));
+			}
+		}
+
+		return chunks;
+	}
 }
 
 public static class Colors
@@ -128,5 +156,10 @@ public static class Colors
 	public static Color Fade(this Color c, float alpha)
 	{
 		return new(c.R, c.G, c.B, alpha);
+	}
+
+	public static Color Value(this Color c, float amt)
+	{
+		return new((byte)((float)c.R * amt), (byte)((float)c.G * amt), (byte)((float)c.B * amt), c.A);
 	}
 }

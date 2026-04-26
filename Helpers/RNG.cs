@@ -24,4 +24,13 @@ public static class RNG
 		var roll = rng.NextDouble();
 		return roll < percentage;
 	}
+
+	public static Vector2 Position(float range = 1.0f)
+	{
+		var pos = new Vector2(Range(-1f, 1f), Range(-1f, 1f));
+		if (pos.Length() > 1.0f)
+			pos = Raymath.Vector2Normalize(pos);
+
+		return pos * range;
+	}
 };
