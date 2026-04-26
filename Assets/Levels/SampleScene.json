@@ -9,9 +9,9 @@
       "Y": 160.0
     },
     "AmbientColor": {
-      "R": 31,
-      "G": 31,
-      "B": 31,
+      "R": 99,
+      "G": 99,
+      "B": 99,
       "A": 255
     }
   },
@@ -399,6 +399,169 @@
       "Size": {
         "X": 6.0,
         "Y": 3.0
+      }
+    }
+  ],
+  "EnvironmentSprites": [
+    {
+      "SpriteID": "env/tile-2",
+      "Position": {
+        "X": 4.91,
+        "Y": 0.84
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 136.102951,
+        "Y": 94.1155548
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/ground-5",
+      "Position": {
+        "X": 0.84,
+        "Y": 1.18
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": -1,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 183.293854,
+        "Y": 174.545624
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/tile-2",
+      "Position": {
+        "X": -14.96,
+        "Y": 56.17
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 36.2014046,
+        "Y": 19.0247383
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/tile-2",
+      "Position": {
+        "X": 36.64,
+        "Y": -59.95
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 69.48326,
+        "Y": 30.1186981
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/wood-13",
+      "Position": {
+        "X": 25.76,
+        "Y": 35.78
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 47.40721,
+        "Y": 24.0862885
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/grate_albedo",
+      "Position": {
+        "X": -14.76,
+        "Y": 52.33
+      },
+      "Parallax": 0.1,
+      "Rotation": 0.0,
+      "SortingGroup": 1,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 36.8692169,
+        "Y": 28.996109
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/ground-10",
+      "Position": {
+        "X": 38.49,
+        "Y": 57.7
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": -1,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 66.38388,
+        "Y": 15.6155128
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
       }
     }
   ]
