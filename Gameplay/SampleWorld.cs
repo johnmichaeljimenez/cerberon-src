@@ -19,6 +19,32 @@ public static class SampleWorld
             }
         };
 
+        world.EnvironmentSprites.Add(new()
+        {
+            Position = new(25, 30),
+            Scale = 1,
+            Parallax = 0,
+            Rotation = 0,
+            SortingGroup = 0,
+            SortingIndex = 0,
+            SpriteID = "env/tile-2",
+            Tint = Color.White,
+            RenderType = WorldSpriteRenderer.RenderTypes.Tiled,
+            TileSize = new Vector2(25, 25)
+        });
+
+        world.EnvironmentSprites.Add(new()
+        {
+            Position = new(25, 30),
+            Scale = 2,
+            Parallax = 0.2f,
+            Rotation = 0,
+            SortingGroup = 1,
+            SortingIndex = 0,
+            SpriteID = "env/overlay-bush-01",
+            Tint = Color.Black
+        });
+
         world.Entities.Add(new WallEntity { Position = new(-66.0f, -48.0f), Size = new(6.0f, 96.0f) });
         world.Entities.Add(new WallEntity { Position = new(69.0f, -78.0f), Size = new(6.0f, 126.0f) });
         world.Entities.Add(new WallEntity { Position = new(0.0f, -78.0f), Size = new(69.0f, 6.0f) });

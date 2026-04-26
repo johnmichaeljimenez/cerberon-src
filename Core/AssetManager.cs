@@ -51,6 +51,28 @@ public class Sprite : IDisposable
 
 		Raylib.DrawTexturePro(Texture, srcRect, destRect, originPix, rotation, tintColor);
 	}
+	
+	public void DrawTiled(Vector2 position, Vector2 tileSize, float rotation = 0, Color? tint = null)
+	{
+		var tintColor = tint ?? Color.White;
+		var originNorm = Vector2.One * 0.5f;
+
+		var destW = tileSize.X;
+		var destH = tileSize.Y;
+
+		var originPix = new Vector2(originNorm.X * destW, originNorm.Y * destH);
+		var pivotPix = position;
+
+		var destRect = new Rectangle(
+			pivotPix.X,
+			pivotPix.Y,
+			destW,
+			destH
+		);
+
+		var srcRect = new Rectangle(0, 0, Width, Height);
+		Raylib.DrawTexturePro(Texture, srcRect, destRect, originPix, rotation, tintColor);
+	}
 }
 
 public static class AssetManager

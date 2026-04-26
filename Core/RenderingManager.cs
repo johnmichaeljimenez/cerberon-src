@@ -11,11 +11,13 @@ public class RenderingManager
 
     public static Shader PostShader { get; private set; }
     public static Shader SpriteMasked { get; private set; }
+    public static Shader SpriteTiled { get; private set; }
 
     private static int lightTexLoc;
     private static int visionTexLoc;
 
     private static int maskVisionTexLoc;
+    private static int tiledTexLocX, tiledTexLocY;
 
     public static float Scale;
     public static Vector2 Offset;
@@ -23,15 +25,30 @@ public class RenderingManager
     public static void Init()
     {
         SpriteMasked = Raylib.LoadShader(null, "Assets/Shaders/sprite-masked.fs");
+        SpriteTiled = Raylib.LoadShader(null, "Assets/Shaders/sprite-tiled.fs");
+
         maskVisionTexLoc = Raylib.GetShaderLocation(SpriteMasked, "visionTex");
+        tiledTexLocX = Raylib.GetShaderLocation(SpriteTiled, "tilingX");
+        tiledTexLocY = Raylib.GetShaderLocation(SpriteTiled, "tilingY");
 
         ReloadShader(AssetWatcher.Add(POST_FX, ReloadShader));
     }
 
     public static void BeginMaskedShader() //TODO: add a proper sprite rendering system
     {
-		Raylib.BeginShaderMode(SpriteMasked);
-		Raylib.SetShaderValueTexture(SpriteMasked, maskVisionTexLoc, LightingSystem.VisionRenderTexture.Texture);
+        Raylib.BeginShaderMode(SpriteMasked);
+        Raylib.SetShaderValueTexture(SpriteMasked, maskVisionTexLoc, LightingSystem.VisionRenderTexture.Texture);
+    }
+
+    public static void BeginTiledShader(Sprite sprite, Vector2 size)
+    {
+        var tiling = new Vector2(
+                size.X * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Width,
+                size.Y * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Height);
+                
+        Raylib.BeginShaderMode(SpriteTiled);
+        Raylib.SetShaderValue(SpriteTiled, tiledTexLocX, tiling.X, ShaderUniformDataType.Float); //TODO: use vector2 (for some reason it doesnt work on that)
+        Raylib.SetShaderValue(SpriteTiled, tiledTexLocY, tiling.Y, ShaderUniformDataType.Float);
     }
 
     private static void ReloadShader(string shader)
@@ -50,6 +67,12 @@ public class RenderingManager
     public static void UnloadPostShader()
     {
         AssetWatcher.Remove(POST_FX);
+
+        if (SpriteTiled.Id != 0)
+        {
+            Raylib.UnloadShader(SpriteTiled);
+            SpriteTiled = default;
+        }
 
         if (SpriteMasked.Id != 0)
         {

@@ -9,6 +9,58 @@ using Newtonsoft.Json;
 
 namespace Main.Gameplay;
 
+[Serializable]
+public class WorldSpriteRenderer //no need for real entities for static environment stuff like these
+{
+	public enum RenderTypes
+	{
+		Default,
+		Tiled,
+		Masked
+	}
+
+	[JsonProperty]
+	public string SpriteID { get; set; }
+
+	public Sprite Sprite { get; set; }
+	public Vector2 Position { get; set; }
+	public float Rotation { get; set; }
+	public float Scale { get; set; } = 1;
+	public Color Tint { get; set; } = Color.White;
+	public int SortingGroup { get; set; }
+	public int SortingIndex { get; set; }
+	public float Parallax { get; set; }
+	public RenderTypes RenderType { get; set; }
+	public Vector2 TileSize { get; set; }
+
+	public void Init()
+	{
+		Sprite = AssetManager.GetSprite(SpriteID);
+	}
+
+	public void Draw()
+	{
+		var pos = Position;
+		if (MathF.Abs(Parallax) >= 0.001f)
+		{
+			var dir = Position - Game.Instance.Camera.Camera.Target;
+			pos += dir * Parallax; // value > 0 for tall objects, < 0 for low objects
+		}
+
+		if (RenderType == RenderTypes.Tiled)
+		{
+			RenderingManager.BeginTiledShader(Sprite, TileSize);
+			Sprite.DrawTiled(pos, TileSize, Rotation, Tint);
+			Raylib.EndShaderMode();
+		}
+		else
+		{
+			Sprite.Draw(pos, Scale, Rotation, Tint, Vector2.One * 0.5f);
+		}
+	}
+}
+
+
 public struct WorldSettings //struct so that it cannot be null
 {
 	public Vector2 PlayerSpawnPoint;
@@ -27,6 +79,12 @@ public class World : IDisposable //aka Level loader
 
 	[JsonProperty]
 	public List<BaseEntity> Entities { get; private set; } = new();
+
+	[JsonProperty]
+	public List<WorldSpriteRenderer> EnvironmentSprites { get; private set; } = new();
+
+	[JsonIgnore]
+	public readonly Dictionary<int, List<WorldSpriteRenderer>> Sprites = new();
 
 	[JsonIgnore]
 	public readonly Dictionary<string, List<BaseEntity>> EntityGroups = new();
@@ -72,6 +130,25 @@ public class World : IDisposable //aka Level loader
 		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
 
 		DecalSystem.Init(Vector2.Zero, WorldSettings.WorldSize);
+
+		Sprites.Clear();
+		foreach (var i in EnvironmentSprites)
+		{
+			i.Init();
+
+			if (!Sprites.ContainsKey(i.SortingGroup))
+				Sprites[i.SortingGroup] = new();
+
+			Sprites[i.SortingGroup].Add(i);
+		}
+
+		foreach (var kvp in Sprites)
+		{
+			kvp.Value.Sort((a, b) => a.SortingIndex.CompareTo(b.SortingIndex));
+		}
+
+		if (!Sprites.ContainsKey(0))
+			Sprites.Add(0, new()); //add middleground rendering for entity and decal's baseline layer
 	}
 
 	public void Update(float dt, float udt)
@@ -136,14 +213,25 @@ public class World : IDisposable //aka Level loader
 
 	public void Draw()
 	{
-		DecalSystem.Draw();
-
-		foreach (var i in Entities)
+		foreach (var i in Sprites)
 		{
-			if (i.IsDestroyed || !i.IsActive)
-				continue;
+			foreach (var j in i.Value)
+			{
+				j.Draw();
+			}
 
-			i.Draw(); //sorting is a tomorrow's problem
+			if (i.Key == 0)
+			{
+				DecalSystem.Draw();
+
+				foreach (var j in Entities)
+				{
+					if (j.IsDestroyed || !j.IsActive)
+						continue;
+
+					j.Draw(); //sorting for each entities is a tomorrow's problem (or maybe this is already fine now)
+				}
+			}
 		}
 	}
 
