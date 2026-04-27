@@ -1,4 +1,5 @@
 using Main.Helpers;
+using System.Text.RegularExpressions;
 
 namespace Main.Core;
 
@@ -172,5 +173,16 @@ public static class AssetManager
 	{
 		var items = string.Join("\n", sprites.Values.Select(p => $"{p.Name}: {p.Width}x{p.Height}")); //super slow, but very temporary approach for now
 		ImGui.Text($"Sprites: {sprites.Count}\n\n{items}");
+	}
+
+	public static List<string> GetSpritesStartingWith(string prefix)
+	{
+		if (string.IsNullOrEmpty(prefix))
+			return new List<string>();
+
+		return sprites.Keys
+			.Where(k => k.StartsWith(prefix))
+			.OrderBy(k => Regex.Replace(k, @"\d+", m => m.Value.PadLeft(10, '0')))
+			.ToList();
 	}
 }

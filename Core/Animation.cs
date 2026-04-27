@@ -19,6 +19,23 @@ public class Animation //this is the "asset"
 
 	public void Init()
 	{
+		var expandedFrames = new List<string>();
+		foreach (var frameSpec in Frames)
+		{
+			if (frameSpec.EndsWith("*"))
+			{
+				string prefix = frameSpec.Substring(0, frameSpec.Length - 1);
+				var matches = AssetManager.GetSpritesStartingWith(prefix);
+				expandedFrames.AddRange(matches);
+			}
+			else
+			{
+				expandedFrames.Add(frameSpec ?? string.Empty);
+			}
+		}
+
+		Frames = expandedFrames;
+
 		Sprites.Clear();
 		Sprites.AddRange(Frames.Select(AssetManager.GetSprite));
 
