@@ -1,114 +1,47 @@
 {
-	"player-idle": {
-		"Name": "player-idle",
+	"player-handgun-idle": {
+		"Name": "player-handgun-idle",
 		"Frames": [
-			"player/idle/idle (1)",
-			"player/idle/idle (2)",
-			"player/idle/idle (3)",
-			"player/idle/idle (4)",
-			"player/idle/idle (5)",
-			"player/idle/idle (6)",
-			"player/idle/idle (7)",
-			"player/idle/idle (8)",
-			"player/idle/idle (9)",
-			"player/idle/idle (10)",
-			"player/idle/idle (11)",
-			"player/idle/idle (12)",
-			"player/idle/idle (13)",
-			"player/idle/idle (14)",
-			"player/idle/idle (15)",
-			"player/idle/idle (16)",
-			"player/idle/idle (17)",
-			"player/idle/idle (18)",
-			"player/idle/idle (19)",
-			"player/idle/idle (20)"
+			"player/handgun/idle/*"
 		],
 		"LoopStartIndex": 0
 	},
-	"player-move": {
-		"Name": "player-move",
+	"player-handgun-move": {
+		"Name": "player-handgun-move",
 		"Frames": [
-			"player/move/move (1)",
-			"player/move/move (2)",
-			"player/move/move (3)",
-			"player/move/move (4)",
-			"player/move/move (5)",
-			"player/move/move (6)",
-			"player/move/move (7)",
-			"player/move/move (8)",
-			"player/move/move (9)",
-			"player/move/move (10)",
-			"player/move/move (11)",
-			"player/move/move (12)",
-			"player/move/move (13)",
-			"player/move/move (14)",
-			"player/move/move (15)",
-			"player/move/move (16)",
-			"player/move/move (17)",
-			"player/move/move (18)",
-			"player/move/move (19)",
-			"player/move/move (20)"
+			"player/handgun/move/*"
 		],
 		"LoopStartIndex": 0
 	},
+	"player-handgun-shoot": {
+		"Name": "player-handgun-shoot",
+		"Frames": [
+			"player/handgun/shoot/*"
+		],
+		"LoopStartIndex": -1
+	},
+
+
+
+
 	"zombie-idle": {
 		"Name": "zombie-idle",
 		"Frames": [
-			"zombie/idle/idle (1)",
-			"zombie/idle/idle (2)",
-			"zombie/idle/idle (3)",
-			"zombie/idle/idle (4)",
-			"zombie/idle/idle (5)",
-			"zombie/idle/idle (6)",
-			"zombie/idle/idle (7)",
-			"zombie/idle/idle (8)",
-			"zombie/idle/idle (9)",
-			"zombie/idle/idle (10)",
-			"zombie/idle/idle (11)",
-			"zombie/idle/idle (12)",
-			"zombie/idle/idle (13)",
-			"zombie/idle/idle (14)",
-			"zombie/idle/idle (15)",
-			"zombie/idle/idle (16)",
-			"zombie/idle/idle (17)"
+			"zombie/idle/*"
 		],
 		"LoopStartIndex": 0
 	},
 	"zombie-move": {
 		"Name": "zombie-move",
 		"Frames": [
-			"zombie/move/move (1)",
-			"zombie/move/move (2)",
-			"zombie/move/move (3)",
-			"zombie/move/move (4)",
-			"zombie/move/move (5)",
-			"zombie/move/move (6)",
-			"zombie/move/move (7)",
-			"zombie/move/move (8)",
-			"zombie/move/move (9)",
-			"zombie/move/move (10)",
-			"zombie/move/move (11)",
-			"zombie/move/move (12)",
-			"zombie/move/move (13)",
-			"zombie/move/move (14)",
-			"zombie/move/move (15)",
-			"zombie/move/move (16)",
-			"zombie/move/move (17)"
+			"zombie/move/*"
 		],
 		"LoopStartIndex": 0
 	},
 	"zombie-attack": {
 		"Name": "zombie-attack",
 		"Frames": [
-			"zombie/attack/attack (1)",
-			"zombie/attack/attack (2)",
-			"zombie/attack/attack (3)",
-			"zombie/attack/attack (4)",
-			"zombie/attack/attack (5)",
-			"zombie/attack/attack (6)",
-			"zombie/attack/attack (7)",
-			"zombie/attack/attack (8)",
-			"zombie/attack/attack (9)"
+			"zombie/attack/*"
 		],
 		"LoopStartIndex": -1
 	}
