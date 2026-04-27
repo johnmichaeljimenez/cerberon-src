@@ -6,6 +6,7 @@ namespace Main.Gameplay.Entities.Player;
 
 public class Gun
 {
+	public string ID;
 	public string Name;
 	public int MaxAmmo;
 	public int MagSize;
@@ -18,9 +19,10 @@ public class Gun
 
 	public string AudioWeaponName;
 
-	public Gun(string name, int damage, float firingRate,
+	public Gun(string id, string name, int damage, float firingRate,
 			   int magSize, int maxAmmo, float reloadTime, string audioWeaponName)
 	{
+		ID = id;
 		Name = name;
 		Damage = damage;
 		FiringRate = firingRate;
@@ -54,8 +56,8 @@ public class PlayerWeapons : IDisposable
 {
 	public readonly List<Gun> Guns = new() //total hardcoded for now
 	{
-		new Gun("Sig Sauer", 15, 0f, 15, 60, 1.3f, "handgun"),
-		new Gun("AK-47", 30, 0.1f, 30, 120, 1.4f, "rifle"),
+		new Gun("handgun", "Sig Sauer", 15, 0f, 15, 60, 1.3f, "handgun"),
+		new Gun("rifle", "AK-47", 30, 0.1f, 30, 120, 1.4f, "rifle"),
 	};
 
 	private int currentGunIndex;
