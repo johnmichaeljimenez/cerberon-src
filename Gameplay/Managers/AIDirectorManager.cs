@@ -5,6 +5,7 @@ using Main.Helpers;
 namespace Main.Gameplay.Managers;
 
 //TODO: make all magic numbers editable outside
+//TODO: make items and enemies despawn when far enough
 public class AIDirectorManager : BaseManager
 {
 	public enum TensionState { Calm, Tense, Panic, Critical }
@@ -158,12 +159,12 @@ public class AIDirectorManager : BaseManager
 
 		emaPlayerHealth.AddSample((float)pc.HP / (float)pc.MaxHP);
 		//for quick dev, guns and max ammos are guaranteed as non-zero
-		emaPlayerAmmo.AddSample(pc.guns.Sum(p => (float)(p.CurrentAmmo + p.CurrentMaxAmmo) / (float)(p.MagSize + p.MaxAmmo)) / (float)pc.guns.Count); //TODO: add Signal<Gun> on gun fire for ammo change instead of continuous per-frame query
+		emaPlayerAmmo.AddSample(pc.Weapons.Guns.Sum(p => (float)(p.CurrentAmmo + p.CurrentMaxAmmo) / (float)(p.MagSize + p.MaxAmmo)) / (float)pc.Weapons.Guns.Count); //TODO: add Signal<Gun> on gun fire for ammo change instead of continuous per-frame query
 
 		var healthFactor = emaPlayerHealth.Current;
 		var ammoFactor = emaPlayerAmmo.Current;
 
-		playerStrength = healthFactor * 0.95f + ammoFactor * 0.05f;
+		playerStrength = healthFactor * 0.7f + ammoFactor * 0.3f;
 		baseTension = GetBaseTensionRamp(1f - (gm.GameTime / gm.MaxGameTime)); //GameTime counts down, 0 = win ending, and the lower the number, the more intense the gameplay (zombie home invasion from midnight until dawn)
 
 		var deviation = playerStrength - 0.5f;

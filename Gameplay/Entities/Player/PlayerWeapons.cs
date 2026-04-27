@@ -1,9 +1,8 @@
 using Main.Core;
 using Main.Effects;
-using Main.Gameplay.Managers;
 using Main.Helpers;
 
-namespace Main.Gameplay.Entities;
+namespace Main.Gameplay.Entities.Player;
 
 public class Gun
 {
@@ -18,8 +17,6 @@ public class Gun
 	public int CurrentMaxAmmo;
 
 	public string AudioWeaponName;
-
-
 
 	public Gun(string name, int damage, float firingRate,
 			   int magSize, int maxAmmo, float reloadTime, string audioWeaponName)
@@ -53,50 +50,41 @@ public class Gun
 	}
 }
 
-public class PlayerEntity : CharacterEntity //put all of them here for now, component architecture is a tomorrow's problem if i can mow down zombies right now with this code. if this is a god class then call this project mt. olympus for now
+public class PlayerWeapons : IDisposable
 {
-	public readonly List<Gun> guns = new() //total hardcoded for now
+	public readonly List<Gun> Guns = new() //total hardcoded for now
 	{
 		new Gun("Sig Sauer", 15, 0f, 15, 60, 1.3f, "handgun"),
 		new Gun("AK-47", 30, 0.1f, 30, 120, 1.4f, "rifle"),
 	};
 
-	private LinecastHit laserHit;
-	private Light lightSelf;
-	private Light lightSelfVision;
-	private Light flashLight;
-
-	private Light muzzleFlash;
-	private bool flashLightOn;
-
 	private int currentGunIndex;
-	private Gun currentGun => guns[currentGunIndex];
+	private Gun currentGun => Guns[currentGunIndex];
 	private float fireTimer;
 	private float reloadTimer;
 	private bool isIraqiReload;
+	private Light muzzleFlash;
 
-	private float fsTimer = 0; //test
+	private PlayerEntity player;
+	private GameplayState gameplayState;
+	public LinecastHit LaserHit => laserHit;
+	private LinecastHit laserHit;
 
-	public override void Init(GameplayState gameplayState)
+	public PlayerWeapons(GameplayState gameplayState, PlayerEntity player)
 	{
-		base.Init(gameplayState);
-
-		Origin = new Vector2(0.3f, 0.7f);
-
-		Animator = new Animator("player-idle", "player-move"); //TODO: add player weapon-specific animations
-		Game.Instance.Camera.Follow(Position);
-		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new(30, 30, 30), 0, 8);
-		lightSelfVision = LightingSystem.AddLight(AssetManager.GetSprite("vision-cone"), Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), Light.ShadowTypes.Dynamic, Light.VisionEffects.VisionOnly);
-		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White, FacingAngle, 10, flashLightOn, new(0f, 0.5f), Light.ShadowTypes.Dynamic); //redundant shadow but it is what it is
-
-		Animator.Play("player-idle");
+		this.player = player;
+		this.gameplayState = gameplayState;
 	}
 
-	public override void Update(float dt, float udt)
+	public void Dispose()
 	{
-		base.Update(dt, udt);
+		if (muzzleFlash != null)
+			LightingSystem.RemoveLight(muzzleFlash);
+	}
 
-		velocity = InputManager.Movement * MovementSpeed;
+	public void Update(float dt, float udt)
+	{
+		gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (player.FacingDirection * 100), out laserHit, player.CollisionBody);
 
 		if (muzzleFlash != null)
 		{
@@ -111,14 +99,6 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 			}
 		}
 
-		gameplayState.GetManager<CollisionManager>().Linecast(Position, Position + (FacingDirection * 100), out laserHit, CollisionBody);
-
-		if (InputManager.FlashlightJustPressed)
-		{
-			AudioHandler.PlaySound("generic/flashlight-toggle");
-			flashLightOn = !flashLightOn;
-			flashLight.Enabled = flashLightOn;
-		}
 
 		if (fireTimer > 0)
 			fireTimer -= dt;
@@ -189,9 +169,9 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 						LightingSystem.RemoveLight(muzzleFlash);
 					}
 
-					muzzleFlash = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new(80, 30, 0), 0, 14);
+					muzzleFlash = LightingSystem.AddLight(AssetManager.GetSprite("light"), player.Position, new(80, 30, 0), 0, 14);
 
-					if (laserHit.Body != null && laserHit.Body.SourceEntity is ZombieEntity z)
+					if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
 						z.ApplyDamage(currentGun.Damage);
 
 					currentGun.CurrentAmmo -= 1;
@@ -201,69 +181,5 @@ public class PlayerEntity : CharacterEntity //put all of them here for now, comp
 				}
 			}
 		}
-	}
-
-	public override void LateUpdate(float dt, float udt)
-	{
-		base.LateUpdate(dt, udt);
-
-		float rotSpeed = 12;
-		FacingAngle = Raymath.LerpAngle(FacingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
-
-		lightSelf.Position = Position;
-		lightSelfVision.Position = Position;
-		lightSelfVision.Rotation = FacingAngle;
-		flashLight.Position = Position;
-		flashLight.Rotation = Raymath.LerpAngle(flashLight.Rotation, FacingAngle, dt * rotSpeed); //intentional delay
-
-		if (velocity.LengthSquared() > 0.1f)
-		{
-			Animator.Play("player-move");
-			fsTimer += dt;
-
-			if (fsTimer >= 0.4f)
-			{
-				AudioHandler.PlaySound("fs/rock");
-				fsTimer = 0;
-			}
-		}
-		else
-		{
-			Animator.Play("player-idle");
-		}
-
-		var target = InputManager.MouseWorldPosition - Position;
-		target = Position + Raymath.Vector2ClampValue(target, 0, 5);
-		Game.Instance.Camera.Follow(target, 2f);
-	}
-
-	public override void Draw()
-	{
-		base.Draw();
-
-		Raylib.DrawLineV(Position, laserHit.HitPosition, Colors.RED.Fade(laserHit.Body != null ? 1 : 0.4f));
-
-		if (laserHit.Body != null)
-			Raylib.DrawCircleV(laserHit.HitPosition, 0.3f, Colors.RED);
-	}
-
-	public override void Dispose()
-	{
-		base.Dispose();
-
-		if (muzzleFlash != null)
-			LightingSystem.RemoveLight(muzzleFlash);
-
-		LightingSystem.RemoveLight(flashLight);
-		LightingSystem.RemoveLight(lightSelfVision);
-		LightingSystem.RemoveLight(lightSelf);
-	}
-
-	protected override void OnDeath()
-	{
-		base.OnDeath();
-		IsActive = false; //TODO: spawn a player death animation false entity
-
-		gameplayState.GetManager<PlayerManager>().OnPlayerDeath.Publish(this);
 	}
 }

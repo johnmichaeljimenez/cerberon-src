@@ -1,5 +1,5 @@
 using Main.Core;
-using Main.Gameplay.Entities;
+using Main.Gameplay.Entities.Player;
 using Main.Helpers;
 
 namespace Main.Gameplay.Managers;
