@@ -12,8 +12,6 @@ public class ZombieEntity : CharacterEntity
 	private readonly List<Vector2> nodes = new();
 
 	private float fsTimer = 0;
-	private bool isAttacking;
-
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
@@ -25,16 +23,6 @@ public class ZombieEntity : CharacterEntity
 		MovementSpeed = 4.0f;
 
 		Animator.Play("zombie-idle");
-	}
-
-	protected override void OnAnimationEnd(string animationName)
-	{
-		base.OnAnimationEnd(animationName);
-
-		if (animationName != "zombie-attack")
-			return;
-
-		isAttacking = false;
 	}
 
 	protected override void OnAnimationFrameChanged((string, int, float) frameData)
@@ -57,7 +45,7 @@ public class ZombieEntity : CharacterEntity
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
 		var d = player.Position - Position;
 
-		if (isAttacking)
+		if (IsAnimatorBusy)
 		{
 			FacingAngle = Raymath.LerpAngle(FacingAngle, d.ToDirection(), dt * 8);
 			velocity = Raymath.Vector2Lerp(velocity, Vector2.Zero, dt * 10);
@@ -70,7 +58,6 @@ public class ZombieEntity : CharacterEntity
 
 			if (Animator.Play("zombie-attack", false, "zombie-idle"))
 			{
-				isAttacking = true;
 				velocity = Vector2.Zero;
 			}
 		}
@@ -118,7 +105,8 @@ public class ZombieEntity : CharacterEntity
 	public override void LateUpdate(float dt, float udt)
 	{
 		base.LateUpdate(dt, udt);
-		if (isAttacking)
+
+		if (IsAnimatorBusy)
 			return;
 
 		if (velocity.LengthSquared() > 0.1f)

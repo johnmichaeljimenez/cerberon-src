@@ -39,6 +39,8 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	[JsonIgnore]
 	public Vector2 Origin { get; set; } = Vector2.One * 0.5f;
 
+	public bool IsAnimatorBusy => Animator.IsPlayingOneShot;
+
 	public Vector2 FacingDirection => new Vector2(
 		MathF.Cos(FacingAngle * MathF.PI / 180f),
 		MathF.Sin(FacingAngle * MathF.PI / 180f)
