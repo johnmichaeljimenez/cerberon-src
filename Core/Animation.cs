@@ -63,10 +63,11 @@ public class Animator //this is the "instance" using those said "assets"
 	private float timer;
 
 	public float NormalizedTime { get; private set; }
+	public float CurrentDuration { get; private set; }
 
-	public Action<string, int, float> OnFrameChanged { get; set; }
-	public Action<string> OnAnimationBegin { get; set; }
-	public Action<string> OnAnimationEnd { get; set; }
+	public Signal<(string, int, float)> OnFrameChanged { get; set; } = new();
+	public Signal<string> OnAnimationBegin { get; set; } = new();
+	public Signal<string> OnAnimationEnd { get; set; } = new();
 
 	private readonly Dictionary<string, int> priority = new();
 
@@ -129,7 +130,7 @@ public class Animator //this is the "instance" using those said "assets"
 			frameIndex++;
 			NormalizedTime = (float)frameIndex / (float)currentAnimation.Frames.Count;
 
-			OnFrameChanged?.Invoke(currentAnimation.Name, frameIndex, NormalizedTime);
+			OnFrameChanged?.Publish((currentAnimation.Name, frameIndex, NormalizedTime));
 
 			if (frameIndex >= currentAnimation.Frames.Count) //this loop runs at fixed 60hz (not fps), so it's guaranteed to be consistent anyway. dt = 1 / 60 constant
 			{
@@ -140,7 +141,7 @@ public class Animator //this is the "instance" using those said "assets"
 				}
 				else
 				{
-					OnAnimationEnd?.Invoke(currentAnimation.Name);
+					OnAnimationEnd?.Publish(currentAnimation.Name);
 					frameIndex = currentAnimation.Frames.Count - 1;
 					NormalizedTime = 1.0f;
 
@@ -167,7 +168,7 @@ public class Animator //this is the "instance" using those said "assets"
 		return currentAnimation.Sprites[frameIndex];
 	}
 
-	public bool Play(string animationName, bool forceRestart = false, string nextAnimationName = null, bool ignorePriority = false) //nextAnimationName will be commonly used (ex. attack to idle) without coding massive amount of FSM handling
+	public bool Play(string animationName, bool forceRestart = false, string nextAnimationName = null, bool ignorePriority = false, float targetStartTime = 0f) //nextAnimationName will be commonly used (ex. attack to idle) without coding massive amount of FSM handling
 	{
 		if (!Animations.TryGetValue(animationName, out var anim))
 			throw new ArgumentException($"Animation '{animationName}' not found.");
@@ -187,9 +188,11 @@ public class Animator //this is the "instance" using those said "assets"
 		this.nextAnimationName = nextAnimationName; //lazy check
 		IsPlaying = true;
 		NormalizedTime = 0f;
+		CurrentDuration = currentAnimation.Frames.Count * Animation.FRAMES_PER_SECOND;
+		frameIndex = (int)(targetStartTime * currentAnimation.Frames.Count);
 
 		IsPlayingOneShot = currentAnimation.LoopStartIndex < 0;
-		OnAnimationBegin?.Invoke(animationName);
+		OnAnimationBegin?.Publish(animationName);
 
 		return true;
 	}
@@ -202,6 +205,7 @@ public class Animator //this is the "instance" using those said "assets"
 	private void Reset()
 	{
 		timer = 0;
+		CurrentDuration = 0;
 		IsPlaying = false;
 		IsPlayingOneShot = false;
 		frameIndex = 0;
