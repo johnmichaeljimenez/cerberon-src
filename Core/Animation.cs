@@ -104,6 +104,12 @@ public class Animator //this is the "instance" using those said "assets"
 		Reset();
 	}
 
+	public void Add(string animationName, int prio = 0)
+	{
+		Animations[animationName] = AssetManager.GetAnimation(animationName);
+		priority[animationName] = prio;
+	}
+
 	//this is an optional (but very useful 90% of the games) DIY system called hierarchical state machine
 	//it works by using priority level instead of transition lines to connect animation states, which is overkill for most of the time
 	public void SetPriority(string animation, int value)
@@ -166,13 +172,14 @@ public class Animator //this is the "instance" using those said "assets"
 		if (!Animations.TryGetValue(animationName, out var anim))
 			throw new ArgumentException($"Animation '{animationName}' not found.");
 
-		if (!forceRestart && currentAnimation?.Name == animationName && IsPlaying)
-			return false;
-
-		if (!ignorePriority && currentAnimation != null)
+		if (IsPlaying && currentAnimation != null)
 		{
-			if (priority[currentAnimation.Name] > priority[animationName])
+			if (!forceRestart && currentAnimation.Name == animationName)
 				return false;
+
+			if (!ignorePriority && priority[currentAnimation.Name] > priority[animationName])
+				return false;
+
 		}
 
 		Reset();
