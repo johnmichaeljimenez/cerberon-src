@@ -12,6 +12,7 @@ public static class InputManager
     public static Vector2 Movement { get; private set; }
     public static bool ActionDown { get; private set; }
     public static bool ActionJustPressed { get; private set; }
+    public static bool ActionAltJustPressed { get; private set; }
     public static bool FlashlightJustPressed { get; private set; }
     public static bool Weapon1JustPressed { get; private set; }
     public static bool Weapon2JustPressed { get; private set; }
@@ -40,6 +41,7 @@ public static class InputManager
 
         ActionDown = Raylib.IsMouseButtonDown(MouseButton.Left);
         ActionJustPressed |= Raylib.IsMouseButtonPressed(MouseButton.Left); //this "latch" mechanism made the render loop -> fixed loop synchronization work
+        ActionAltJustPressed |= Raylib.IsMouseButtonPressed(MouseButton.Right);
 
         FlashlightJustPressed |= Raylib.IsKeyPressed(KeyboardKey.F);
         Weapon1JustPressed |= Raylib.IsKeyPressed(KeyboardKey.One);
@@ -56,6 +58,7 @@ public static class InputManager
         Weapon1JustPressed = false;
         Weapon2JustPressed = false;
         ReloadJustPressed = false;
+        ActionAltJustPressed = false;
     }
 
     public static bool IsKeyDown(KeyboardKey key) => Raylib.IsKeyDown(key);
