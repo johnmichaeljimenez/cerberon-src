@@ -21,17 +21,19 @@ public class Gun
 	public int MagSize;
 	public float FiringRate; // FiringRate <= 0 means tap to shoot
 	public int Damage;
+	public int AltDamage;
 	public float ReloadTime;
 
 	public int CurrentAmmo;
 	public int CurrentMaxAmmo;
 
-	public Gun(string id, string name, int damage, float firingRate,
+	public Gun(string id, string name, int damage, int altDamage, float firingRate,
 			   int magSize, int maxAmmo, float reloadTime)
 	{
 		ID = id;
 		Name = name;
 		Damage = damage;
+		AltDamage = altDamage;
 		FiringRate = firingRate;
 		MagSize = magSize;
 		MaxAmmo = maxAmmo;
@@ -67,8 +69,8 @@ public class PlayerWeapons : IDisposable
 
 	public readonly List<Gun> Weapons = new() //total hardcoded for now
 	{
-		new Gun("handgun", "Sig Sauer", 15, 0f, 15, 60, 1.3f),
-		new Gun("rifle", "AK-47", 30, 0.1f, 30, 120, 1.4f),
+		new Gun("handgun", "Sig Sauer", 15, 25, 0f, 15, 60, 1.3f),
+		new Gun("rifle", "AK-47", 30, 40, 0.1f, 30, 120, 1.4f),
 	};
 
 	private int currentWeaponIndex;
@@ -95,11 +97,6 @@ public class PlayerWeapons : IDisposable
 			player.Animator.Add(i.ANIM_MELEE, 51);
 			player.Animator.Add(i.ANIM_RELOAD, 52);
 		}
-
-		player.Animator.OnAnimationEnd.Subscribe(anim =>
-		{
-
-		}); //no need for dispose since it's same lifecycle
 	}
 
 	public void Dispose()
@@ -128,12 +125,17 @@ public class PlayerWeapons : IDisposable
 		if (fireTimer > 0)
 			fireTimer -= dt;
 
+		if (player.IsAnimatorBusy)
+			return;
+
 		if (fireTimer <= 0)
 		{
 			if (InputManager.ActionAltJustPressed)
 			{
 				if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
-					fireTimer = player.Animator.CurrentDuration;
+				{
+
+				}
 			}
 
 			if (InputManager.Weapon1JustPressed)
@@ -158,7 +160,7 @@ public class PlayerWeapons : IDisposable
 				//this game has no charging handle for guns, so trigger is the closest alternative
 
 				isIraqiReload = CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo == 0 && InputManager.ActionDown;
-				if (player.Animator.Play(CurrentWeapon.ANIM_RELOAD, targetStartTime: isIraqiReload? 0.4f : 0f))
+				if (player.Animator.Play(CurrentWeapon.ANIM_RELOAD, targetStartTime: isIraqiReload ? 0.4f : 0f))
 				{
 					if (isIraqiReload)
 						AudioHandler.PlaySound(SFX_RELOADFAST);
@@ -166,7 +168,9 @@ public class PlayerWeapons : IDisposable
 						AudioHandler.PlaySound(CurrentWeapon.SFX_RELOAD);
 
 					Log.Send($"Reloading...");
-				}else{
+				}
+				else
+				{
 					isIraqiReload = false;
 				}
 			}
@@ -208,7 +212,24 @@ public class PlayerWeapons : IDisposable
 
 	public void OnFrameChanged((string, int, float) frameData)
 	{
-		
+		if (frameData.Item1 != CurrentWeapon.ANIM_MELEE)
+			return;
+
+		if (frameData.Item2 != 8)
+			return;
+
+		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(ZombieEntity)))
+		{
+			var z = i as ZombieEntity;
+			if (z.IsDead)
+				continue;
+
+			var d = i.Position - player.Position;
+			if (!player.FacingDirection.IsInFront(d, 4, 70))
+				continue;
+
+			z.ApplyDamage(CurrentWeapon.AltDamage);
+		}
 	}
 
 	internal void OnAnimationEnd(string animationName)

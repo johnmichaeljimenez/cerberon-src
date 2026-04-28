@@ -164,4 +164,19 @@ public static class Colors
 	{
 		return new((byte)((float)c.R * amt), (byte)((float)c.G * amt), (byte)((float)c.B * amt), c.A);
 	}
+
+
+	public static bool IsInFront(this Vector2 myFacing, Vector2 dirToTarget, float radius, float fovDeg)
+	{
+		if (dirToTarget.LengthSquared() > radius * radius) return false;
+		if (myFacing == Vector2.Zero) return false;
+
+		var forward = Vector2.Normalize(myFacing);
+		var toTarget = Vector2.Normalize(dirToTarget);
+
+		var halfFovRad = MathF.Abs(fovDeg) * MathF.PI / 180f / 2f;
+		var cosHalfFov = MathF.Cos(halfFovRad);
+
+		return Vector2.Dot(forward, toTarget) >= cosHalfFov;
+	}
 }
