@@ -188,7 +188,7 @@ public class Animator //this is the "instance" using those said "assets"
 		this.nextAnimationName = nextAnimationName; //lazy check
 		IsPlaying = true;
 		NormalizedTime = 0f;
-		CurrentDuration = currentAnimation.Frames.Count * Animation.FRAMES_PER_SECOND;
+		CurrentDuration = currentAnimation.Frames.Count * Animation.FRAME_RATE;
 		frameIndex = (int)(targetStartTime * currentAnimation.Frames.Count);
 
 		IsPlayingOneShot = currentAnimation.LoopStartIndex < 0;
