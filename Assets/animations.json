@@ -20,8 +20,57 @@
 		],
 		"LoopStartIndex": -1
 	},
+	"player-handgun-meleeattack": {
+		"Name": "player-handgun-meleeattack",
+		"Frames": [
+			"player/handgun/meleeattack/*"
+		],
+		"LoopStartIndex": -1
+	},
+	"player-handgun-reload": {
+		"Name": "player-handgun-reload",
+		"Frames": [
+			"player/handgun/reload/*"
+		],
+		"LoopStartIndex": -1
+	},
 
 
+	"player-rifle-idle": {
+		"Name": "player-rifle-idle",
+		"Frames": [
+			"player/rifle/idle/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-rifle-move": {
+		"Name": "player-rifle-move",
+		"Frames": [
+			"player/rifle/move/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-rifle-shoot": {
+		"Name": "player-rifle-shoot",
+		"Frames": [
+			"player/rifle/shoot/*"
+		],
+		"LoopStartIndex": -1
+	},
+	"player-rifle-meleeattack": {
+		"Name": "player-rifle-meleeattack",
+		"Frames": [
+			"player/rifle/meleeattack/*"
+		],
+		"LoopStartIndex": -1
+	},
+	"player-rifle-reload": {
+		"Name": "player-rifle-reload",
+		"Frames": [
+			"player/rifle/reload/*"
+		],
+		"LoopStartIndex": -1
+	},
 
 
 	"zombie-idle": {
