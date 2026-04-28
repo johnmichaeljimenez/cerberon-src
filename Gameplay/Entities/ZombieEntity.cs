@@ -7,48 +7,47 @@ namespace Main.Gameplay.Entities;
 public class ZombieEntity : CharacterEntity
 {
 	public override Teams Team => Teams.Enemy;
-
-	//temporary stuff for testing
-	private float attackRate = 2;
 	private int attackDamage = 20;
-	private float attackTimer;
 
 	private readonly List<Vector2> nodes = new();
 
 	private float fsTimer = 0;
-	private bool isAttacking; //TODO: use proper FSM later
+	private bool isAttacking;
 
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
 
-		Animator = new Animator("zombie-idle", "zombie-move", "zombie-attack");
+		Animator.Add("zombie-idle", 0);
+		Animator.Add("zombie-move", 0);
+		Animator.Add("zombie-attack", 50);
+
 		MovementSpeed = 4.0f;
-		attackTimer = attackRate;
 
 		Animator.Play("zombie-idle");
+	}
 
-		Animator.OnAnimationEnd = (animation) =>
+	protected override void OnAnimationEnd(string animationName)
+	{
+		base.OnAnimationEnd(animationName);
+
+		if (animationName != "zombie-attack")
+			return;
+
+		isAttacking = false;
+	}
+
+	protected override void OnAnimationFrameChanged((string, int, float) frameData)
+	{
+		if (frameData.Item1 != "zombie-attack" || frameData.Item2 != 5) //guaranteed to be frame-perfect than using normalized time
+			return;
+
+		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+		var d = player.Position - Position;
+		if (!player.IsDead && d.Length() <= 4f)
 		{
-			if (animation != "zombie-attack")
-				return;
-
-			isAttacking = false;
-		};
-
-		Animator.OnFrameChanged = (animation, index, t) =>
-		{
-			if (animation != "zombie-attack" || index != 5) //guaranteed to be frame-perfect than using normalized time
-				return;
-
-			var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
-			var d = player.Position - Position;
-			if (!player.IsDead && d.Length() <= 3f)
-			{
-				attackTimer = attackRate;
-				player.ApplyDamage(attackDamage);
-			}
-		};
+			player.ApplyDamage(attackDamage);
+		}
 	}
 
 	public override void Update(float dt, float udt)
@@ -61,17 +60,19 @@ public class ZombieEntity : CharacterEntity
 		if (isAttacking)
 		{
 			FacingAngle = Raymath.LerpAngle(FacingAngle, d.ToDirection(), dt * 8);
+			velocity = Raymath.Vector2Lerp(velocity, Vector2.Zero, dt * 10);
 			return;
 		}
 
-		if (d.Length() <= 4f)
+		if (d.Length() <= 3f)
 		{
 			nodes.Clear();
-			velocity = Raymath.Vector2Lerp(velocity, Vector2.Zero, dt * 10);
 
-			isAttacking = true;
-			velocity = Vector2.Zero;
-			Animator.Play("zombie-attack");
+			if (Animator.Play("zombie-attack", false, "zombie-idle"))
+			{
+				isAttacking = true;
+				velocity = Vector2.Zero;
+			}
 		}
 		else
 		{
