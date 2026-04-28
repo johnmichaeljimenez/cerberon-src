@@ -50,6 +50,26 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 		HP = MaxHP;
 		CollisionBody = gameplayState.GetManager<CollisionManager>().AddBody(Position, Radius, this);
+
+		Animator = new Animator();
+		Animator.OnAnimationBegin.Subscribe(OnAnimationBegin).AddTo(disposables);
+		Animator.OnAnimationEnd.Subscribe(OnAnimationEnd).AddTo(disposables);
+		Animator.OnFrameChanged.Subscribe(OnAnimationFrameChanged).AddTo(disposables);
+	}
+
+	protected virtual void OnAnimationEnd(string animationName)
+	{
+		
+	}
+
+	protected virtual void OnAnimationFrameChanged((string, int, float) frameData)
+	{
+		
+	}
+
+	protected virtual void OnAnimationBegin(string animationName)
+	{
+		
 	}
 
 	public override void Dispose()

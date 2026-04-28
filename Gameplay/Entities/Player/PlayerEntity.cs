@@ -24,8 +24,6 @@ public class PlayerEntity : CharacterEntity
 		base.Init(gameplayState);
 
 		Origin = new Vector2(0.3f, 0.7f);
-		Animator = new Animator();
-
 		Weapons = new(gameplayState, this);
 
 		Game.Instance.Camera.Follow(Position);
@@ -36,16 +34,26 @@ public class PlayerEntity : CharacterEntity
 		Animator.Play(Weapons.CurrentWeapon.ANIM_IDLE);
 	}
 
+	protected override void OnAnimationBegin(string animationName)
+	{
+		
+	}
+
+	protected override void OnAnimationEnd(string animationName)
+	{
+		Weapons.OnAnimationEnd(animationName);
+	}
+
+	protected override void OnAnimationFrameChanged((string, int, float) frameData)
+	{
+		Weapons.OnFrameChanged(frameData);
+	}
+
 	public override void Update(float dt, float udt)
 	{
 		base.Update(dt, udt);
 
 		velocity = InputManager.Movement * MovementSpeed;
-
-		if (InputManager.ActionAltJustPressed)
-		{
-			Animator.Play("player-handgun-meleeattack", false, "player-handgun-idle");
-		}
 
 		if (InputManager.FlashlightJustPressed)
 		{

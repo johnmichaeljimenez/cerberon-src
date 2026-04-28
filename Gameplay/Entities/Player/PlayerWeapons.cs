@@ -74,14 +74,13 @@ public class PlayerWeapons : IDisposable
 	private int currentWeaponIndex;
 	public Gun CurrentWeapon => Weapons[currentWeaponIndex];
 	private float fireTimer;
-	private float reloadTimer;
-	private bool isIraqiReload;
 	private Light muzzleFlash;
 
 	private PlayerEntity player;
 	private GameplayState gameplayState;
 	public LinecastHit LaserHit => laserHit;
 	private LinecastHit laserHit;
+	private bool isIraqiReload;
 
 	public PlayerWeapons(GameplayState gameplayState, PlayerEntity player)
 	{
@@ -96,6 +95,11 @@ public class PlayerWeapons : IDisposable
 			player.Animator.Add(i.ANIM_MELEE, 51);
 			player.Animator.Add(i.ANIM_RELOAD, 52);
 		}
+
+		player.Animator.OnAnimationEnd.Subscribe(anim =>
+		{
+
+		}); //no need for dispose since it's same lifecycle
 	}
 
 	public void Dispose()
@@ -124,22 +128,14 @@ public class PlayerWeapons : IDisposable
 		if (fireTimer > 0)
 			fireTimer -= dt;
 
-		if (reloadTimer > 0)
+		if (fireTimer <= 0)
 		{
-			reloadTimer -= dt;
-			if (reloadTimer <= 0)
+			if (InputManager.ActionAltJustPressed)
 			{
-				CurrentWeapon.DoReload();
-
-				if (!isIraqiReload)
-					AudioHandler.PlaySound(SFX_READY);
-
-				isIraqiReload = false;
+				if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
+					fireTimer = player.Animator.CurrentDuration;
 			}
-		}
 
-		if (fireTimer <= 0 && reloadTimer <= 0)
-		{
 			if (InputManager.Weapon1JustPressed)
 			{
 				currentWeaponIndex = 0;
@@ -161,16 +157,17 @@ public class PlayerWeapons : IDisposable
 				//IRL equivalent of holding the charging handle ready while loading the new mag
 				//this game has no charging handle for guns, so trigger is the closest alternative
 
-				if (player.Animator.Play(CurrentWeapon.ANIM_RELOAD))
+				isIraqiReload = CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo == 0 && InputManager.ActionDown;
+				if (player.Animator.Play(CurrentWeapon.ANIM_RELOAD, targetStartTime: isIraqiReload? 0.4f : 0f))
 				{
-					isIraqiReload = CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo == 0 && InputManager.ActionDown;
-					reloadTimer = CurrentWeapon.ReloadTime * (isIraqiReload ? 0.6f : 1); //40% is OK enough
-
 					if (isIraqiReload)
 						AudioHandler.PlaySound(SFX_RELOADFAST);
 					else
 						AudioHandler.PlaySound(CurrentWeapon.SFX_RELOAD);
+
 					Log.Send($"Reloading...");
+				}else{
+					isIraqiReload = false;
 				}
 			}
 			else if (
@@ -206,6 +203,24 @@ public class PlayerWeapons : IDisposable
 						fireTimer = CurrentWeapon.FiringRate;
 				}
 			}
+		}
+	}
+
+	public void OnFrameChanged((string, int, float) frameData)
+	{
+		
+	}
+
+	internal void OnAnimationEnd(string animationName)
+	{
+		if (animationName == CurrentWeapon.ANIM_RELOAD)
+		{
+			CurrentWeapon.DoReload();
+
+			if (!isIraqiReload)
+				AudioHandler.PlaySound(SFX_READY);
+
+			isIraqiReload = false;
 		}
 	}
 }
