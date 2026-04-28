@@ -68,6 +68,27 @@ public class Animator //this is the "instance" using those said "assets"
 	public Action<string> OnAnimationBegin { get; set; }
 	public Action<string> OnAnimationEnd { get; set; }
 
+	private readonly Dictionary<string, int> priority = new();
+
+	public bool IsPlayingOneShot { get; set; }
+
+	public Animator(Dictionary<string, int> animationNames)
+	{
+		if (animationNames.Count == 0)
+			return;
+
+		Animations.Clear();
+		priority.Clear();
+
+		foreach (var i in animationNames.Keys.Select(AssetManager.GetAnimation))
+		{
+			Animations.Add(i.Name, i);
+			priority[i.Name] = animationNames[i.Name];
+		}
+
+		Reset();
+	}
+
 	public Animator(params string[] animationNames)
 	{
 		if (animationNames.Length == 0)
@@ -77,9 +98,17 @@ public class Animator //this is the "instance" using those said "assets"
 		foreach (var i in animationNames.Select(AssetManager.GetAnimation))
 		{
 			Animations.Add(i.Name, i);
+			priority[i.Name] = 0;
 		}
 
 		Reset();
+	}
+
+	//this is an optional (but very useful 90% of the games) DIY system called hierarchical state machine
+	//it works by using priority level instead of transition lines to connect animation states, which is overkill for most of the time
+	public void SetPriority(string animation, int value)
+	{
+		priority[animation] = value;
 	}
 
 	public void Update(float dt, float udt) //unscaled is for later use
@@ -110,6 +139,7 @@ public class Animator //this is the "instance" using those said "assets"
 					NormalizedTime = 1.0f;
 
 					IsPlaying = false;
+					IsPlayingOneShot = false;
 				}
 			}
 		}
@@ -118,7 +148,7 @@ public class Animator //this is the "instance" using those said "assets"
 		{
 			if (nextAnimationName != null)
 			{
-				Play(nextAnimationName, true);
+				Play(nextAnimationName, true, null, true); //intended ignore priority
 			}
 		}
 	}
@@ -131,21 +161,30 @@ public class Animator //this is the "instance" using those said "assets"
 		return currentAnimation.Sprites[frameIndex];
 	}
 
-	public void Play(string animationName, bool forceRestart = false, string nextAnimationName = null) //nextAnimationName will be commonly used (ex. attack to idle) without coding massive amount of FSM handling
+	public bool Play(string animationName, bool forceRestart = false, string nextAnimationName = null, bool ignorePriority = false) //nextAnimationName will be commonly used (ex. attack to idle) without coding massive amount of FSM handling
 	{
 		if (!Animations.TryGetValue(animationName, out var anim))
 			throw new ArgumentException($"Animation '{animationName}' not found.");
 
 		if (!forceRestart && currentAnimation?.Name == animationName && IsPlaying)
-			return;
+			return false;
+
+		if (!ignorePriority && currentAnimation != null)
+		{
+			if (priority[currentAnimation.Name] > priority[animationName])
+				return false;
+		}
 
 		Reset();
 		currentAnimation = anim;
 		this.nextAnimationName = nextAnimationName; //lazy check
 		IsPlaying = true;
 		NormalizedTime = 0f;
-		
+
+		IsPlayingOneShot = currentAnimation.LoopStartIndex < 0;
 		OnAnimationBegin?.Invoke(animationName);
+
+		return true;
 	}
 
 	public void Stop()
@@ -157,6 +196,7 @@ public class Animator //this is the "instance" using those said "assets"
 	{
 		timer = 0;
 		IsPlaying = false;
+		IsPlayingOneShot = false;
 		frameIndex = 0;
 		nextAnimationName = null;
 		NormalizedTime = 0;
