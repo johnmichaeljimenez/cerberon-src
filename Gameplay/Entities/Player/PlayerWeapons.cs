@@ -66,6 +66,9 @@ public class PlayerWeapons : IDisposable
 	private const string SFX_READY = "weapon/generic/ready";
 	private const string SFX_RELOADFAST = "weapon/generic/reloadfast";
 	private const string SFX_EQUIP = "weapon/generic/equip";
+	private const string SFX_BULLET_HIT = "weapon/generic/bullethit";
+	private const string SFX_MELEE_START = "weapon/generic/meleestart";
+	private const string SFX_MELEE_HIT = "weapon/generic/meleehit";
 
 	public readonly List<Gun> Weapons = new() //total hardcoded for now
 	{
@@ -134,7 +137,7 @@ public class PlayerWeapons : IDisposable
 			{
 				if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
 				{
-
+					AudioHandler.PlaySound(SFX_MELEE_START);
 				}
 			}
 
@@ -199,7 +202,10 @@ public class PlayerWeapons : IDisposable
 					muzzleFlash = LightingSystem.AddLight(AssetManager.GetSprite("light"), player.Position, new(80, 30, 0), 0, 14);
 
 					if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
+					{
 						z.ApplyDamage(CurrentWeapon.Damage);
+						AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
+					}
 
 					CurrentWeapon.CurrentAmmo -= 1;
 					Log.Send($"Shoot ({CurrentWeapon.CurrentAmmo}/{CurrentWeapon.CurrentMaxAmmo})");
@@ -215,9 +221,10 @@ public class PlayerWeapons : IDisposable
 		if (frameData.Item1 != CurrentWeapon.ANIM_MELEE)
 			return;
 
-		if (frameData.Item2 != 8)
+		if (frameData.Item2 != 3)
 			return;
 
+		var hit = false;
 		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(ZombieEntity)))
 		{
 			var z = i as ZombieEntity;
@@ -229,7 +236,11 @@ public class PlayerWeapons : IDisposable
 				continue;
 
 			z.ApplyDamage(CurrentWeapon.AltDamage);
+			hit = true;
 		}
+
+		if (hit)
+			AudioHandler.PlaySound(SFX_MELEE_HIT);
 	}
 
 	internal void OnAnimationEnd(string animationName)

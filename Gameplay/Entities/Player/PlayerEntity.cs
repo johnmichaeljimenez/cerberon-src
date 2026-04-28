@@ -36,7 +36,7 @@ public class PlayerEntity : CharacterEntity
 
 	protected override void OnAnimationBegin(string animationName)
 	{
-		
+
 	}
 
 	protected override void OnAnimationEnd(string animationName)
@@ -118,6 +118,12 @@ public class PlayerEntity : CharacterEntity
 		LightingSystem.RemoveLight(flashLight);
 		LightingSystem.RemoveLight(lightSelfVision);
 		LightingSystem.RemoveLight(lightSelf);
+	}
+
+	protected override void OnHit(float amt, bool isDead)
+	{
+		base.OnHit(amt, isDead);
+		AudioHandler.PlaySound("generic/player-hit");
 	}
 
 	protected override void OnDeath()

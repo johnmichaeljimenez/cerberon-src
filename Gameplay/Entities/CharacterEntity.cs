@@ -61,17 +61,17 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	protected virtual void OnAnimationEnd(string animationName)
 	{
-		
+
 	}
 
 	protected virtual void OnAnimationFrameChanged((string, int, float) frameData)
 	{
-		
+
 	}
 
 	protected virtual void OnAnimationBegin(string animationName)
 	{
-		
+
 	}
 
 	public override void Dispose()
@@ -132,6 +132,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 		DecalSystem.Paint(Position);
 		HP -= amt;
+		OnHit(amt, HP <= 0);
 		Log.Send($"HIT: {amt} -> {HP}/{MaxHP}");
 		if (HP <= 0)
 		{
@@ -141,6 +142,11 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		}
 
 		return true;
+	}
+
+	protected virtual void OnHit(float amt, bool isDead)
+	{
+
 	}
 
 	protected virtual void OnDeath()
