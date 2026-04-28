@@ -15,6 +15,7 @@ public class RenderingManager
 
     private static int lightTexLoc;
     private static int visionTexLoc;
+    private static int timeLoc;
 
     private static int maskVisionTexLoc;
     private static int tiledTexLocX, tiledTexLocY;
@@ -62,6 +63,7 @@ public class RenderingManager
         PostShader = Raylib.LoadShaderFromMemory(null, shader);
         lightTexLoc = Raylib.GetShaderLocation(PostShader, "lightTex");
         visionTexLoc = Raylib.GetShaderLocation(PostShader, "visionTex");
+        timeLoc = Raylib.GetShaderLocation(PostShader, "time");
     }
 
     public static void UnloadPostShader()
@@ -113,6 +115,7 @@ public class RenderingManager
             Raylib.BeginShaderMode(PostShader);
             Raylib.SetShaderValueTexture(PostShader, lightTexLoc, LightingSystem.LightingRenderTexture.Texture);
             Raylib.SetShaderValueTexture(PostShader, visionTexLoc, LightingSystem.VisionRenderTexture.Texture);
+            Raylib.SetShaderValue(PostShader, timeLoc, Time.CurrentTime, ShaderUniformDataType.Float);
         }
 
         Rectangle source = new(0, 0, target.Texture.Width, -target.Texture.Height);
