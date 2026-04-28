@@ -6,6 +6,12 @@ namespace Main.Gameplay.Entities.Player;
 
 public class Gun
 {
+	public string ANIM_IDLE => $"player-{ID}-idle";
+	public string ANIM_MOVE => $"player-{ID}-move";
+	public string ANIM_SHOOT => $"player-{ID}-shoot";
+	public string ANIM_MELEE => $"player-{ID}-meleeattack";
+	public string ANIM_RELOAD => $"player-{ID}-reload";
+
 	public string SFX_FIRE => $"weapon/{ID}/fire";
 	public string SFX_RELOAD => $"weapon/{ID}/reload";
 
@@ -19,7 +25,6 @@ public class Gun
 
 	public int CurrentAmmo;
 	public int CurrentMaxAmmo;
-
 
 	public Gun(string id, string name, int damage, float firingRate,
 			   int magSize, int maxAmmo, float reloadTime)
@@ -66,8 +71,8 @@ public class PlayerWeapons : IDisposable
 		new Gun("rifle", "AK-47", 30, 0.1f, 30, 120, 1.4f),
 	};
 
-	private int currentGunIndex;
-	private Gun currentWeapon => Weapons[currentGunIndex];
+	private int currentWeaponIndex;
+	public Gun CurrentWeapon => Weapons[currentWeaponIndex];
 	private float fireTimer;
 	private float reloadTimer;
 	private bool isIraqiReload;
@@ -82,6 +87,15 @@ public class PlayerWeapons : IDisposable
 	{
 		this.player = player;
 		this.gameplayState = gameplayState;
+
+		foreach (var i in Weapons)
+		{
+			player.Animator.Add(i.ANIM_IDLE, 0);
+			player.Animator.Add(i.ANIM_MOVE, 0);
+			player.Animator.Add(i.ANIM_SHOOT, 50);
+			player.Animator.Add(i.ANIM_MELEE, 51);
+			player.Animator.Add(i.ANIM_RELOAD, 52);
+		}
 	}
 
 	public void Dispose()
@@ -115,7 +129,7 @@ public class PlayerWeapons : IDisposable
 			reloadTimer -= dt;
 			if (reloadTimer <= 0)
 			{
-				currentWeapon.DoReload();
+				CurrentWeapon.DoReload();
 
 				if (!isIraqiReload)
 					AudioHandler.PlaySound(SFX_READY);
@@ -128,17 +142,17 @@ public class PlayerWeapons : IDisposable
 		{
 			if (InputManager.Weapon1JustPressed)
 			{
-				currentGunIndex = 0;
-				Log.Send($"Switched to: {currentWeapon.Name}");
+				currentWeaponIndex = 0;
+				Log.Send($"Switched to: {CurrentWeapon.Name}");
 				AudioHandler.PlaySound(SFX_EQUIP);
 			}
 			else if (InputManager.Weapon2JustPressed)
 			{
-				currentGunIndex = 1;
-				Log.Send($"Switched to: {currentWeapon.Name}");
+				currentWeaponIndex = 1;
+				Log.Send($"Switched to: {CurrentWeapon.Name}");
 				AudioHandler.PlaySound(SFX_EQUIP);
 			}
-			else if (InputManager.ReloadJustPressed && currentWeapon.CanReload())
+			else if (InputManager.ReloadJustPressed && CurrentWeapon.CanReload())
 			{
 				//I just feel like adding Iraqi reload here because it's cheap and cool tbh ("sometimes a cigar is just a cigar" of game design)
 
@@ -146,30 +160,35 @@ public class PlayerWeapons : IDisposable
 				//if a weapon is an auto and mag is empty, hold the trigger while reloading to make the reload faster
 				//IRL equivalent of holding the charging handle ready while loading the new mag
 				//this game has no charging handle for guns, so trigger is the closest alternative
-				isIraqiReload = currentWeapon.FiringRate > 0 && currentWeapon.CurrentAmmo == 0 && InputManager.ActionDown;
-				reloadTimer = currentWeapon.ReloadTime * (isIraqiReload ? 0.6f : 1); //40% is OK enough
 
-				if (isIraqiReload)
-					AudioHandler.PlaySound(SFX_RELOADFAST);
-				else
-					AudioHandler.PlaySound(currentWeapon.SFX_RELOAD);
-				Log.Send($"Reloading...");
+				if (player.Animator.Play(CurrentWeapon.ANIM_RELOAD))
+				{
+					isIraqiReload = CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo == 0 && InputManager.ActionDown;
+					reloadTimer = CurrentWeapon.ReloadTime * (isIraqiReload ? 0.6f : 1); //40% is OK enough
+
+					if (isIraqiReload)
+						AudioHandler.PlaySound(SFX_RELOADFAST);
+					else
+						AudioHandler.PlaySound(CurrentWeapon.SFX_RELOAD);
+					Log.Send($"Reloading...");
+				}
 			}
 			else if (
-				(currentWeapon.CurrentAmmo == 0 && InputManager.ActionJustPressed) || //guaranteed tap-to-shoot for dryfire
-				(currentWeapon.CurrentAmmo > 0 && (
-					(currentWeapon.FiringRate <= 0 && InputManager.ActionJustPressed) ||
-					(currentWeapon.FiringRate > 0 && InputManager.ActionDown)
+				(CurrentWeapon.CurrentAmmo == 0 && InputManager.ActionJustPressed) || //guaranteed tap-to-shoot for dryfire
+				(CurrentWeapon.CurrentAmmo > 0 && (
+					(CurrentWeapon.FiringRate <= 0 && InputManager.ActionJustPressed) ||
+					(CurrentWeapon.FiringRate > 0 && InputManager.ActionDown)
 				))
 			)
 			{
-				if (currentWeapon.CurrentAmmo == 0)
+				if (CurrentWeapon.CurrentAmmo == 0)
 				{
 					AudioHandler.PlaySound(SFX_DRYFIRE);
 				}
 				else
 				{
-					AudioHandler.PlaySound(currentWeapon.SFX_FIRE);
+					player.Animator.Play(CurrentWeapon.ANIM_SHOOT);
+					AudioHandler.PlaySound(CurrentWeapon.SFX_FIRE);
 
 					if (muzzleFlash != null)
 					{
@@ -179,12 +198,12 @@ public class PlayerWeapons : IDisposable
 					muzzleFlash = LightingSystem.AddLight(AssetManager.GetSprite("light"), player.Position, new(80, 30, 0), 0, 14);
 
 					if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
-						z.ApplyDamage(currentWeapon.Damage);
+						z.ApplyDamage(CurrentWeapon.Damage);
 
-					currentWeapon.CurrentAmmo -= 1;
-					Log.Send($"Shoot ({currentWeapon.CurrentAmmo}/{currentWeapon.CurrentMaxAmmo})");
-					if (currentWeapon.FiringRate > 0 && currentWeapon.CurrentAmmo > 0)
-						fireTimer = currentWeapon.FiringRate;
+					CurrentWeapon.CurrentAmmo -= 1;
+					Log.Send($"Shoot ({CurrentWeapon.CurrentAmmo}/{CurrentWeapon.CurrentMaxAmmo})");
+					if (CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo > 0)
+						fireTimer = CurrentWeapon.FiringRate;
 				}
 			}
 		}

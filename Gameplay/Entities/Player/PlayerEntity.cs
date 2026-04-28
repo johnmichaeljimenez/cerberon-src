@@ -7,7 +7,7 @@ namespace Main.Gameplay.Entities.Player;
 
 //put all of them here for now, component architecture is a tomorrow's problem if i can mow down zombies right now with this code. if this is a god class then call this project mt. olympus for now
 //UPDATE: added PlayerWeapons.cs (moved weapon-related stuff there) it can be considered as component now, but from now on each component that I will make must be "deserving immediately now" of being a component. otherwise they will stay for now in each of their own entity classes.
-public class PlayerEntity : CharacterEntity 
+public class PlayerEntity : CharacterEntity
 {
 	private Light lightSelf;
 	private Light lightSelfVision;
@@ -22,17 +22,18 @@ public class PlayerEntity : CharacterEntity
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
-		Weapons = new(gameplayState, this);
 
 		Origin = new Vector2(0.3f, 0.7f);
+		Animator = new Animator();
 
-		Animator = new Animator("player-handgun-idle", "player-handgun-move"); //TODO: add player weapon-specific animations
+		Weapons = new(gameplayState, this);
+
 		Game.Instance.Camera.Follow(Position);
 		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new(30, 30, 30), 0, 8);
 		lightSelfVision = LightingSystem.AddLight(AssetManager.GetSprite("vision-cone"), Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), Light.ShadowTypes.Dynamic, Light.VisionEffects.VisionOnly);
 		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White.Value(0.5f), FacingAngle, 10, flashLightOn, new(0f, 0.5f), Light.ShadowTypes.Dynamic); //redundant shadow but it is what it is
 
-		Animator.Play("player-handgun-idle");
+		Animator.Play(Weapons.CurrentWeapon.ANIM_IDLE);
 	}
 
 	public override void Update(float dt, float udt)
@@ -40,6 +41,11 @@ public class PlayerEntity : CharacterEntity
 		base.Update(dt, udt);
 
 		velocity = InputManager.Movement * MovementSpeed;
+
+		if (InputManager.ActionAltJustPressed)
+		{
+			Animator.Play("player-handgun-meleeattack", false, "player-handgun-idle");
+		}
 
 		if (InputManager.FlashlightJustPressed)
 		{
@@ -66,7 +72,7 @@ public class PlayerEntity : CharacterEntity
 
 		if (velocity.LengthSquared() > 0.1f)
 		{
-			Animator.Play("player-handgun-move");
+			Animator.Play(Weapons.CurrentWeapon.ANIM_MOVE);
 			fsTimer += dt;
 
 			if (fsTimer >= 0.4f)
@@ -77,7 +83,7 @@ public class PlayerEntity : CharacterEntity
 		}
 		else
 		{
-			Animator.Play("player-handgun-idle");
+			Animator.Play(Weapons.CurrentWeapon.ANIM_IDLE);
 		}
 
 		var target = InputManager.MouseWorldPosition - Position;
