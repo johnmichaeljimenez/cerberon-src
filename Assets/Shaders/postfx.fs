@@ -6,6 +6,9 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 uniform sampler2D lightTex;
 uniform sampler2D visionTex;
+uniform float time;
+
+uniform float nightAmt = 1.0; //TODO: pass ingame as toggle
 
 const float blurRadius = 1.5;
 
@@ -39,6 +42,25 @@ vec3 contrast(vec3 col, float factor)
     return (col - 0.5) * factor + 0.5;
 }
 
+vec3 nightVision(vec3 tex, vec3 light)
+{
+    vec3 col = tex;
+    col = contrast(col,0.9);
+    col = col + (light * 2);
+
+    const vec3 nightTint = vec3(0.1, 1.0, 0.2);
+    col *= nightTint;
+
+    float grain = fract(
+        sin( dot( fragTexCoord.xy + vec2(time*1.0, 0.0),
+                  vec2(12.9898,78.233) ) ) * 43758.5453
+    );
+
+    col += (grain - 0.5) * 0.4;
+
+    return col;
+}
+
 vec3 blur(sampler2D tex, vec2 uv, float radius)
 {
     vec2 texelSize = 1.0 / vec2(textureSize(tex, 0));
@@ -49,6 +71,7 @@ vec3 blur(sampler2D tex, vec2 uv, float radius)
     {
         for (int y = -2; y <= 2; ++y)
         {
+            //TODO: optimize by caching radius and weights
             float weight = exp(-(x*x + y*y) / (2.0 * radius * radius)); // Gaussian falloff
             vec2 offset = vec2(x, y) * texelSize * radius;
             color += texture(tex, uv + offset).rgb * weight;
@@ -73,13 +96,14 @@ void main() {
     vec3 lightBlur = blur(lightTex, fragTexCoord, 2.5).rgb;
     lightBlur = contrast(lightBlur, 5); //bloom
 	
-    vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2)); //basic light with intentional overblown lights
+    vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2));
     float lum = pow(dot(blurColor, vec3(0.299, 0.587, 0.114)), 3);
     vec3 screenGrayColor = vec3(lum, lum, lum);
 	
-	vec3 finColor = mix(screenGrayColor, texelColor, visColor.r);
+    vec3 nightCol = nightVision(screenColor, lightColor);         
+	vec3 finColor = mix(screenGrayColor, mix(texelColor, nightCol, nightAmt), visColor.r);
+    
 	float dither = ditherOffset(fragTexCoord);
-
     finColor += lightBlur * 0.1;
 	finColor += dither; //remove color banding
 	
