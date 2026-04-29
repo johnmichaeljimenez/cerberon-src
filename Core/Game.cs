@@ -21,6 +21,7 @@ public class Game
 
     private IGameState currentState;
     private IGameState nextState;
+    private bool requestExit;
 
 
     public CameraController Camera { get; private set; }
@@ -33,6 +34,8 @@ public class Game
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
         Raylib.InitWindow(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT, "Raylib-cs Letterbox");
         Raylib.MaximizeWindow();
+        Raylib.SetExitKey(0);
+
         _target = Raylib.LoadRenderTexture(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
         RenderingManager.Init();
 
@@ -171,6 +174,14 @@ public class Game
                 showIMGUI = !showIMGUI;
 
             Draw();
+
+            if (requestExit)
+                break;
         }
+    }
+
+    public void RequestExit()
+    {
+        requestExit = true;
     }
 }
