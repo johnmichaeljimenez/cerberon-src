@@ -1,5 +1,6 @@
-ID	Position	Size	Visible
-test-bg	0, 0	800, 450	0
-b1	4, 4	32, 32	1
-b1	4, 45	32, 32	1
-b1	4, 85	32, 32	1
+ID	Position	Size	Group	Visible	Clickable
+bg	0,0	800,450	MainMenu	1	0
+title	200,50	400,80	MainMenu	1	0
+btn-start	300,150	200,40	MainMenu	1	1
+btn-options	300,210	200,40	MainMenu	1	1
+btn-exit	300,270	200,40	MainMenu	1	1
