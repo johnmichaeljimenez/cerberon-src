@@ -10,6 +10,11 @@ public abstract class BaseScreen : IDisposable
 	protected UIElement hoveredElement { get; private set; }
 	protected UIElement pressElement { get; private set; }
 
+	public BaseScreen(object context = null)
+	{
+
+	}
+
 	public virtual void UpdateElements(List<UIElement> elements)
 	{
 		hoveredElement = null;
@@ -24,7 +29,7 @@ public abstract class BaseScreen : IDisposable
 
 	}
 
-	public virtual void OnEnter(object context = null)
+	public virtual void OnEnter()
 	{
 
 	}

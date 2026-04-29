@@ -4,3 +4,7 @@ title	200,50	400,80	MainMenu	1	0
 btn-start	300,150	200,40	MainMenu	1	1
 btn-options	300,210	200,40	MainMenu	1	1
 btn-exit	300,270	200,40	MainMenu	1	1
+
+btn-resume	300,150	200,40	PauseMenu	1	1
+btn-options	300,210	200,40	PauseMenu	1	1
+btn-quit-to-menu	300,270	200,40	PauseMenu	1	1

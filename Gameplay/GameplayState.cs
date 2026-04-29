@@ -3,12 +3,15 @@ using Main.Effects;
 using Main.Gameplay.Entities;
 using Main.Gameplay.Managers;
 using Main.Helpers;
+using Main.UI;
 
 namespace Main.Gameplay;
 
 public class GameplayState : IGameState
 {
 	public readonly GameplayOptions options;
+
+	private bool isPaused;
 
 	private readonly Dictionary<Type, BaseManager> managers = new();
 
@@ -71,6 +74,28 @@ public class GameplayState : IGameState
 		}
 
 		CurrentWorld.LateUpdate(dt, udt);
+
+		if (InputManager.IsPressed(InputAction.Pause))
+		{
+			PauseGame(!isPaused);
+		}
+	}
+
+	public void PauseGame(bool paused)
+	{
+		isPaused = paused;
+
+		if (isPaused)
+		{
+			PauseHandler.Pause("ingame");
+			UIManager.ShowScreen<PauseMenuScreen>(this, false);
+		}
+		else
+		{
+			PauseHandler.Unpause("ingame");
+			if (UIManager.Current is PauseMenuScreen)
+				UIManager.Back();
+		}
 	}
 
 	public void Draw()

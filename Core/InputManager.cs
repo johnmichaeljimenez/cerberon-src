@@ -43,7 +43,8 @@ public enum InputAction
     Weapon2,
     Reload,
     Flashlight,
-	Nightvision
+	Nightvision,
+    Pause
 }
 
 public static class InputManager
@@ -64,7 +65,8 @@ public static class InputManager
         { InputAction.Reload, new(KeyboardKey.R, null) },
         { InputAction.Weapon1, new(KeyboardKey.One, null) },
         { InputAction.Weapon2, new(KeyboardKey.Two, null) },
-        { InputAction.Nightvision, new(KeyboardKey.N, null) }
+        { InputAction.Nightvision, new(KeyboardKey.N, null) },
+        { InputAction.Pause, new(KeyboardKey.Escape, null) }
     };
 
     public static void Update(float scale, Vector2 offset, Camera2D camera)
