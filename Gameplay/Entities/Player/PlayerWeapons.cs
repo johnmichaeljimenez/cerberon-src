@@ -133,7 +133,7 @@ public class PlayerWeapons : IDisposable
 
 		if (fireTimer <= 0)
 		{
-			if (InputManager.ActionAltJustPressed)
+			if (InputManager.IsPressed(InputAction.AltFire))
 			{
 				if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
 				{
@@ -141,19 +141,19 @@ public class PlayerWeapons : IDisposable
 				}
 			}
 
-			if (InputManager.Weapon1JustPressed)
+			if (InputManager.IsPressed(InputAction.Weapon1))
 			{
 				currentWeaponIndex = 0;
 				Log.Send($"Switched to: {CurrentWeapon.Name}");
 				AudioHandler.PlaySound(SFX_EQUIP);
 			}
-			else if (InputManager.Weapon2JustPressed)
+			else if (InputManager.IsPressed(InputAction.Weapon2))
 			{
 				currentWeaponIndex = 1;
 				Log.Send($"Switched to: {CurrentWeapon.Name}");
 				AudioHandler.PlaySound(SFX_EQUIP);
 			}
-			else if (InputManager.ReloadJustPressed && CurrentWeapon.CanReload())
+			else if (InputManager.IsPressed(InputAction.Reload) && CurrentWeapon.CanReload())
 			{
 				//I just feel like adding Iraqi reload here because it's cheap and cool tbh ("sometimes a cigar is just a cigar" of game design)
 
@@ -162,7 +162,7 @@ public class PlayerWeapons : IDisposable
 				//IRL equivalent of holding the charging handle ready while loading the new mag
 				//this game has no charging handle for guns, so trigger is the closest alternative
 
-				isIraqiReload = CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo == 0 && InputManager.ActionDown;
+				isIraqiReload = CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo == 0 && InputManager.IsDown(InputAction.Fire);
 				if (player.Animator.Play(CurrentWeapon.ANIM_RELOAD, targetStartTime: isIraqiReload ? 0.4f : 0f))
 				{
 					if (isIraqiReload)
@@ -178,10 +178,10 @@ public class PlayerWeapons : IDisposable
 				}
 			}
 			else if (
-				(CurrentWeapon.CurrentAmmo == 0 && InputManager.ActionJustPressed) || //guaranteed tap-to-shoot for dryfire
+				(CurrentWeapon.CurrentAmmo == 0 && InputManager.IsPressed(InputAction.Fire)) || //guaranteed tap-to-shoot for dryfire
 				(CurrentWeapon.CurrentAmmo > 0 && (
-					(CurrentWeapon.FiringRate <= 0 && InputManager.ActionJustPressed) ||
-					(CurrentWeapon.FiringRate > 0 && InputManager.ActionDown)
+					(CurrentWeapon.FiringRate <= 0 && InputManager.IsPressed(InputAction.Fire)) ||
+					(CurrentWeapon.FiringRate > 0 && InputManager.IsDown(InputAction.Fire))
 				))
 			)
 			{

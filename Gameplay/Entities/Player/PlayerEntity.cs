@@ -55,7 +55,7 @@ public class PlayerEntity : CharacterEntity
 
 		velocity = InputManager.Movement * MovementSpeed;
 
-		if (InputManager.FlashlightJustPressed)
+		if (InputManager.IsPressed(InputAction.Flashlight))
 		{
 			AudioHandler.PlaySound("generic/flashlight-toggle");
 			flashLightOn = !flashLightOn;

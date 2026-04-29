@@ -1,6 +1,50 @@
 namespace Main.Core;
 
-//i don't care about rebinding for now. and if I ever care of it, at least I just need to fix this script and worry about it in far future instead
+public class InputButton
+{
+    public KeyboardKey? KeyButton;
+    public MouseButton? MouseButton;
+
+    public bool IsDown { get; private set; }
+    public bool IsPressed { get; private set; }
+
+    public InputButton(KeyboardKey? keyButton, MouseButton? mouseButton)
+    {
+        KeyButton = keyButton;
+        MouseButton = mouseButton;
+    }
+
+    public void Update()
+    {
+        IsDown = (
+            KeyButton.HasValue && Raylib.IsKeyDown(KeyButton.Value)) ||
+            (MouseButton.HasValue && Raylib.IsMouseButtonDown(MouseButton.Value)
+        );
+
+        IsPressed |= ( //this "latch" mechanism made the render loop -> fixed loop synchronization work
+            KeyButton.HasValue && Raylib.IsKeyPressed(KeyButton.Value)) ||
+            (MouseButton.HasValue && Raylib.IsMouseButtonPressed(MouseButton.Value)
+        );
+    }
+
+    public void LateUpdate()
+    {
+        IsDown = false;
+        IsPressed = false;
+    }
+}
+
+public enum InputAction
+{
+    None,
+    Fire,
+    AltFire,
+    Weapon1,
+    Weapon2,
+    Reload,
+    Flashlight
+}
+
 public static class InputManager
 {
     const float DEADZONE = 0.15f;
@@ -10,13 +54,16 @@ public static class InputManager
     public static Vector2 MouseWorldPosition { get; private set; }
 
     public static Vector2 Movement { get; private set; }
-    public static bool ActionDown { get; private set; }
-    public static bool ActionJustPressed { get; private set; }
-    public static bool ActionAltJustPressed { get; private set; }
-    public static bool FlashlightJustPressed { get; private set; }
-    public static bool Weapon1JustPressed { get; private set; }
-    public static bool Weapon2JustPressed { get; private set; }
-    public static bool ReloadJustPressed { get; private set; }
+
+    private static Dictionary<InputAction, InputButton> Actions = new()
+    {
+        { InputAction.Fire, new(null, MouseButton.Left) },
+        { InputAction.AltFire, new(null, MouseButton.Right) },
+        { InputAction.Flashlight, new(KeyboardKey.F, null) },
+        { InputAction.Reload, new(KeyboardKey.R, null) },
+        { InputAction.Weapon1, new(KeyboardKey.One, null) },
+        { InputAction.Weapon2, new(KeyboardKey.Two, null) }
+    };
 
     public static void Update(float scale, Vector2 offset, Camera2D camera)
     {
@@ -33,33 +80,34 @@ public static class InputManager
 
         Vector2 dir = new Vector2
         {
-            X = (IsKeyDown(KeyboardKey.A) ? -1 : IsKeyDown(KeyboardKey.D) ? 1 : 0) + gpX,
-            Y = (IsKeyDown(KeyboardKey.W) ? -1 : IsKeyDown(KeyboardKey.S) ? 1 : 0) + gpY
+            X = (Raylib.IsKeyDown(KeyboardKey.A) ? -1 : Raylib.IsKeyDown(KeyboardKey.D) ? 1 : 0) + gpX,
+            Y = (Raylib.IsKeyDown(KeyboardKey.W) ? -1 : Raylib.IsKeyDown(KeyboardKey.S) ? 1 : 0) + gpY
         };
 
         Movement = (dir.X != 0 || dir.Y != 0) ? Raymath.Vector2Normalize(dir) : dir;
 
-        ActionDown = Raylib.IsMouseButtonDown(MouseButton.Left);
-        ActionJustPressed |= Raylib.IsMouseButtonPressed(MouseButton.Left); //this "latch" mechanism made the render loop -> fixed loop synchronization work
-        ActionAltJustPressed |= Raylib.IsMouseButtonPressed(MouseButton.Right);
-
-        FlashlightJustPressed |= Raylib.IsKeyPressed(KeyboardKey.F);
-        Weapon1JustPressed |= Raylib.IsKeyPressed(KeyboardKey.One);
-        Weapon2JustPressed |= Raylib.IsKeyPressed(KeyboardKey.Two);
-        ReloadJustPressed |= Raylib.IsKeyPressed(KeyboardKey.R);
+        foreach (var i in Actions)
+        {
+            i.Value.Update();
+        }
     }
 
     public static void LateUpdate()
     {
         //consume all pending active inputs here
-
-        ActionJustPressed = false;
-        FlashlightJustPressed = false;
-        Weapon1JustPressed = false;
-        Weapon2JustPressed = false;
-        ReloadJustPressed = false;
-        ActionAltJustPressed = false;
+        foreach (var i in Actions)
+        {
+            i.Value.LateUpdate();
+        }
     }
 
-    public static bool IsKeyDown(KeyboardKey key) => Raylib.IsKeyDown(key);
+    public static bool IsPressed(InputAction action)
+    {
+        return Actions[action].IsPressed;
+    }
+
+    public static bool IsDown(InputAction action)
+    {
+        return Actions[action].IsDown;
+    }
 }
