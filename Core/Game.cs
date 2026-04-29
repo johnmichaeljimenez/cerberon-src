@@ -16,6 +16,7 @@ public interface IGameState
 public class Game
 {
     public static Game Instance { get; private set; }
+    public readonly Signal<IGameState> OnStateChanged = new();
     private RenderTexture2D _target;
 
     private IGameState currentState;
@@ -72,6 +73,7 @@ public class Game
             PauseHandler.Clear();
             currentState?.Enter();
             nextState = null;
+            OnStateChanged?.Publish(currentState);
         }
 
         Camera.Update(dt);
@@ -163,6 +165,7 @@ public class Game
                 Update(fixedDt, unscaledFixedDt, scale, offset);
             });
 
+            UIManager.Update(Time.DeltaTime, Time.UnscaledDeltaTime);
 
             if (Raylib.IsKeyPressed(KeyboardKey.F1))
                 showIMGUI = !showIMGUI;
