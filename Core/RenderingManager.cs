@@ -18,7 +18,7 @@ public class RenderingManager
 
         public void Use(Shader shader)
         {
-            CurrentValue = Raymath.Lerp(CurrentValue, TargetValue, Time.DeltaTime * 20);
+            CurrentValue = Raymath.Lerp(CurrentValue, TargetValue, Time.UnscaledDeltaTime * 20);
             Raylib.SetShaderValue(shader, ShaderLocation, CurrentValue, ShaderUniformDataType.Float);
         }
     }

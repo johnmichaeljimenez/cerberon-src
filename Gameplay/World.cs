@@ -177,6 +177,9 @@ public class World : IDisposable //aka Level loader
 
 	public void LateUpdate(float dt, float udt)
 	{
+		if (PauseHandler.IsPaused)
+			return;
+
 		foreach (var i in Entities)
 		{
 			if (i.IsDestroyed)

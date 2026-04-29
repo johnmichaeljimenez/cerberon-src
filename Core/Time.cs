@@ -3,8 +3,8 @@ namespace Main.Core;
 public static class Time
 {
 	public static float CurrentTime { get; private set; }
-	public static float DeltaTime => Raylib.GetFrameTime();
-	public static float UnscaledDeltaTime => PauseHandler.IsPaused ? 0 : DeltaTime;
+	public static float DeltaTime => PauseHandler.IsPaused ? 0 : UnscaledDeltaTime;
+	public static float UnscaledDeltaTime => Raylib.GetFrameTime();
 	public static float Alpha => _accumulator / FixedDeltaTime;
 
 	public static float FixedDeltaTime => PauseHandler.IsPaused ? 0 : UnscaledFixedDeltaTime;
