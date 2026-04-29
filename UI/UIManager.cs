@@ -22,30 +22,38 @@ public static class UIManager
 			elements[i.Group].Add(i);
 		}
 
-		SetRoot(ShowScreen<MainMenuScreen>(null));
+		ShowScreen<MainMenuScreen>(null);
 		Game.Instance.OnStateChanged.Subscribe(state =>
 		{
 			if (state is MenuState)
 			{
-				SetRoot(ShowScreen<MainMenuScreen>(null));
+				ShowScreen<MainMenuScreen>(null);
 			}
 			else
 			{
-				SetRoot(ShowScreen<HUDScreen>(null));
+				ShowScreen<HUDScreen>(null);
 			}
 
 		}); //no need to dispose
 	}
 
-	public static T ShowScreen<T>(object context) where T : BaseScreen
+	public static T ShowScreen<T>(object context, bool clear = true) where T : BaseScreen
 	{
-		var screen = Activator.CreateInstance<T>();
+		var screen = context == null ? Activator.CreateInstance<T>() : Activator.CreateInstance(typeof(T), context) as T;
 		if (elements.ContainsKey(screen.UIGroup))
 			screen.UpdateElements(elements[screen.UIGroup]);
 
-		screen.OnEnter(context);
+		if (clear)
+			SetRoot(screen);
+		else
+			Push(screen);
 
 		return screen;
+	}
+
+	public static void Back()
+	{
+		Pop();
 	}
 
 	private static void OnTSVLayoutChanged(string content)
@@ -87,7 +95,7 @@ public static class UIManager
 		Current?.Draw();
 	}
 
-	public static void Push(BaseScreen screen)
+	private static void Push(BaseScreen screen)
 	{
 		Current?.Dispose();
 
@@ -96,7 +104,7 @@ public static class UIManager
 	}
 
 	// Pop the current screen off the stack
-	public static void Pop()
+	private static void Pop()
 	{
 		if (_stack.Count == 0) return;
 
@@ -106,7 +114,7 @@ public static class UIManager
 		Current?.OnEnter();
 	}
 
-	public static void SetRoot(BaseScreen screen)
+	private static void SetRoot(BaseScreen screen)
 	{
 		while (_stack.Count > 0) Pop();
 		Push(screen);
