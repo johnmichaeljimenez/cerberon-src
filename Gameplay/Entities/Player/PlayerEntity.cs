@@ -67,6 +67,11 @@ public class PlayerEntity : CharacterEntity
 		{
 			nightvisionOn = !nightvisionOn;
 			RenderingManager.SetFilter(RenderingManager.Filters.Nightvision, nightvisionOn);
+
+			if (nightvisionOn)
+			{
+				AudioHandler.PlaySound("generic/nightvision-on"); //I used charging sound from a camera flash capacitor
+			}
 		}
 
 		Weapons.Update(dt, udt);
