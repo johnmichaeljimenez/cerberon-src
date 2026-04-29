@@ -8,7 +8,7 @@ uniform sampler2D lightTex;
 uniform sampler2D visionTex;
 uniform float time;
 
-uniform float nightAmt = 1.0; //TODO: pass ingame as toggle
+uniform float nightAmt = 0.0;
 
 const float blurRadius = 1.5;
 

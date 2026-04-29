@@ -14,6 +14,7 @@ public class PlayerEntity : CharacterEntity
 	private Light flashLight;
 
 	private bool flashLightOn;
+	private bool nightvisionOn;
 
 	private float fsTimer = 0; //test
 
@@ -60,6 +61,12 @@ public class PlayerEntity : CharacterEntity
 			AudioHandler.PlaySound("generic/flashlight-toggle");
 			flashLightOn = !flashLightOn;
 			flashLight.Enabled = flashLightOn;
+		}
+
+		if (InputManager.IsPressed(InputAction.Nightvision))
+		{
+			nightvisionOn = !nightvisionOn;
+			RenderingManager.SetFilter(RenderingManager.Filters.Nightvision, nightvisionOn);
 		}
 
 		Weapons.Update(dt, udt);
