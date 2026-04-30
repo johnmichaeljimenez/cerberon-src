@@ -108,6 +108,7 @@ void main() {
     vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2));
     float lum = pow(luminance(blurColor), 2.5);
     vec3 screenGrayColor = vec3(lum, lum, lum);
+    screenGrayColor *= lightColor * 2;
 	
     vec3 nightCol = nightVision(screenColor, lightColor);         
 	vec3 finColor = mix(screenGrayColor, mix(texelColor, nightCol, nightAmt), visColor.r);
@@ -115,6 +116,7 @@ void main() {
 	float dither = ditherOffset(fragTexCoord);
     finColor += lightBlur * 0.1;
 	finColor += dither; //remove color banding
+    finColor += visColor * 0.1;
 
     finColor = fade(finColor, fadeAmt/4.5);
     finColor *= vig;

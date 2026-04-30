@@ -1,17 +1,17 @@
 {
   "WorldSettings": {
     "PlayerSpawnPoint": {
-      "X": 22.02,
-      "Y": 36.78
+      "X": -15.49,
+      "Y": 2.08
     },
     "WorldSize": {
       "X": 160.0,
       "Y": 160.0
     },
     "AmbientColor": {
-      "R": 99,
-      "G": 99,
-      "B": 99,
+      "R": 19,
+      "G": 19,
+      "B": 19,
       "A": 255
     }
   },
@@ -19,386 +19,188 @@
     {
       "Type": "WallEntity",
       "Position": {
-        "X": -66.0,
-        "Y": -48.0
+        "X": -9.0,
+        "Y": -10.0
       },
       "Size": {
-        "X": 6.0,
-        "Y": 96.0
+        "X": 2.0,
+        "Y": 10.0
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": 69.0,
-        "Y": -78.0
+        "X": 8.0,
+        "Y": -10.000001
       },
       "Size": {
-        "X": 6.0,
-        "Y": 126.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 0.0,
-        "Y": -78.0
-      },
-      "Size": {
-        "X": 69.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -66.0,
-        "Y": 45.0
-      },
-      "Size": {
-        "X": 36.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 0.0,
-        "Y": 45.0
-      },
-      "Size": {
-        "X": 75.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -30.0,
-        "Y": 63.0
-      },
-      "Size": {
-        "X": 9.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -60.0,
-        "Y": -48.0
-      },
-      "Size": {
-        "X": 30.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -30.0,
-        "Y": -24.0
-      },
-      "Size": {
-        "X": 30.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -36.0,
-        "Y": -48.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 15.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 0.0,
-        "Y": -27.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 9.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -36.0,
-        "Y": 48.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 21.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 0.0,
-        "Y": 48.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 21.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 0.0,
-        "Y": -12.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 24.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -36.0,
-        "Y": 12.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 18.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 45.0,
-        "Y": -12.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 24.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 6.0,
-        "Y": -24.0
-      },
-      "Size": {
-        "X": 45.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 0.0,
-        "Y": 21.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 9.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 6.0,
-        "Y": 6.0
-      },
-      "Size": {
-        "X": 12.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 6.0,
-        "Y": 21.0
-      },
-      "Size": {
-        "X": 12.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 24.0,
-        "Y": 21.0
-      },
-      "Size": {
-        "X": 21.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 24.0,
-        "Y": 6.0
-      },
-      "Size": {
-        "X": 21.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 45.0,
-        "Y": 21.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 15.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -36.0,
-        "Y": 36.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 9.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -36.0,
-        "Y": -27.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 33.0
+        "X": 2.0,
+        "Y": 9.000002
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
         "X": -9.0,
-        "Y": 63.0
+        "Y": -10.0
       },
       "Size": {
-        "X": 9.0,
-        "Y": 6.0
+        "X": 19.0,
+        "Y": 2.0
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": -60.0,
-        "Y": 21.0
+        "X": -9.0,
+        "Y": 4.0
       },
       "Size": {
-        "X": 15.0,
-        "Y": 6.0
+        "X": 12.0,
+        "Y": 2.0
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": -18.0,
-        "Y": -6.0
+        "X": -9.0,
+        "Y": 3.0
       },
       "Size": {
-        "X": 6.0,
-        "Y": 6.0
+        "X": 2.0,
+        "Y": 26.0
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": -18.0,
-        "Y": 39.0
+        "X": 1.0,
+        "Y": 5.99999952
       },
       "Size": {
-        "X": 6.0,
-        "Y": 6.0
+        "X": 2.0,
+        "Y": 10.000001
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": 0.0,
-        "Y": 36.0
+        "X": 1.0,
+        "Y": 20.0
       },
       "Size": {
-        "X": 6.0,
+        "X": 2.0,
         "Y": 9.0
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": -39.0,
-        "Y": 21.0
-      },
-      "Size": {
-        "X": 3.0,
-        "Y": 6.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 0.0,
-        "Y": -72.0
-      },
-      "Size": {
-        "X": 6.0,
-        "Y": 39.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -30.0,
-        "Y": -42.0
+        "X": 10.0,
+        "Y": -10.0
       },
       "Size": {
         "X": 30.0,
-        "Y": 6.0
+        "Y": 2.00000024
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": -60.0,
-        "Y": -15.0
+        "X": 8.0,
+        "Y": 2.999999
       },
       "Size": {
-        "X": 15.0,
-        "Y": 6.0
+        "X": 2.0,
+        "Y": 13.0000019
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": -39.0,
-        "Y": -15.0
+        "X": 8.0,
+        "Y": 20.0
       },
       "Size": {
-        "X": 3.0,
-        "Y": 6.0
+        "X": 2.0,
+        "Y": 9.0
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
-        "X": 45.0,
-        "Y": 42.0
+        "X": 10.0,
+        "Y": 4.0
       },
       "Size": {
-        "X": 6.0,
-        "Y": 3.0
+        "X": 12.0,
+        "Y": 2.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 26.0,
+        "Y": 4.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 38.0,
+        "Y": -10.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 20.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 38.0,
+        "Y": 14.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 16.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": -9.0,
+        "Y": 28.0
+      },
+      "Size": {
+        "X": 49.0,
+        "Y": 2.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 10.0,
+        "Y": 14.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 27.0,
+        "Y": 14.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
       }
     }
   ],
@@ -406,8 +208,8 @@
     {
       "SpriteID": "env/tile-2",
       "Position": {
-        "X": 4.91,
-        "Y": 0.84
+        "X": 15.549,
+        "Y": 9.776
       },
       "Parallax": 0.0,
       "Rotation": 0.0,
@@ -416,77 +218,8 @@
       "RenderType": 1,
       "Scale": 1.0,
       "TileSize": {
-        "X": 136.102951,
-        "Y": 94.1155548
-      },
-      "Tint": {
-        "R": 255,
-        "G": 255,
-        "B": 255,
-        "A": 255
-      }
-    },
-    {
-      "SpriteID": "env/ground-5",
-      "Position": {
-        "X": 0.84,
-        "Y": 1.18
-      },
-      "Parallax": 0.0,
-      "Rotation": 0.0,
-      "SortingGroup": 0,
-      "SortingIndex": -1,
-      "RenderType": 1,
-      "Scale": 1.0,
-      "TileSize": {
-        "X": 183.293854,
-        "Y": 174.545624
-      },
-      "Tint": {
-        "R": 255,
-        "G": 255,
-        "B": 255,
-        "A": 255
-      }
-    },
-    {
-      "SpriteID": "env/tile-2",
-      "Position": {
-        "X": -14.96,
-        "Y": 56.17
-      },
-      "Parallax": 0.0,
-      "Rotation": 0.0,
-      "SortingGroup": 0,
-      "SortingIndex": 0,
-      "RenderType": 1,
-      "Scale": 1.0,
-      "TileSize": {
-        "X": 36.2014046,
-        "Y": 19.0247383
-      },
-      "Tint": {
-        "R": 255,
-        "G": 255,
-        "B": 255,
-        "A": 255
-      }
-    },
-    {
-      "SpriteID": "env/tile-2",
-      "Position": {
-        "X": 36.64,
-        "Y": -59.95
-      },
-      "Parallax": 0.0,
-      "Rotation": 0.0,
-      "SortingGroup": 0,
-      "SortingIndex": 0,
-      "RenderType": 1,
-      "Scale": 1.0,
-      "TileSize": {
-        "X": 69.48326,
-        "Y": 30.1186981
+        "X": 47.5459251,
+        "Y": 38.3533554
       },
       "Tint": {
         "R": 255,
@@ -498,8 +231,8 @@
     {
       "SpriteID": "env/wood-13",
       "Position": {
-        "X": 25.76,
-        "Y": 35.78
+        "X": -3.005,
+        "Y": 16.883
       },
       "Parallax": 0.0,
       "Rotation": 0.0,
@@ -508,54 +241,8 @@
       "RenderType": 1,
       "Scale": 1.0,
       "TileSize": {
-        "X": 47.40721,
-        "Y": 24.0862885
-      },
-      "Tint": {
-        "R": 255,
-        "G": 255,
-        "B": 255,
-        "A": 255
-      }
-    },
-    {
-      "SpriteID": "env/grate_albedo",
-      "Position": {
-        "X": -14.76,
-        "Y": 52.33
-      },
-      "Parallax": 0.1,
-      "Rotation": 0.0,
-      "SortingGroup": 1,
-      "SortingIndex": 0,
-      "RenderType": 1,
-      "Scale": 1.0,
-      "TileSize": {
-        "X": 36.8692169,
-        "Y": 28.996109
-      },
-      "Tint": {
-        "R": 255,
-        "G": 255,
-        "B": 255,
-        "A": 255
-      }
-    },
-    {
-      "SpriteID": "env/ground-10",
-      "Position": {
-        "X": 38.49,
-        "Y": 57.7
-      },
-      "Parallax": 0.0,
-      "Rotation": 0.0,
-      "SortingGroup": 0,
-      "SortingIndex": -1,
-      "RenderType": 1,
-      "Scale": 1.0,
-      "TileSize": {
-        "X": 66.38388,
-        "Y": 15.6155128
+        "X": 10.4374819,
+        "Y": 24.1395836
       },
       "Tint": {
         "R": 255,
