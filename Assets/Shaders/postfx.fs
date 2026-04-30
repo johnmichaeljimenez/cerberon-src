@@ -116,7 +116,7 @@ void main() {
     finColor += lightBlur * 0.1;
 	finColor += dither; //remove color banding
 
-    finColor = fade(finColor, fadeAmt);
+    finColor = fade(finColor, fadeAmt/4.5);
     finColor *= vig;
 
 	finalColor = vec4(finColor, 1);

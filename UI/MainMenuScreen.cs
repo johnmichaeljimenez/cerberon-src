@@ -10,7 +10,7 @@ public class MainMenuScreen : BaseScreen
 
 	public MainMenuScreen(object context) : base(context)
 	{
-		
+
 	}
 
 	protected override void OnClick(UIElement e)
@@ -20,10 +20,10 @@ public class MainMenuScreen : BaseScreen
 		switch (e.ID)
 		{
 			case "btn-start":
-				Game.Instance.GoToIngame();
+				FadeHandler.FadeIn(Game.Instance.GoToIngame, true);
 				break;
 			case "btn-exit":
-				Game.Instance.RequestExit();
+				FadeHandler.FadeIn(Game.Instance.RequestExit);
 				break;
 			default:
 				break;

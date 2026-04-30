@@ -123,6 +123,7 @@ public class Game
             Raylib.ClearBackground(Color.Black);
             RenderingManager.DrawToScreen(_target);
             UIManager.Draw();
+            FadeHandler.Draw();
 
             if (showIMGUI)
             {
@@ -170,6 +171,7 @@ public class Game
             });
 
             UIManager.Update(Time.DeltaTime, Time.UnscaledDeltaTime);
+            FadeHandler.Update();
 
             if (Raylib.IsKeyPressed(KeyboardKey.F1))
                 showIMGUI = !showIMGUI;

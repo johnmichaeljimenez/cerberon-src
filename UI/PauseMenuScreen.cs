@@ -25,7 +25,7 @@ public class PauseMenuScreen : BaseScreen
 				gameplayState.PauseGame(false);
 				break;
 			case "btn-quit-to-menu":
-				Game.Instance.GoToMenu();
+				FadeHandler.FadeIn(Game.Instance.GoToMenu, true);
 				break;
 			default:
 				break;

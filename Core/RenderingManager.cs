@@ -2,7 +2,7 @@ using Main.Effects;
 
 namespace Main.Core;
 
-public class RenderingManager
+public static class RenderingManager
 {
     public class RendererFilter
     {
@@ -41,12 +41,15 @@ public class RenderingManager
     private static int lightTexLoc;
     private static int visionTexLoc;
     private static int timeLoc;
+    private static int fadeLoc;
 
     private static int maskVisionTexLoc;
     private static int tiledTexLocX, tiledTexLocY;
 
     public static float Scale;
     public static Vector2 Offset;
+
+    private static float fadeAmount;
 
     private static readonly Dictionary<Filters, RendererFilter> AllFilters = new()
     {
@@ -94,6 +97,7 @@ public class RenderingManager
         lightTexLoc = Raylib.GetShaderLocation(PostShader, "lightTex");
         visionTexLoc = Raylib.GetShaderLocation(PostShader, "visionTex");
         timeLoc = Raylib.GetShaderLocation(PostShader, "time");
+        fadeLoc = Raylib.GetShaderLocation(PostShader, "fadeAmt");
 
         foreach (var i in AllFilters)
         {
@@ -151,6 +155,7 @@ public class RenderingManager
             Raylib.SetShaderValueTexture(PostShader, lightTexLoc, LightingSystem.LightingRenderTexture.Texture);
             Raylib.SetShaderValueTexture(PostShader, visionTexLoc, LightingSystem.VisionRenderTexture.Texture);
             Raylib.SetShaderValue(PostShader, timeLoc, Time.CurrentTime, ShaderUniformDataType.Float);
+            Raylib.SetShaderValue(PostShader, fadeLoc, fadeAmount, ShaderUniformDataType.Float);
 
             foreach (var i in AllFilters)
             {
@@ -178,5 +183,10 @@ public class RenderingManager
             i.Value.TargetValue = 0;
             i.Value.CurrentValue = 0;
         }
+    }
+
+    public static void SetFade(float amt)
+    {
+        fadeAmount = amt;
     }
 }
