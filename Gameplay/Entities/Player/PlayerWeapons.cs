@@ -48,15 +48,16 @@ public class Gun
 		return CurrentAmmo < MagSize && CurrentMaxAmmo > 0;
 	}
 
-	public void DoReload()
+	public bool DoReload()
 	{
-		if (!CanReload()) return;
+		if (!CanReload()) return false;
 
 		int ammoToAdd = Math.Min(MagSize - CurrentAmmo, CurrentMaxAmmo);
 		CurrentAmmo += ammoToAdd;
 		CurrentMaxAmmo -= ammoToAdd;
 
 		Log.Send($"Reloaded: ({CurrentAmmo}/{CurrentMaxAmmo})");
+		return true;
 	}
 }
 
@@ -87,6 +88,9 @@ public class PlayerWeapons : IDisposable
 	private LinecastHit laserHit;
 	private bool isIraqiReload;
 
+	public readonly Signal<Gun> OnWeaponSelected = new();
+	public readonly Signal<Gun> OnWeaponAmmoChanged = new();
+
 	public PlayerWeapons(GameplayState gameplayState, PlayerEntity player)
 	{
 		this.player = player;
@@ -100,6 +104,8 @@ public class PlayerWeapons : IDisposable
 			player.Animator.Add(i.ANIM_MELEE, 51);
 			player.Animator.Add(i.ANIM_RELOAD, 52);
 		}
+
+		OnWeaponSelected.Publish(CurrentWeapon);
 	}
 
 	public void Dispose()
@@ -144,12 +150,14 @@ public class PlayerWeapons : IDisposable
 			if (InputManager.IsPressed(InputAction.Weapon1))
 			{
 				currentWeaponIndex = 0;
+				OnWeaponSelected.Publish(CurrentWeapon);
 				Log.Send($"Switched to: {CurrentWeapon.Name}");
 				AudioHandler.PlaySound(SFX_EQUIP);
 			}
 			else if (InputManager.IsPressed(InputAction.Weapon2))
 			{
 				currentWeaponIndex = 1;
+				OnWeaponSelected.Publish(CurrentWeapon);
 				Log.Send($"Switched to: {CurrentWeapon.Name}");
 				AudioHandler.PlaySound(SFX_EQUIP);
 			}
@@ -208,6 +216,7 @@ public class PlayerWeapons : IDisposable
 					}
 
 					CurrentWeapon.CurrentAmmo -= 1;
+					OnWeaponAmmoChanged.Publish(CurrentWeapon);
 					Log.Send($"Shoot ({CurrentWeapon.CurrentAmmo}/{CurrentWeapon.CurrentMaxAmmo})");
 					if (CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo > 0)
 						fireTimer = CurrentWeapon.FiringRate;
@@ -247,10 +256,13 @@ public class PlayerWeapons : IDisposable
 	{
 		if (animationName == CurrentWeapon.ANIM_RELOAD)
 		{
-			CurrentWeapon.DoReload();
+			if (CurrentWeapon.DoReload())
+			{
+				if (!isIraqiReload)
+					AudioHandler.PlaySound(SFX_READY);
 
-			if (!isIraqiReload)
-				AudioHandler.PlaySound(SFX_READY);
+				OnWeaponAmmoChanged.Publish(CurrentWeapon);
+			}
 
 			isIraqiReload = false;
 		}

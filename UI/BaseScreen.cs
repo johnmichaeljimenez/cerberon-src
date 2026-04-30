@@ -9,6 +9,7 @@ public abstract class BaseScreen : IDisposable
 
 	protected UIElement hoveredElement { get; private set; }
 	protected UIElement pressElement { get; private set; }
+	protected readonly List<IDisposable> disposables = new();
 
 	public BaseScreen(object context = null)
 	{
@@ -79,7 +80,7 @@ public abstract class BaseScreen : IDisposable
 
 	public virtual void Dispose()
 	{
-
+		disposables.ForEach(p => p?.Dispose());
 	}
 
 	protected virtual void OnClick(UIElement e)
