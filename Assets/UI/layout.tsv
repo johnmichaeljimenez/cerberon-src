@@ -1,13 +1,17 @@
-ID	Position	Size	Group	Visible	Clickable	Text	Align
-bg	0,0	800,450	MainMenu	1	0		0
-title	200,50	400,80	MainMenu	1	0		0
-btn-start	300,150	200,40	MainMenu	1	1	Start Game	0
-btn-options	300,210	200,40	MainMenu	1	1	Options	0
-btn-exit	300,270	200,40	MainMenu	1	1	Exit	0
+ID	Position	Size	Group	Visible	Clickable	Text	Align	TextSize	SpriteName
+bg	0,0	800,450	MainMenu	1	0		0		
+title	200,50	400,80	MainMenu	1	0		0		
+btn-start	300,150	200,40	MainMenu	1	1	Start Game	0			
+btn-options	300,210	200,40	MainMenu	1	1	Options	0		
+btn-exit	300,270	200,40	MainMenu	1	1	Exit	0		
 
-hp-text	0,0	100,40	HUD	1	0	HP: 100/100	-1
-ammo-text	0,10	100,40	HUD	1	0	AK-47 (10/30)	-1
+hp-text	0,0	100,40	HUD	1	0	HP: 100/100	-1		
+ammo-text	0,10	100,40	HUD	1	0	AK-47 (10/30)	-1		
 
-btn-resume	300,150	200,40	PauseMenu	1	1	Resume	0
-btn-options	300,210	200,40	PauseMenu	1	1	Options	0
-btn-quit-to-menu	300,270	200,40	PauseMenu	1	1	Quit to Menu	0
+btn-resume	300,150	200,40	PauseMenu	1	1	Resume	0		
+btn-options	300,210	200,40	PauseMenu	1	1	Options	0		
+btn-quit-to-menu	300,270	200,40	PauseMenu	1	1	Quit to Menu	0		
+
+result-text	300,150	200,40	End	1	0	Mission Complete	0	20	
+btn-restart	300,210	200,40	End	1	1	Restart	0		
+btn-quit-to-menu	300,270	200,40	End	1	1	Quit to Menu	0		

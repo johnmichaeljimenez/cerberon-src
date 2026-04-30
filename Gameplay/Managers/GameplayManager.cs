@@ -1,6 +1,7 @@
 using Main.Core;
 using Main.Gameplay.Entities.Player;
 using Main.Helpers;
+using Main.UI;
 
 namespace Main.Gameplay.Managers;
 
@@ -21,7 +22,8 @@ public class GameplayManager : BaseManager
 	{
 		Running = false;
 		Log.Send(win ? "You win" : "You lose");
-		PauseHandler.Pause("ending");
+		UIManager.ShowScreen<EndScreen>((gameplayState, win), false);
+		// PauseHandler.Pause("ending");
 	}
 
 	private void OnPlayerDeath(PlayerEntity entity)
