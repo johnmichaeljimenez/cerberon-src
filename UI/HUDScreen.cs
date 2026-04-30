@@ -30,7 +30,7 @@ public class HUDScreen : BaseScreen
 		base.OnEnter();
 		
 		OnWeaponUpdate(weapons.CurrentWeapon);
-		OnHPUpdate(playerEntity.MaxHP);
+		OnHPUpdate(playerEntity.HP);
 	}
 
 	private void OnHPUpdate(int amt)
