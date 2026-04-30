@@ -49,6 +49,7 @@ public class Game
         currentState = new MenuState();
 
         UIManager.Init();
+        OnStateChanged?.Publish(currentState);
     }
 
     public void End()

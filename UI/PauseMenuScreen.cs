@@ -12,7 +12,7 @@ public class PauseMenuScreen : BaseScreen
 
 	public PauseMenuScreen(object context) : base(context)
 	{
-		gameplayState = (GameplayState)context;
+		gameplayState = context as GameplayState;
 	}
 
 	protected override void OnClick(UIElement e)

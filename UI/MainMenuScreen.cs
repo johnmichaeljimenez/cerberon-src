@@ -7,6 +7,12 @@ public class MainMenuScreen : BaseScreen
 {
 	public override string UIGroup => "MainMenu";
 
+
+	public MainMenuScreen(object context) : base(context)
+	{
+		
+	}
+
 	protected override void OnClick(UIElement e)
 	{
 		base.OnClick(e);

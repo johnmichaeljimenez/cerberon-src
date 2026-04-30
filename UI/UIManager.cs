@@ -22,16 +22,15 @@ public static class UIManager
 			elements[i.Group].Add(i);
 		}
 
-		ShowScreen<MainMenuScreen>(null);
 		Game.Instance.OnStateChanged.Subscribe(state =>
 		{
 			if (state is MenuState)
 			{
-				ShowScreen<MainMenuScreen>(null);
+				ShowScreen<MainMenuScreen>(state);
 			}
 			else
 			{
-				ShowScreen<HUDScreen>(null);
+				ShowScreen<HUDScreen>(state);
 			}
 
 		}); //no need to dispose
