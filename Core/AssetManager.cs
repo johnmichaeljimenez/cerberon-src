@@ -81,6 +81,7 @@ public static class AssetManager
 	private static readonly Dictionary<string, Sprite> sprites = new();
 	private static readonly Dictionary<string, Animation> animations = new();
 	public static Sprite MissingSprite { get; private set; }
+	public static Font Font { get; private set; }
 
 	//load everything in Assets for now regardless of where level they will be used. later I'll add an Update() function that stores the pending asset paths in a queue then timeslice them via Game's Update loop (true Raylib frames loop).
 	//no multithreading bs as I need main thread to load textures, so I'll just do "load 10 png this frame then do the remaining 10 on next frame". good for loading screens too
@@ -90,6 +91,7 @@ public static class AssetManager
 	public static void Init()
 	{
 		var assetsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
+		Font = Raylib.LoadFont(Path.Combine(assetsPath, "font.ttf"));
 
 		AudioHandler.Init(Path.Combine(assetsPath, "Audio"));
 
@@ -167,6 +169,7 @@ public static class AssetManager
 		sprites.Clear();
 
 		AudioHandler.Unload();
+		Raylib.UnloadFont(Font);
 	}
 
 	public static void OnDrawImGui()
