@@ -100,8 +100,6 @@ public static class UIManager
 
 	private static void Push(BaseScreen screen)
 	{
-		Current?.Dispose();
-
 		_stack.Push(screen);
 		screen.OnEnter();
 	}
