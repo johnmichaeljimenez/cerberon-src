@@ -48,7 +48,9 @@ public static class TsvParser
 			{
 				if (prop == null) continue;
 
-				string raw = idx < fields.Length ? fields[idx] : string.Empty;
+				string raw = idx < fields.Length ? fields[idx].Trim() : string.Empty;
+				if (string.IsNullOrEmpty(raw)) continue; //let the default values to be used if column is blank for this row
+
 				object value = ConvertValue(raw, prop.PropertyType);
 				prop.SetValue(obj, value);
 			}
@@ -63,11 +65,6 @@ public static class TsvParser
 	{
 		if (targetType == typeof(string))
 			return raw;
-
-		if (string.IsNullOrWhiteSpace(raw))
-		{
-			return targetType.IsValueType ? Activator.CreateInstance(targetType) : null; //TODO: use default declaration value
-		}
 
 		var underlying = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
