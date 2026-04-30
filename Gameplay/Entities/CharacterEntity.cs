@@ -46,6 +46,8 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		MathF.Sin(FacingAngle * MathF.PI / 180f)
 	);
 
+	public readonly Signal<int> OnHPChanged = new();
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
@@ -121,6 +123,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 			return false;
 
 		HP += amt;
+		OnHPChanged.Publish(HP);
 		HP = Math.Min(HP, MaxHP);
 		return true;
 	}
@@ -133,6 +136,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		DecalSystem.Paint(Position);
 		HP -= amt;
 		OnHit(amt, HP <= 0);
+		OnHPChanged.Publish(HP);
 		Log.Send($"HIT: {amt} -> {HP}/{MaxHP}");
 		if (HP <= 0)
 		{

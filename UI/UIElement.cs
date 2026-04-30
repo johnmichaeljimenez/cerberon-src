@@ -53,7 +53,7 @@ public class UIElement
 
 	public void Draw(bool hovered)
 	{
-		var tint = Color.White.Value(hovered? 1.0f : 0.8f);
+		var tint = Color.White.Value(Clickable && hovered? 1.0f : 0.8f);
 		if (TextSize > 0 && !string.IsNullOrWhiteSpace(Text))
 		{
 			Raylib.DrawTextEx(AssetManager.Font, Text, GetTextRect.Position + Vector2.UnitY * 2, TextSize, 0, Color.Black); //shadow

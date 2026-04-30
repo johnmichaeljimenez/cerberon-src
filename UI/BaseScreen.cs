@@ -29,6 +29,9 @@ public abstract class BaseScreen : IDisposable
 	{
 		foreach (var item in elements)
 		{
+			if (!item.Visible)
+				continue;
+				
 			item.Draw(hoveredElement == item);
 		}
 	}
@@ -56,7 +59,7 @@ public abstract class BaseScreen : IDisposable
 			if (hover)
 			{
 				hoveredElement = e;
-				
+
 				if (Raylib.IsMouseButtonReleased(0))
 				{
 					//classic UX: only do onclick events on the button as long as the press and release events are on the same button
