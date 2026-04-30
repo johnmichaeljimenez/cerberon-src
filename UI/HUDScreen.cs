@@ -35,13 +35,11 @@ public class HUDScreen : BaseScreen
 
 	private void OnHPUpdate(int amt)
 	{
-		//TODO: improve
-		elements.FirstOrDefault(p => p.ID == "hp-text").Text = $"HP: {amt}/{playerEntity.MaxHP}";
+		references["hp-text"].Text = $"HP: {amt}/{playerEntity.MaxHP}";
 	}
 
 	private void OnWeaponUpdate(Gun w)
 	{
-		//TODO: improve
-		elements.FirstOrDefault(p => p.ID == "ammo-text").Text = $"{w.Name} ({w.CurrentAmmo}/{w.CurrentMaxAmmo})";
+		references["ammo-text"].Text = $"{w.Name} ({w.CurrentAmmo}/{w.CurrentMaxAmmo})";
 	}
 }

@@ -6,6 +6,7 @@ public abstract class BaseScreen : IDisposable
 {
 	public virtual string UIGroup => throw new NotImplementedException();
 	protected readonly List<UIElement> elements = new();
+	protected readonly Dictionary<string, UIElement> references = new(); //for lookup purposes, use list above for processing and/or guaranteed order
 
 	protected UIElement hoveredElement { get; private set; }
 	protected UIElement pressElement { get; private set; }
@@ -23,6 +24,12 @@ public abstract class BaseScreen : IDisposable
 
 		this.elements.Clear();
 		this.elements.AddRange(elements);
+
+		this.references.Clear();
+		foreach (var i in elements)
+		{
+			this.references[i.ID] = i;
+		}
 	}
 
 	public virtual void Draw()

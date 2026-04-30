@@ -16,6 +16,8 @@ public static class UIManager
 		elements.Clear();
 		foreach (var i in TsvParser.Parse<UIElement>(AssetWatcher.Add(LAYOUT, OnTSVLayoutChanged)))
 		{
+			i.Init();
+
 			if (!elements.ContainsKey(i.Group))
 				elements[i.Group] = new();
 
@@ -64,6 +66,8 @@ public static class UIManager
 
 			foreach (var i in temp)
 			{
+				i.Init();
+
 				if (!elements.ContainsKey(i.Group))
 					elements[i.Group] = new();
 
