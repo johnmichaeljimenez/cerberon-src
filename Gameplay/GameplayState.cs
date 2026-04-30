@@ -31,6 +31,8 @@ public class GameplayState : IGameState
 		AddManager<WaypointManager>();
 		AddManager<AIDirectorManager>();
 
+		RenderingManager.ResetAllFilters();
+
 		foreach (var i in managers)
 		{
 			i.Value.Init();
@@ -61,6 +63,7 @@ public class GameplayState : IGameState
 			i.Value.Dispose();
 		}
 
+		RenderingManager.ResetAllFilters();
 		LightingSystem.Clear();
 	}
 

@@ -170,4 +170,13 @@ public class RenderingManager
     {
         AllFilters[filters].TargetValue = enabled ? 1 : 0;
     }
+
+    public static void ResetAllFilters()
+    {
+        foreach (var i in AllFilters)
+        {
+            i.Value.TargetValue = 0;
+            i.Value.CurrentValue = 0;
+        }
+    }
 }
