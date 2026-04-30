@@ -26,7 +26,10 @@ public abstract class BaseScreen : IDisposable
 
 	public virtual void Draw()
 	{
-
+		foreach (var item in elements)
+		{
+			item.Draw(hoveredElement == item);
+		}
 	}
 
 	public virtual void OnEnter()
