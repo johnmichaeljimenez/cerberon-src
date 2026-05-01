@@ -5,8 +5,8 @@
       "Y": 2.08
     },
     "WorldSize": {
-      "X": 160.0,
-      "Y": 160.0
+      "X": 128.0,
+      "Y": 128.0
     },
     "AmbientColor": {
       "R": 19,
@@ -31,11 +31,11 @@
       "Type": "WallEntity",
       "Position": {
         "X": 8.0,
-        "Y": -10.000001
+        "Y": -10.0
       },
       "Size": {
         "X": 2.0,
-        "Y": 9.000002
+        "Y": 9.0
       }
     },
     {
@@ -45,7 +45,7 @@
         "Y": -10.0
       },
       "Size": {
-        "X": 19.0,
+        "X": 12.0,
         "Y": 2.0
       }
     },
@@ -75,11 +75,11 @@
       "Type": "WallEntity",
       "Position": {
         "X": 1.0,
-        "Y": 5.99999952
+        "Y": 6.0
       },
       "Size": {
         "X": 2.0,
-        "Y": 10.000001
+        "Y": 10.0
       }
     },
     {
@@ -100,19 +100,19 @@
         "Y": -10.0
       },
       "Size": {
-        "X": 30.0,
-        "Y": 2.00000024
+        "X": 7.0,
+        "Y": 2.0
       }
     },
     {
       "Type": "WallEntity",
       "Position": {
         "X": 8.0,
-        "Y": 2.999999
+        "Y": 3.0
       },
       "Size": {
         "X": 2.0,
-        "Y": 13.0000019
+        "Y": 13.0
       }
     },
     {
@@ -202,6 +202,116 @@
         "X": 12.0,
         "Y": 2.0
       }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 1.0,
+        "Y": -44.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 36.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 8.0,
+        "Y": -44.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 8.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 8.0,
+        "Y": -16.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 7.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 8.0,
+        "Y": -30.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 8.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 10.0,
+        "Y": -27.0
+      },
+      "Size": {
+        "X": 14.0,
+        "Y": 2.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 2.0,
+        "Y": -44.0
+      },
+      "Size": {
+        "X": 22.0,
+        "Y": 2.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 24.0,
+        "Y": -36.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 18.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 21.5,
+        "Y": -10.0
+      },
+      "Size": {
+        "X": 18.0,
+        "Y": 2.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 24.0,
+        "Y": -44.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 4.0
+      }
+    },
+    {
+      "Type": "WallEntity",
+      "Position": {
+        "X": 24.0,
+        "Y": -14.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 6.0
+      }
     }
   ],
   "EnvironmentSprites": [
@@ -252,10 +362,10 @@
       }
     },
     {
-      "SpriteID": "env/ground-10",
+      "SpriteID": "env/grass-1",
       "Position": {
-        "X": 17.02,
-        "Y": 10.45
+        "X": 0.0,
+        "Y": 0.0
       },
       "Parallax": 0.0,
       "Rotation": 0.0,
@@ -264,8 +374,192 @@
       "RenderType": 1,
       "Scale": 1.0,
       "TileSize": {
-        "X": 74.44867,
-        "Y": 53.7624741
+        "X": 130.0,
+        "Y": 130.0
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/tile-2",
+      "Position": {
+        "X": 13.63,
+        "Y": -26.54
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 22.1964245,
+        "Y": 34.67359
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/patch-1",
+      "Position": {
+        "X": 23.96,
+        "Y": -16.24
+      },
+      "Parallax": 0.0,
+      "Rotation": -30.11626,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.29626,
+      "TileSize": {
+        "X": 14.1734657,
+        "Y": 14.1734657
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/patch-1",
+      "Position": {
+        "X": 19.12,
+        "Y": -21.2
+      },
+      "Parallax": 0.0,
+      "Rotation": -357.507843,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.81294918,
+      "TileSize": {
+        "X": 15.1205311,
+        "Y": 15.1205311
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/patch-1",
+      "Position": {
+        "X": 17.9,
+        "Y": -13.46
+      },
+      "Parallax": 0.0,
+      "Rotation": -327.4234,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.52514851,
+      "TileSize": {
+        "X": 16.85105,
+        "Y": 16.85105
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/patch-1",
+      "Position": {
+        "X": 12.56,
+        "Y": -18.51
+      },
+      "Parallax": 0.0,
+      "Rotation": -266.10553,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.52514851,
+      "TileSize": {
+        "X": 13.0017109,
+        "Y": 13.0017109
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/dirt-1",
+      "Position": {
+        "X": 12.2,
+        "Y": 19.72
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 2.47211337,
+      "TileSize": {
+        "X": 9.88845348,
+        "Y": 9.88845348
+      },
+      "Tint": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/patch-1",
+      "Position": {
+        "X": -4.92,
+        "Y": -1.53
+      },
+      "Parallax": 0.0,
+      "Rotation": -266.10553,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 2.07740474,
+      "TileSize": {
+        "X": 17.709631,
+        "Y": 17.709631
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/patch-1",
+      "Position": {
+        "X": 3.01,
+        "Y": 1.26
+      },
+      "Parallax": 0.0,
+      "Rotation": -313.704559,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.43698239,
+      "TileSize": {
+        "X": 16.2534447,
+        "Y": 16.2534447
       },
       "Tint": {
         "R": 255,
@@ -338,6 +632,27 @@
       "Enabled": true,
       "Scale": 32.0,
       "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 18.1,
+        "Y": 10.9
+      },
+      "Color": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 60
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 101.5872,
+      "ShadowType": 0
     }
   ]
 }
