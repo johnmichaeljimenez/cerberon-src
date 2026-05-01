@@ -80,7 +80,21 @@ public class Light : IDisposable
 		Dynamic
 	}
 
-	public Sprite Sprite { get; set; }
+	public string SpriteID { get; set; }
+	[JsonIgnore]
+	private Sprite _sprite = null;
+	[JsonIgnore]
+	public Sprite Sprite
+	{
+		get
+		{
+			if (_sprite == null)
+				_sprite = AssetManager.GetSprite(SpriteID);
+
+			return _sprite;
+		}
+	}
+
 	public Vector2 Position { get; set; }
 	public Color Color { get; set; }
 	public float Rotation { get; set; }
@@ -98,7 +112,7 @@ public class Light : IDisposable
 	public bool ShouldUpdateShadow()
 	{
 		if (ShadowType == ShadowTypes.Dynamic)
-		return true;
+			return true;
 
 		if (ShadowType == ShadowTypes.Static)
 		{
@@ -114,11 +128,11 @@ public class Light : IDisposable
 		return false;
 	}
 
-	public Light(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, ShadowTypes shadowType = Light.ShadowTypes.None, VisionEffects visionEffect = VisionEffects.Light)
+	public Light(string spriteID, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, ShadowTypes shadowType = Light.ShadowTypes.None, VisionEffects visionEffect = VisionEffects.Light)
 	{
 		var org = origin ?? new(0.5f, 0.5f);
 
-		Sprite = sprite;
+		SpriteID = spriteID;
 		Position = position;
 		Color = color;
 		Rotation = rotation;
@@ -128,18 +142,23 @@ public class Light : IDisposable
 		VisionEffect = visionEffect;
 		ShadowType = shadowType;
 
-		if (shadowType != ShadowTypes.None)
+		Init();
+	}
+
+	public void Init()
+	{
+		if (ShadowType != ShadowTypes.None)
 		{
 			int rtSize = (int)SHADOW_MAP_RESOLUTION; //TODO: use world unity dynamic resolution (bigger light = bigger RT)
 
 			ShadowRenderTexture = Raylib.LoadRenderTexture(rtSize, rtSize);
 			Raylib.SetTextureFilter(ShadowRenderTexture.Value.Texture, TextureFilter.Bilinear);
 
-			float spriteWorldDiameter = sprite.UnitSize.X * scale * 2;
+			float spriteWorldDiameter = Sprite.UnitSize.X * Scale * 2;
 
 			ShadowCamera = new Camera2D
 			{
-				Target = position,
+				Target = Position,
 				Offset = new Vector2(rtSize / 2f, rtSize / 2f),
 				Zoom = SHADOW_MAP_RESOLUTION / spriteWorldDiameter,
 				Rotation = 0f
@@ -177,9 +196,21 @@ public static class LightingSystem
 		Raylib.SetTextureFilter(AssetManager.GetSprite("flashlight").Texture, TextureFilter.Bilinear);
 	}
 
-	public static Light AddLight(Sprite sprite, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, Light.ShadowTypes shadowType = Light.ShadowTypes.None, Light.VisionEffects visionEffect = Light.VisionEffects.Light)
+	public static Light AddLight(Light light)
 	{
-		var light = new Light(sprite, position, color, rotation, scale, enabled, origin, shadowType);
+		light.Init();
+
+		if (light.VisionEffect == Light.VisionEffects.Light)
+			lights.Add(light);
+		else if (light.VisionEffect == Light.VisionEffects.VisionOnly)
+			visionLights.Add(light);
+
+		return light;
+	}
+
+	public static Light AddLight(string spriteID, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, Light.ShadowTypes shadowType = Light.ShadowTypes.None, Light.VisionEffects visionEffect = Light.VisionEffects.Light)
+	{
+		var light = new Light(spriteID, position, color, rotation, scale, enabled, origin, shadowType);
 
 		if (visionEffect == Light.VisionEffects.Light)
 			lights.Add(light);

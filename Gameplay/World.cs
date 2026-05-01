@@ -22,7 +22,19 @@ public class WorldSpriteRenderer //no need for real entities for static environm
 	[JsonProperty]
 	public string SpriteID { get; set; }
 
-	public Sprite Sprite { get; set; }
+	private Sprite _sprite = null;
+	[JsonIgnore]
+	public Sprite Sprite
+	{
+		get
+		{
+			if (_sprite == null)
+				_sprite = AssetManager.GetSprite(SpriteID);
+
+			return _sprite;
+		}
+	}
+
 	public Vector2 Position { get; set; }
 	public float Rotation { get; set; }
 	public float Scale { get; set; } = 1;
@@ -32,11 +44,6 @@ public class WorldSpriteRenderer //no need for real entities for static environm
 	public float Parallax { get; set; }
 	public RenderTypes RenderType { get; set; }
 	public Vector2 TileSize { get; set; }
-
-	public void Init()
-	{
-		Sprite = AssetManager.GetSprite(SpriteID);
-	}
 
 	public void Draw()
 	{
@@ -81,6 +88,9 @@ public class World : IDisposable //aka Level loader
 	public List<BaseEntity> Entities { get; private set; } = new();
 
 	[JsonProperty]
+	public List<Light> Lights { get; private set; } = new();
+
+	[JsonProperty]
 	public List<WorldSpriteRenderer> EnvironmentSprites { get; private set; } = new();
 
 	[JsonIgnore]
@@ -118,7 +128,7 @@ public class World : IDisposable //aka Level loader
 		this.gameplayState = gameplayState;
 		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
 
-		gameplayState.GetManager<WaypointManager>().Bake(Entities.Where(p => p is WallEntity).Cast<WallEntity>().Select(p => p.RectangleBounds), WorldSettings.WorldSize, 1.5f); //TODO: add "is solid" property for entities once static props are implemented
+		gameplayState.GetManager<WaypointManager>().Bake(Entities.Where(p => p is WallEntity).Cast<WallEntity>().Select(p => p.RectangleBounds), WorldSettings.WorldSize, 1f); //TODO: add "is solid" property for entities once static props are implemented
 
 		foreach (var i in Entities)
 		{
@@ -127,19 +137,22 @@ public class World : IDisposable //aka Level loader
 		}
 
 		gameplayState.GetManager<CollisionManager>().AddWalls(-WorldSettings.WorldSize * 0.5f, WorldSettings.WorldSize, worldBounds, true);
+
 		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
+		foreach (var i in Lights)
+		{
+			LightingSystem.AddLight(i);
+		}
 
 		DecalSystem.Init(Vector2.Zero, WorldSettings.WorldSize);
 
 		Sprites.Clear();
-		
+
 		if (EnvironmentSprites == null)
 			EnvironmentSprites = new();
 
 		foreach (var i in EnvironmentSprites)
 		{
-			i.Init();
-
 			if (!Sprites.ContainsKey(i.SortingGroup))
 				Sprites[i.SortingGroup] = new();
 
@@ -247,6 +260,11 @@ public class World : IDisposable //aka Level loader
 		foreach (var i in worldBounds)
 		{
 			gameplayState.GetManager<CollisionManager>().RemoveWall(i);
+		}
+
+		foreach (var i in Lights)
+		{
+			LightingSystem.RemoveLight(i);
 		}
 
 		DecalSystem.Dispose();

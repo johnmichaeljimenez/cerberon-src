@@ -207,7 +207,7 @@ public class PlayerWeapons : IDisposable
 						LightingSystem.RemoveLight(muzzleFlash);
 					}
 
-					muzzleFlash = LightingSystem.AddLight(AssetManager.GetSprite("light"), player.Position, new(80, 30, 0), 0, 14);
+					muzzleFlash = LightingSystem.AddLight("light", player.Position, new(80, 30, 0), 0, 14);
 
 					if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
 					{

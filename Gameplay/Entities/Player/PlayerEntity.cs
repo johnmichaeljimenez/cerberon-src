@@ -28,9 +28,9 @@ public class PlayerEntity : CharacterEntity
 		Weapons = new(gameplayState, this);
 
 		Game.Instance.Camera.Follow(Position);
-		lightSelf = LightingSystem.AddLight(AssetManager.GetSprite("light"), Position, new(30, 30, 30), 0, 8);
-		lightSelfVision = LightingSystem.AddLight(AssetManager.GetSprite("vision-cone"), Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), Light.ShadowTypes.Dynamic, Light.VisionEffects.VisionOnly);
-		flashLight = LightingSystem.AddLight(AssetManager.GetSprite("flashlight"), Position, Color.White.Value(0.5f), FacingAngle, 10, flashLightOn, new(0f, 0.5f), Light.ShadowTypes.Dynamic); //redundant shadow but it is what it is
+		lightSelf = LightingSystem.AddLight("light", Position, new(30, 30, 30), 0, 8);
+		lightSelfVision = LightingSystem.AddLight("vision-cone", Position, Color.White, FacingAngle, 4, true, new(0.15f, 0.5f), Light.ShadowTypes.Dynamic, Light.VisionEffects.VisionOnly);
+		flashLight = LightingSystem.AddLight("flashlight", Position, Color.White.Value(0.5f), FacingAngle, 10, flashLightOn, new(0f, 0.5f), Light.ShadowTypes.Dynamic); //redundant shadow but it is what it is
 
 		Animator.Play(Weapons.CurrentWeapon.ANIM_IDLE);
 	}

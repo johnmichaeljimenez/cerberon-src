@@ -251,5 +251,70 @@
         "A": 255
       }
     }
+  ],
+  "Lights": [
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 4.74,
+        "Y": 0.57
+      },
+      "Color": {
+        "R": 128,
+        "G": 128,
+        "B": 128,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 32.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 34.2,
+        "Y": 11.8
+      },
+      "Color": {
+        "R": 128,
+        "G": 128,
+        "B": 128,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 32.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": -2.6,
+        "Y": 17.9
+      },
+      "Color": {
+        "R": 142,
+        "G": 0,
+        "B": 0,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 32.0,
+      "ShadowType": 1
+    }
   ]
 }
