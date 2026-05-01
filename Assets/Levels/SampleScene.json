@@ -250,6 +250,29 @@
         "B": 255,
         "A": 255
       }
+    },
+    {
+      "SpriteID": "env/ground-10",
+      "Position": {
+        "X": 17.02,
+        "Y": 10.45
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": -1,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 74.44867,
+        "Y": 53.7624741
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
     }
   ],
   "Lights": [

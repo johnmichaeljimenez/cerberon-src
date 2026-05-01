@@ -46,6 +46,12 @@ float luminance(vec3 c)
     return dot(c, vec3(0.299, 0.587, 0.114));
 }
 
+vec3 grayscale(vec3 c)
+{
+    float lum = luminance(c);
+    return vec3(lum, lum, lum);
+}
+
 vec3 fade(vec3 col, float n)
 {
     return max(vec3(0.0), col - n * 4.5); //simple fade (mix to black) is not enough, this one is the long-lost art common in retro consoles
@@ -99,16 +105,18 @@ void main() {
     vec3 screenColor = texture(texture0, fragTexCoord).rgb;
     vec3 blurColor = blur(texture0, fragTexCoord, blurRadius); //focus blur effect
 	vec3 lightColor = texture(lightTex, fragTexCoord).rgb;
+    vec3 lightgray = grayscale(lightColor);
 	vec3 visColor = texture(visionTex, fragTexCoord).rgb;
 
 	lightColor = contrast(lightColor, 1.1);
     vec3 lightBlur = blur(lightTex, fragTexCoord, 2.5).rgb;
-    lightBlur = contrast(lightBlur, 5); //bloom
+    float lightBlurLum = luminance(lightBlur);
+    lightBlur = contrast(vec3(lightBlurLum, lightBlurLum, lightBlurLum), 5); //bloom
 	
     vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2));
     float lum = pow(luminance(blurColor), 2.5);
     vec3 screenGrayColor = vec3(lum, lum, lum);
-    screenGrayColor *= lightColor * 2;
+    screenGrayColor *= lightgray * 2; //only show the colored parts of lights in visible area
 	
     vec3 nightCol = nightVision(screenColor, lightColor);         
 	vec3 finColor = mix(screenGrayColor, mix(texelColor, nightCol, nightAmt), visColor.r);
