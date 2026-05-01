@@ -51,6 +51,11 @@ public static class TsvParser
 				string raw = idx < fields.Length ? fields[idx].Trim() : string.Empty;
 				if (string.IsNullOrEmpty(raw)) continue; //let the default values to be used if column is blank for this row
 
+				raw = raw.Replace("\\n", "\n") //allow common escape characters to be used
+						.Replace("\\t", "\t")  
+						.Replace("\\r", "\r")
+						.Replace("\\\\", "\\");
+
 				object value = ConvertValue(raw, prop.PropertyType);
 				prop.SetValue(obj, value);
 			}
