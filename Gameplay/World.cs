@@ -113,6 +113,8 @@ public class World : IDisposable //aka Level loader
 	private readonly List<Wall> worldBounds = new();
 
 	private int _nextID;
+
+	public readonly Signal<BaseEntity> OnEntityDespawn = new();
 	public static void InitRegistry()
 	{
 		entityRegistry.Clear();
@@ -136,7 +138,7 @@ public class World : IDisposable //aka Level loader
 			i.Init(gameplayState);
 		}
 
-		gameplayState.GetManager<CollisionManager>().AddWalls(-WorldSettings.WorldSize * 0.5f, WorldSettings.WorldSize, worldBounds, true);
+		gameplayState.GetManager<CollisionManager>().AddWalls(-WorldSettings.WorldSize * 0.5f, WorldSettings.WorldSize, worldBounds, Wall.WallFlags.None, true);
 
 		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
 		foreach (var i in Lights)
@@ -223,6 +225,7 @@ public class World : IDisposable //aka Level loader
 		{
 			foreach (var i in toRemoveEntities)
 			{
+				OnEntityDespawn.Publish(i);
 				Entities.Remove(i);
 				OnRemove(i);
 			}
