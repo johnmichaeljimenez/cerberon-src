@@ -51,13 +51,13 @@ public class ItemPickupEntity : BaseEntity
 			//TODO: cleanup
 			if (ItemType == ItemTypes.AmmoAK)
 			{
-				player.Weapons.PickupAmmo("AK-47", Amount);
+				player.Weapons.PickupAmmo("rifle", Amount);
 				pickedUp = true;
 			}
 
 			if (ItemType == ItemTypes.AmmoSIG)
 			{
-				player.Weapons.PickupAmmo("Sig Sauer", Amount);
+				player.Weapons.PickupAmmo("handgun", Amount);
 				pickedUp = true;
 			}
 
