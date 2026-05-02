@@ -1,5 +1,6 @@
 using Main.Core;
 using Main.Gameplay.Entities;
+using Main.Gameplay.Entities.Player;
 using Main.Helpers;
 
 namespace Main.Gameplay.Managers;
@@ -20,36 +21,48 @@ public class AIDirectorManager : BaseManager
 		};
 
 	private readonly EMA emaPlayerHealth = new(0.05f);
-	private readonly EMA emaPlayerSkill = new(0.09f);
+	private readonly EMA emaPlayerAccuracy = new(0.005f);
+	private readonly EMA emaKillCount = new(0.003f);
+	private readonly EMA emaPlayerHurt = new(0.003f);
 
-	private readonly EMA emaTension = new(0.08f);
+	private readonly EMA emaTension = new(0.005f);
 
 	public float Tension { get; private set; }
 
 	private const int MAX_ZOMBIE_COUNT = 20;
-	private const int MAX_ITEM_HEALTH_COUNT = 2;
+	private const int MAX_ITEM_HEALTH_COUNT = 3;
 	private const int MAX_ITEM_AMMO_COUNT = 5;
 
 	private float zombieSpawnTimer;
 	private float healthSpawnTimer;
 	private float ammoSpawnTimer;
 
-	private float recentKillCount;
-	private const float KILL_WINDOW_SECONDS = 30f;
+	private PlayerEntity player;
 
 	public AIDirectorManager(GameplayState gameplayState) : base(gameplayState)
 	{
-		zombieSpawnTimer = 9f;
-		healthSpawnTimer = 28f;
-		ammoSpawnTimer = 22f;
+		zombieSpawnTimer = 10f;
+		healthSpawnTimer = 0f;
+		ammoSpawnTimer = 0f;
 	}
 
 	public override void OnEnter()
 	{
 		base.OnEnter();
+
+		player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+
 		gameplayState.CurrentWorld.OnEntityDespawn.Subscribe(e =>
 		{
-			if (e is ZombieEntity) recentKillCount++;
+			if (e is ZombieEntity z && z.HP <= 0)
+			{
+				emaKillCount.AddSample(60.0f); //large bump to compensate for decay (add must be faster than reduction)
+			}
+		}).AddTo(disposables);
+
+		player.OnTakeDamage.Subscribe(dmg =>
+		{
+			emaPlayerHurt.AddSample(dmg * 30);
 		}).AddTo(disposables);
 	}
 
@@ -62,10 +75,6 @@ public class AIDirectorManager : BaseManager
 		TensionUpdate(dt);
 
 		if (emaPlayerHealth.Current <= 0) return;
-		
-		//spawn health when HP is GENERALLY very low, as well as for ammo
-		//for zombies, make them spawn very few when tension is low, but very frequent up to when tension is critical
-		//consider the max counts to avoid flooding, then use timer variable (and dt) for timers
 
 		zombieSpawnTimer -= dt;
 		if (zombieSpawnTimer <= 0)
@@ -80,12 +89,12 @@ public class AIDirectorManager : BaseManager
 		}
 
 		healthSpawnTimer -= dt;
-		if (healthSpawnTimer <= 0 && emaPlayerHealth.Current < 0.55f)
+		if (healthSpawnTimer <= 0 && (emaPlayerHealth.Current < 0.8f || emaPlayerHurt.Current >= 0.5f)) //allow health spawn when player takes too much damage in short time
 		{
 			if (gameplayState.CurrentWorld.GetEntitiesByGroup("health").Count < MAX_ITEM_HEALTH_COUNT)
 			{
 				SpawnHealthItem();
-				healthSpawnTimer = 28f;
+				healthSpawnTimer = 10f;
 			}
 		}
 
@@ -95,37 +104,28 @@ public class AIDirectorManager : BaseManager
 			if (gameplayState.CurrentWorld.GetEntitiesByGroup("ammo").Count < MAX_ITEM_AMMO_COUNT)
 			{
 				SpawnAmmoItem();
-				ammoSpawnTimer = 22f;
+				ammoSpawnTimer = 15f;
 			}
 		}
 	}
 
 	private void TensionUpdate(float dt)
 	{
-		var pc = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+		emaKillCount.AddSample(0f);
+		emaPlayerHurt.AddSample(0f);
 
-		emaPlayerHealth.AddSample((float)pc.HP / pc.MaxHP);
+		emaPlayerAccuracy.AddSample(player.Weapons.Accuracy);
+		emaPlayerHealth.AddSample((float)player.HP / player.MaxHP);
 
-		recentKillCount = Math.Max(0f, recentKillCount - (1f / KILL_WINDOW_SECONDS) * dt);
-		float killsPerMinute = recentKillCount * (60f / KILL_WINDOW_SECONDS);
-		float skillScore = Math.Clamp(killsPerMinute / 45f, 0f, 3f);
-		skillScore = skillScore * 0.65f + pc.Weapons.Accuracy * 0.35f;
+		var newTension = emaKillCount.Current * 0.4f +
+						 emaPlayerAccuracy.Current * 0.1f + 
+						 emaPlayerHealth.Current * 0.5f;
 
-		emaPlayerSkill.AddSample(skillScore);
+		newTension -= emaPlayerHurt.Current * 0.5f;
 
-		float recentKillsPerSec = recentKillCount / KILL_WINDOW_SECONDS;
-
-		float performance =
-			emaPlayerSkill.Current * 0.55f +      // skill + accuracy
-			emaPlayerHealth.Current * 0.35f +     // staying healthy = skilled
-			(recentKillsPerSec * 0.8f);           // fast killing = very skilled
-
-		float struggle = (1f - emaPlayerHealth.Current) * 1.5f;   // strong relief when taking damage
-
-		float desiredTension = performance - struggle;
-		desiredTension = Math.Clamp(desiredTension, 0f, 1f);
-
-		emaTension.AddSample(desiredTension);
+		newTension = Math.Clamp(newTension, 0f, 1f);
+		emaTension.AddSample(newTension);
+		
 		Tension = emaTension.Current;
 	}
 
@@ -142,7 +142,8 @@ public class AIDirectorManager : BaseManager
 
 	private Vector2 GetSpawnPosition() =>
 		gameplayState.GetManager<WaypointManager>().GetNodePosition(
-			gameplayState.GetManager<PlayerManager>().PlayerCharacter.Position, 28f, 36f);
+			player.Position, 28f, 36f
+		);
 
 	private void SpawnHealthItem() => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
 	{
@@ -166,25 +167,13 @@ public class AIDirectorManager : BaseManager
 	public override void DrawImGui()
 	{
 		base.DrawImGui();
-		ImGui.SeparatorText("AI Director");
+		ImGui.SeparatorText($"AI Director: ({CurrentState})");
+		ImGui.ProgressBar(Tension, new(340, 25), $"Overall Tension: {emaTension.Current:F2}");
 
-		ImGui.Text($"Tension: {Tension:F3} ({CurrentState})");
-		ImGui.ProgressBar(Tension, new System.Numerics.Vector2(340, 25));
-
-		ImGui.Text($"Player Health (EMA): {emaPlayerHealth.Current:F2}");
-		ImGui.Text($"Player Skill (EMA):  {emaPlayerSkill.Current:F2}");
-		ImGui.Text($"Recent kills (last {KILL_WINDOW_SECONDS}s): {recentKillCount:F1} ({recentKillCount / KILL_WINDOW_SECONDS:F2}/s)");
-
-		if (ImGui.CollapsingHeader("Raw Factors", ImGuiTreeNodeFlags.DefaultOpen))
-		{
-			float recentKillsPerSec = recentKillCount / KILL_WINDOW_SECONDS;
-			float performance = emaPlayerSkill.Current * 0.55f + emaPlayerHealth.Current * 0.35f + (recentKillsPerSec * 0.8f);
-			float struggle = (1f - emaPlayerHealth.Current) * 1.1f;
-
-			ImGui.Text($"Performance: {performance:F3}");
-			ImGui.Text($"Struggle (damage): {struggle:F3}");
-			ImGui.Separator();
-			ImGui.Text($"→ Desired Tension (before EMA): {performance - struggle:F3}");
-		}
+		ImGui.SeparatorText("Data");
+		ImGui.ProgressBar(emaKillCount.Current, new(340, 25), $"Kill Rate: {emaKillCount.Current:F2}");
+		ImGui.ProgressBar(emaPlayerAccuracy.Current, new(340, 25), $"Accuracy: {emaPlayerAccuracy.Current:F2}");
+		ImGui.ProgressBar(emaPlayerHealth.Current, new(340, 25), $"Health: {emaPlayerHealth.Current:F2}");
+		ImGui.ProgressBar(emaPlayerHurt.Current, new(340, 25), $"Damage Taken: {emaPlayerHurt.Current:F2}");
 	}
 }

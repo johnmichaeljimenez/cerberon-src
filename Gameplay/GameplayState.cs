@@ -51,12 +51,12 @@ public class GameplayState : IGameState
 		CurrentWorld = jsonText.FromJson<World>();
 		CurrentWorld.Init(this);
 
+		GetManager<PlayerManager>().SpawnPlayer(CurrentWorld.WorldSettings.PlayerSpawnPoint);
+
 		foreach (var i in managers)
 		{
 			i.Value.OnEnter();
 		}
-
-		GetManager<PlayerManager>().SpawnPlayer(CurrentWorld.WorldSettings.PlayerSpawnPoint);
 	}
 
 	public void Exit()

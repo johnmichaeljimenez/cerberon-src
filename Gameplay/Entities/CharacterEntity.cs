@@ -47,6 +47,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	);
 
 	public readonly Signal<int> OnHPChanged = new();
+	public readonly Signal<int> OnTakeDamage = new();
 
 	public override void Init(GameplayState gameplayState)
 	{
@@ -136,6 +137,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		DecalSystem.Paint(Position);
 		HP -= amt;
 		OnHit(amt, HP <= 0);
+		OnTakeDamage.Publish(amt);
 		OnHPChanged.Publish(HP);
 		Log.Send($"HIT: {amt} -> {HP}/{MaxHP}");
 		if (HP <= 0)
