@@ -6,17 +6,23 @@ namespace Main.Gameplay.Entities;
 
 public class ZombieEntity : CharacterEntity
 {
+	const float LIFETIME = 20f;
 	public override Teams Team => Teams.Enemy;
 	private int attackDamage = 5;
 
 	private readonly List<Vector2> nodes = new();
 
 	private float fsTimer = 0;
+
+	private float lifetime; //despawn far-away zombies after certain time
+
 	public override void Init(GameplayState gameplayState)
 	{
+		lifetime = LIFETIME;
 		MaxHP = 70;
 		MovementSpeed = 4.0f;
-		
+		Log.Send($"Spawned zombie #{ID}");
+
 		base.Init(gameplayState);
 
 		Animator.Add("zombie-idle", 0);
@@ -55,6 +61,7 @@ public class ZombieEntity : CharacterEntity
 
 		if (d.Length() <= 3f)
 		{
+			lifetime = LIFETIME;
 			nodes.Clear();
 
 			if (Animator.Play("zombie-attack", false, "zombie-idle"))
@@ -67,11 +74,15 @@ public class ZombieEntity : CharacterEntity
 			var w = gameplayState.GetManager<WaypointManager>();
 			if (w.IsVisible(Position, player.Position)) //go straight to player if directly visible (not true FOV yet)
 			{
+				lifetime = LIFETIME;
 				if (nodes.Count > 0)
 					nodes.Clear();
 			}
 			else
 			{
+				if (d.Length() <= 10)
+					lifetime = LIFETIME;
+
 				if (nodes.Count == 0) //change the path only when the current path is reached for immersion, but will add cooldown for frequency control
 				{
 					w.Move(Position, player.Position, nodes);
@@ -124,6 +135,13 @@ public class ZombieEntity : CharacterEntity
 		else
 		{
 			Animator.Play("zombie-idle");
+		}
+
+		lifetime -= dt;
+		if (lifetime <= 0)
+		{
+			Despawn();
+			Log.Send($"Despawned zombie #{ID}");
 		}
 	}
 
