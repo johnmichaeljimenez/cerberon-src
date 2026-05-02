@@ -9,9 +9,10 @@ public class GameplayManager : BaseManager
 {
 	public float GameTime => _gameTime;
 	private float _gameTime;
-	public readonly float MaxGameTime = 300f; //temporary hardcoded
+	public readonly float MaxGameTime = 180f; //temporary hardcoded
 
 	public bool Running { get; private set; }
+	public float NormalizedTime { get; internal set; }
 
 	public GameplayManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -23,7 +24,7 @@ public class GameplayManager : BaseManager
 		Running = false;
 		Log.Send(win ? "You win" : "You lose");
 		UIManager.ShowScreen<EndScreen>((gameplayState, win), false);
-		// PauseHandler.Pause("ending");
+		PauseHandler.Pause("ending");
 	}
 
 	private void OnPlayerDeath(PlayerEntity entity)
@@ -50,6 +51,7 @@ public class GameplayManager : BaseManager
 
 		if (Running)
 		{
+			NormalizedTime = _gameTime / MaxGameTime;
 			if (Utils.Countdown(ref _gameTime, dt))
 			{
 				End(true);

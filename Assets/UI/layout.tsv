@@ -8,6 +8,7 @@ btn-exit	300,270	200,40	MainMenu	1	1	Exit	0
 hp-text	0,0	100,40	HUD	1	0	HP: 100/100	-1		
 ammo-text	0,10	100,40	HUD	1	0	AK-47 (10/30)	-1		
 control-text	0, 370	200,20	HUD	1	0	WASD - Movement\nLMB - Shoot\nRMB - Melee\nF - Flashlight\nR - Reload\n1,2 - Weapon 1 & 2\nN - Nightvision	0	8
+time-text	710,0	100,40	HUD	1	0	00:00	1	20	
 
 btn-resume	300,150	200,40	PauseMenu	1	1	Resume	0		
 btn-options	300,210	200,40	PauseMenu	1	1	Options	0		

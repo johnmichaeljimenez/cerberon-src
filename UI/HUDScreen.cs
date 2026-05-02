@@ -8,7 +8,7 @@ namespace Main.UI;
 public class HUDScreen : BaseScreen
 {
 	public override string UIGroup => "HUD";
-	
+
 	private GameplayState gameplayState;
 	private PlayerEntity playerEntity;
 	private PlayerWeapons weapons;
@@ -28,9 +28,24 @@ public class HUDScreen : BaseScreen
 	public override void OnEnter()
 	{
 		base.OnEnter();
-		
+
 		OnWeaponUpdate(weapons.CurrentWeapon);
 		OnHPUpdate(playerEntity.HP);
+	}
+
+	public override void Draw()
+	{
+		float norm = 1.0f - gameplayState.GetManager<GameplayManager>().NormalizedTime;
+
+		const int totalSeconds = 6 * 60 * 60;
+		int elapsedSec = (int)(norm * totalSeconds);
+		TimeSpan ts = TimeSpan.FromSeconds(elapsedSec);
+
+		string timeString = ts.ToString(@"hh\:mm");
+
+		references["time-text"].Text = timeString;
+
+		base.Draw();
 	}
 
 	private void OnHPUpdate(int amt)
