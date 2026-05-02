@@ -7,20 +7,21 @@ namespace Main.Gameplay.Entities;
 public class ZombieEntity : CharacterEntity
 {
 	public override Teams Team => Teams.Enemy;
-	private int attackDamage = 20;
+	private int attackDamage = 5;
 
 	private readonly List<Vector2> nodes = new();
 
 	private float fsTimer = 0;
 	public override void Init(GameplayState gameplayState)
 	{
+		MaxHP = 70;
+		MovementSpeed = 4.0f;
+		
 		base.Init(gameplayState);
 
 		Animator.Add("zombie-idle", 0);
 		Animator.Add("zombie-move", 0);
 		Animator.Add("zombie-attack", 50);
-
-		MovementSpeed = 4.0f;
 
 		Animator.Play("zombie-idle");
 	}
