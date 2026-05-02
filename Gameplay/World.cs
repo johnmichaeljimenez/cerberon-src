@@ -100,10 +100,10 @@ public class World : IDisposable //aka Level loader
 	public readonly Dictionary<string, List<BaseEntity>> EntityGroups = new();
 
 	[JsonIgnore]
-	private readonly List<BaseEntity> toAddEntities = new();
+	private readonly HashSet<BaseEntity> toAddEntities = new(); //avoid duplicate spawning/despawning request
 
 	[JsonIgnore]
-	private readonly List<BaseEntity> toRemoveEntities = new();
+	private readonly HashSet<BaseEntity> toRemoveEntities = new();
 
 	private static readonly Dictionary<string, Type> entityRegistry = new();
 
