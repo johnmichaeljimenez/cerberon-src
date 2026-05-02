@@ -27,6 +27,8 @@ public class Gun
 	public int CurrentAmmo;
 	public int CurrentMaxAmmo;
 
+	public float NormalizedCurrentAmmoCount => (float)(CurrentAmmo + CurrentMaxAmmo) / (MagSize + MaxAmmo);
+
 	public Gun(string id, string name, int damage, int altDamage, float firingRate,
 			   int magSize, int maxAmmo, float reloadTime)
 	{
@@ -90,6 +92,14 @@ public class PlayerWeapons : IDisposable
 
 	public readonly Signal<Gun> OnWeaponSelected = new();
 	public readonly Signal<Gun> OnWeaponAmmoChanged = new();
+	public readonly Signal<Gun> OnWeaponFire = new();
+	public readonly Signal<(Gun, BaseEntity)> OnWeaponHit = new();
+	public readonly Signal<(Gun, BaseEntity)> OnWeaponKill = new();
+
+	public float NormalizedTotalAmmoCount { get; private set; }
+	public float Accuracy => fireCount < 3 ? 0 : (float)hitCount / (float)fireCount;
+
+	private int fireCount, hitCount;
 
 	public PlayerWeapons(GameplayState gameplayState, PlayerEntity player)
 	{
@@ -106,6 +116,18 @@ public class PlayerWeapons : IDisposable
 		}
 
 		OnWeaponSelected.Publish(CurrentWeapon);
+		UpdateAmmoCount();
+	}
+
+	private void UpdateAmmoCount()
+	{
+		if (Weapons.Count == 0)
+		{
+			NormalizedTotalAmmoCount = 0;
+			return;
+		}
+
+		NormalizedTotalAmmoCount = Weapons.Sum(p => p.NormalizedCurrentAmmoCount) / Weapons.Count;
 	}
 
 	public void Dispose()
@@ -143,6 +165,7 @@ public class PlayerWeapons : IDisposable
 			{
 				if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
 				{
+					fireCount++;
 					AudioHandler.PlaySound(SFX_MELEE_START);
 				}
 			}
@@ -199,6 +222,9 @@ public class PlayerWeapons : IDisposable
 				}
 				else
 				{
+					fireCount++;
+
+					OnWeaponFire.Publish(CurrentWeapon);
 					player.Animator.Play(CurrentWeapon.ANIM_SHOOT);
 					AudioHandler.PlaySound(CurrentWeapon.SFX_FIRE);
 
@@ -211,12 +237,19 @@ public class PlayerWeapons : IDisposable
 
 					if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
 					{
-						z.ApplyDamage(CurrentWeapon.Damage);
 						AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
+
+						hitCount++;
+						OnWeaponHit.Publish((CurrentWeapon, z));
+						z.ApplyDamage(CurrentWeapon.Damage);
+
+						if (z.IsDead)
+							OnWeaponKill.Publish((CurrentWeapon, z));
 					}
 
 					CurrentWeapon.CurrentAmmo -= 1;
 					OnWeaponAmmoChanged.Publish(CurrentWeapon);
+					UpdateAmmoCount();
 					Log.Send($"Shoot ({CurrentWeapon.CurrentAmmo}/{CurrentWeapon.CurrentMaxAmmo})");
 					if (CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo > 0)
 						fireTimer = CurrentWeapon.FiringRate;
@@ -241,7 +274,7 @@ public class PlayerWeapons : IDisposable
 				continue;
 
 			var d = i.Position - player.Position;
-			if (!player.FacingDirection.IsInFront(d, 4, 70))
+			if (!player.FacingDirection.IsInFront(d, 5, 70))
 				continue;
 
 			z.ApplyDamage(CurrentWeapon.AltDamage);
@@ -262,6 +295,7 @@ public class PlayerWeapons : IDisposable
 					AudioHandler.PlaySound(SFX_READY);
 
 				OnWeaponAmmoChanged.Publish(CurrentWeapon);
+				UpdateAmmoCount();
 			}
 
 			isIraqiReload = false;
