@@ -33,6 +33,11 @@ public abstract class BaseManager : IDisposable
 
 	}
 
+	public virtual void OnEnter()
+	{
+
+	}
+
 	public virtual void DrawDebug()
 	{
 
