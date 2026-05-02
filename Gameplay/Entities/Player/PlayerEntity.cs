@@ -106,9 +106,16 @@ public class PlayerEntity : CharacterEntity
 			Animator.Play(Weapons.CurrentWeapon.ANIM_IDLE);
 		}
 
-		var target = InputManager.MouseWorldPosition - Position;
-		target = Position + Raymath.Vector2ClampValue(target, 0, 5);
-		Game.Instance.Camera.Follow(target, 2f);
+		if (IsDead)
+		{
+			Game.Instance.Camera.Follow(Position, 3f);
+		}
+		else
+		{
+			var target = InputManager.MouseWorldPosition - Position;
+			target = Position + Raymath.Vector2ClampValue(target, 0, 5);
+			Game.Instance.Camera.Follow(target, 2f);
+		}
 	}
 
 	public override void Draw()
