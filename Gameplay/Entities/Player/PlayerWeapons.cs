@@ -301,4 +301,16 @@ public class PlayerWeapons : IDisposable
 			isIraqiReload = false;
 		}
 	}
+
+	public bool PickupAmmo(string id, int amt)
+	{
+		var weapon = Weapons.FirstOrDefault(p => p.ID == id);
+		if (weapon == null)
+			return false;
+
+		weapon.CurrentMaxAmmo += amt;
+		if (weapon == CurrentWeapon)
+			OnWeaponAmmoChanged.Publish(weapon);
+		return true;
+	}
 }
