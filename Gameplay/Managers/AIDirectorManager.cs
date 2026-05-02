@@ -6,10 +6,13 @@ using Main.Helpers;
 namespace Main.Gameplay.Managers;
 
 //TODO: make all magic numbers editable outside
-//TODO: make items and enemies despawn when far enough
+//TODO: track the player's most frequently visited locations and make items spawn there
 public class AIDirectorManager : BaseManager
 {
+	//TENSION is for gameplay difficulty (spawn rates, aggression, events)
 	public enum TensionState { Calm, Tense, Panic, Critical }
+	//MOOD is for atmosphere and emotion (music, colors, effects)
+	public enum MoodState { Calm, Unease, Anxious, Dread, Terror }
 
 	public TensionState CurrentState =>
 		Tension switch
@@ -20,14 +23,27 @@ public class AIDirectorManager : BaseManager
 			_ => TensionState.Critical
 		};
 
+	public MoodState CurrentMood => Mood switch	//TODO: add hysteresis
+	{
+		< 0.12f => MoodState.Calm,
+		< 0.4f => MoodState.Unease,
+		< 0.65f => MoodState.Anxious,
+		< 0.85f => MoodState.Dread,
+		_ => MoodState.Terror
+	};
+
 	private readonly EMA emaPlayerHealth = new(0.05f);
+	private readonly EMA emaAmmoCount = new(0.05f);
 	private readonly EMA emaPlayerAccuracy = new(0.005f);
 	private readonly EMA emaKillCount = new(0.003f);
 	private readonly EMA emaPlayerHurt = new(0.003f);
+	private readonly EMA emaNearbyZombieCount = new(0.003f);
 
 	private readonly EMA emaTension = new(0.005f);
+	private readonly EMA emaMood = new(0.001f);
 
 	public float Tension { get; private set; }
+	public float Mood { get; private set; }
 
 	private const int MAX_ZOMBIE_COUNT = 20;
 	private const int MAX_ITEM_HEALTH_COUNT = 3;
@@ -54,15 +70,19 @@ public class AIDirectorManager : BaseManager
 
 		gameplayState.CurrentWorld.OnEntityDespawn.Subscribe(e =>
 		{
-			if (e is ZombieEntity z && z.HP <= 0)
+			if (e is ZombieEntity z)
 			{
-				emaKillCount.AddSample(60.0f); //large bump to compensate for decay (add must be faster than reduction)
+				if (z.HP <= 0)
+				{
+					emaKillCount.AddSample(60.0f); //large bump to compensate for decay (add must be faster than reduction)
+				}
 			}
 		}).AddTo(disposables);
 
 		player.OnTakeDamage.Subscribe(dmg =>
 		{
 			emaPlayerHurt.AddSample(dmg * 30);
+			emaMood.AddSample(emaMood.Current + (dmg * 0.5f));
 		}).AddTo(disposables);
 	}
 
@@ -84,6 +104,7 @@ public class AIDirectorManager : BaseManager
 			if (current < MAX_ZOMBIE_COUNT)
 			{
 				int toSpawn = CalculateZombiesToSpawn();
+
 				for (int i = 0; i < toSpawn; i++) SpawnZombie();
 			}
 		}
@@ -116,17 +137,46 @@ public class AIDirectorManager : BaseManager
 
 		emaPlayerAccuracy.AddSample(player.Weapons.Accuracy);
 		emaPlayerHealth.AddSample((float)player.HP / player.MaxHP);
+		emaAmmoCount.AddSample(player.Weapons.NormalizedTotalAmmoCount);
+		
+		var zList = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(ZombieEntity));
+		var nearbyZombieCount = 0;
+		for (int i = 0; i < zList.Count; i++)
+		{
+			var z = zList[i] as ZombieEntity;
+			if (z.IsDestroyed || z.IsDead)
+				continue;
+
+			if ((z.Position - player.Position).LengthSquared() <= 10 * 10)
+				nearbyZombieCount++;
+		}
+		
+		emaNearbyZombieCount.AddSample(((float)nearbyZombieCount / 10) * 2);
 
 		var newTension = emaKillCount.Current * 0.4f +
-						 emaPlayerAccuracy.Current * 0.1f + 
+						 emaPlayerAccuracy.Current * 0.1f +
 						 emaPlayerHealth.Current * 0.5f;
 
 		newTension -= emaPlayerHurt.Current * 0.5f;
 
 		newTension = Math.Clamp(newTension, 0f, 1f);
 		emaTension.AddSample(newTension);
-		
+
 		Tension = emaTension.Current;
+		UpdateMood();
+	}
+
+	private void UpdateMood()
+	{
+		float moodInput = (1.0f - emaPlayerHealth.Current) * 0.45f + //low health = more intense mood
+						  emaNearbyZombieCount.Current * 0.45f + 
+						  emaAmmoCount.Current * 0.1f;
+
+		moodInput *= 2.0f;
+
+		moodInput = Math.Clamp(moodInput, 0f, 1f);
+		emaMood.AddSample(moodInput);
+		Mood = emaMood.Current;
 	}
 
 	private float CalculateZombieSpawnInterval() => 9.5f - Tension * 7.8f;
@@ -167,13 +217,16 @@ public class AIDirectorManager : BaseManager
 	public override void DrawImGui()
 	{
 		base.DrawImGui();
-		ImGui.SeparatorText($"AI Director: ({CurrentState})");
+		ImGui.SeparatorText($"AI Director: (Tension: {CurrentState}, Mood: {CurrentMood})");
 		ImGui.ProgressBar(Tension, new(340, 25), $"Overall Tension: {emaTension.Current:F2}");
+		ImGui.ProgressBar(Mood, new(340, 25), $"Mood: {emaMood.Current:F2}");
 
 		ImGui.SeparatorText("Data");
 		ImGui.ProgressBar(emaKillCount.Current, new(340, 25), $"Kill Rate: {emaKillCount.Current:F2}");
 		ImGui.ProgressBar(emaPlayerAccuracy.Current, new(340, 25), $"Accuracy: {emaPlayerAccuracy.Current:F2}");
 		ImGui.ProgressBar(emaPlayerHealth.Current, new(340, 25), $"Health: {emaPlayerHealth.Current:F2}");
+		ImGui.ProgressBar(emaAmmoCount.Current, new(340, 25), $"Ammo: {emaAmmoCount.Current:F2}");
 		ImGui.ProgressBar(emaPlayerHurt.Current, new(340, 25), $"Damage Taken: {emaPlayerHurt.Current:F2}");
+		ImGui.ProgressBar(emaNearbyZombieCount.Current, new(340, 25), $"Nearby enemy Count: {emaNearbyZombieCount.Current:F2}");
 	}
 }
