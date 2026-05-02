@@ -124,8 +124,8 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 			return false;
 
 		HP += amt;
-		OnHPChanged.Publish(HP);
 		HP = Math.Min(HP, MaxHP);
+		OnHPChanged.Publish(HP);
 		return true;
 	}
 
@@ -136,10 +136,13 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 		DecalSystem.Paint(Position);
 		HP -= amt;
+		HP = Math.Max(0, HP);
 		OnHit(amt, HP <= 0);
 		OnTakeDamage.Publish(amt);
 		OnHPChanged.Publish(HP);
+
 		Log.Send($"HIT: {amt} -> {HP}/{MaxHP}");
+
 		if (HP <= 0)
 		{
 			HP = 0;
