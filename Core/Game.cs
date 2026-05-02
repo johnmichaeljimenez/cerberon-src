@@ -131,21 +131,19 @@ public class Game
                 {
                     Log.DrawImGui();
 
-                    if (ImGui.Begin("Debug"))
+                    ImGui.Begin("Debug");
                     {
                         ImGui.SeparatorText(currentState.GetType().Name);
                         currentState.DrawImGui();
-
-                        ImGui.End();
                     }
+                    ImGui.End();
 
-                    if (ImGui.Begin("Assets"))
+                    ImGui.Begin("Assets");
                     {
                         ImGui.SeparatorText("Assets");
                         AssetManager.OnDrawImGui();
-
-                        ImGui.End();
                     }
+                    ImGui.End();
                 }
                 rlImGui.End();
             }

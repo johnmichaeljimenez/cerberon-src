@@ -14,7 +14,7 @@ public static class Log
 	public static void DrawImGui()
 	{
 		ImGui.SetNextWindowSize(new(400, 500), ImGuiCond.FirstUseEver);
-		if (ImGui.Begin("Log"))
+		ImGui.Begin("Log");
 		{
 			ImGui.TextUnformatted(Messages);
 
@@ -24,7 +24,7 @@ public static class Log
 				scrollNow = false;
 			}
 
-			ImGui.End();
 		}
+		ImGui.End();
 	}
 }
