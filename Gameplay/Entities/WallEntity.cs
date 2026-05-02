@@ -22,7 +22,7 @@ public class WallEntity : BaseEntity //simple solid rectangular blocker
 	{
 		base.Init(gameplayState);
 
-		gameplayState.GetManager<CollisionManager>().AddWalls(Position, Size, walls);
+		gameplayState.GetManager<CollisionManager>().AddWalls(Position, Size, walls, Wall.WallFlags.None);
 		shadow = LightingSystem.AddShadow(Position, Size);
 	}
 

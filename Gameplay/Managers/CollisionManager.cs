@@ -4,11 +4,20 @@ using Main.Gameplay.Managers;
 
 public class Wall
 {
+	public enum WallFlags
+	{
+		None = 0,
+		Shadows = 1,
+		NoWaypoint = 2,
+		DirectLineOfSight = 4
+	}
+
 	public Vector2 From { get; set; }
 	public Vector2 To { get; set; }
 	public Vector2 Normal { get; set; }
 	public Vector2 Midpoint { get; set; }
 	public float Length { get; set; }
+	public WallFlags Flags { get; set; }
 }
 
 public struct LinecastHit
@@ -55,9 +64,9 @@ public class CollisionManager : BaseManager
 		bodies.Remove(body);
 	}
 
-	public void AddWalls(Vector2 pos, Vector2 size, List<Wall> walls, bool invert = false)
+	public void AddWalls(Vector2 pos, Vector2 size, List<Wall> walls, Wall.WallFlags flags, bool invert = false)
 	{
-		Wall Add(Vector2 a, Vector2 b) => invert ? AddWall(b, a) : AddWall(a, b);
+		Wall Add(Vector2 a, Vector2 b) => invert ? AddWall(b, a, flags) : AddWall(a, b, flags);
 
 		// Top wall
 		walls.Add(Add(pos, new Vector2(pos.X + size.X, pos.Y)));
@@ -76,7 +85,7 @@ public class CollisionManager : BaseManager
 	}
 
 	//do clockwise order when making polygons to make them point outward, otherwise do it inward for maximum level boundaries
-	public Wall AddWall(Vector2 from, Vector2 to)
+	public Wall AddWall(Vector2 from, Vector2 to, Wall.WallFlags flags)
 	{
 		var wall = new Wall
 		{
