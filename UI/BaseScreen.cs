@@ -12,6 +12,11 @@ public abstract class BaseScreen : IDisposable
 	protected UIElement pressElement { get; private set; }
 	protected readonly List<IDisposable> disposables = new();
 
+	public BaseScreen()
+	{
+
+	}
+
 	public BaseScreen(object context = null)
 	{
 
@@ -86,6 +91,16 @@ public abstract class BaseScreen : IDisposable
 				break;
 			}
 		}
+
+		if (pressElement == null && Raylib.IsKeyPressed(KeyboardKey.Escape))
+		{
+			OnBack();
+		}
+	}
+
+	public virtual void OnBack()
+	{
+		UIManager.Back();
 	}
 
 	public virtual void Dispose()

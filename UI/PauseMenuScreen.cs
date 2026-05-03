@@ -15,6 +15,11 @@ public class PauseMenuScreen : BaseScreen
 		gameplayState = context as GameplayState;
 	}
 
+	public override void OnBack()
+	{
+		
+	}
+
 	protected override void OnClick(UIElement e)
 	{
 		base.OnClick(e);

@@ -33,6 +33,11 @@ public class HUDScreen : BaseScreen
 		OnHPUpdate(playerEntity.HP);
 	}
 
+	public override void OnBack()
+	{
+		
+	}
+
 	public override void Draw()
 	{
 		float norm = 1.0f - gameplayState.GetManager<GameplayManager>().NormalizedTime;

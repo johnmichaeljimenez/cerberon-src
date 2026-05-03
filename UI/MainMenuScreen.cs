@@ -13,6 +13,11 @@ public class MainMenuScreen : BaseScreen
 
 	}
 
+	public override void OnBack()
+	{
+		
+	}
+
 	protected override void OnClick(UIElement e)
 	{
 		base.OnClick(e);
@@ -20,7 +25,8 @@ public class MainMenuScreen : BaseScreen
 		switch (e.ID)
 		{
 			case "btn-start":
-				FadeHandler.FadeIn(Game.Instance.GoToIngame, true);
+				UIManager.ShowScreen<LevelSelectScreen>(null, false);
+				// FadeHandler.FadeIn(Game.Instance.GoToIngame, true);
 				break;
 			case "btn-exit":
 				FadeHandler.FadeIn(Game.Instance.RequestExit);
