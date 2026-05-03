@@ -91,7 +91,7 @@ public static class AssetManager
 
 	public static void Init()
 	{
-		var assetsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets");
+		var assetsPath = "Assets";
 		Font = Raylib.LoadFont(Path.Combine(assetsPath, "font.ttf"));
 
 		AudioHandler.Init(Path.Combine(assetsPath, "Audio"));
