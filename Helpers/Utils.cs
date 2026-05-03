@@ -174,6 +174,49 @@ public static class Utils
 
 		return [topLeft, topRight, bottomRight, bottomLeft]; // clockwise order
 	}
+
+	public static List<(Vector2 from, Vector2 to)> GetRectangleEdges(
+	Vector2 center, Vector2 size, float rotationDeg = 0f, Vector2 origin = default)
+	{
+		var corners = GetRectangleCorners(center, size, rotationDeg, origin);
+		return new()
+		{
+			(corners[0], corners[1]),
+			(corners[1], corners[2]),
+			(corners[2], corners[3]),
+			(corners[3], corners[0])
+		};
+	}
+
+	public static List<Vector2> GetExpandedRectangleCorners(
+		Vector2 center, Vector2 size, float rotationDeg, float expandAmount)
+	{
+		Vector2 expandedSize = size + new Vector2(expandAmount * 2f, expandAmount * 2f);
+		return GetRectangleCorners(center, expandedSize, rotationDeg).ToList();
+	}
+
+	public static bool IsPointInRotatedRectangle(
+		Vector2 point, Vector2 center, Vector2 size, float rotationDeg)
+	{
+		if (MathF.Abs(rotationDeg) < 0.0001f)
+		{
+			Rectangle rect = new Rectangle(center - size * 0.5f, size);
+			return Raylib.CheckCollisionPointRec(point, rect);
+		}
+
+		//invert from world to local space
+		Vector2 offset = point - center;
+		float rad = -rotationDeg * MathF.PI / 180f;
+		float cos = MathF.Cos(rad);
+		float sin = MathF.Sin(rad);
+
+		Vector2 local = new Vector2(
+			offset.X * cos - offset.Y * sin,
+			offset.X * sin + offset.Y * cos
+		);
+
+		return MathF.Abs(local.X) <= size.X * 0.5f && MathF.Abs(local.Y) <= size.Y * 0.5f;
+	}
 }
 
 public static class Colors

@@ -16,13 +16,6 @@ public class WorldCollider //no need for real entities for static environment st
 	public Vector2 Size { get; set; }
 	public float Rotation { get; set; }
 	public Wall.WallFlags Flags { get; set; }
-
-	[JsonIgnore]
-	public Rectangle RectangleBounds => new Rectangle()
-	{
-		Position = Position,
-		Size = Size
-	};
 }
 
 [Serializable]
@@ -163,7 +156,7 @@ public class World : IDisposable //aka Level loader
 			colliderWalls.Add(i, (l, shadow));
 		}
 
-		// gameplayState.GetManager<WaypointManager>().Bake(Entities.Where(p => p is WallEntity).Cast<WallEntity>().Select(p => p.RectangleBounds), WorldSettings.WorldSize, 1f); //TODO: add "is solid" property for entities once static props are implemented
+		gameplayState.GetManager<WaypointManager>().Bake(EnvironmentColliders, WorldSettings.WorldSize, 1f);
 
 		foreach (var i in Entities)
 		{
@@ -286,6 +279,21 @@ public class World : IDisposable //aka Level loader
 						continue;
 
 					j.Draw(); //sorting for each entities is a tomorrow's problem (or maybe this is already fine now)
+				}
+
+				foreach (var j in EnvironmentColliders)
+				{
+					if (!j.Flags.HasFlag(Wall.WallFlags.DrawOverlay))
+						continue;
+
+					Rectangle rect = new Rectangle(
+						j.Position,// - j.Size * 0.5f,
+						j.Size
+					);
+
+					Vector2 origin = j.Size * 0.5f;
+
+					Raylib.DrawRectanglePro(rect, origin, j.Rotation, Color.Black);
 				}
 			}
 		}

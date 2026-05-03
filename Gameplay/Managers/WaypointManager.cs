@@ -153,7 +153,7 @@ public class WaypointManager : BaseManager
 		//TODO: add string pulling algorithm to simplify path (ex. start -> a -> b -> c -> goal, and c is already visible, make it start -> c -> goal)
 	}
 
-	public void Bake(IEnumerable<Rectangle> rawObstacles, Vector2 worldSize, float characterRadius)
+	public void Bake(IEnumerable<WorldCollider> rawObstacles, Vector2 worldSize, float characterRadius)
 	{
 		nodes.Clear();
 
@@ -163,44 +163,45 @@ public class WaypointManager : BaseManager
 		// 3. remove all node points that are inside rectangle colliders
 		// 4. connect all node points that can directly "see" each other
 
-		var distributionRadius = characterRadius * 2; //character units before the next scattered node
-		var obstacles = new List<Rectangle>();
 
 		obstacleLines.Clear();
 
 		//step 1
-		foreach (var i in rawObstacles)
+		foreach (var collider in rawObstacles)
 		{
 			var r = characterRadius;
-			var bounds = i.Expand(r);
-			nodes.AddRange(bounds.ToVector2List().Select(p => new Node(p)));
+
+			var expandedCorners = Utils.GetExpandedRectangleCorners(
+				collider.Position, collider.Size, collider.Rotation, r);
+			nodes.AddRange(expandedCorners.Select(p => new Node(p)));
 
 			//TODO: step 1.5: for long rectangles, add more nodes (ex. if characterRadius = 1, then every 1 unit for a 5x5 square, instead of 4 points only on corners, it will have +3 on each edge
 
-			var checkBounds = i.Expand(r - 0.1f); //breathing room for avoiding epsilon-level false positives
-			obstacles.Add(checkBounds);
-			var list = new List<Vector2>();
-			list.AddRange(checkBounds.ToVector2List());
-
-			obstacleLines.Add((list[0], list[1]));
-			obstacleLines.Add((list[1], list[2]));
-			obstacleLines.Add((list[2], list[3]));
-			obstacleLines.Add((list[3], list[0]));
+			var obstacleEdges = Utils.GetRectangleEdges(
+				collider.Position, collider.Size - (Vector2.One * 0.1f), collider.Rotation); //breathing room for avoiding epsilon-level false positives
+			foreach (var edge in obstacleEdges)
+			{
+				obstacleLines.Add(edge);
+			}
 		}
 
 		// //step 2
-		var poisson = PoissonDisc.Sample(new(-worldSize / 2, worldSize), distributionRadius); //TODO: add "seed" parameter for determinism (not needed yet)
+		var distributionRadius = characterRadius * 2;
+		var poisson = PoissonDisc.Sample(new(-worldSize / 2, worldSize), distributionRadius); // TODO: seed for determinism
 		nodes.AddRange(poisson.Select(p => new Node(p)));
 
 		//step 3
 		for (int i = nodes.Count - 1; i >= 0; i--)
 		{
-			foreach (var j in obstacles) //uses the expanded version
+			var nodePos = nodes[i].Position;
+			foreach (var collider in rawObstacles)
 			{
-				var n = nodes[i];
-				if (Raylib.CheckCollisionPointRec(n.Position, j))
+				float r = characterRadius;
+				Vector2 expandedSize = collider.Size + new Vector2(r * 2f, r * 2f);
+
+				if (Utils.IsPointInRotatedRectangle(nodePos, collider.Position, expandedSize, collider.Rotation))
 				{
-					nodes.RemoveAt(i); //TIL that RemoveAt is more efficient than Remove
+					nodes.RemoveAt(i);
 					break;
 				}
 			}
@@ -217,23 +218,12 @@ public class WaypointManager : BaseManager
 
 				var from = i.Position;
 				var to = j.Position;
-				var hit = false;
 				var dist = (to - from).Length();
 
 				if (dist >= distributionRadius * 2)
 					continue;
 
-				foreach (var k in obstacleLines)
-				{
-					Vector2 p = default;
-					if (Raylib.CheckCollisionLines(from, to, k.Item1, k.Item2, ref p))
-					{
-						hit = true;
-						break;
-					}
-				}
-
-				if (hit)
+				if (!IsVisible(from, to))
 					continue;
 
 				//connect i and j here

@@ -10,8 +10,8 @@ public class Wall
 	{
 		None = 0,
 		Shadows = 1 << 0,
-		NoWaypoint = 1 << 1,
-		DirectLineOfSight = 1 << 2
+		DirectLineOfSight = 1 << 1,
+		DrawOverlay = 1 << 2
 	}
 
 	public Vector2 From { get; set; }
