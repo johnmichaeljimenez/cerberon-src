@@ -86,9 +86,9 @@ public class Game
         InputManager.LateUpdate();
     }
 
-    public void GoToIngame()
+    public void GoToIngame(GameplayOptions gameplayOptions)
     {
-        SetState(new GameplayState(new GameplayOptions()));
+        SetState(new GameplayState(gameplayOptions ?? new GameplayOptions()));
     }
 
     public void RestartGame()

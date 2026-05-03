@@ -80,6 +80,7 @@ public static class AssetManager
 {
 	private static readonly Dictionary<string, Sprite> sprites = new();
 	private static readonly Dictionary<string, Animation> animations = new();
+	public static readonly Dictionary<string, string> LevelFiles = new();
 	public static Sprite MissingSprite { get; private set; }
 	public static Font Font { get; private set; }
 
@@ -136,6 +137,12 @@ public static class AssetManager
 		foreach (var i in animations)
 		{
 			i.Value.Init();
+		}
+
+		LevelFiles.Clear();
+		foreach (var i in Directory.GetFiles(Path.Combine(assetsPath, "Levels"), "*.json", SearchOption.AllDirectories))
+		{
+			LevelFiles.Add(i, Path.GetFileNameWithoutExtension(i));
 		}
 	}
 

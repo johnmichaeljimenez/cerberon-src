@@ -47,7 +47,7 @@ public class GameplayState : IGameState
 
 	public void Enter()
 	{
-		string jsonText = File.ReadAllText("Assets/Levels/SampleScene.json"); //test
+		string jsonText = File.ReadAllText(options.LevelFileName); //test
 		CurrentWorld = jsonText.FromJson<World>();
 		CurrentWorld.Init(this);
 
@@ -177,5 +177,6 @@ public class GameplayState : IGameState
 
 public class GameplayOptions
 {
+	public string LevelFileName;
 	//difficulty, current save slot, is debug mode, and anything that I will need later
 }

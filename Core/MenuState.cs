@@ -26,7 +26,7 @@ public class MenuState : IGameState
 
 	public void DrawImGui()
 	{
-		if (ImGui.Button("Play"))
-			Game.Instance.GoToIngame();
+		// if (ImGui.Button("Play"))
+		// 	Game.Instance.GoToIngame(null);
 	}
 }

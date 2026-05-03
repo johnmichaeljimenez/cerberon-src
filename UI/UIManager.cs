@@ -40,7 +40,7 @@ public static class UIManager
 
 	public static T ShowScreen<T>(object context, bool clear = true) where T : BaseScreen
 	{
-		var screen = context == null ? Activator.CreateInstance<T>() : Activator.CreateInstance(typeof(T), context) as T;
+		var screen = Activator.CreateInstance(typeof(T), context) as T;
 		if (elements.ContainsKey(screen.UIGroup))
 			screen.UpdateElements(elements[screen.UIGroup]);
 

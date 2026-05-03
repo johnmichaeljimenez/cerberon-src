@@ -217,6 +217,22 @@ public static class Utils
 
 		return MathF.Abs(local.X) <= size.X * 0.5f && MathF.Abs(local.Y) <= size.Y * 0.5f;
 	}
+
+	public static List<T> GetPage<T>(List<T> source, int pageSize, ref int page, out int totalPages)
+	{
+		if (source == null) throw new ArgumentNullException(nameof(source));
+		if (pageSize <= 0) throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be > 0.");
+
+		totalPages = (source.Count + pageSize - 1) / pageSize;
+		if (totalPages == 0) totalPages = 1;
+
+		page = Math.Max(1, Math.Min(page, totalPages));
+
+		int start = (page - 1) * pageSize;
+		int count = Math.Min(pageSize, source.Count - start);
+
+		return source.Skip(start).Take(count).ToList();
+	}
 }
 
 public static class Colors
