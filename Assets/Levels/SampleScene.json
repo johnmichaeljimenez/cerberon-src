@@ -1,8 +1,8 @@
 {
   "WorldSettings": {
     "PlayerSpawnPoint": {
-      "X": -15.49,
-      "Y": 2.08
+      "X": -11.58,
+      "Y": 1.37
     },
     "WorldSize": {
       "X": 128.0,
@@ -15,305 +15,7 @@
       "A": 255
     }
   },
-  "Entities": [
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -9.0,
-        "Y": -10.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 10.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 8.0,
-        "Y": -10.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 9.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -9.0,
-        "Y": -10.0
-      },
-      "Size": {
-        "X": 12.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -9.0,
-        "Y": 4.0
-      },
-      "Size": {
-        "X": 12.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -9.0,
-        "Y": 3.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 26.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 1.0,
-        "Y": 6.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 10.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 1.0,
-        "Y": 20.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 9.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 10.0,
-        "Y": -10.0
-      },
-      "Size": {
-        "X": 7.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 8.0,
-        "Y": 3.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 13.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 8.0,
-        "Y": 20.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 9.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 10.0,
-        "Y": 4.0
-      },
-      "Size": {
-        "X": 12.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 26.0,
-        "Y": 4.0
-      },
-      "Size": {
-        "X": 12.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 38.0,
-        "Y": -10.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 20.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 38.0,
-        "Y": 14.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 16.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": -9.0,
-        "Y": 28.0
-      },
-      "Size": {
-        "X": 49.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 10.0,
-        "Y": 14.0
-      },
-      "Size": {
-        "X": 12.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 27.0,
-        "Y": 14.0
-      },
-      "Size": {
-        "X": 12.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 1.0,
-        "Y": -44.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 36.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 8.0,
-        "Y": -44.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 8.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 8.0,
-        "Y": -16.5
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 7.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 8.0,
-        "Y": -30.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 8.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 10.0,
-        "Y": -27.0
-      },
-      "Size": {
-        "X": 14.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 2.0,
-        "Y": -44.0
-      },
-      "Size": {
-        "X": 22.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 24.0,
-        "Y": -36.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 18.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 21.5,
-        "Y": -10.0
-      },
-      "Size": {
-        "X": 18.0,
-        "Y": 2.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 24.0,
-        "Y": -44.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 4.0
-      }
-    },
-    {
-      "Type": "WallEntity",
-      "Position": {
-        "X": 24.0,
-        "Y": -14.0
-      },
-      "Size": {
-        "X": 2.0,
-        "Y": 6.0
-      }
-    }
-  ],
+  "Entities": [],
   "EnvironmentSprites": [
     {
       "SpriteID": "env/tile-2",
@@ -567,6 +269,416 @@
         "B": 255,
         "A": 255
       }
+    }
+  ],
+  "EnvironmentColliders": [
+    {
+      "Position": {
+        "X": -8.0,
+        "Y": -5.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 10.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 9.0,
+        "Y": -5.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 9.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -3.0,
+        "Y": -9.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -3.0,
+        "Y": 5.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -8.0,
+        "Y": 16.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 26.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 2.0,
+        "Y": 11.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 10.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 2.0,
+        "Y": 24.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 9.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 13.5,
+        "Y": -9.0
+      },
+      "Size": {
+        "X": 7.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 9.0,
+        "Y": 9.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 13.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 9.0,
+        "Y": 24.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 9.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 16.0,
+        "Y": 5.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 32.0,
+        "Y": 5.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 39.0,
+        "Y": 0.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 20.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 39.0,
+        "Y": 22.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 16.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 15.5,
+        "Y": 29.0
+      },
+      "Size": {
+        "X": 49.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 16.0,
+        "Y": 15.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 33.0,
+        "Y": 15.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 2.0,
+        "Y": -26.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 36.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 9.0,
+        "Y": -40.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 8.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 9.0,
+        "Y": -13.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 7.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 9.0,
+        "Y": -26.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 8.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 17.0,
+        "Y": -26.0
+      },
+      "Size": {
+        "X": 14.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 13.0,
+        "Y": -43.0
+      },
+      "Size": {
+        "X": 22.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 25.0,
+        "Y": -27.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 18.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 30.5,
+        "Y": -9.0
+      },
+      "Size": {
+        "X": 18.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 25.0,
+        "Y": -42.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 4.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 25.0,
+        "Y": -11.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 6.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 10.5,
+        "Y": -2.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 12.5,
+        "Y": -2.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 14.5,
+        "Y": -2.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 16.5,
+        "Y": -2.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 18.5,
+        "Y": -2.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 20.5,
+        "Y": -2.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 26.0,
+        "Y": -2.0
+      },
+      "Size": {
+        "X": 8.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
     }
   ],
   "Lights": [
