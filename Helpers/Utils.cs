@@ -8,7 +8,6 @@ public static class Utils
 	{
 		return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
 		{
-			ContractResolver = new SaveContractResolver(onlySaveData),
 			Formatting = Formatting.Indented,
 			TypeNameHandling = TypeNameHandling.None,
 			NullValueHandling = NullValueHandling.Ignore,
