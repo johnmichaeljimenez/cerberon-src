@@ -122,6 +122,58 @@ public static class Utils
 
 		return chunks;
 	}
+
+
+	public static bool IsInFront(this Vector2 myFacing, Vector2 dirToTarget, float radius, float fovDeg)
+	{
+		if (dirToTarget.LengthSquared() > radius * radius) return false;
+		if (myFacing == Vector2.Zero) return false;
+
+		var forward = Vector2.Normalize(myFacing);
+		var toTarget = Vector2.Normalize(dirToTarget);
+
+		var halfFovRad = MathF.Abs(fovDeg) * MathF.PI / 180f / 2f;
+		var cosHalfFov = MathF.Cos(halfFovRad);
+
+		return Vector2.Dot(forward, toTarget) >= cosHalfFov;
+	}
+
+	public static Vector2 RotatePoint(this Vector2 point, Vector2 center, float angleDeg)
+	{
+		float rad = MathF.PI * angleDeg / 180f;
+		float cos = MathF.Cos(rad);
+		float sin = MathF.Sin(rad);
+
+		float dx = point.X - center.X;
+		float dy = point.Y - center.Y;
+
+		float rx = dx * cos - dy * sin;
+		float ry = dx * sin + dy * cos;
+
+		return new Vector2(rx + center.X, ry + center.Y);
+	}
+
+	public static Vector2[] GetRectangleCorners(Vector2 centerPosition, Vector2 size, float rotationDeg = 0f, Vector2 origin = default)
+	{
+		if (origin == default) origin = new Vector2(0.5f, 0.5f);
+
+		Vector2 topLeft = centerPosition - new Vector2(origin.X * size.X, origin.Y * size.Y);
+		Vector2 topRight = topLeft + new Vector2(size.X, 0f);
+		Vector2 bottomRight = topLeft + size;
+		Vector2 bottomLeft = topLeft + new Vector2(0f, size.Y);
+
+		Vector2 pivot = centerPosition + (origin - new Vector2(0.5f, 0.5f)) * size;
+
+		if (MathF.Abs(rotationDeg) > 0.0001f)
+		{
+			topLeft = topLeft.RotatePoint(pivot, rotationDeg);
+			topRight = topRight.RotatePoint(pivot, rotationDeg);
+			bottomRight = bottomRight.RotatePoint(pivot, rotationDeg);
+			bottomLeft = bottomLeft.RotatePoint(pivot, rotationDeg);
+		}
+
+		return [topLeft, topRight, bottomRight, bottomLeft]; // clockwise order
+	}
 }
 
 public static class Colors
@@ -163,20 +215,5 @@ public static class Colors
 	public static Color Value(this Color c, float amt)
 	{
 		return new((byte)((float)c.R * amt), (byte)((float)c.G * amt), (byte)((float)c.B * amt), c.A);
-	}
-
-
-	public static bool IsInFront(this Vector2 myFacing, Vector2 dirToTarget, float radius, float fovDeg)
-	{
-		if (dirToTarget.LengthSquared() > radius * radius) return false;
-		if (myFacing == Vector2.Zero) return false;
-
-		var forward = Vector2.Normalize(myFacing);
-		var toTarget = Vector2.Normalize(dirToTarget);
-
-		var halfFovRad = MathF.Abs(fovDeg) * MathF.PI / 180f / 2f;
-		var cosHalfFov = MathF.Cos(halfFovRad);
-
-		return Vector2.Dot(forward, toTarget) >= cosHalfFov;
 	}
 }

@@ -5,18 +5,19 @@ namespace Main.Effects;
 
 public class Shadow
 {
-	public Rectangle Bounds => new Rectangle(Position, Size);
-	public Vector2 Position;
+	public Vector2 Position; 
 	public Vector2 Size;
+	public float Rotation;
 
 	public readonly Vector2[] Points;
 
-	public Shadow(Vector2 position, Vector2 size)
+	public Shadow(Vector2 centerPosition, Vector2 size, float rotation = 0f)
 	{
-		Position = position;
+		Position = centerPosition;
 		Size = size;
+		Rotation = rotation;
 
-		Points = Bounds.ToVector2List().ToArray(); //clockwise
+		Points = Utils.GetRectangleCorners(centerPosition, size, rotation).Reverse().ToArray();
 	}
 
 	public void DrawShadow(Light light)
@@ -24,7 +25,11 @@ public class Shadow
 		const float farDistance = 100;
 		const float sideExtrude = 80;
 
-		Raylib.DrawRectangleRec(Bounds, Color.Black);
+		if (Points.Length == 4)
+		{
+			Raylib.DrawTriangle(Points[0], Points[1], Points[2], Color.Black);
+			Raylib.DrawTriangle(Points[0], Points[2], Points[3], Color.Black);
+		}
 
 		for (int i = 0; i < Points.Length; i++)
 		{
@@ -231,9 +236,9 @@ public static class LightingSystem
 			visionLights.Remove(light);
 	}
 
-	public static Shadow AddShadow(Vector2 position, Vector2 size)
+	public static Shadow AddShadow(Vector2 centerPosition, Vector2 size, float rotation = 0f)
 	{
-		var shadow = new Shadow(position, size);
+		var shadow = new Shadow(centerPosition, size, rotation);
 		shadows.Add(shadow);
 
 		return shadow;

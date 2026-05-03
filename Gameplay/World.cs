@@ -10,7 +10,23 @@ using Newtonsoft.Json;
 namespace Main.Gameplay;
 
 [Serializable]
-public class WorldSpriteRenderer //no need for real entities for static environment stuff like these
+public class WorldCollider //no need for real entities for static environment stuff like these
+{
+	public Vector2 Position { get; set; }
+	public Vector2 Size { get; set; }
+	public float Rotation { get; set; }
+	public Wall.WallFlags Flags { get; set; }
+
+	[JsonIgnore]
+	public Rectangle RectangleBounds => new Rectangle()
+	{
+		Position = Position,
+		Size = Size
+	};
+}
+
+[Serializable]
+public class WorldSpriteRenderer //same with this
 {
 	public enum RenderTypes
 	{
@@ -91,6 +107,9 @@ public class World : IDisposable //aka Level loader
 	public List<Light> Lights { get; private set; } = new();
 
 	[JsonProperty]
+	public List<WorldCollider> EnvironmentColliders { get; private set; } = new();
+
+	[JsonProperty]
 	public List<WorldSpriteRenderer> EnvironmentSprites { get; private set; } = new();
 
 	[JsonIgnore]
@@ -115,6 +134,8 @@ public class World : IDisposable //aka Level loader
 	private int _nextID;
 
 	public readonly Signal<BaseEntity> OnEntityDespawn = new();
+
+	private readonly Dictionary<WorldCollider, (List<Wall>, Shadow)> colliderWalls = new();
 	public static void InitRegistry()
 	{
 		entityRegistry.Clear();
@@ -130,7 +151,19 @@ public class World : IDisposable //aka Level loader
 		this.gameplayState = gameplayState;
 		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
 
-		gameplayState.GetManager<WaypointManager>().Bake(Entities.Where(p => p is WallEntity).Cast<WallEntity>().Select(p => p.RectangleBounds), WorldSettings.WorldSize, 1f); //TODO: add "is solid" property for entities once static props are implemented
+		foreach (var i in EnvironmentColliders)
+		{
+			var l = new List<Wall>();
+			Shadow shadow = null;
+			gameplayState.GetManager<CollisionManager>().AddWalls(i.Position, i.Size, l, i.Flags, false, i.Rotation);
+
+			if (i.Flags.HasFlag(Wall.WallFlags.Shadows))
+				shadow = LightingSystem.AddShadow(i.Position, i.Size, i.Rotation);
+
+			colliderWalls.Add(i, (l, shadow));
+		}
+
+		// gameplayState.GetManager<WaypointManager>().Bake(Entities.Where(p => p is WallEntity).Cast<WallEntity>().Select(p => p.RectangleBounds), WorldSettings.WorldSize, 1f); //TODO: add "is solid" property for entities once static props are implemented
 
 		foreach (var i in Entities)
 		{
@@ -138,7 +171,7 @@ public class World : IDisposable //aka Level loader
 			i.Init(gameplayState);
 		}
 
-		gameplayState.GetManager<CollisionManager>().AddWalls(-WorldSettings.WorldSize * 0.5f, WorldSettings.WorldSize, worldBounds, Wall.WallFlags.None, true);
+		gameplayState.GetManager<CollisionManager>().AddWalls(Vector2.Zero, WorldSettings.WorldSize, worldBounds, Wall.WallFlags.None, true);
 
 		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
 		foreach (var i in Lights)
@@ -268,6 +301,17 @@ public class World : IDisposable //aka Level loader
 		foreach (var i in Lights)
 		{
 			LightingSystem.RemoveLight(i);
+		}
+
+		foreach (var i in colliderWalls)
+		{
+			foreach (var j in i.Value.Item1)
+			{
+				gameplayState.GetManager<CollisionManager>().RemoveWall(j);
+			}
+
+			if (i.Value.Item2 != null)
+				LightingSystem.RemoveShadow(i.Value.Item2);
 		}
 
 		DecalSystem.Dispose();

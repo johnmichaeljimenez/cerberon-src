@@ -1,15 +1,17 @@
 using Main.Gameplay;
 using Main.Gameplay.Entities;
 using Main.Gameplay.Managers;
+using Main.Helpers;
 
 public class Wall
 {
+	[Flags]
 	public enum WallFlags
 	{
 		None = 0,
-		Shadows = 1,
-		NoWaypoint = 2,
-		DirectLineOfSight = 4
+		Shadows = 1 << 0,
+		NoWaypoint = 1 << 1,
+		DirectLineOfSight = 1 << 2
 	}
 
 	public Vector2 From { get; set; }
@@ -64,24 +66,26 @@ public class CollisionManager : BaseManager
 		bodies.Remove(body);
 	}
 
-	public void AddWalls(Vector2 pos, Vector2 size, List<Wall> walls, Wall.WallFlags flags, bool invert = false)
+	public void AddWalls(
+		Vector2 pos,
+		Vector2 size,
+		List<Wall> walls,
+		Wall.WallFlags flags,
+		bool invert = false,
+		float rotation = 0f,
+		Vector2 origin = default)
 	{
-		Wall Add(Vector2 a, Vector2 b) => invert ? AddWall(b, a, flags) : AddWall(a, b, flags);
+		if (origin == default) origin = new Vector2(0.5f, 0.5f);
 
-		// Top wall
-		walls.Add(Add(pos, new Vector2(pos.X + size.X, pos.Y)));
-		// Right wall
-		walls.Add(Add(
-			new Vector2(pos.X + size.X, pos.Y),
-			new Vector2(pos.X + size.X, pos.Y + size.Y)));
-		// Bottom wall
-		walls.Add(Add(
-			new Vector2(pos.X + size.X, pos.Y + size.Y),
-			new Vector2(pos.X, pos.Y + size.Y)));
-		// Left wall
-		walls.Add(Add(
-			new Vector2(pos.X, pos.Y + size.Y),
-			pos));
+		var corners = Utils.GetRectangleCorners(pos, size, rotation, origin);
+
+		Wall Add(Vector2 a, Vector2 b) =>
+			invert ? AddWall(b, a, flags) : AddWall(a, b, flags);
+
+		walls.Add(Add(corners[0], corners[1]));     // top
+		walls.Add(Add(corners[1], corners[2]));     // right
+		walls.Add(Add(corners[2], corners[3]));     // bottom
+		walls.Add(Add(corners[3], corners[0]));     // left
 	}
 
 	//do clockwise order when making polygons to make them point outward, otherwise do it inward for maximum level boundaries
@@ -284,6 +288,16 @@ public class CollisionManager : BaseManager
 		ImGui.SeparatorText("Collision");
 		ImGui.Text($"Wall count: {walls.Count}");
 		ImGui.Text($"Body count: {bodies.Count}");
+	}
+
+	public override void DrawDebug()
+	{
+		base.DrawDebug();
+
+		foreach (var i in walls)
+		{
+			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Colors.RED);
+		}
 	}
 
 	public override void Dispose()
