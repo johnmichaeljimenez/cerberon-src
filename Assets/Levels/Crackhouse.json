@@ -1,0 +1,781 @@
+{
+  "WorldSettings": {
+    "PlayerSpawnPoint": {
+      "X": -7.08,
+      "Y": 2.75
+    },
+    "WorldSize": {
+      "X": 128.0,
+      "Y": 64.0
+    },
+    "AmbientColor": {
+      "R": 19,
+      "G": 19,
+      "B": 19,
+      "A": 255
+    }
+  },
+  "Entities": [],
+  "EnvironmentSprites": [
+    {
+      "SpriteID": "env/plaster-1",
+      "Position": {
+        "X": 8.15,
+        "Y": 2.47
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": -1,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 53.7992935,
+        "Y": 41.2064972
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/tile-1",
+      "Position": {
+        "X": 7.79,
+        "Y": -18.53
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 8.70373,
+        "Y": 14.7218018
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/tile-2",
+      "Position": {
+        "X": 18.046,
+        "Y": -18.4
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 12.9147606,
+        "Y": 14.7218018
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/plaster-1",
+      "Position": {
+        "X": 29.972,
+        "Y": -18.595
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 10.9112892,
+        "Y": 14.4133263
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/wood-9",
+      "Position": {
+        "X": -7.281,
+        "Y": -11.354
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 21.9883232,
+        "Y": 12.4251394
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/wood-9",
+      "Position": {
+        "X": 8.307,
+        "Y": 16.263
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 54.0031,
+        "Y": 12.75071
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/grass-1",
+      "Position": {
+        "X": 1.58,
+        "Y": -0.32
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": -10,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 167.661926,
+        "Y": 98.47206
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/concrete-1",
+      "Position": {
+        "X": -50.26,
+        "Y": -18.27
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": -10,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 23.1481,
+        "Y": 23.73168
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/ground-5",
+      "Position": {
+        "X": -45.823,
+        "Y": 4.2
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": -9,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 55.5332756,
+        "Y": 5.689712
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/wood-8",
+      "Position": {
+        "X": -21.26,
+        "Y": -1.802
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": -8,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 7.12152147,
+        "Y": 28.6955318
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/wood-8",
+      "Position": {
+        "X": 21.328,
+        "Y": -28.6
+      },
+      "Parallax": 0.0,
+      "Rotation": -90.0,
+      "SortingGroup": 0,
+      "SortingIndex": -8,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 7.12152147,
+        "Y": 28.8547611
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/overlay-bush-01",
+      "Position": {
+        "X": -35.404,
+        "Y": 45.491
+      },
+      "Parallax": 0.3,
+      "Rotation": 0.0,
+      "SortingGroup": 1,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 5.27053165,
+      "TileSize": {
+        "X": 22.1964245,
+        "Y": 34.67359
+      },
+      "Tint": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 255
+      }
+    }
+  ],
+  "EnvironmentColliders": [
+    {
+      "Position": {
+        "X": -62.0,
+        "Y": -19.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 24.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -50.0,
+        "Y": -30.0
+      },
+      "Size": {
+        "X": 24.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -39.0,
+        "Y": -27.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 7.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -58.5,
+        "Y": -7.0
+      },
+      "Size": {
+        "X": 9.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -41.0,
+        "Y": -7.0
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -39.0,
+        "Y": -14.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 12.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 33.5,
+        "Y": -11.5
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 9.0,
+        "Y": -11.5
+      },
+      "Size": {
+        "X": 8.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 22.5,
+        "Y": -11.5
+      },
+      "Size": {
+        "X": 11.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 14.5,
+        "Y": 21.5
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 24.5,
+        "Y": -18.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 16.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 17.5,
+        "Y": -5.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 29.5,
+        "Y": -5.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 31.0,
+        "Y": 10.0
+      },
+      "Size": {
+        "X": 8.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 15.5,
+        "Y": -25.0
+      },
+      "Size": {
+        "X": 25.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 13.0,
+        "Y": -5.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 35.0,
+        "Y": -1.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 51.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 4.0,
+        "Y": -16.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 21.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 17.5,
+        "Y": 10.0
+      },
+      "Size": {
+        "X": 12.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 14.5,
+        "Y": 5.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 22.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 2.0,
+        "Y": 21.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 2.0,
+        "Y": 13.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 6.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 2.0,
+        "Y": 10.0
+      },
+      "Size": {
+        "X": 11.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -13.0,
+        "Y": 10.0
+      },
+      "Size": {
+        "X": 11.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 2.0,
+        "Y": -5.0
+      },
+      "Size": {
+        "X": 11.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -13.0,
+        "Y": -5.0
+      },
+      "Size": {
+        "X": 11.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -18.0,
+        "Y": 15.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 18.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -8.5,
+        "Y": -17.5
+      },
+      "Size": {
+        "X": 22.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 8.5,
+        "Y": 23.0
+      },
+      "Size": {
+        "X": 56.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": -18.0,
+        "Y": -8.5
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 21.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 34.0,
+        "Y": -25.0
+      },
+      "Size": {
+        "X": 4.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 12.0,
+        "Y": -20.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 8.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    },
+    {
+      "Position": {
+        "X": 12.0,
+        "Y": -12.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 5
+    }
+  ],
+  "Lights": [
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 20.01,
+        "Y": -19.97
+      },
+      "Color": {
+        "R": 51,
+        "G": 47,
+        "B": 36,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 0
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": -0.58,
+        "Y": 2.28
+      },
+      "Color": {
+        "R": 51,
+        "G": 47,
+        "B": 36,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 0
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 20.3,
+        "Y": 7.94
+      },
+      "Color": {
+        "R": 51,
+        "G": 47,
+        "B": 36,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 0
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": -40.85,
+        "Y": -21.74
+      },
+      "Color": {
+        "R": 116,
+        "G": 39,
+        "B": 39,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 16.0,
+      "ShadowType": 1
+    }
+  ]
+}
