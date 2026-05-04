@@ -19,10 +19,11 @@ public class Weapon
 	public string Name;
 	public int MaxAmmo;
 	public int MagSize;
+	public int SpreadCount;
+	public float SpreadAngle;
 	public float FiringRate; // FiringRate <= 0 means tap to shoot
 	public int Damage;
 	public int AltDamage;
-	public float ReloadTime;
 
 	public int CurrentAmmo;
 	public int CurrentMaxAmmo;
@@ -31,7 +32,7 @@ public class Weapon
 	public float NormalizedCurrentAmmoCount => !UsesAmmo ? 0 : (float)(CurrentAmmo + CurrentMaxAmmo) / (MagSize + MaxAmmo);
 
 	public Weapon(string id, string name, int damage, int altDamage, float firingRate,
-			   int magSize, int maxAmmo, float reloadTime)
+			   int magSize, int maxAmmo)
 	{
 		ID = id;
 		Name = name;
@@ -40,7 +41,6 @@ public class Weapon
 		FiringRate = firingRate;
 		MagSize = magSize;
 		MaxAmmo = maxAmmo;
-		ReloadTime = reloadTime;
 
 		CurrentAmmo = MagSize;
 		CurrentMaxAmmo = MaxAmmo / 4;
@@ -76,9 +76,13 @@ public class PlayerWeapons : IDisposable
 
 	public readonly List<Weapon> Weapons = new() //total hardcoded for now
 	{
-		new Weapon("knife", "Knife", 0, 45, 0f, 0, 0, 0),
-		new Weapon("handgun", "Sig Sauer", 15, 25, 0f, 15, 60, 1.3f),
-		new Weapon("rifle", "AK-47", 30, 40, 0.1f, 30, 120, 1.4f),
+		new Weapon("knife", "Knife", 0, 45, 0f, 0, 0),
+		new Weapon("handgun", "Sig Sauer", 15, 25, 0f, 15, 60),
+		new Weapon("rifle", "AK-47", 30, 40, 0.1f, 30, 120),
+		new Weapon("shotgun", "Sawn-off Shotgun", 30, 40, 0f, 2, 30){
+			SpreadAngle = 8,
+			SpreadCount = 6
+		} //2-shot
 	};
 
 	private int currentWeaponIndex;
@@ -91,6 +95,8 @@ public class PlayerWeapons : IDisposable
 	public LinecastHit LaserHit => laserHit;
 	private LinecastHit laserHit;
 	private bool isIraqiReload;
+
+	private LinecastHit spreadHit;
 
 	public readonly Signal<Weapon> OnWeaponSelected = new();
 	public readonly Signal<Weapon> OnWeaponAmmoChanged = new();
@@ -194,6 +200,13 @@ public class PlayerWeapons : IDisposable
 				Log.Send($"Switched to: {CurrentWeapon.Name}");
 				AudioHandler.PlaySound(SFX_EQUIP);
 			}
+			else if (InputManager.IsPressed(InputAction.Weapon4))
+			{
+				currentWeaponIndex = 3;
+				OnWeaponSelected.Publish(CurrentWeapon);
+				Log.Send($"Switched to: {CurrentWeapon.Name}");
+				AudioHandler.PlaySound(SFX_EQUIP);
+			}
 			else if (InputManager.IsPressed(InputAction.Reload) && CurrentWeapon.CanReload())
 			{
 				//I just feel like adding Iraqi reload here because it's cheap and cool tbh ("sometimes a cigar is just a cigar" of game design)
@@ -256,16 +269,41 @@ public class PlayerWeapons : IDisposable
 
 						muzzleFlash = LightingSystem.AddLight("light", player.Position, new(80, 30, 0), 0, 14);
 
-						if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
+						if (CurrentWeapon.SpreadCount == 0)
 						{
-							AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
+							if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
+							{
+								hitCount++;
+								HitBullet(z);
+							}
+						}
+						else
+						{
+							var hit = false;
+							var sc = 0;
+							for (int i = 0; i < CurrentWeapon.SpreadCount; i++)
+							{
+								var half = CurrentWeapon.SpreadAngle / 2;
+								var a = Raymath.LerpAngle(-half, half, (float)i / CurrentWeapon.SpreadCount);
+								var d = player.GetFacingAngleOffset(a);
 
-							hitCount++;
-							OnWeaponHit.Publish((CurrentWeapon, z));
-							z.ApplyDamage(CurrentWeapon.Damage);
+								gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (d * 100), out spreadHit, player.CollisionBody);
+								if (spreadHit.Body != null && spreadHit.Body.SourceEntity is ZombieEntity z)
+								{
+									if (!hit)
+									{
+										hit = true;
+										hitCount++;
+									}
 
-							if (z.IsDead)
-								OnWeaponKill.Publish((CurrentWeapon, z));
+									sc++;
+									HitBullet(z);
+								}
+							}
+
+							Log.Send($"Spread hit: {sc}");
+
+							spreadHit.Body = null;
 						}
 
 						CurrentWeapon.CurrentAmmo -= 1;
@@ -278,6 +316,16 @@ public class PlayerWeapons : IDisposable
 				}
 			}
 		}
+	}
+
+	private void HitBullet(ZombieEntity z)
+	{
+		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
+		OnWeaponHit.Publish((CurrentWeapon, z));
+		z.ApplyDamage(CurrentWeapon.Damage);
+
+		if (z.IsDead)
+			OnWeaponKill.Publish((CurrentWeapon, z));
 	}
 
 	public void OnAnimationBegin(string animationName)

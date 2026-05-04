@@ -41,10 +41,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public bool IsAnimatorBusy => Animator.IsPlayingOneShot;
 
-	public Vector2 FacingDirection => new Vector2(
-		MathF.Cos(FacingAngle * MathF.PI / 180f),
-		MathF.Sin(FacingAngle * MathF.PI / 180f)
-	);
+	public Vector2 FacingDirection => GetFacingAngleOffset(0);
 
 	public readonly Signal<int> OnHPChanged = new();
 	public readonly Signal<int> OnTakeDamage = new();
@@ -161,5 +158,14 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	protected virtual void OnDeath()
 	{
 		DecalSystem.Paint(Position);
+	}
+
+	public Vector2 GetFacingAngleOffset(float angleOffset)
+	{
+		var targetAngle = (FacingAngle + angleOffset) * MathF.PI / 180f;
+		return new Vector2(
+			MathF.Cos(targetAngle),
+			MathF.Sin(targetAngle)
+		);
 	}
 }
