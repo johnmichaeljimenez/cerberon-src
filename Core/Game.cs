@@ -26,6 +26,7 @@ public class Game
 
     public CameraController Camera { get; private set; }
 
+    private GameplayOptions currentOptions;
     private bool showIMGUI;
 
     public Game()
@@ -88,12 +89,13 @@ public class Game
 
     public void GoToIngame(GameplayOptions gameplayOptions)
     {
-        SetState(new GameplayState(gameplayOptions ?? new GameplayOptions()));
+        currentOptions = gameplayOptions ?? new GameplayOptions();
+        SetState(new GameplayState(currentOptions));
     }
 
     public void RestartGame()
     {
-        SetState(new GameplayState(new()));
+        SetState(new GameplayState(currentOptions));
     }
 
     public void GoToMenu()
