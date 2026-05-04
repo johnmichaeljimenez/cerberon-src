@@ -23,10 +23,29 @@ public static class DecalSystem
 			Raylib.EndTextureMode();
 		}
 
-		public void Paint(Vector2 localDecalPos)
+		public void PaintDead(Sprite sprite, Vector2 localDecalPos, float rotation, Vector2? origin = null, float scale = 1.0f)
 		{
 			Raylib.BeginTextureMode(RenderTexture);
+			scale /= 4; //TODO: temporary (add proper scaler)
 
+			var originNorm = origin ?? (Vector2.One * 0.5f);
+			var srcRect = new Rectangle(0, 0, sprite.Width, sprite.Height);
+			var originPix = new Vector2(sprite.Width * originNorm.X * scale, sprite.Height * originNorm.Y * scale);
+			var destRect = new Rectangle(
+				localDecalPos.X,
+				localDecalPos.Y,
+				sprite.Width * scale,
+				sprite.Height * scale
+			);
+
+			Raylib.DrawTexturePro(sprite.Texture, srcRect, destRect, originPix, rotation, Color.White.Value(0.4f));
+			PaintBloodProcedural(localDecalPos);
+
+			Raylib.EndTextureMode();
+		}
+
+		private void PaintBloodProcedural(Vector2 localDecalPos)
+		{
 			//placeholder procedural blood for now
 			var amt = RNG.Range(3, 12);
 			for (int i = 0; i < amt; i++)
@@ -34,7 +53,12 @@ public static class DecalSystem
 				var pos = localDecalPos + RNG.Position(20);
 				Raylib.DrawCircleV(pos, RNG.Range(1, 4), Colors.RED.Value(RNG.Range(0.4f, 0.6f))); //do not use any alpha < 1 here. blood doesn't become translucent on the floor on contact
 			}
+		}
 
+		public void Paint(Vector2 localDecalPos)
+		{
+			Raylib.BeginTextureMode(RenderTexture);
+			PaintBloodProcedural(localDecalPos);
 			Raylib.EndTextureMode();
 		}
 
@@ -62,7 +86,19 @@ public static class DecalSystem
 		Log.Send($"DecalSystem: {regions.Count} chunks ({DECAL_TEXTURE_SIZE}×{DECAL_TEXTURE_SIZE})");
 	}
 
-	public static void Paint(Vector2 worldPos)
+	public static void PaintDead(Sprite sprite, Vector2 position, float rotation, Vector2? origin = null, float scale = 1)
+	{
+		foreach (var region in regions)
+		{
+			if (!Raylib.CheckCollisionCircleRec(position, UNIT_SIZE_WORLD, region.WorldRect))
+				continue;
+
+			Vector2 localPos = (position - region.WorldRect.Position) * DECAL_PPU;
+			region.PaintDead(sprite, localPos, rotation, origin, scale);
+		}
+	}
+
+	public static void PaintBlood(Vector2 worldPos)
 	{
 		foreach (var region in regions)
 		{

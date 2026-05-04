@@ -111,8 +111,11 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public override void DrawDebug()
 	{
-		Raylib.DrawCircleLinesV(CollisionBody.Position, CollisionBody.Radius, Colors.GREEN);
-		Raylib.DrawCircleLinesV(Position + (FacingDirection * 0.6f), 0.3f, Colors.GREEN);
+		if (CollisionBody.Enabled)
+		{
+			Raylib.DrawCircleLinesV(CollisionBody.Position, CollisionBody.Radius, Colors.GREEN);
+			Raylib.DrawCircleLinesV(Position + (FacingDirection * 0.6f), 0.3f, Colors.GREEN);
+		}
 	}
 
 	public bool Heal(int amt)
@@ -131,7 +134,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		if (IsDead)
 			return false;
 
-		DecalSystem.Paint(Position);
+		DecalSystem.PaintBlood(Position);
 		HP -= amt;
 		HP = Math.Max(0, HP);
 		OnHit(amt, HP <= 0);
@@ -157,7 +160,8 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	protected virtual void OnDeath()
 	{
-		DecalSystem.Paint(Position);
+		velocity = Vector2.Zero;
+		CollisionBody.Enabled = false;
 	}
 
 	public Vector2 GetFacingAngleOffset(float angleOffset)
