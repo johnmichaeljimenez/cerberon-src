@@ -73,6 +73,43 @@
 	},
 
 
+	"player-shotgun-idle": {
+		"Name": "player-shotgun-idle",
+		"Frames": [
+			"player/shotgun/idle/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-shotgun-move": {
+		"Name": "player-shotgun-move",
+		"Frames": [
+			"player/shotgun/move/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-shotgun-shoot": {
+		"Name": "player-shotgun-shoot",
+		"Frames": [
+			"player/shotgun/shoot/*"
+		],
+		"LoopStartIndex": -1
+	},
+	"player-shotgun-meleeattack": {
+		"Name": "player-shotgun-meleeattack",
+		"Frames": [
+			"player/shotgun/meleeattack/*"
+		],
+		"LoopStartIndex": -1
+	},
+	"player-shotgun-reload": {
+		"Name": "player-shotgun-reload",
+		"Frames": [
+			"player/shotgun/reload/*"
+		],
+		"LoopStartIndex": -1
+	},
+
+
 	"player-knife-idle": {
 		"Name": "player-knife-idle",
 		"Frames": [
