@@ -73,6 +73,29 @@
 	},
 
 
+	"player-knife-idle": {
+		"Name": "player-knife-idle",
+		"Frames": [
+			"player/knife/idle/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-knife-move": {
+		"Name": "player-knife-move",
+		"Frames": [
+			"player/knife/move/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-knife-meleeattack": {
+		"Name": "player-knife-meleeattack",
+		"Frames": [
+			"player/knife/meleeattack/*"
+		],
+		"LoopStartIndex": -1
+	},
+
+
 	"zombie-idle": {
 		"Name": "zombie-idle",
 		"Frames": [

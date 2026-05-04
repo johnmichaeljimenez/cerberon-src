@@ -41,6 +41,7 @@ public enum InputAction
     AltFire,
     Weapon1,
     Weapon2,
+    Weapon3,
     Reload,
     Flashlight,
 	Nightvision,
@@ -65,6 +66,7 @@ public static class InputManager
         { InputAction.Reload, new(KeyboardKey.R, null) },
         { InputAction.Weapon1, new(KeyboardKey.One, null) },
         { InputAction.Weapon2, new(KeyboardKey.Two, null) },
+        { InputAction.Weapon3, new(KeyboardKey.Three, null) },
         { InputAction.Nightvision, new(KeyboardKey.N, null) },
         { InputAction.Pause, new(KeyboardKey.Escape, null) }
     };
