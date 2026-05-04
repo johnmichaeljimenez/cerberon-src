@@ -7,6 +7,7 @@ public static class FadeHandler
 	private const float FadeDuration = 0.3f;
 
 	public static bool IsFading => isFading;
+	public static bool Running => (fadeTimer / FadeDuration) < 1.0f;
 
 	private static float fadeTarget;
 	private static float fadeTimer;
