@@ -66,7 +66,7 @@ public abstract class BaseScreen : IDisposable
 			if (!e.Clickable)
 				continue;
 
-			var hover = Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), e.Rect);
+			var hover = !FadeHandler.Running && Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), e.Rect);
 
 			if (hover)
 			{

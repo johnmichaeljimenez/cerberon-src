@@ -7,7 +7,7 @@ public static class FadeHandler
 	private const float FadeDuration = 0.3f;
 
 	public static bool IsFading => isFading;
-	public static bool Running => (fadeTimer / FadeDuration) < 1.0f;
+	public static bool Running => isFading && (fadeTimer / FadeDuration) < 1.0f;
 
 	private static float fadeTarget;
 	private static float fadeTimer;
@@ -47,6 +47,7 @@ public static class FadeHandler
 				if (fadeTarget < 1)
 				{
 					RenderingManager.SetFade(0);
+					fadeTimer = 0;
 					isFading = false;
 				}
 
