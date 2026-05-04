@@ -26,6 +26,7 @@ public class PlayerEntity : CharacterEntity
 
 		Origin = new Vector2(0.3f, 0.7f);
 		Weapons = new(gameplayState, this);
+		SortingIndex = 10;
 
 		Game.Instance.Camera.Follow(Position);
 		lightSelf = LightingSystem.AddLight("light", Position, new(30, 30, 30), 0, 8);
@@ -116,6 +117,9 @@ public class PlayerEntity : CharacterEntity
 			target = Position + Raymath.Vector2ClampValue(target, 0, 5);
 			Game.Instance.Camera.Follow(target, 2f);
 		}
+
+		if (Raylib.IsKeyPressed(KeyboardKey.Q))
+			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin, 1);
 	}
 
 	public override void Draw()
