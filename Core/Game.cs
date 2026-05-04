@@ -1,6 +1,7 @@
 using Main.Effects;
 using Main.Gameplay;
 using Main.UI;
+using Tween;
 
 namespace Main.Core;
 
@@ -51,10 +52,23 @@ public class Game
 
         UIManager.Init();
         OnStateChanged?.Publish(currentState);
+
+
+        Tween<float>.RegisterLerper(Raymath.Lerp);
+        Tween<Vector2>.RegisterLerper(Raymath.Vector2Lerp);
+        Tween<Vector3>.RegisterLerper(Raymath.Vector3Lerp);
+        Tween<Color>.RegisterLerper(Raylib.ColorLerp);
+        Tween<Rectangle>.RegisterLerper((from, to, amt) => new Rectangle(
+            Raymath.Lerp(from.X, to.X, amt),
+            Raymath.Lerp(from.Y, to.Y, amt),
+            Raymath.Lerp(from.Width, to.Width, amt),
+            Raymath.Lerp(from.Height, to.Height, amt)
+        ));
     }
 
     public void End()
     {
+        TweenManager.Clear();
         currentState?.Exit();
         UIManager.Dispose();
 
@@ -76,6 +90,7 @@ public class Game
             currentState?.Exit();
             currentState = nextState;
             PauseHandler.Clear();
+            TweenManager.Clear();
             currentState?.Enter();
             nextState = null;
             OnStateChanged?.Publish(currentState);
@@ -159,6 +174,8 @@ public class Game
     {
         while (!Raylib.WindowShouldClose())
         {
+            TweenManager.Update(Time.DeltaTime, Time.UnscaledDeltaTime);
+
             RenderingManager.UpdateLayout();
             float scale = RenderingManager.Scale;
             Vector2 offset = RenderingManager.Offset;
