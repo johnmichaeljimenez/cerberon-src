@@ -1,10 +1,11 @@
 using Main.Core;
+using Main.Effects;
 using Main.Gameplay.Managers;
 using Main.Helpers;
 
 namespace Main.Gameplay.Entities;
 
-public class ZombieEntity : CharacterEntity
+public class EnemyEntity : CharacterEntity
 {
 	const float LIFETIME = 20f;
 	public override Teams Team => Teams.Enemy;
@@ -12,29 +13,44 @@ public class ZombieEntity : CharacterEntity
 
 	private readonly List<Vector2> nodes = new();
 
+	[JsonIgnore]
+	public bool Persistent { get; set; }
+
 	private float fsTimer = 0;
 
-	private float lifetime; //despawn far-away zombies after certain time
+	private float lifetime; //despawn far-away enemys after certain time
 
 	public override void Init(GameplayState gameplayState)
 	{
 		lifetime = LIFETIME;
 		MaxHP = 70;
+		Radius = 0.8f;
 		MovementSpeed = 4.0f;
-		Log.Send($"Spawned zombie #{ID}");
+		Log.Send($"Spawned enemy #{ID}");
+		Origin = new(0.4f, 0.5f);
 
 		base.Init(gameplayState);
 
-		Animator.Add("zombie-idle", 0);
-		Animator.Add("zombie-move", 0);
-		Animator.Add("zombie-attack", 50);
+		Animator.Add("roach-idle", 0);
+		Animator.Add("roach-move", 0);
+		Animator.Add("roach-attack", 50);
+		Animator.Add("roach-death", 100);
 
-		Animator.Play("zombie-idle");
+		Animator.Play("roach-idle");
+	}
+
+	protected override void OnAnimationEnd(string animationName)
+	{
+		if (animationName == "roach-death")
+		{
+			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin);
+			Despawn();
+		}
 	}
 
 	protected override void OnAnimationFrameChanged((string, int, float) frameData)
 	{
-		if (frameData.Item1 != "zombie-attack" || frameData.Item2 != 5) //guaranteed to be frame-perfect than using normalized time
+		if (frameData.Item1 != "roach-attack" || frameData.Item2 != 6) //guaranteed to be frame-perfect than using normalized time
 			return;
 
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
@@ -48,6 +64,9 @@ public class ZombieEntity : CharacterEntity
 	public override void Update(float dt, float udt)
 	{
 		base.Update(dt, udt);
+
+		if (IsDead)
+			return;
 
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
 		var d = player.Position - Position;
@@ -64,7 +83,7 @@ public class ZombieEntity : CharacterEntity
 			lifetime = LIFETIME;
 			nodes.Clear();
 
-			if (Animator.Play("zombie-attack", false, "zombie-idle"))
+			if (Animator.Play("roach-attack", false, "roach-idle"))
 			{
 				velocity = Vector2.Zero;
 			}
@@ -121,9 +140,10 @@ public class ZombieEntity : CharacterEntity
 		if (IsAnimatorBusy)
 			return;
 
-		if (velocity.LengthSquared() > 0.1f)
+		var ms = MovementSpeed / 1.5f;
+		if (velocity.LengthSquared() > ms * ms)
 		{
-			Animator.Play("zombie-move");
+			Animator.Play("roach-move");
 			fsTimer += dt;
 
 			if (fsTimer >= 0.4f)
@@ -134,14 +154,17 @@ public class ZombieEntity : CharacterEntity
 		}
 		else
 		{
-			Animator.Play("zombie-idle");
+			Animator.Play("roach-idle");
 		}
 
-		lifetime -= dt;
-		if (lifetime <= 0)
+		if (!Persistent)
 		{
-			Despawn();
-			Log.Send($"Despawned zombie #{ID}");
+			lifetime -= dt;
+			if (lifetime <= 0)
+			{
+				Despawn();
+				Log.Send($"Despawned enemy #{ID}");
+			}
 		}
 	}
 
@@ -149,7 +172,7 @@ public class ZombieEntity : CharacterEntity
 	{
 		base.OnDeath();
 
-		Despawn();
+		Animator.Play("roach-death");
 	}
 
 	public override void Draw()

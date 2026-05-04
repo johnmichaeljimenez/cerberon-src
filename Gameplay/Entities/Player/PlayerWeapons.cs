@@ -271,7 +271,7 @@ public class PlayerWeapons : IDisposable
 
 						if (CurrentWeapon.SpreadCount == 0)
 						{
-							if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
+							if (LaserHit.Body != null && LaserHit.Body.SourceEntity is EnemyEntity z)
 							{
 								hitCount++;
 								HitBullet(z);
@@ -288,7 +288,7 @@ public class PlayerWeapons : IDisposable
 								var d = player.GetFacingAngleOffset(a);
 
 								gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (d * 100), out spreadHit, player.CollisionBody);
-								if (spreadHit.Body != null && spreadHit.Body.SourceEntity is ZombieEntity z)
+								if (spreadHit.Body != null && spreadHit.Body.SourceEntity is EnemyEntity z)
 								{
 									if (!hit)
 									{
@@ -318,7 +318,7 @@ public class PlayerWeapons : IDisposable
 		}
 	}
 
-	private void HitBullet(ZombieEntity z)
+	private void HitBullet(EnemyEntity z)
 	{
 		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
 		OnWeaponHit.Publish((CurrentWeapon, z));
@@ -342,9 +342,9 @@ public class PlayerWeapons : IDisposable
 			return;
 
 		var hit = false;
-		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(ZombieEntity)))
+		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity)))
 		{
-			var z = i as ZombieEntity;
+			var z = i as EnemyEntity;
 			if (z.IsDead)
 				continue;
 

@@ -131,26 +131,33 @@
 		],
 		"LoopStartIndex": -1
 	},
+	
 
-
-	"zombie-idle": {
-		"Name": "zombie-idle",
+	"roach-idle": {
+		"Name": "roach-idle",
 		"Frames": [
-			"zombie/idle/*"
+			"roach/idle/*"
 		],
 		"LoopStartIndex": 0
 	},
-	"zombie-move": {
-		"Name": "zombie-move",
+	"roach-move": {
+		"Name": "roach-move",
 		"Frames": [
-			"zombie/move/*"
+			"roach/move/*"
 		],
 		"LoopStartIndex": 0
 	},
-	"zombie-attack": {
-		"Name": "zombie-attack",
+	"roach-attack": {
+		"Name": "roach-attack",
 		"Frames": [
-			"zombie/attack/*"
+			"roach/attack/*"
+		],
+		"LoopStartIndex": -1
+	},
+	"roach-death": {
+		"Name": "roach-death",
+		"Frames": [
+			"roach/death/*"
 		],
 		"LoopStartIndex": -1
 	}

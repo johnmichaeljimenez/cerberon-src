@@ -37,7 +37,7 @@ public class AIDirectorManager : BaseManager
 	private readonly EMA emaPlayerAccuracy = new(0.005f);
 	private readonly EMA emaKillCount = new(0.003f);
 	private readonly EMA emaPlayerHurt = new(0.003f);
-	private readonly EMA emaNearbyZombieCount = new(0.003f);
+	private readonly EMA emaNearbyEnemyCount = new(0.003f);
 
 	private readonly EMA emaTension = new(0.005f);
 	private readonly EMA emaMood = new(0.001f);
@@ -45,19 +45,21 @@ public class AIDirectorManager : BaseManager
 	public float Tension { get; private set; }
 	public float Mood { get; private set; }
 
-	private const int MAX_ZOMBIE_COUNT = 20;
+	private const int MAX_ENEMY_COUNT = 20;
 	private const int MAX_ITEM_HEALTH_COUNT = 3;
 	private const int MAX_ITEM_AMMO_COUNT = 5;
 
-	private float zombieSpawnTimer;
+	private float enemySpawnTimer;
 	private float healthSpawnTimer;
 	private float ammoSpawnTimer;
 
 	private PlayerEntity player;
 
+	private bool paused = false;
+
 	public AIDirectorManager(GameplayState gameplayState) : base(gameplayState)
 	{
-		zombieSpawnTimer = 10f;
+		enemySpawnTimer = 10f;
 		healthSpawnTimer = 0f;
 		ammoSpawnTimer = 0f;
 	}
@@ -70,7 +72,7 @@ public class AIDirectorManager : BaseManager
 
 		gameplayState.CurrentWorld.OnEntityDespawn.Subscribe(e =>
 		{
-			if (e is ZombieEntity z)
+			if (e is EnemyEntity z)
 			{
 				if (z.HP <= 0)
 				{
@@ -88,7 +90,7 @@ public class AIDirectorManager : BaseManager
 
 	public override void Update(float dt, float udt)
 	{
-		if (PauseHandler.IsPaused) return;
+		if (PauseHandler.IsPaused || paused) return;
 
 		base.Update(dt, udt);
 
@@ -96,16 +98,16 @@ public class AIDirectorManager : BaseManager
 
 		if (emaPlayerHealth.Current <= 0) return;
 
-		zombieSpawnTimer -= dt;
-		if (zombieSpawnTimer <= 0)
+		enemySpawnTimer -= dt;
+		if (enemySpawnTimer <= 0)
 		{
-			zombieSpawnTimer = CalculateZombieSpawnInterval();
-			int current = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(ZombieEntity)).Count;
-			if (current < MAX_ZOMBIE_COUNT)
+			enemySpawnTimer = CalculateEnemySpawnInterval();
+			int current = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity)).Count;
+			if (current < MAX_ENEMY_COUNT)
 			{
-				int toSpawn = CalculateZombiesToSpawn();
+				int toSpawn = CalculateEnemysToSpawn();
 
-				for (int i = 0; i < toSpawn; i++) SpawnZombie();
+				for (int i = 0; i < toSpawn; i++) SpawnEnemy();
 			}
 		}
 
@@ -139,19 +141,19 @@ public class AIDirectorManager : BaseManager
 		emaPlayerHealth.AddSample((float)player.HP / player.MaxHP);
 		emaAmmoCount.AddSample(player.Weapons.NormalizedTotalAmmoCount);
 		
-		var zList = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(ZombieEntity));
-		var nearbyZombieCount = 0;
+		var zList = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity));
+		var nearbyEnemyCount = 0;
 		for (int i = 0; i < zList.Count; i++)
 		{
-			var z = zList[i] as ZombieEntity;
+			var z = zList[i] as EnemyEntity;
 			if (z.IsDestroyed || z.IsDead)
 				continue;
 
 			if ((z.Position - player.Position).LengthSquared() <= 10 * 10)
-				nearbyZombieCount++;
+				nearbyEnemyCount++;
 		}
 		
-		emaNearbyZombieCount.AddSample(((float)nearbyZombieCount / 10) * 2);
+		emaNearbyEnemyCount.AddSample(((float)nearbyEnemyCount / 10) * 2);
 
 		var newTension = emaKillCount.Current * 0.4f +
 						 emaPlayerAccuracy.Current * 0.1f +
@@ -169,7 +171,7 @@ public class AIDirectorManager : BaseManager
 	private void UpdateMood()
 	{
 		float moodInput = (1.0f - emaPlayerHealth.Current) * 0.45f + //low health = more intense mood
-						  emaNearbyZombieCount.Current * 0.45f + 
+						  emaNearbyEnemyCount.Current * 0.45f + 
 						  emaAmmoCount.Current * 0.1f;
 
 		moodInput *= 2.0f;
@@ -179,8 +181,8 @@ public class AIDirectorManager : BaseManager
 		Mood = emaMood.Current;
 	}
 
-	private float CalculateZombieSpawnInterval() => 9.5f - Tension * 7.8f;
-	private int CalculateZombiesToSpawn() =>
+	private float CalculateEnemySpawnInterval() => 9.5f - Tension * 7.8f;
+	private int CalculateEnemysToSpawn() =>
 		CurrentState switch
 		{
 			TensionState.Calm => 1,
@@ -209,7 +211,7 @@ public class AIDirectorManager : BaseManager
 		e.Position = GetSpawnPosition();
 	});
 
-	private void SpawnZombie() => gameplayState.CurrentWorld.SpawnEntity<ZombieEntity>(e =>
+	private void SpawnEnemy() => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
 	{
 		e.Position = GetSpawnPosition() + RNG.Position(0.2f);
 	});
@@ -217,6 +219,7 @@ public class AIDirectorManager : BaseManager
 	public override void DrawImGui()
 	{
 		base.DrawImGui();
+		ImGui.Checkbox("Pause", ref paused);
 		ImGui.SeparatorText($"AI Director: (Tension: {CurrentState}, Mood: {CurrentMood})");
 		ImGui.ProgressBar(Tension, new(340, 25), $"Overall Tension: {emaTension.Current:F2}");
 		ImGui.ProgressBar(Mood, new(340, 25), $"Mood: {emaMood.Current:F2}");
@@ -227,6 +230,6 @@ public class AIDirectorManager : BaseManager
 		ImGui.ProgressBar(emaPlayerHealth.Current, new(340, 25), $"Health: {emaPlayerHealth.Current:F2}");
 		ImGui.ProgressBar(emaAmmoCount.Current, new(340, 25), $"Ammo: {emaAmmoCount.Current:F2}");
 		ImGui.ProgressBar(emaPlayerHurt.Current, new(340, 25), $"Damage Taken: {emaPlayerHurt.Current:F2}");
-		ImGui.ProgressBar(emaNearbyZombieCount.Current, new(340, 25), $"Nearby enemy Count: {emaNearbyZombieCount.Current:F2}");
+		ImGui.ProgressBar(emaNearbyEnemyCount.Current, new(340, 25), $"Nearby enemy Count: {emaNearbyEnemyCount.Current:F2}");
 	}
 }
