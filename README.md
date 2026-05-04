@@ -5,4 +5,26 @@
 - Lightweight, personal and pragmatic 2D Game Engine written in C# using Raylib-cs
 - Currently work in progress
 
-Download: [rateater93.itch.io/zombie-shooter](https://rateater93.itch.io/zombie-shooter)
+## Getting Started
+
+1. Ensure you have the [.NET 9.0 SDK](https://dotnet.microsoft.com/download) installed.
+2. Clone the repository:
+   ```bash
+   git clone https://github.com/johnmichaeljimenez/cerberon-src.git
+   cd cerberon-src
+   ```
+3. Restore packages and build:
+   ```bash
+   dotnet restore
+   dotnet build
+   ```
+4. Run the engine:
+   ```bash
+   dotnet run
+   ```
+
+All assets are automatically copied to the output directory on build.
+
+## Game demo
+Download the game on itch.io: [rateater93.itch.io/vasodilator](https://rateater93.itch.io/vasodilator)
+- The game is continuously updated by this repo via GitHub workflow.
