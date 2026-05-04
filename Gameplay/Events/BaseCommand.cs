@@ -1,4 +1,5 @@
 using Main.Core;
+using Main.Gameplay.Entities;
 
 namespace Main.Gameplay.Events;
 
@@ -79,5 +80,52 @@ public class Fade : BaseCommand
 	public override bool Update(float dt)
 	{
 		return !FadeHandler.Running; //safe to use even if it's paused, custom timescale, etc.
+	}
+}
+
+public class PlayAudio : BaseCommand
+{
+	private Sound? sound;
+	private string soundID;
+	private Vector2? soundPosition;
+	private bool wait;
+
+	public PlayAudio(string id, Vector2 pos, bool wait = false)
+	{
+		soundID = id;
+		soundPosition = pos;
+		this.wait = wait;
+	}
+
+	public override void OnEnter()
+	{
+		sound = AudioHandler.PlaySound(soundID, soundPosition);
+	}
+
+	public override bool Update(float dt)
+	{
+		if (!sound.HasValue || !wait)
+			return true;
+
+		return AudioHandler.IsPlaying(sound.Value);
+	}
+}
+
+public class SpawnEnemy : BaseCommand
+{
+	public Vector2 position;
+
+	public SpawnEnemy(Vector2 pos)
+	{
+		position = pos;
+	}
+
+	public override void OnEnter()
+	{
+		gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(nameof(EnemyEntity), e =>
+		{
+			e.Persistent = true;
+			e.Position = position;
+		});
 	}
 }

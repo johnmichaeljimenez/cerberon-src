@@ -206,7 +206,7 @@ public static class AudioHandler
 		nextAliasIndex[key] = 0;
 	}
 
-	public static bool PlaySound(string key, Vector2? position = null)
+	public static Sound? PlaySound(string key, Vector2? position = null)
 	{
 		if (soundVariations.TryGetValue(key, out var variations) && variations.Count > 0)
 		{
@@ -217,10 +217,10 @@ public static class AudioHandler
 		return PlayIndividual(key, position);
 	}
 
-	private static bool PlayIndividual(string individualKey, Vector2? position)
+	private static Sound? PlayIndividual(string individualKey, Vector2? position)
 	{
 		if (!soundAliases.TryGetValue(individualKey, out var aliases) || aliases.Count == 0)
-			return false;
+			return null;
 
 		var index = nextAliasIndex.GetValueOrDefault(individualKey, 0);
 		var sound = aliases[index];
@@ -244,6 +244,11 @@ public static class AudioHandler
 		Raylib.SetSoundPitch(sound, RNG.Range(0.9f, 1.1f));
 
 		nextAliasIndex[individualKey] = (index + 1) % aliases.Count;
-		return true;
+		return sound;
+	}
+
+	public static bool IsPlaying(Sound sound)
+	{
+		return Raylib.IsSoundPlaying(sound);
 	}
 }
