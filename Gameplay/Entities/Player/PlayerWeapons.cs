@@ -230,9 +230,9 @@ public class PlayerWeapons : IDisposable
 				{
 					if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
 					{
+						fireCount++;
 						OnWeaponFire.Publish(CurrentWeapon);
 						AudioHandler.PlaySound(SFX_MELEE_START);
-						fireCount++;
 					}
 				}
 				else
@@ -282,7 +282,7 @@ public class PlayerWeapons : IDisposable
 
 	public void OnAnimationBegin(string animationName)
 	{
-		player.Origin = CurrentWeapon.ID == "knife"? new(0.3f, 0.45f) : new(0.3f, 0.7f);
+		player.Origin = CurrentWeapon.ID == "knife" ? new(0.3f, 0.45f) : new(0.3f, 0.7f);
 	}
 
 	public void OnFrameChanged((string, int, float) frameData)
@@ -309,7 +309,10 @@ public class PlayerWeapons : IDisposable
 		}
 
 		if (hit)
+		{
+			hitCount++;
 			AudioHandler.PlaySound(SFX_MELEE_HIT);
+		}
 	}
 
 	public void OnAnimationEnd(string animationName)
