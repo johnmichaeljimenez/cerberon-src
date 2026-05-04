@@ -58,8 +58,8 @@ public class HUDScreen : BaseScreen
 		references["hp-text"].Text = $"HP: {amt}/{playerEntity.MaxHP}";
 	}
 
-	private void OnWeaponUpdate(Gun w)
+	private void OnWeaponUpdate(Weapon w)
 	{
-		references["ammo-text"].Text = $"{w.Name} ({w.CurrentAmmo}/{w.CurrentMaxAmmo})";
+		references["ammo-text"].Text = w.UsesAmmo? $"{w.Name} ({w.CurrentAmmo}/{w.CurrentMaxAmmo})" : $"{w.Name}";
 	}
 }

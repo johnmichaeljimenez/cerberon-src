@@ -37,7 +37,7 @@ public class PlayerEntity : CharacterEntity
 
 	protected override void OnAnimationBegin(string animationName)
 	{
-
+		Weapons.OnAnimationBegin(animationName);
 	}
 
 	protected override void OnAnimationEnd(string animationName)

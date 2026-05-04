@@ -4,7 +4,7 @@ using Main.Helpers;
 
 namespace Main.Gameplay.Entities.Player;
 
-public class Gun
+public class Weapon
 {
 	public string ANIM_IDLE => $"player-{ID}-idle";
 	public string ANIM_MOVE => $"player-{ID}-move";
@@ -27,9 +27,10 @@ public class Gun
 	public int CurrentAmmo;
 	public int CurrentMaxAmmo;
 
-	public float NormalizedCurrentAmmoCount => (float)(CurrentAmmo + CurrentMaxAmmo) / (MagSize + MaxAmmo);
+	public bool UsesAmmo => MaxAmmo + MagSize > 0;
+	public float NormalizedCurrentAmmoCount => !UsesAmmo ? 0 : (float)(CurrentAmmo + CurrentMaxAmmo) / (MagSize + MaxAmmo);
 
-	public Gun(string id, string name, int damage, int altDamage, float firingRate,
+	public Weapon(string id, string name, int damage, int altDamage, float firingRate,
 			   int magSize, int maxAmmo, float reloadTime)
 	{
 		ID = id;
@@ -47,7 +48,7 @@ public class Gun
 
 	public bool CanReload()
 	{
-		return CurrentAmmo < MagSize && CurrentMaxAmmo > 0;
+		return UsesAmmo && CurrentAmmo < MagSize && CurrentMaxAmmo > 0;
 	}
 
 	public bool DoReload()
@@ -73,14 +74,15 @@ public class PlayerWeapons : IDisposable
 	private const string SFX_MELEE_START = "weapon/generic/meleestart";
 	private const string SFX_MELEE_HIT = "weapon/generic/meleehit";
 
-	public readonly List<Gun> Weapons = new() //total hardcoded for now
+	public readonly List<Weapon> Weapons = new() //total hardcoded for now
 	{
-		new Gun("handgun", "Sig Sauer", 15, 25, 0f, 15, 60, 1.3f),
-		new Gun("rifle", "AK-47", 30, 40, 0.1f, 30, 120, 1.4f),
+		new Weapon("knife", "Knife", 0, 45, 0f, 0, 0, 0),
+		new Weapon("handgun", "Sig Sauer", 15, 25, 0f, 15, 60, 1.3f),
+		new Weapon("rifle", "AK-47", 30, 40, 0.1f, 30, 120, 1.4f),
 	};
 
 	private int currentWeaponIndex;
-	public Gun CurrentWeapon => Weapons[currentWeaponIndex];
+	public Weapon CurrentWeapon => Weapons[currentWeaponIndex];
 	private float fireTimer;
 	private Light muzzleFlash;
 
@@ -90,11 +92,11 @@ public class PlayerWeapons : IDisposable
 	private LinecastHit laserHit;
 	private bool isIraqiReload;
 
-	public readonly Signal<Gun> OnWeaponSelected = new();
-	public readonly Signal<Gun> OnWeaponAmmoChanged = new();
-	public readonly Signal<Gun> OnWeaponFire = new();
-	public readonly Signal<(Gun, BaseEntity)> OnWeaponHit = new();
-	public readonly Signal<(Gun, BaseEntity)> OnWeaponKill = new();
+	public readonly Signal<Weapon> OnWeaponSelected = new();
+	public readonly Signal<Weapon> OnWeaponAmmoChanged = new();
+	public readonly Signal<Weapon> OnWeaponFire = new();
+	public readonly Signal<(Weapon, BaseEntity)> OnWeaponHit = new();
+	public readonly Signal<(Weapon, BaseEntity)> OnWeaponKill = new();
 
 	public float NormalizedTotalAmmoCount { get; private set; }
 	public float Accuracy => fireCount < 3 ? 0 : (float)hitCount / (float)fireCount;
@@ -161,7 +163,7 @@ public class PlayerWeapons : IDisposable
 
 		if (fireTimer <= 0)
 		{
-			if (InputManager.IsPressed(InputAction.AltFire))
+			if (InputManager.IsPressed(InputAction.AltFire) && CurrentWeapon.UsesAmmo)
 			{
 				if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
 				{
@@ -170,6 +172,7 @@ public class PlayerWeapons : IDisposable
 				}
 			}
 
+			//TODO: simplify
 			if (InputManager.IsPressed(InputAction.Weapon1))
 			{
 				currentWeaponIndex = 0;
@@ -180,6 +183,13 @@ public class PlayerWeapons : IDisposable
 			else if (InputManager.IsPressed(InputAction.Weapon2))
 			{
 				currentWeaponIndex = 1;
+				OnWeaponSelected.Publish(CurrentWeapon);
+				Log.Send($"Switched to: {CurrentWeapon.Name}");
+				AudioHandler.PlaySound(SFX_EQUIP);
+			}
+			else if (InputManager.IsPressed(InputAction.Weapon3))
+			{
+				currentWeaponIndex = 2;
 				OnWeaponSelected.Publish(CurrentWeapon);
 				Log.Send($"Switched to: {CurrentWeapon.Name}");
 				AudioHandler.PlaySound(SFX_EQUIP);
@@ -209,53 +219,70 @@ public class PlayerWeapons : IDisposable
 				}
 			}
 			else if (
-				(CurrentWeapon.CurrentAmmo == 0 && InputManager.IsPressed(InputAction.Fire)) || //guaranteed tap-to-shoot for dryfire
+				((CurrentWeapon.CurrentAmmo == 0 || !CurrentWeapon.UsesAmmo) && InputManager.IsPressed(InputAction.Fire)) || //guaranteed tap-to-shoot for dryfire and melee-only
 				(CurrentWeapon.CurrentAmmo > 0 && (
 					(CurrentWeapon.FiringRate <= 0 && InputManager.IsPressed(InputAction.Fire)) ||
 					(CurrentWeapon.FiringRate > 0 && InputManager.IsDown(InputAction.Fire))
 				))
 			)
 			{
-				if (CurrentWeapon.CurrentAmmo == 0)
+				if (!CurrentWeapon.UsesAmmo)
 				{
-					AudioHandler.PlaySound(SFX_DRYFIRE);
+					if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
+					{
+						OnWeaponFire.Publish(CurrentWeapon);
+						AudioHandler.PlaySound(SFX_MELEE_START);
+						fireCount++;
+					}
 				}
 				else
 				{
-					fireCount++;
-
-					OnWeaponFire.Publish(CurrentWeapon);
-					player.Animator.Play(CurrentWeapon.ANIM_SHOOT);
-					AudioHandler.PlaySound(CurrentWeapon.SFX_FIRE);
-
-					if (muzzleFlash != null)
+					if (CurrentWeapon.CurrentAmmo == 0)
 					{
-						LightingSystem.RemoveLight(muzzleFlash);
+						AudioHandler.PlaySound(SFX_DRYFIRE);
 					}
-
-					muzzleFlash = LightingSystem.AddLight("light", player.Position, new(80, 30, 0), 0, 14);
-
-					if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
+					else
 					{
-						AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
+						fireCount++;
 
-						hitCount++;
-						OnWeaponHit.Publish((CurrentWeapon, z));
-						z.ApplyDamage(CurrentWeapon.Damage);
+						OnWeaponFire.Publish(CurrentWeapon);
+						player.Animator.Play(CurrentWeapon.ANIM_SHOOT);
+						AudioHandler.PlaySound(CurrentWeapon.SFX_FIRE);
 
-						if (z.IsDead)
-							OnWeaponKill.Publish((CurrentWeapon, z));
+						if (muzzleFlash != null)
+						{
+							LightingSystem.RemoveLight(muzzleFlash);
+						}
+
+						muzzleFlash = LightingSystem.AddLight("light", player.Position, new(80, 30, 0), 0, 14);
+
+						if (LaserHit.Body != null && LaserHit.Body.SourceEntity is ZombieEntity z)
+						{
+							AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
+
+							hitCount++;
+							OnWeaponHit.Publish((CurrentWeapon, z));
+							z.ApplyDamage(CurrentWeapon.Damage);
+
+							if (z.IsDead)
+								OnWeaponKill.Publish((CurrentWeapon, z));
+						}
+
+						CurrentWeapon.CurrentAmmo -= 1;
+						OnWeaponAmmoChanged.Publish(CurrentWeapon);
+						UpdateAmmoCount();
+						Log.Send($"Shoot ({CurrentWeapon.CurrentAmmo}/{CurrentWeapon.CurrentMaxAmmo})");
+						if (CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo > 0)
+							fireTimer = CurrentWeapon.FiringRate;
 					}
-
-					CurrentWeapon.CurrentAmmo -= 1;
-					OnWeaponAmmoChanged.Publish(CurrentWeapon);
-					UpdateAmmoCount();
-					Log.Send($"Shoot ({CurrentWeapon.CurrentAmmo}/{CurrentWeapon.CurrentMaxAmmo})");
-					if (CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo > 0)
-						fireTimer = CurrentWeapon.FiringRate;
 				}
 			}
 		}
+	}
+
+	public void OnAnimationBegin(string animationName)
+	{
+		player.Origin = CurrentWeapon.ID == "knife"? new(0.3f, 0.45f) : new(0.3f, 0.7f);
 	}
 
 	public void OnFrameChanged((string, int, float) frameData)
@@ -285,7 +312,7 @@ public class PlayerWeapons : IDisposable
 			AudioHandler.PlaySound(SFX_MELEE_HIT);
 	}
 
-	internal void OnAnimationEnd(string animationName)
+	public void OnAnimationEnd(string animationName)
 	{
 		if (animationName == CurrentWeapon.ANIM_RELOAD)
 		{
