@@ -15,6 +15,9 @@ public abstract class BaseEntity : IDisposable
 	[DefaultValue(true)]
 	public bool IsActive { get; set; } = true;
 
+	[JsonIgnore]
+	public int SortingIndex { get; set; } = 0;
+
 	private string _currentSpriteID;
 	[JsonProperty]
 	public string CurrentSpriteID

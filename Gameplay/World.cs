@@ -1,11 +1,9 @@
 using System.Reflection;
-using System.Runtime.Serialization;
 using Main.Core;
 using Main.Effects;
 using Main.Gameplay.Entities;
 using Main.Gameplay.Managers;
 using Main.Helpers;
-using Newtonsoft.Json;
 
 namespace Main.Gameplay;
 
@@ -111,10 +109,7 @@ public class World : IDisposable //aka Level loader
 	[JsonIgnore]
 	public readonly Dictionary<string, List<BaseEntity>> EntityGroups = new();
 
-	[JsonIgnore]
 	private readonly HashSet<BaseEntity> toAddEntities = new(); //avoid duplicate spawning/despawning request
-
-	[JsonIgnore]
 	private readonly HashSet<BaseEntity> toRemoveEntities = new();
 
 	private static readonly Dictionary<string, Type> entityRegistry = new();
@@ -235,9 +230,11 @@ public class World : IDisposable //aka Level loader
 			i.LateUpdate(dt, udt);
 		}
 
+		var changed = false;
 		//do the finalization on the last step of update+late update loop of the world
 		if (toAddEntities.Count > 0)
 		{
+			changed = true;
 			foreach (var i in toAddEntities)
 			{
 				Entities.Add(i);
@@ -249,6 +246,7 @@ public class World : IDisposable //aka Level loader
 
 		if (toRemoveEntities.Count > 0)
 		{
+			changed = true;
 			foreach (var i in toRemoveEntities)
 			{
 				OnEntityDespawn.Publish(i);
@@ -257,6 +255,11 @@ public class World : IDisposable //aka Level loader
 			}
 
 			toRemoveEntities.Clear();
+		}
+
+		if (changed)
+		{
+			Entities.Sort((p, q) => p.SortingIndex.CompareTo(q.SortingIndex)); //ascending
 		}
 	}
 
@@ -278,7 +281,7 @@ public class World : IDisposable //aka Level loader
 					if (j.IsDestroyed || !j.IsActive)
 						continue;
 
-					j.Draw(); //sorting for each entities is a tomorrow's problem (or maybe this is already fine now)
+					j.Draw();
 				}
 
 				foreach (var j in EnvironmentColliders)
@@ -351,7 +354,7 @@ public class World : IDisposable //aka Level loader
 			throw new InvalidCastException($"Failed to create {objectTypeName} as {typeof(T).Name}");
 
 		obj.ID = _nextID;
-		_nextID++; //frequently spawned objects like bullets and particles will not be included in save serialization, and this ensures that IDs do not collide without slow checks
+		_nextID++;
 
 		onSpawn?.Invoke(obj); //set custom data here before Init() triggers
 		obj.Init(gameplayState);
