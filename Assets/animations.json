@@ -147,6 +147,13 @@
 		],
 		"LoopStartIndex": 0
 	},
+	"roach-fly": {
+		"Name": "roach-fly",
+		"Frames": [
+			"roach/fly/*"
+		],
+		"LoopStartIndex": 0
+	},
 	"roach-attack": {
 		"Name": "roach-attack",
 		"Frames": [

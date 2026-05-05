@@ -20,6 +20,12 @@ public class EnemyEntity : CharacterEntity
 
 	private float lifetime; //despawn far-away enemys after certain time
 
+	[JsonProperty]
+	public bool IsFlyer { get; set; } = false;
+	private bool flying;
+	private Vector2 flyTarget;
+	private float visibleTime = 0;
+
 	public override void Init(GameplayState gameplayState)
 	{
 		lifetime = LIFETIME;
@@ -33,6 +39,7 @@ public class EnemyEntity : CharacterEntity
 
 		Animator.Add("roach-idle", 0);
 		Animator.Add("roach-move", 0);
+		Animator.Add("roach-fly", 0);
 		Animator.Add("roach-attack", 50);
 		Animator.Add("roach-death", 100);
 
@@ -55,7 +62,7 @@ public class EnemyEntity : CharacterEntity
 
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
 		var d = player.Position - Position;
-		if (!player.IsDead && d.Length() <= 4f)
+		if (!player.IsDead && FacingDirection.IsInFront(player.Position - Position, 4, 50))
 		{
 			player.ApplyDamage(attackDamage);
 		}
@@ -71,6 +78,22 @@ public class EnemyEntity : CharacterEntity
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
 		var d = player.Position - Position;
 
+		if (flying)
+		{
+			d = flyTarget - Position;
+			FacingAngle = Raymath.LerpAngle(FacingAngle, d.ToDirection(), dt * 8);
+			velocity = Vector2.Normalize(d) * MovementSpeed * 2;
+			CollisionBody.EnableState = CircleBody.States.DisabledMoveCheck;
+
+			if (d.Length() <= 2)
+			{
+				flying = false;
+				CollisionBody.EnableState = !IsDead ? CircleBody.States.Enabled : CircleBody.States.FullyDisabled;
+			}
+
+			return;
+		}
+
 		if (IsAnimatorBusy)
 		{
 			FacingAngle = Raymath.LerpAngle(FacingAngle, d.ToDirection(), dt * 8);
@@ -78,8 +101,10 @@ public class EnemyEntity : CharacterEntity
 			return;
 		}
 
-		if (d.Length() <= 3f)
+		var dist = d.Length();
+		if (dist <= 3f)
 		{
+			visibleTime += dt;
 			lifetime = LIFETIME;
 			nodes.Clear();
 
@@ -93,12 +118,14 @@ public class EnemyEntity : CharacterEntity
 			var w = gameplayState.GetManager<WaypointManager>();
 			if (w.IsVisible(Position, player.Position)) //go straight to player if directly visible (not true FOV yet)
 			{
+				visibleTime += dt;
 				lifetime = LIFETIME;
 				if (nodes.Count > 0)
 					nodes.Clear();
 			}
 			else
 			{
+				visibleTime = 0;
 				if (d.Length() <= 10)
 					lifetime = LIFETIME;
 
@@ -127,6 +154,15 @@ public class EnemyEntity : CharacterEntity
 				}
 			}
 
+
+			if (IsFlyer && d.Length() >= 8)
+			{
+				flying = true;
+				flyTarget = Position + (d * 0.5f); //undershoot flying target
+				AudioHandler.PlaySound("roach/fly", Position);
+				return;
+			}
+
 			velocity = Raymath.Vector2Lerp(velocity, Raymath.Vector2Normalize(d) * MovementSpeed, dt * 10);
 		}
 
@@ -143,13 +179,20 @@ public class EnemyEntity : CharacterEntity
 		var ms = MovementSpeed / 1.5f;
 		if (velocity.LengthSquared() > ms * ms)
 		{
-			Animator.Play("roach-move");
-			fsTimer += dt;
-
-			if (fsTimer >= 0.4f)
+			if (flying)
 			{
-				AudioHandler.PlaySound("fs/rock", Position);
-				fsTimer = 0;
+				Animator.Play("roach-fly");
+			}
+			else
+			{
+				Animator.Play("roach-move");
+				fsTimer += dt;
+
+				if (fsTimer >= 0.4f)
+				{
+					AudioHandler.PlaySound("fs/rock", Position);
+					fsTimer = 0;
+				}
 			}
 		}
 		else
@@ -166,6 +209,11 @@ public class EnemyEntity : CharacterEntity
 				Log.Send($"Despawned enemy #{ID}");
 			}
 		}
+	}
+
+	protected override void OnHit(float amt, bool isDead)
+	{
+		base.OnHit(amt, isDead);
 	}
 
 	protected override void OnDeath()

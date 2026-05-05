@@ -45,7 +45,7 @@ public class AIDirectorManager : BaseManager
 	public float Tension { get; private set; }
 	public float Mood { get; private set; }
 
-	private const int MAX_ENEMY_COUNT = 20;
+	private const int MAX_ENEMY_COUNT = 50;
 	private const int MAX_ITEM_HEALTH_COUNT = 3;
 	private const int MAX_ITEM_AMMO_COUNT = 5;
 	private const int MAX_ITEM_WEAPON_COUNT = 1;
@@ -261,6 +261,7 @@ public class AIDirectorManager : BaseManager
 	private void SpawnEnemy() => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
 	{
 		e.Position = GetSpawnPosition() + RNG.Position(0.2f);
+		e.IsFlyer = CurrentState >= TensionState.Panic && CurrentMood >= MoodState.Dread && RNG.Chance(0.5f); //jumpscare
 	});
 
 	public override void DrawImGui()
