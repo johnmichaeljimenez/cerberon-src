@@ -33,10 +33,20 @@ public struct LinecastHit
 
 public class CircleBody
 {
+	[Flags]
+	public enum States
+	{
+		None = 0,
+		FullyDisabled = 1 << 0,
+		Enabled = 1 << 1,
+		DisabledMoveCheck = 1 << 2,
+		DisabledLinecast = 1 << 3
+	}
+
 	public Vector2 Position;
 	public float Radius;
 	public BaseEntity SourceEntity;
-	public bool Enabled = true;
+	public States EnableState = States.Enabled;
 }
 
 public class CollisionManager : BaseManager
@@ -163,7 +173,7 @@ public class CollisionManager : BaseManager
 
 		foreach (var other in bodies)
 		{
-			if (body == other || !other.Enabled) continue;
+			if (body == other || other.EnableState.HasFlag(CircleBody.States.FullyDisabled) || other.EnableState.HasFlag(CircleBody.States.DisabledMoveCheck)) continue;
 
 			Vector2 delta = proposed - other.Position;
 			float distSq = delta.LengthSquared();
@@ -228,7 +238,7 @@ public class CollisionManager : BaseManager
 
 		foreach (var other in bodies)
 		{
-			if (other == null || other == fromBody || !other.Enabled) continue;
+			if (other == null || other == fromBody || other.EnableState == CircleBody.States.FullyDisabled || other.EnableState.HasFlag(CircleBody.States.DisabledLinecast)) continue;
 
 			Vector2 oc = from - other.Position;
 			float a = 1f;
