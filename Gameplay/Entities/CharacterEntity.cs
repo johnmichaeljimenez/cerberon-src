@@ -1,6 +1,7 @@
 using Main.Core;
 using Main.Effects;
 using Main.Helpers;
+using Tween;
 
 namespace Main.Gameplay.Entities;
 
@@ -46,6 +47,9 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	public readonly Signal<int> OnHPChanged = new();
 	public readonly Signal<int> OnTakeDamage = new();
 
+	protected Tween<Vector2> externalForceTween;
+	protected Vector2 externalForce;
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
@@ -85,10 +89,13 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	{
 		base.LateUpdate(dt, udt);
 
-		if (velocity.LengthSquared() > 0)
+		var hasVelocity = velocity.LengthSquared() > 0;
+		var hasExternalForce = externalForce.LengthSquared() > 0;
+
+		if (hasVelocity || hasExternalForce)
 		{
 			var cm = gameplayState.GetManager<CollisionManager>();
-			var vel = velocity * dt;
+			var vel = (hasExternalForce? externalForce : velocity) * dt;
 			cm.Move(CollisionBody, ref vel); //super smooth and accurate collision detection and resolution
 			cm.MoveRepelBody(CollisionBody, ref vel);
 			Position += vel;
@@ -111,7 +118,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public override void DrawDebug()
 	{
-		if (CollisionBody.Enabled)
+		if (CollisionBody.EnableState == CircleBody.States.Enabled)
 		{
 			Raylib.DrawCircleLinesV(CollisionBody.Position, CollisionBody.Radius, Colors.GREEN);
 			Raylib.DrawCircleLinesV(Position + (FacingDirection * 0.6f), 0.3f, Colors.GREEN);
@@ -161,7 +168,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	protected virtual void OnDeath()
 	{
 		velocity = Vector2.Zero;
-		CollisionBody.Enabled = false;
+		CollisionBody.EnableState = CircleBody.States.FullyDisabled;
 	}
 
 	public Vector2 GetFacingAngleOffset(float angleOffset)
@@ -171,5 +178,22 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 			MathF.Cos(targetAngle),
 			MathF.Sin(targetAngle)
 		);
+	}
+
+	public void SetExternalForce(Vector2 dir, float amt, float duration)
+	{
+		if (externalForceTween != null)
+			TweenManager.Remove(externalForceTween);
+
+		externalForceTween = new Tween<Vector2>(() => externalForce, (t) => externalForce = t, Vector2.Zero, duration, dir * amt, $"exforce-{GetType().Name}#{ID}").SetEasing(Easing.QuadInOut);
+		TweenManager.Add(externalForceTween);
+	}
+
+	public void StopExternalForce()
+	{
+		if (externalForceTween != null)
+			TweenManager.Remove(externalForceTween);
+
+		externalForceTween = null;
 	}
 }

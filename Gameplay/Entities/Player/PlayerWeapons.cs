@@ -25,6 +25,10 @@ public class Weapon
 	public int Damage;
 	public int AltDamage;
 
+	//knockback
+	public float MeleeKick;
+	public float RangedKick;
+
 	public int CurrentAmmo;
 	public int CurrentMaxAmmo;
 
@@ -34,7 +38,7 @@ public class Weapon
 	public bool IsUnlocked { get; private set; }
 
 	public Weapon(string id, string name, int damage, int altDamage, float firingRate,
-			   int magSize, int maxAmmo, bool unlocked = false)
+			   int magSize, int maxAmmo, bool unlocked = false, float meleeKick = 60, float rangedKick = 20)
 	{
 		ID = id;
 		Name = name;
@@ -43,8 +47,10 @@ public class Weapon
 		FiringRate = firingRate;
 		MagSize = magSize;
 		MaxAmmo = maxAmmo;
-		IsUnlocked = unlocked;
+		MeleeKick = meleeKick;
+		RangedKick = rangedKick;
 
+		IsUnlocked = unlocked;
 		GiveAmmo();
 	}
 
@@ -93,11 +99,11 @@ public class PlayerWeapons : IDisposable
 	public readonly List<Weapon> Weapons = new() //total hardcoded for now
 	{
 		new Weapon("knife", "Knife", 0, 70, 0f, 0, 0, true),
-		new Weapon("handgun", "Sig Sauer", 15, 25, 0f, 15, 60, true),
-		new Weapon("rifle", "AK-47", 30, 40, 0.1f, 30, 120),
-		new Weapon("shotgun", "Sawn-off Shotgun", 30, 40, 0f, 2, 30){
-			SpreadAngle = 8,
-			SpreadCount = 6
+		new Weapon("handgun", "Sig Sauer", 50, 50, 0f, 15, 60, true),
+		new Weapon("rifle", "AK-47", 80, 60, 0.1f, 30, 120),
+		new Weapon("shotgun", "Sawn-off Shotgun", 70, 60, 0f, 2, 30, true, rangedKick: 80){
+			SpreadAngle = 60,
+			SpreadCount = 20
 		} //2-shot
 	};
 
@@ -327,6 +333,7 @@ public class PlayerWeapons : IDisposable
 	{
 		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
 		OnWeaponHit.Publish((CurrentWeapon, z));
+		ApplyKick(z, Raymath.Vector2Normalize(z.Position - player.Position), CurrentWeapon.RangedKick);
 		z.ApplyDamage(CurrentWeapon.Damage);
 
 		if (z.IsDead)
@@ -357,6 +364,7 @@ public class PlayerWeapons : IDisposable
 			if (!player.FacingDirection.IsInFront(d, 6, 90))
 				continue;
 
+			ApplyKick(z, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
 			z.ApplyDamage(CurrentWeapon.AltDamage);
 			hit = true;
 		}
@@ -418,9 +426,18 @@ public class PlayerWeapons : IDisposable
 		foreach (var i in Weapons)
 		{
 			if (i.IsUnlocked)
+			{
 				i.GiveAmmo(0);  //give reserve ammo
+				if (i == CurrentWeapon)
+					OnWeaponAmmoChanged.Publish(CurrentWeapon);
+			}
 		}
 
 		return true;
+	}
+
+	private void ApplyKick(CharacterEntity e, Vector2 dir, float amt)
+	{
+		e.SetExternalForce(dir, amt, 0.1f);
 	}
 }
