@@ -60,6 +60,7 @@ public class Weapon
 			return;
 
 		CurrentAmmo += ammo1 < 0 ? MagSize : ammo1;
+		CurrentAmmo = Math.Min(CurrentAmmo, MagSize);
 		CurrentMaxAmmo += ammo2 < 0 ? MaxAmmo / 4 : ammo2;
 	}
 
