@@ -12,6 +12,8 @@ public abstract class BaseScreen : IDisposable
 	protected UIElement pressElement { get; private set; }
 	protected readonly List<IDisposable> disposables = new();
 
+	private float inputStartDelay;
+
 	public BaseScreen()
 	{
 
@@ -43,19 +45,25 @@ public abstract class BaseScreen : IDisposable
 		{
 			if (!item.Visible)
 				continue;
-				
+
 			item.Draw(hoveredElement == item);
 		}
 	}
 
 	public virtual void OnEnter()
 	{
-
+		inputStartDelay = 0.4f;
 	}
 
 	public virtual void Update(float dt, float udt)
 	{
 		hoveredElement = null;
+
+		if (inputStartDelay > 0)
+		{
+			inputStartDelay -= udt; //tiny QOL to avoid immediately triggering a newly-shown screen clickable element
+			return;
+		}
 
 		for (int i = elements.Count - 1; i >= 0; i--)
 		{
