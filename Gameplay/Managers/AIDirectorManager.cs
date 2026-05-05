@@ -60,6 +60,11 @@ public class AIDirectorManager : BaseManager
 
 	private bool paused = false;
 
+
+	private const int MAX_ATTACKING_ENEMY = 2;
+	private const float TOKEN_COOLDOWN = 1.5f;
+	private readonly float[] attackTokenCooldowns = new float[MAX_ATTACKING_ENEMY];
+
 	public AIDirectorManager(GameplayState gameplayState) : base(gameplayState)
 	{
 		enemySpawnTimer = 10f;
@@ -88,7 +93,7 @@ public class AIDirectorManager : BaseManager
 
 		player.OnTakeDamage.Subscribe(dmg =>
 		{
-			emaPlayerHurt.AddSample(dmg * 20);
+			emaPlayerHurt.AddSample(dmg * 40);
 			emaMood.AddSample(emaMood.Current + (dmg * 0.5f));
 		}).AddTo(disposables);
 	}
@@ -98,6 +103,11 @@ public class AIDirectorManager : BaseManager
 		if (PauseHandler.IsPaused || paused) return;
 
 		base.Update(dt, udt);
+
+		for (int i = 0; i < attackTokenCooldowns.Length; i++)
+		{
+			Utils.Countdown(ref attackTokenCooldowns[i], dt);
+		}
 
 		TensionUpdate(dt);
 
@@ -195,7 +205,7 @@ public class AIDirectorManager : BaseManager
 				nearbyEnemyCount++;
 		}
 
-		emaNearbyEnemyCount.AddSample(((float)nearbyEnemyCount / 10) * 2);
+		emaNearbyEnemyCount.AddSample(((float)nearbyEnemyCount / 5) * 2);
 
 		var newTension = emaKillCount.Current * 0.4f +
 						 emaPlayerAccuracy.Current * 0.1f +
@@ -230,7 +240,7 @@ public class AIDirectorManager : BaseManager
 			TensionState.Calm => 1,
 			TensionState.Tense => 2,
 			TensionState.Panic => 3,
-			TensionState.Critical => 8,
+			TensionState.Critical => 5,
 			_ => 2
 		};
 
@@ -261,7 +271,7 @@ public class AIDirectorManager : BaseManager
 	private void SpawnEnemy() => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
 	{
 		e.Position = GetSpawnPosition() + RNG.Position(0.2f);
-		e.IsFlyer = CurrentState >= TensionState.Panic && CurrentMood >= MoodState.Dread && RNG.Chance(0.5f); //jumpscare
+		e.IsFlyer = CurrentState >= TensionState.Critical && RNG.Chance(0.5f); //jumpscare + escalate pressure (but only if player can sustain it)
 	});
 
 	public override void DrawImGui()
@@ -279,5 +289,36 @@ public class AIDirectorManager : BaseManager
 		ImGui.ProgressBar(emaAmmoCount.Current, new(340, 25), $"Ammo: {emaAmmoCount.Current:F2}");
 		ImGui.ProgressBar(emaPlayerHurt.Current, new(340, 25), $"Damage Taken: {emaPlayerHurt.Current:F2}");
 		ImGui.ProgressBar(emaNearbyEnemyCount.Current, new(340, 25), $"Nearby enemy Count: {emaNearbyEnemyCount.Current:F2}");
+
+		ImGui.SeparatorText("Attack tokens");
+		for (int i = 0; i < attackTokenCooldowns.Length; i++)
+		{
+			var val = attackTokenCooldowns[i] / TOKEN_COOLDOWN;
+			ImGui.ProgressBar(val, new(340, 20), $"{val:F2} s");
+		}
+	}
+
+	public int RequestAttack()
+	{
+		// Find an available token that isn't on cooldown
+		for (int i = 0; i < MAX_ATTACKING_ENEMY; i++)
+		{
+			if (attackTokenCooldowns[i] <= 0)
+			{
+				// Mark as "in use" (set to a negative value or a flag)
+				attackTokenCooldowns[i] = -1f;
+				return i;
+			}
+		}
+		return -1; // No tokens available
+	}
+
+	public void ReleaseAttack(int tokenIndex)
+	{
+		if (tokenIndex >= 0 && tokenIndex < MAX_ATTACKING_ENEMY)
+		{
+			// Start the cooldown for this specific token
+			attackTokenCooldowns[tokenIndex] = TOKEN_COOLDOWN;
+		}
 	}
 }

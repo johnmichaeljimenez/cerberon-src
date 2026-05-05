@@ -26,6 +26,8 @@ public class EnemyEntity : CharacterEntity
 	private Vector2 flyTarget;
 	private float visibleTime = 0;
 
+	private int attackRequestIndex = -1;
+
 	public override void Init(GameplayState gameplayState)
 	{
 		lifetime = LIFETIME;
@@ -34,6 +36,7 @@ public class EnemyEntity : CharacterEntity
 		MovementSpeed = 7.0f;
 		Log.Send($"Spawned enemy #{ID}");
 		Origin = new(0.4f, 0.5f);
+		attackRequestIndex = -1;
 
 		base.Init(gameplayState);
 
@@ -48,6 +51,12 @@ public class EnemyEntity : CharacterEntity
 
 	protected override void OnAnimationEnd(string animationName)
 	{
+		if (animationName == "roach-attack")
+		{
+			ReleaseAttack();
+			return;
+		}
+
 		if (animationName == "roach-death")
 		{
 			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin);
@@ -108,9 +117,15 @@ public class EnemyEntity : CharacterEntity
 			lifetime = LIFETIME;
 			nodes.Clear();
 
-			if (Animator.Play("roach-attack", false, "roach-idle"))
+			ReleaseAttack();
+			attackRequestIndex = gameplayState.GetManager<AIDirectorManager>().RequestAttack();
+
+			if (attackRequestIndex >= 0)
 			{
-				velocity = Vector2.Zero;
+				if (Animator.Play("roach-attack", false, "roach-idle"))
+				{
+					velocity = Vector2.Zero;
+				}
 			}
 		}
 		else
@@ -228,6 +243,16 @@ public class EnemyEntity : CharacterEntity
 		RenderingManager.BeginMaskedShader();
 		base.Draw();
 		Raylib.EndShaderMode();
+	}
+
+	private void ReleaseAttack()
+	{
+		if (attackRequestIndex >= 0)
+		{
+			gameplayState.GetManager<AIDirectorManager>().ReleaseAttack(attackRequestIndex);
+		}
+
+		attackRequestIndex = -1;
 	}
 
 	// public override void DrawDebug()

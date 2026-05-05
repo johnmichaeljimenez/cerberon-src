@@ -157,7 +157,17 @@
 	"roach-attack": {
 		"Name": "roach-attack",
 		"Frames": [
-			"roach/attack/*"
+			"roach/attack/frames-1",
+			"roach/attack/frames-3",
+			"roach/attack/frames-5",
+			"roach/attack/frames-7",
+			"roach/attack/frames-9",
+			"roach/attack/frames-11",
+			"roach/attack/frames-13",
+			"roach/attack/frames-15",
+			"roach/attack/frames-15",
+			"roach/attack/frames-17",
+			"roach/attack/frames-17"
 		],
 		"LoopStartIndex": -1
 	},
