@@ -181,6 +181,7 @@ public class Animator //this is the "instance" using those said "assets"
 			if (!ignorePriority && priority[currentAnimation.Name] > priority[animationName])
 				return false;
 
+			OnAnimationEnd?.Publish(currentAnimation.Name);
 		}
 
 		Reset();
