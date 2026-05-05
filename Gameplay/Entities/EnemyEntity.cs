@@ -25,7 +25,7 @@ public class EnemyEntity : CharacterEntity
 		lifetime = LIFETIME;
 		MaxHP = 70;
 		Radius = 0.8f;
-		MovementSpeed = 4.0f;
+		MovementSpeed = 7.0f;
 		Log.Send($"Spawned enemy #{ID}");
 		Origin = new(0.4f, 0.5f);
 

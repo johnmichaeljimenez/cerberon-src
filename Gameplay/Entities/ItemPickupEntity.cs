@@ -20,6 +20,9 @@ public class ItemPickupEntity : BaseEntity
 	[JsonProperty]
 	public int Amount { get; set; }
 
+	private float lifeTime;
+	private const int MAX_LIFETIME = 20;
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
@@ -37,6 +40,7 @@ public class ItemPickupEntity : BaseEntity
 			Groups.Add("ammo");
 		}
 
+		lifeTime = MAX_LIFETIME;
 		Log.Send($"Spawned item: {ItemType} at {Position}");
 	}
 
@@ -45,8 +49,8 @@ public class ItemPickupEntity : BaseEntity
 		base.Update(dt, udt);
 
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
-		var d = (player.Position - Position);
-		if (d.Length() <= 1.5f)
+		var d = (player.Position - Position).Length();
+		if (d <= 1.5f)
 		{
 			var pickedUp = false;
 
@@ -67,6 +71,15 @@ public class ItemPickupEntity : BaseEntity
 				AudioHandler.PlaySound("generic/item-pickup");
 				Despawn();
 			}
+		}
+		else if (d >= 25)
+		{
+			if (Utils.Countdown(ref lifeTime, dt))
+				Despawn();
+		}
+		else
+		{
+			lifeTime = MAX_LIFETIME;
 		}
 	}
 
