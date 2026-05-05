@@ -31,8 +31,10 @@ public class Weapon
 	public bool UsesAmmo => MaxAmmo + MagSize > 0;
 	public float NormalizedCurrentAmmoCount => !UsesAmmo ? 0 : (float)(CurrentAmmo + CurrentMaxAmmo) / (MagSize + MaxAmmo);
 
+	public bool IsUnlocked { get; private set; }
+
 	public Weapon(string id, string name, int damage, int altDamage, float firingRate,
-			   int magSize, int maxAmmo)
+			   int magSize, int maxAmmo, bool unlocked = false)
 	{
 		ID = id;
 		Name = name;
@@ -41,9 +43,23 @@ public class Weapon
 		FiringRate = firingRate;
 		MagSize = magSize;
 		MaxAmmo = maxAmmo;
+		IsUnlocked = unlocked;
 
-		CurrentAmmo = MagSize;
-		CurrentMaxAmmo = MaxAmmo / 4;
+		GiveAmmo();
+	}
+
+	public void GiveAmmo(int ammo1 = -1, int ammo2 = -1)
+	{
+		if (!IsUnlocked || !UsesAmmo)
+			return;
+
+		CurrentAmmo += ammo1 < 0 ? MagSize : ammo1;
+		CurrentMaxAmmo += ammo2 < 0 ? MaxAmmo / 4 : ammo2;
+	}
+
+	public void Unlock()
+	{
+		IsUnlocked = true;
 	}
 
 	public bool CanReload()
@@ -76,8 +92,8 @@ public class PlayerWeapons : IDisposable
 
 	public readonly List<Weapon> Weapons = new() //total hardcoded for now
 	{
-		new Weapon("knife", "Knife", 0, 45, 0f, 0, 0),
-		new Weapon("handgun", "Sig Sauer", 15, 25, 0f, 15, 60),
+		new Weapon("knife", "Knife", 0, 70, 0f, 0, 0, true),
+		new Weapon("handgun", "Sig Sauer", 15, 25, 0f, 15, 60, true),
 		new Weapon("rifle", "AK-47", 30, 40, 0.1f, 30, 120),
 		new Weapon("shotgun", "Sawn-off Shotgun", 30, 40, 0f, 2, 30){
 			SpreadAngle = 8,
@@ -178,36 +194,17 @@ public class PlayerWeapons : IDisposable
 				}
 			}
 
-			//TODO: simplify
-			if (InputManager.IsPressed(InputAction.Weapon1))
+			for (int i = 0; i < InputManager.WeaponInputs.Count; i++)
 			{
-				currentWeaponIndex = 0;
-				OnWeaponSelected.Publish(CurrentWeapon);
-				Log.Send($"Switched to: {CurrentWeapon.Name}");
-				AudioHandler.PlaySound(SFX_EQUIP);
+				var input = InputManager.WeaponInputs[i];
+				if (InputManager.IsPressed(input) && currentWeaponIndex != i && Weapons[i].IsUnlocked)
+				{
+					SwitchWeapon(i);
+					break;
+				}
 			}
-			else if (InputManager.IsPressed(InputAction.Weapon2))
-			{
-				currentWeaponIndex = 1;
-				OnWeaponSelected.Publish(CurrentWeapon);
-				Log.Send($"Switched to: {CurrentWeapon.Name}");
-				AudioHandler.PlaySound(SFX_EQUIP);
-			}
-			else if (InputManager.IsPressed(InputAction.Weapon3))
-			{
-				currentWeaponIndex = 2;
-				OnWeaponSelected.Publish(CurrentWeapon);
-				Log.Send($"Switched to: {CurrentWeapon.Name}");
-				AudioHandler.PlaySound(SFX_EQUIP);
-			}
-			else if (InputManager.IsPressed(InputAction.Weapon4))
-			{
-				currentWeaponIndex = 3;
-				OnWeaponSelected.Publish(CurrentWeapon);
-				Log.Send($"Switched to: {CurrentWeapon.Name}");
-				AudioHandler.PlaySound(SFX_EQUIP);
-			}
-			else if (InputManager.IsPressed(InputAction.Reload) && CurrentWeapon.CanReload())
+
+			if (InputManager.IsPressed(InputAction.Reload) && CurrentWeapon.CanReload())
 			{
 				//I just feel like adding Iraqi reload here because it's cheap and cool tbh ("sometimes a cigar is just a cigar" of game design)
 
@@ -318,6 +315,14 @@ public class PlayerWeapons : IDisposable
 		}
 	}
 
+	private void SwitchWeapon(int i)
+	{
+		currentWeaponIndex = i;
+		OnWeaponSelected.Publish(CurrentWeapon);
+		Log.Send($"Switched to: {CurrentWeapon.Name}");
+		AudioHandler.PlaySound(SFX_EQUIP);
+	}
+
 	private void HitBullet(EnemyEntity z)
 	{
 		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
@@ -349,7 +354,7 @@ public class PlayerWeapons : IDisposable
 				continue;
 
 			var d = i.Position - player.Position;
-			if (!player.FacingDirection.IsInFront(d, 5, 70))
+			if (!player.FacingDirection.IsInFront(d, 6, 90))
 				continue;
 
 			z.ApplyDamage(CurrentWeapon.AltDamage);
@@ -361,6 +366,25 @@ public class PlayerWeapons : IDisposable
 			hitCount++;
 			AudioHandler.PlaySound(SFX_MELEE_HIT);
 		}
+	}
+
+	public bool PickupWeapon(string id)
+	{
+		var w = Weapons.FirstOrDefault(p => p.ID == id);
+		if (w == null)
+			return false;
+
+		if (!w.IsUnlocked)
+		{
+			w.Unlock();
+			SwitchWeapon(Weapons.IndexOf(w));
+		}
+
+		w.GiveAmmo();
+		if (w == CurrentWeapon)
+			OnWeaponAmmoChanged.Publish(w);
+
+		return true;
 	}
 
 	public void OnAnimationEnd(string animationName)
@@ -380,15 +404,23 @@ public class PlayerWeapons : IDisposable
 		}
 	}
 
-	public bool PickupAmmo(string id, int amt)
+	public bool IsWeaponUnlocked(string id)
 	{
-		var weapon = Weapons.FirstOrDefault(p => p.ID == id);
-		if (weapon == null)
+		var w = Weapons.FirstOrDefault(p => p.ID == id);
+		if (w == null)
 			return false;
 
-		weapon.CurrentMaxAmmo += amt;
-		if (weapon == CurrentWeapon)
-			OnWeaponAmmoChanged.Publish(weapon);
+		return w.IsUnlocked;
+	}
+
+	public bool PickupAmmo()
+	{
+		foreach (var i in Weapons)
+		{
+			if (i.IsUnlocked)
+				i.GiveAmmo(0);  //give reserve ammo
+		}
+
 		return true;
 	}
 }

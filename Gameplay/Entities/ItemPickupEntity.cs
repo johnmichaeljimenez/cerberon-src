@@ -9,8 +9,9 @@ public class ItemPickupEntity : BaseEntity
 	public enum ItemTypes
 	{
 		Health,
-		AmmoSIG,
-		AmmoAK
+		Ammo,
+		WeaponAK,
+		WeaponShotgun
 	}
 
 	[JsonProperty]
@@ -26,6 +27,10 @@ public class ItemPickupEntity : BaseEntity
 		if (ItemType == ItemTypes.Health)
 		{
 			Groups.Add("health");
+		}
+		else if (ItemType == ItemTypes.WeaponAK || ItemType == ItemTypes.WeaponShotgun)
+		{
+			Groups.Add("weapons");
 		}
 		else
 		{
@@ -48,18 +53,14 @@ public class ItemPickupEntity : BaseEntity
 			if (ItemType == ItemTypes.Health)
 				pickedUp = player.Heal(Amount);
 
-			//TODO: cleanup
-			if (ItemType == ItemTypes.AmmoAK)
-			{
-				player.Weapons.PickupAmmo("rifle", Amount);
-				pickedUp = true;
-			}
+			if (ItemType == ItemTypes.Ammo)
+				pickedUp = player.Weapons.PickupAmmo();
 
-			if (ItemType == ItemTypes.AmmoSIG)
-			{
-				player.Weapons.PickupAmmo("handgun", Amount);
-				pickedUp = true;
-			}
+			if (ItemType == ItemTypes.WeaponAK)
+				pickedUp = player.Weapons.PickupWeapon("rifle");
+
+			if (ItemType == ItemTypes.WeaponShotgun)
+				pickedUp = player.Weapons.PickupWeapon("shotgun");
 
 			if (pickedUp)
 			{

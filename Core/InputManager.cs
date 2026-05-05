@@ -59,6 +59,14 @@ public static class InputManager
 
     public static Vector2 Movement { get; private set; }
 
+    public static readonly List<InputAction> WeaponInputs = new()
+    {
+        InputAction.Weapon1,
+        InputAction.Weapon2,
+        InputAction.Weapon3,
+        InputAction.Weapon4,
+    };
+
     private static Dictionary<InputAction, InputButton> Actions = new()
     {
         { InputAction.Fire, new(null, MouseButton.Left) },

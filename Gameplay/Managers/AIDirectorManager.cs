@@ -17,13 +17,13 @@ public class AIDirectorManager : BaseManager
 	public TensionState CurrentState =>
 		Tension switch
 		{
-			< 0.3f => TensionState.Calm,
-			< 0.6f => TensionState.Tense,
-			< 0.85f => TensionState.Panic,
+			< 0.2f => TensionState.Calm,
+			< 0.5f => TensionState.Tense,
+			< 0.7f => TensionState.Panic,
 			_ => TensionState.Critical
 		};
 
-	public MoodState CurrentMood => Mood switch	//TODO: add hysteresis
+	public MoodState CurrentMood => Mood switch //TODO: add hysteresis
 	{
 		< 0.12f => MoodState.Calm,
 		< 0.4f => MoodState.Unease,
@@ -48,12 +48,15 @@ public class AIDirectorManager : BaseManager
 	private const int MAX_ENEMY_COUNT = 20;
 	private const int MAX_ITEM_HEALTH_COUNT = 3;
 	private const int MAX_ITEM_AMMO_COUNT = 5;
+	private const int MAX_ITEM_WEAPON_COUNT = 1;
 
 	private float enemySpawnTimer;
 	private float healthSpawnTimer;
 	private float ammoSpawnTimer;
+	private float weaponSpawnTimer;
 
 	private PlayerEntity player;
+	private GameplayManager gameplayManager;
 
 	private bool paused = false;
 
@@ -62,12 +65,14 @@ public class AIDirectorManager : BaseManager
 		enemySpawnTimer = 10f;
 		healthSpawnTimer = 0f;
 		ammoSpawnTimer = 0f;
+		weaponSpawnTimer = 30f;
 	}
 
 	public override void OnEnter()
 	{
 		base.OnEnter();
 
+		gameplayManager = gameplayState.GetManager<GameplayManager>();
 		player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
 
 		gameplayState.CurrentWorld.OnEntityDespawn.Subscribe(e =>
@@ -83,7 +88,7 @@ public class AIDirectorManager : BaseManager
 
 		player.OnTakeDamage.Subscribe(dmg =>
 		{
-			emaPlayerHurt.AddSample(dmg * 30);
+			emaPlayerHurt.AddSample(dmg * 20);
 			emaMood.AddSample(emaMood.Current + (dmg * 0.5f));
 		}).AddTo(disposables);
 	}
@@ -122,12 +127,49 @@ public class AIDirectorManager : BaseManager
 		}
 
 		ammoSpawnTimer -= dt;
-		if (ammoSpawnTimer <= 0 && emaPlayerHealth.Current < 0.7f)
+		if (ammoSpawnTimer <= 0 && emaAmmoCount.Current < 0.7f)
 		{
 			if (gameplayState.CurrentWorld.GetEntitiesByGroup("ammo").Count < MAX_ITEM_AMMO_COUNT)
 			{
 				SpawnAmmoItem();
 				ammoSpawnTimer = 15f;
+			}
+		}
+
+		if (weaponSpawnTimer > 0)
+		{
+			weaponSpawnTimer -= dt;
+			if (weaponSpawnTimer <= 0)
+			{
+				weaponSpawnTimer = 5.0f;
+				if (gameplayManager.NormalizedTime <= 0.25f || emaTension.Current >= 0.6f)
+				{
+					var allWeaponsUnlocked = player.Weapons.Weapons.All(p => p.IsUnlocked);
+					if (allWeaponsUnlocked)
+					{
+						weaponSpawnTimer = -1;
+					}
+					else
+					{
+						var spawned = false;
+
+						if (gameplayState.CurrentWorld.GetEntitiesByGroup("weapon").Count < MAX_ITEM_WEAPON_COUNT)
+						{
+							if (!player.Weapons.IsWeaponUnlocked("rifle"))
+							{
+								SpawnWeaponItem("rifle");
+								spawned = true;
+							}
+							else if (!player.Weapons.IsWeaponUnlocked("shotgun"))
+							{
+								SpawnWeaponItem("shotgun");
+								spawned = true;
+							}
+						}
+
+						weaponSpawnTimer = spawned ? 20f : 5f;
+					}
+				}
 			}
 		}
 	}
@@ -140,7 +182,7 @@ public class AIDirectorManager : BaseManager
 		emaPlayerAccuracy.AddSample(player.Weapons.Accuracy);
 		emaPlayerHealth.AddSample((float)player.HP / player.MaxHP);
 		emaAmmoCount.AddSample(player.Weapons.NormalizedTotalAmmoCount);
-		
+
 		var zList = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity));
 		var nearbyEnemyCount = 0;
 		for (int i = 0; i < zList.Count; i++)
@@ -152,7 +194,7 @@ public class AIDirectorManager : BaseManager
 			if ((z.Position - player.Position).LengthSquared() <= 10 * 10)
 				nearbyEnemyCount++;
 		}
-		
+
 		emaNearbyEnemyCount.AddSample(((float)nearbyEnemyCount / 10) * 2);
 
 		var newTension = emaKillCount.Current * 0.4f +
@@ -171,7 +213,7 @@ public class AIDirectorManager : BaseManager
 	private void UpdateMood()
 	{
 		float moodInput = (1.0f - emaPlayerHealth.Current) * 0.45f + //low health = more intense mood
-						  emaNearbyEnemyCount.Current * 0.45f + 
+						  emaNearbyEnemyCount.Current * 0.45f +
 						  emaAmmoCount.Current * 0.1f;
 
 		moodInput *= 2.0f;
@@ -188,7 +230,7 @@ public class AIDirectorManager : BaseManager
 			TensionState.Calm => 1,
 			TensionState.Tense => 2,
 			TensionState.Panic => 3,
-			TensionState.Critical => 4,
+			TensionState.Critical => 8,
 			_ => 2
 		};
 
@@ -206,8 +248,13 @@ public class AIDirectorManager : BaseManager
 
 	private void SpawnAmmoItem() => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
 	{
-		e.ItemType = RNG.Chance(0.65f) ? ItemPickupEntity.ItemTypes.AmmoSIG : ItemPickupEntity.ItemTypes.AmmoAK;
-		e.Amount = 25;
+		e.ItemType = ItemPickupEntity.ItemTypes.Ammo;
+		e.Position = GetSpawnPosition();
+	});
+
+	private void SpawnWeaponItem(string id) => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
+	{
+		e.ItemType = id == "shotgun" ? ItemPickupEntity.ItemTypes.WeaponShotgun : ItemPickupEntity.ItemTypes.WeaponAK;
 		e.Position = GetSpawnPosition();
 	});
 
