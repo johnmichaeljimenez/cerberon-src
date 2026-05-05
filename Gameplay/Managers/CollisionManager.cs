@@ -171,21 +171,24 @@ public class CollisionManager : BaseManager
 		Vector2 proposed = body.Position + velocity;
 		bool collided = false;
 
-		foreach (var other in bodies)
+		if (!body.EnableState.HasFlag(CircleBody.States.FullyDisabled) && !body.EnableState.HasFlag(CircleBody.States.DisabledMoveCheck))
 		{
-			if (body == other || other.EnableState.HasFlag(CircleBody.States.FullyDisabled) || other.EnableState.HasFlag(CircleBody.States.DisabledMoveCheck)) continue;
-
-			Vector2 delta = proposed - other.Position;
-			float distSq = delta.LengthSquared();
-			float minDistance = body.Radius + other.Radius;
-
-			if (distSq < minDistance * minDistance && distSq > 0.00001f)
+			foreach (var other in bodies)
 			{
-				float dist = MathF.Sqrt(distSq);
-				Vector2 pushDir = delta / dist;
+				if (body == other || other.EnableState.HasFlag(CircleBody.States.FullyDisabled) || other.EnableState.HasFlag(CircleBody.States.DisabledMoveCheck)) continue;
 
-				proposed = other.Position + pushDir * minDistance;
-				collided = true;
+				Vector2 delta = proposed - other.Position;
+				float distSq = delta.LengthSquared();
+				float minDistance = body.Radius + other.Radius;
+
+				if (distSq < minDistance * minDistance && distSq > 0.00001f)
+				{
+					float dist = MathF.Sqrt(distSq);
+					Vector2 pushDir = delta / dist;
+
+					proposed = other.Position + pushDir * minDistance;
+					collided = true;
+				}
 			}
 		}
 
