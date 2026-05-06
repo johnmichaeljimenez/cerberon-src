@@ -14,23 +14,24 @@ public class AIDirectorManager : BaseManager
 	//MOOD is for atmosphere and emotion (music, colors, effects)
 	public enum MoodState { Calm, Unease, Anxious, Dread, Terror }
 
-	public TensionState CurrentState =>
-		Tension switch
+	public readonly HysteresisState<TensionState> CurrentTensionState = new(new List<(TensionState, float)>()
 		{
-			< 0.2f => TensionState.Calm,
-			< 0.5f => TensionState.Tense,
-			< 0.7f => TensionState.Panic,
-			_ => TensionState.Critical
-		};
+			(TensionState.Calm, 0f),
+			(TensionState.Tense, 0.2f),
+			(TensionState.Panic, 0.5f),
+			(TensionState.Critical, 0.7f),
+		}
+	);
 
-	public MoodState CurrentMood => Mood switch //TODO: add hysteresis
-	{
-		< 0.12f => MoodState.Calm,
-		< 0.4f => MoodState.Unease,
-		< 0.65f => MoodState.Anxious,
-		< 0.85f => MoodState.Dread,
-		_ => MoodState.Terror
-	};
+	public readonly HysteresisState<MoodState> CurrentMood = new(new List<(MoodState, float)>()
+		{
+			(MoodState.Calm, 0f),
+			(MoodState.Unease, 0.12f),
+			(MoodState.Anxious, 0.4f),
+			(MoodState.Dread, 0.65f),
+			(MoodState.Terror, 0.85f),
+		}
+	);
 
 	private readonly EMA emaPlayerHealth = new(0.05f);
 	private readonly EMA emaAmmoCount = new(0.05f);
@@ -40,7 +41,7 @@ public class AIDirectorManager : BaseManager
 	private readonly EMA emaNearbyEnemyCount = new(0.003f);
 
 	private readonly EMA emaTension = new(0.005f);
-	private readonly EMA emaMood = new(0.001f);
+	private readonly EMA emaMood = new(0.005f);
 
 	public float Tension { get; private set; }
 	public float Mood { get; private set; }
@@ -61,6 +62,7 @@ public class AIDirectorManager : BaseManager
 	private bool paused = false;
 
 
+	//this enemy attack token system prevents the player from get shredded quickly by horde of enemies
 	private const int MAX_ATTACKING_ENEMY = 2;
 	private const float TOKEN_COOLDOWN = 1.5f;
 	private readonly float[] attackTokenCooldowns = new float[MAX_ATTACKING_ENEMY];
@@ -218,6 +220,9 @@ public class AIDirectorManager : BaseManager
 
 		Tension = emaTension.Current;
 		UpdateMood();
+
+		CurrentTensionState.Update(Tension);
+		CurrentMood.Update(Mood);
 	}
 
 	private void UpdateMood()
@@ -226,7 +231,7 @@ public class AIDirectorManager : BaseManager
 						  emaNearbyEnemyCount.Current * 0.45f +
 						  emaAmmoCount.Current * 0.1f;
 
-		moodInput *= 2.0f;
+		moodInput *= 2.3f;
 
 		moodInput = Math.Clamp(moodInput, 0f, 1f);
 		emaMood.AddSample(moodInput);
@@ -235,7 +240,7 @@ public class AIDirectorManager : BaseManager
 
 	private float CalculateEnemySpawnInterval() => 9.5f - Tension * 7.8f;
 	private int CalculateEnemysToSpawn() =>
-		CurrentState switch
+		CurrentTensionState.CurrentState switch
 		{
 			TensionState.Calm => 1,
 			TensionState.Tense => 2,
@@ -271,14 +276,14 @@ public class AIDirectorManager : BaseManager
 	private void SpawnEnemy() => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
 	{
 		e.Position = GetSpawnPosition() + RNG.Position(0.2f);
-		e.IsFlyer = CurrentState >= TensionState.Critical && RNG.Chance(0.5f); //jumpscare + escalate pressure (but only if player can sustain it)
+		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Critical && RNG.Chance(0.5f); //jumpscare + escalate pressure (but only if player can sustain it)
 	});
 
 	public override void DrawImGui()
 	{
 		base.DrawImGui();
 		ImGui.Checkbox("Pause", ref paused);
-		ImGui.SeparatorText($"AI Director: (Tension: {CurrentState}, Mood: {CurrentMood})");
+		ImGui.SeparatorText($"AI Director: (Tension: {CurrentTensionState.CurrentState}, Mood: {CurrentMood.CurrentState})");
 		ImGui.ProgressBar(Tension, new(340, 25), $"Overall Tension: {emaTension.Current:F2}");
 		ImGui.ProgressBar(Mood, new(340, 25), $"Mood: {emaMood.Current:F2}");
 
@@ -300,24 +305,22 @@ public class AIDirectorManager : BaseManager
 
 	public int RequestAttack()
 	{
-		// Find an available token that isn't on cooldown
 		for (int i = 0; i < MAX_ATTACKING_ENEMY; i++)
 		{
 			if (attackTokenCooldowns[i] <= 0)
 			{
-				// Mark as "in use" (set to a negative value or a flag)
 				attackTokenCooldowns[i] = -1f;
 				return i;
 			}
 		}
-		return -1; // No tokens available
+		return -1; //cannot attack yet
 	}
 
 	public void ReleaseAttack(int tokenIndex)
 	{
 		if (tokenIndex >= 0 && tokenIndex < MAX_ATTACKING_ENEMY)
 		{
-			// Start the cooldown for this specific token
+			//give this token a cooldown before being able to be reused
 			attackTokenCooldowns[tokenIndex] = TOKEN_COOLDOWN;
 		}
 	}
