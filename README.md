@@ -12,6 +12,7 @@
    ```bash
    git clone https://github.com/johnmichaeljimenez/cerberon-src.git
    cd cerberon-src
+   git submodule update --init --recursive
    ```
 3. Restore packages and build:
    ```bash
