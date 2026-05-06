@@ -15,7 +15,7 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Update submodules to latest # ← new
+    - name: Update submodules to latest
       run: git submodule update --init --recursive --remote
 
     - name: Setup .NET 9
