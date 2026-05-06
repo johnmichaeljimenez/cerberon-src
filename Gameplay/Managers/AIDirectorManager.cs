@@ -69,7 +69,7 @@ public class AIDirectorManager : BaseManager
 
 	public AIDirectorManager(GameplayState gameplayState) : base(gameplayState)
 	{
-		enemySpawnTimer = 10f;
+		enemySpawnTimer = 1f;
 		healthSpawnTimer = 0f;
 		ammoSpawnTimer = 0f;
 		weaponSpawnTimer = 30f;
@@ -98,6 +98,8 @@ public class AIDirectorManager : BaseManager
 			emaPlayerHurt.AddSample(dmg * 40);
 			emaMood.AddSample(emaMood.Current + (dmg * 0.5f));
 		}).AddTo(disposables);
+
+		OnMoodChanged();
 	}
 
 	public override void Update(float dt, float udt)
@@ -222,7 +224,8 @@ public class AIDirectorManager : BaseManager
 		UpdateMood();
 
 		CurrentTensionState.Update(Tension);
-		CurrentMood.Update(Mood);
+		if (CurrentMood.Update(Mood))
+			OnMoodChanged();
 	}
 
 	private void UpdateMood()
@@ -322,6 +325,20 @@ public class AIDirectorManager : BaseManager
 		{
 			//give this token a cooldown before being able to be reused
 			attackTokenCooldowns[tokenIndex] = TOKEN_COOLDOWN;
+		}
+	}
+
+	private void OnMoodChanged()
+	{
+		switch (CurrentMood.CurrentState)
+		{
+			case MoodState.Dread:
+			case MoodState.Terror:
+				AudioHandler.PlayMusic("bgm/intense");
+				break;
+			default:
+				AudioHandler.PlayMusic("bgm/default");
+				break;
 		}
 	}
 }

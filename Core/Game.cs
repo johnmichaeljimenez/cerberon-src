@@ -34,7 +34,7 @@ public class Game
     {
         Instance = this;
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
-        Raylib.InitWindow(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT, "Raylib-cs Letterbox");
+        Raylib.InitWindow(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT, "Vasodilator");
         Raylib.MaximizeWindow();
         Raylib.SetExitKey(0);
 
@@ -89,8 +89,9 @@ public class Game
         {
             currentState?.Exit();
             currentState = nextState;
-            PauseHandler.Clear();
             TweenManager.Clear();
+            PauseHandler.Clear();
+            AudioHandler.StopMusic();
             currentState?.Enter();
             nextState = null;
             OnStateChanged?.Publish(currentState);

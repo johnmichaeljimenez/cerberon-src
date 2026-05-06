@@ -24,6 +24,7 @@ public class GameplayState : IGameState
 		World.InitRegistry();
 		this.options = options;
 
+		AudioHandler.ClearMusicStates();
 		LightingSystem.Clear();
 		AddManager<CollisionManager>();
 		AddManager<PlayerManager>();

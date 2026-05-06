@@ -1,6 +1,41 @@
 using Main.Helpers;
+using Tween;
 
 namespace Main.Core;
+
+public class MusicSource
+{
+	public Music Music;
+	public string ID;
+	public bool IsPlaying;
+	public float Volume;
+	public float LastTime;
+
+	public void SetActive(bool isPlaying)
+	{
+		IsPlaying = isPlaying;
+		Volume = isPlaying ? 0 : 1;
+		TweenManager.Add(
+			new Tween<float>(
+				() => Volume,
+				n => Volume = n,
+				isPlaying ? 1 : 0, 0.4f,
+				null,
+				$"BGM-{ID}",
+				true
+			).SetEasing(Easing.Linear)
+		);
+
+		if (isPlaying)
+		{
+			Raylib.PlayMusicStream(Music);
+			Raylib.SetMusicVolume(Music, Volume);
+
+			if (LastTime > 0)
+				Raylib.SeekMusicStream(Music, LastTime); //resume last music position if it already played
+		}
+	}
+}
 
 public class AudioSource
 {
@@ -33,8 +68,10 @@ public class AudioSource
 public static class AudioHandler
 {
 	private const int ALIAS_COUNT = 10;
+	private const float MUSIC_BASE_VOLUME = 0.3f;
 
 	private static readonly List<AudioSource> activeAudioSources = new();
+	private static readonly Dictionary<string, MusicSource> musicAssets = new();
 	private static readonly Dictionary<string, float> soundLengths = new();
 	private static readonly Dictionary<string, Sound> soundAssets = new();
 	private static readonly Dictionary<string, List<Sound>> soundAliases = new();
@@ -42,6 +79,7 @@ public static class AudioHandler
 	private static readonly Dictionary<string, List<string>> soundVariations = new();
 
 	public static Vector2 ListenerPosition { get; set; }
+	public static MusicSource CurrentMusic { get; set; }
 
 	//soundAssets -> soundAliases -> soundVariations
 
@@ -53,6 +91,25 @@ public static class AudioHandler
 
 	public static void Update()
 	{
+		foreach (var music in musicAssets.Values)
+		{
+			if (IsMusicPlaying(music.Music))
+			{
+				Raylib.UpdateMusicStream(music.Music);
+				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME);
+
+				if (!music.IsPlaying && music.Volume <= 0.01f) //requested to stop and volume is near zero
+				{
+					music.LastTime = Raylib.GetMusicTimePlayed(music.Music);
+					Raylib.StopMusicStream(music.Music);
+				}
+			}
+			else if (music.IsPlaying)
+			{
+				Raylib.PlayMusicStream(music.Music); //loop
+			}
+		}
+
 		for (int i = activeAudioSources.Count - 1; i >= 0; i--)
 		{
 			var a = activeAudioSources[i];
@@ -84,6 +141,12 @@ public static class AudioHandler
 			Raylib.UnloadSound(sound);
 		}
 
+		foreach (var music in musicAssets.Values)
+		{
+			Raylib.UnloadMusicStream(music.Music);
+		}
+
+		musicAssets.Clear();
 		soundAssets.Clear();
 		soundAliases.Clear();
 		nextAliasIndex.Clear();
@@ -122,6 +185,26 @@ public static class AudioHandler
 			var files = kvp.Value;
 
 			if (files.Count == 0) continue;
+
+			if (!string.IsNullOrEmpty(groupKey) && groupKey.StartsWith("bgm", StringComparison.OrdinalIgnoreCase)) //all audios under Audio/bgm is treated as music automatically
+			{
+				foreach (var filePath in files)
+				{
+					string fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
+					string musicKey = $"{groupKey}";
+
+					Music music = Raylib.LoadMusicStream(filePath);
+					musicAssets[musicKey] = new()
+					{
+						ID = musicKey,
+						IsPlaying = false,
+						Volume = 0,
+						Music = music
+					};
+					totalLoaded++;
+				}
+				continue;
+			}
 
 			if (string.IsNullOrEmpty(groupKey))
 			{
@@ -239,7 +322,7 @@ public static class AudioHandler
 
 		if (source.IsSpatial)
 			source.Update(ListenerPosition);
-			
+
 		activeAudioSources.Add(source);
 		Raylib.SetSoundPitch(sound, RNG.Range(0.9f, 1.1f));
 
@@ -250,5 +333,47 @@ public static class AudioHandler
 	public static bool IsPlaying(Sound sound)
 	{
 		return Raylib.IsSoundPlaying(sound);
+	}
+
+	public static MusicSource PlayMusic(string key)
+	{
+		if (!musicAssets.TryGetValue(key, out var music))
+			return null;
+
+		if (CurrentMusic == music && music.IsPlaying)
+			return music;
+
+		StopMusic();
+
+		CurrentMusic = music;
+		CurrentMusic.SetActive(true);
+		return music;
+	}
+
+	public static void StopMusic()
+	{
+		if (CurrentMusic == null)
+			return;
+
+		CurrentMusic.SetActive(false);
+		CurrentMusic = null;
+	}
+
+	public static void ClearMusicStates()
+	{
+		foreach (var i in musicAssets)
+		{
+			i.Value.IsPlaying = false;
+			i.Value.Volume = 0;
+			i.Value.LastTime = 0;
+
+			if (Raylib.IsMusicStreamPlaying(i.Value.Music))
+				Raylib.StopMusicStream(i.Value.Music);
+		}
+	}
+
+	public static bool IsMusicPlaying(Music music)
+	{
+		return Raylib.IsMusicStreamPlaying(music);
 	}
 }
