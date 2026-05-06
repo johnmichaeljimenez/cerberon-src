@@ -1,7 +1,15 @@
-using Main.Gameplay;
 using Main.Gameplay.Entities;
-using Main.Gameplay.Managers;
 using Main.Helpers;
+
+namespace Main.Gameplay.Managers;
+
+
+public enum CollisionHeight //all of these block pathfinding waypoints
+{
+	Low, //enemy can see player, player can shoot enemy, no vision shadows (low objects like crates, boxes, chairs, tables and even window partitions)
+	Mid, //for entities
+	High //enemy cannot see player, player cannot shoot enemy, generates vision shadows, and enemies can pass through mid height enemies (high objects like walls, trees, pillars and flying enemies)
+}
 
 public class Wall
 {
@@ -9,9 +17,7 @@ public class Wall
 	public enum WallFlags
 	{
 		None = 0,
-		Shadows = 1 << 0,
-		DirectLineOfSight = 1 << 1,
-		DrawOverlay = 1 << 2
+		DrawOverlay = 1 << 0
 	}
 
 	public Vector2 From { get; set; }
@@ -20,6 +26,7 @@ public class Wall
 	public Vector2 Midpoint { get; set; }
 	public float Length { get; set; }
 	public WallFlags Flags { get; set; }
+	public CollisionHeight Height { get; set; }
 }
 
 public struct LinecastHit
@@ -33,20 +40,11 @@ public struct LinecastHit
 
 public class CircleBody
 {
-	[Flags]
-	public enum States
-	{
-		None = 0,
-		FullyDisabled = 1 << 0,
-		Enabled = 1 << 1,
-		DisabledMoveCheck = 1 << 2,
-		DisabledLinecast = 1 << 3
-	}
-
 	public Vector2 Position;
 	public float Radius;
 	public BaseEntity SourceEntity;
-	public States EnableState = States.Enabled;
+	public bool Enabled = true;
+	public CollisionHeight Height;
 }
 
 public class CollisionManager : BaseManager
@@ -59,13 +57,14 @@ public class CollisionManager : BaseManager
 
 	}
 
-	public CircleBody AddBody(Vector2 pos, float radius, BaseEntity sourceEntity)
+	public CircleBody AddBody(Vector2 pos, float radius, CollisionHeight height, BaseEntity sourceEntity)
 	{
 		var body = new CircleBody()
 		{
 			Position = pos,
 			Radius = radius,
-			SourceEntity = sourceEntity
+			SourceEntity = sourceEntity,
+			Height = height
 		};
 
 		bodies.Add(body);
@@ -82,6 +81,7 @@ public class CollisionManager : BaseManager
 		Vector2 size,
 		List<Wall> walls,
 		Wall.WallFlags flags,
+		CollisionHeight height,
 		bool invert = false,
 		float rotation = 0f,
 		Vector2 origin = default)
@@ -91,7 +91,7 @@ public class CollisionManager : BaseManager
 		var corners = Utils.GetRectangleCorners(pos, size, rotation, origin);
 
 		Wall Add(Vector2 a, Vector2 b) =>
-			invert ? AddWall(b, a, flags) : AddWall(a, b, flags);
+			invert ? AddWall(b, a, flags, height) : AddWall(a, b, flags, height);
 
 		walls.Add(Add(corners[0], corners[1]));     // top
 		walls.Add(Add(corners[1], corners[2]));     // right
@@ -100,12 +100,14 @@ public class CollisionManager : BaseManager
 	}
 
 	//do clockwise order when making polygons to make them point outward, otherwise do it inward for maximum level boundaries
-	public Wall AddWall(Vector2 from, Vector2 to, Wall.WallFlags flags)
+	public Wall AddWall(Vector2 from, Vector2 to, Wall.WallFlags flags, CollisionHeight height)
 	{
 		var wall = new Wall
 		{
 			From = from,
-			To = to
+			To = to,
+			Height = height,
+			Flags = flags
 		};
 
 		wall.Midpoint = (from + to) * 0.5f;
@@ -171,11 +173,11 @@ public class CollisionManager : BaseManager
 		Vector2 proposed = body.Position + velocity;
 		bool collided = false;
 
-		if (!body.EnableState.HasFlag(CircleBody.States.FullyDisabled) && !body.EnableState.HasFlag(CircleBody.States.DisabledMoveCheck))
+		if (body.Enabled)
 		{
 			foreach (var other in bodies)
 			{
-				if (body == other || other.EnableState.HasFlag(CircleBody.States.FullyDisabled) || other.EnableState.HasFlag(CircleBody.States.DisabledMoveCheck)) continue;
+				if (body == other || !other.Enabled || other.Height != body.Height) continue;
 
 				Vector2 delta = proposed - other.Position;
 				float distSq = delta.LengthSquared();
@@ -197,7 +199,7 @@ public class CollisionManager : BaseManager
 		return collided;
 	}
 
-	public bool Linecast(Vector2 from, Vector2 to, out LinecastHit hitInfo, CircleBody fromBody = null)
+	public bool Linecast(Vector2 from, Vector2 to, CollisionHeight height, out LinecastHit hitInfo, CircleBody fromBody = null)
 	{
 		hitInfo = new LinecastHit
 		{
@@ -220,6 +222,9 @@ public class CollisionManager : BaseManager
 		Vector2 dirForCulling = from - to;
 		foreach (var w in walls)
 		{
+			if (height > w.Height) //pass through if line is higher than this wall
+				continue;
+
 			if (Vector2.Dot(w.Normal, dirForCulling) > 0f)
 			{
 				Vector2 intersection = default;
@@ -241,7 +246,13 @@ public class CollisionManager : BaseManager
 
 		foreach (var other in bodies)
 		{
-			if (other == null || other == fromBody || other.EnableState == CircleBody.States.FullyDisabled || other.EnableState.HasFlag(CircleBody.States.DisabledLinecast)) continue;
+			if (height > other.Height)
+				continue;
+
+			if (other == null ||
+				other == fromBody ||
+				!other.Enabled) //linecast will hit bodies regardless of height (no uses yet for the opposite case)
+					continue;
 
 			Vector2 oc = from - other.Position;
 			float a = 1f;

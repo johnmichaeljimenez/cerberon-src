@@ -8,12 +8,14 @@ using Main.Helpers;
 namespace Main.Gameplay;
 
 [Serializable]
+//TODO: try to reuse Wall class
 public class WorldCollider //no need for real entities for static environment stuff like these
 {
 	public Vector2 Position { get; set; }
 	public Vector2 Size { get; set; }
 	public float Rotation { get; set; }
 	public Wall.WallFlags Flags { get; set; }
+	public CollisionHeight Height { get; set; }
 }
 
 [Serializable]
@@ -143,9 +145,10 @@ public class World : IDisposable //aka Level loader
 		{
 			var l = new List<Wall>();
 			Shadow shadow = null;
-			gameplayState.GetManager<CollisionManager>().AddWalls(i.Position, i.Size, l, i.Flags, false, i.Rotation);
 
-			if (i.Flags.HasFlag(Wall.WallFlags.Shadows))
+			gameplayState.GetManager<CollisionManager>().AddWalls(i.Position, i.Size, l, i.Flags, i.Height, false, i.Rotation);
+
+			if (i.Height >= CollisionHeight.High)
 				shadow = LightingSystem.AddShadow(i.Position, i.Size, i.Rotation);
 
 			colliderWalls.Add(i, (l, shadow));
@@ -159,7 +162,7 @@ public class World : IDisposable //aka Level loader
 			i.Init(gameplayState);
 		}
 
-		gameplayState.GetManager<CollisionManager>().AddWalls(Vector2.Zero, WorldSettings.WorldSize, worldBounds, Wall.WallFlags.None, true);
+		gameplayState.GetManager<CollisionManager>().AddWalls(Vector2.Zero, WorldSettings.WorldSize, worldBounds, Wall.WallFlags.None, CollisionHeight.Low, true);
 
 		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
 		foreach (var i in Lights)

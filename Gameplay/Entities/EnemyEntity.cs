@@ -92,12 +92,14 @@ public class EnemyEntity : CharacterEntity
 			d = flyTarget - Position;
 			FacingAngle = Raymath.LerpAngle(FacingAngle, d.ToDirection(), dt * 8);
 			velocity = Vector2.Normalize(d) * MovementSpeed * 2;
-			CollisionBody.EnableState = CircleBody.States.DisabledMoveCheck;
+			CollisionBody.Enabled = false;
+			CollisionBody.Height = CollisionHeight.High;
 
 			if (d.Length() <= 2)
 			{
 				flying = false;
-				CollisionBody.EnableState = !IsDead ? CircleBody.States.Enabled : CircleBody.States.FullyDisabled;
+				CollisionBody.Enabled = !IsDead;
+				CollisionBody.Height = CollisionHeight.Mid;
 			}
 
 			return;

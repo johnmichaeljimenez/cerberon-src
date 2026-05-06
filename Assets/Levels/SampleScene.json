@@ -20,8 +20,8 @@
     {
       "SpriteID": "env/tile-2",
       "Position": {
-        "X": 15.549,
-        "Y": 9.776
+        "X": 0.0,
+        "Y": 0.0
       },
       "Parallax": 0.0,
       "Rotation": 0.0,
@@ -30,8 +30,8 @@
       "RenderType": 1,
       "Scale": 1.0,
       "TileSize": {
-        "X": 47.5459251,
-        "Y": 38.3533554
+        "X": 32.0,
+        "Y": 32.0
       },
       "Tint": {
         "R": 255,
@@ -122,8 +122,8 @@
       "RenderType": 0,
       "Scale": 1.29626,
       "TileSize": {
-        "X": 14.1734657,
-        "Y": 14.1734657
+        "X": 22.1964245,
+        "Y": 34.67359
       },
       "Tint": {
         "R": 255,
@@ -145,8 +145,8 @@
       "RenderType": 0,
       "Scale": 1.81294918,
       "TileSize": {
-        "X": 15.1205311,
-        "Y": 15.1205311
+        "X": 22.1964245,
+        "Y": 34.67359
       },
       "Tint": {
         "R": 255,
@@ -168,8 +168,8 @@
       "RenderType": 0,
       "Scale": 1.52514851,
       "TileSize": {
-        "X": 16.85105,
-        "Y": 16.85105
+        "X": 22.1964245,
+        "Y": 34.67359
       },
       "Tint": {
         "R": 255,
@@ -191,8 +191,8 @@
       "RenderType": 0,
       "Scale": 1.52514851,
       "TileSize": {
-        "X": 13.0017109,
-        "Y": 13.0017109
+        "X": 22.1964245,
+        "Y": 34.67359
       },
       "Tint": {
         "R": 255,
@@ -214,8 +214,8 @@
       "RenderType": 0,
       "Scale": 2.47211337,
       "TileSize": {
-        "X": 9.88845348,
-        "Y": 9.88845348
+        "X": 22.1964245,
+        "Y": 34.67359
       },
       "Tint": {
         "R": 0,
@@ -237,8 +237,8 @@
       "RenderType": 0,
       "Scale": 2.07740474,
       "TileSize": {
-        "X": 17.709631,
-        "Y": 17.709631
+        "X": 22.1964245,
+        "Y": 34.67359
       },
       "Tint": {
         "R": 255,
@@ -260,8 +260,77 @@
       "RenderType": 0,
       "Scale": 1.43698239,
       "TileSize": {
-        "X": 16.2534447,
-        "Y": 16.2534447
+        "X": 22.1964245,
+        "Y": 34.67359
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/patch-1",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 22.1964245,
+        "Y": 34.67359
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/crate-4",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/crate-4",
+      "Position": {
+        "X": 0.71,
+        "Y": -0.53
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
       },
       "Tint": {
         "R": 255,
@@ -282,7 +351,8 @@
         "Y": 10.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -294,7 +364,8 @@
         "Y": 9.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -306,7 +377,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -318,7 +390,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -330,7 +403,8 @@
         "Y": 26.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -342,7 +416,8 @@
         "Y": 10.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -354,7 +429,8 @@
         "Y": 9.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -366,7 +442,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -378,7 +455,8 @@
         "Y": 13.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -390,7 +468,8 @@
         "Y": 9.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -402,7 +481,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -414,7 +494,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -426,7 +507,8 @@
         "Y": 20.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -438,7 +520,8 @@
         "Y": 16.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -450,7 +533,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -462,7 +546,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -474,7 +559,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -486,7 +572,8 @@
         "Y": 36.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -498,7 +585,8 @@
         "Y": 8.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -510,7 +598,8 @@
         "Y": 7.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -522,7 +611,8 @@
         "Y": 8.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -534,7 +624,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -546,7 +637,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -558,7 +650,8 @@
         "Y": 18.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -570,7 +663,8 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -582,7 +676,8 @@
         "Y": 4.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -594,7 +689,8 @@
         "Y": 6.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -606,7 +702,8 @@
         "Y": 1.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -618,7 +715,8 @@
         "Y": 1.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -630,7 +728,8 @@
         "Y": 1.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -642,7 +741,8 @@
         "Y": 1.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -654,7 +754,8 @@
         "Y": 1.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -666,7 +767,8 @@
         "Y": 1.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
     },
     {
       "Position": {
@@ -678,15 +780,42 @@
         "Y": 2.0
       },
       "Rotation": 0.0,
-      "Flags": 5
+      "Flags": 5,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0
+      },
+      "Size": {
+        "X": 1.71875,
+        "Y": 1.75
+      },
+      "Rotation": 0.0,
+      "Flags": 2,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 0.71,
+        "Y": -0.53
+      },
+      "Size": {
+        "X": 1.71875,
+        "Y": 1.75
+      },
+      "Rotation": 0.0,
+      "Flags": 2,
+      "Height": 0
     }
   ],
   "Lights": [
     {
       "SpriteID": "light",
       "Position": {
-        "X": 4.74,
-        "Y": 0.57
+        "X": 0.0,
+        "Y": 0.0
       },
       "Color": {
         "R": 128,

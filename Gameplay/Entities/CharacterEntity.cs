@@ -1,5 +1,6 @@
 using Main.Core;
 using Main.Effects;
+using Main.Gameplay.Managers;
 using Main.Helpers;
 using Tween;
 
@@ -55,7 +56,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		base.Init(gameplayState);
 
 		HP = MaxHP;
-		CollisionBody = gameplayState.GetManager<CollisionManager>().AddBody(Position, Radius, this);
+		CollisionBody = gameplayState.GetManager<CollisionManager>().AddBody(Position, Radius, CollisionHeight.Mid, this);
 
 		Animator = new Animator();
 		Animator.OnAnimationBegin.Subscribe(OnAnimationBegin).AddTo(disposables);
@@ -118,7 +119,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public override void DrawDebug()
 	{
-		if (CollisionBody.EnableState == CircleBody.States.Enabled)
+		if (CollisionBody.Enabled)
 		{
 			Raylib.DrawCircleLinesV(CollisionBody.Position, CollisionBody.Radius, Colors.GREEN);
 			Raylib.DrawCircleLinesV(Position + (FacingDirection * 0.6f), 0.3f, Colors.GREEN);
@@ -168,7 +169,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	protected virtual void OnDeath()
 	{
 		velocity = Vector2.Zero;
-		CollisionBody.EnableState = CircleBody.States.FullyDisabled;
+		CollisionBody.Enabled = false;
 	}
 
 	public Vector2 GetFacingAngleOffset(float angleOffset)
