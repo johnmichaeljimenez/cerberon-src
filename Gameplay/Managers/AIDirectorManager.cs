@@ -12,7 +12,7 @@ public class AIDirectorManager : BaseManager
 	//TENSION is for gameplay difficulty (spawn rates, aggression, events)
 	public enum TensionState { Calm, Tense, Panic, Critical }
 	//MOOD is for atmosphere and emotion (music, colors, effects)
-	public enum MoodState { Calm, Unease, Anxious, Dread, Terror }
+	public enum MoodState { Calm, Anxious, Dread, Terror }
 
 	public readonly HysteresisState<TensionState> CurrentTensionState = new(new List<(TensionState, float)>()
 		{
@@ -26,8 +26,7 @@ public class AIDirectorManager : BaseManager
 	public readonly HysteresisState<MoodState> CurrentMood = new(new List<(MoodState, float)>()
 		{
 			(MoodState.Calm, 0f),
-			(MoodState.Unease, 0.12f),
-			(MoodState.Anxious, 0.4f),
+			(MoodState.Anxious, 0.2f),
 			(MoodState.Dread, 0.65f),
 			(MoodState.Terror, 0.85f),
 		}
@@ -324,7 +323,7 @@ public class AIDirectorManager : BaseManager
 		if (tokenIndex >= 0 && tokenIndex < MAX_ATTACKING_ENEMY)
 		{
 			//give this token a cooldown before being able to be reused
-			attackTokenCooldowns[tokenIndex] = TOKEN_COOLDOWN;
+			attackTokenCooldowns[tokenIndex] = RNG.Range(TOKEN_COOLDOWN * 0.8f, TOKEN_COOLDOWN * 2);
 		}
 	}
 
