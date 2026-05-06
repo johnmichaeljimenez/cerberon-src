@@ -9,6 +9,7 @@ uniform float time;
 
 uniform float fadeAmt = 0.0; //0 = none, 1 = full
 uniform float nightAmt = 0.0;
+uniform float hurtAmt = 0.0;
 
 const float blurRadius = 1.5;
 
@@ -127,7 +128,11 @@ void main() {
     finColor += visColor * 0.1;
 
     finColor = fade(finColor, fadeAmt/4.5);
-    finColor *= vig;
+    
+    finColor *= vig; 
+
+    float invVig = (1.0 - vig);
+    finColor = mix(finColor, vec3(0.1, 0.0, 0.0) * invVig, hurtAmt * invVig);
 
 	finalColor = vec4(finColor, 1);
 }

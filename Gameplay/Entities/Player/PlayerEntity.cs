@@ -2,6 +2,7 @@ using Main.Core;
 using Main.Effects;
 using Main.Gameplay.Managers;
 using Main.Helpers;
+using Tween;
 
 namespace Main.Gameplay.Entities.Player;
 
@@ -147,6 +148,9 @@ public class PlayerEntity : CharacterEntity
 	{
 		base.OnHit(amt, isDead);
 		AudioHandler.PlaySound("generic/player-hit");
+
+		Game.Instance.Camera.Shake(0.8f, GetFacingAngleOffset(90));
+		RenderingManager.SetFilter(RenderingManager.Filters.Hurt, true, 0.4f, Easing.QuadInOutLoop);
 	}
 
 	protected override void OnDeath()

@@ -1,5 +1,6 @@
 using Main.Core;
 using Main.Effects;
+using Main.Gameplay.Managers;
 using Main.Helpers;
 
 namespace Main.Gameplay.Entities.Player;
@@ -96,7 +97,7 @@ public class PlayerWeapons : IDisposable
 	private const string SFX_BULLET_HIT = "weapon/generic/bullethit";
 	private const string SFX_MELEE_START = "weapon/generic/meleestart";
 	private const string SFX_MELEE_HIT = "weapon/generic/meleehit";
-
+	private const float MAX_KICK = 80f;
 	public readonly List<Weapon> Weapons = new() //total hardcoded for now
 	{
 		new Weapon("knife", "Knife", 0, 70, 0f, 0, 0, true),
@@ -142,8 +143,8 @@ public class PlayerWeapons : IDisposable
 			player.Animator.Add(i.ANIM_IDLE, 0);
 			player.Animator.Add(i.ANIM_MOVE, 0);
 			player.Animator.Add(i.ANIM_SHOOT, 50);
-			player.Animator.Add(i.ANIM_MELEE, 51);
-			player.Animator.Add(i.ANIM_RELOAD, 52);
+			player.Animator.Add(i.ANIM_MELEE, 50);
+			player.Animator.Add(i.ANIM_RELOAD, 50);
 		}
 
 		OnWeaponSelected.Publish(CurrentWeapon);
@@ -169,7 +170,7 @@ public class PlayerWeapons : IDisposable
 
 	public void Update(float dt, float udt)
 	{
-		gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (player.FacingDirection * 100), out laserHit, player.CollisionBody);
+		gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (player.FacingDirection * 100), CollisionHeight.Mid, out laserHit, player.CollisionBody);
 
 		if (muzzleFlash != null)
 		{
@@ -187,8 +188,8 @@ public class PlayerWeapons : IDisposable
 		if (fireTimer > 0)
 			fireTimer -= dt;
 
-		if (player.IsAnimatorBusy)
-			return;
+		// if (player.IsAnimatorBusy)
+		// 	return;
 
 		if (fireTimer <= 0)
 		{
@@ -262,6 +263,7 @@ public class PlayerWeapons : IDisposable
 					{
 						fireCount++;
 
+						Game.Instance.Camera.Shake(CurrentWeapon.RangedKick / MAX_KICK, player.FacingDirection); //forward shake relative to player
 						OnWeaponFire.Publish(CurrentWeapon);
 						player.Animator.Play(CurrentWeapon.ANIM_SHOOT);
 						AudioHandler.PlaySound(CurrentWeapon.SFX_FIRE);
@@ -291,7 +293,7 @@ public class PlayerWeapons : IDisposable
 								var a = Raymath.LerpAngle(-half, half, (float)i / CurrentWeapon.SpreadCount);
 								var d = player.GetFacingAngleOffset(a);
 
-								gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (d * 100), out spreadHit, player.CollisionBody);
+								gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (d * 100), CollisionHeight.Mid, out spreadHit, player.CollisionBody);
 								if (spreadHit.Body != null && spreadHit.Body.SourceEntity is EnemyEntity z)
 								{
 									if (!hit)
@@ -324,6 +326,7 @@ public class PlayerWeapons : IDisposable
 
 	private void SwitchWeapon(int i)
 	{
+		player.Animator.Stop(); //bypass hierarchy to switch animations immediately
 		currentWeaponIndex = i;
 		OnWeaponSelected.Publish(CurrentWeapon);
 		Log.Send($"Switched to: {CurrentWeapon.Name}");
@@ -344,6 +347,9 @@ public class PlayerWeapons : IDisposable
 	public void OnAnimationBegin(string animationName)
 	{
 		player.Origin = CurrentWeapon.ID == "knife" ? new(0.3f, 0.45f) : new(0.3f, 0.7f);
+
+		if (animationName == CurrentWeapon.ANIM_MELEE)
+			Game.Instance.Camera.Shake(CurrentWeapon.MeleeKick / MAX_KICK, player.GetFacingAngleOffset(90)); //side-by-side shake relative to player
 	}
 
 	public void OnFrameChanged((string, int, float) frameData)
@@ -372,6 +378,7 @@ public class PlayerWeapons : IDisposable
 
 		if (hit)
 		{
+			Game.Instance.Camera.Shake(0.4f, player.GetFacingAngleOffset(90));
 			hitCount++;
 			AudioHandler.PlaySound(SFX_MELEE_HIT);
 		}
@@ -400,13 +407,20 @@ public class PlayerWeapons : IDisposable
 	{
 		if (animationName == CurrentWeapon.ANIM_RELOAD)
 		{
-			if (CurrentWeapon.DoReload())
+			if (player.Animator.NormalizedTime >= 1.0f)
 			{
-				if (!isIraqiReload)
-					AudioHandler.PlaySound(SFX_READY);
+				if (CurrentWeapon.DoReload())
+				{
+					if (!isIraqiReload)
+						AudioHandler.PlaySound(SFX_READY);
 
-				OnWeaponAmmoChanged.Publish(CurrentWeapon);
-				UpdateAmmoCount();
+					OnWeaponAmmoChanged.Publish(CurrentWeapon);
+					UpdateAmmoCount();
+				}
+			}
+			else
+			{
+				Log.Send("Reload cancelled!");
 			}
 
 			isIraqiReload = false;

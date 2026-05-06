@@ -57,7 +57,7 @@ public class Animator //this is the "instance" using those said "assets"
 	public readonly Dictionary<string, Animation> Animations = new();
 
 	public bool IsPlaying { get; private set; }
-	private Animation currentAnimation;
+	public Animation CurrentAnimation { get; private set; }
 	private string nextAnimationName;
 	private int frameIndex;
 	private float timer;
@@ -120,7 +120,7 @@ public class Animator //this is the "instance" using those said "assets"
 
 	public void Update(float dt, float udt) //unscaled is for later use
 	{
-		if (!IsPlaying || currentAnimation == null || currentAnimation.Frames.Count == 0)
+		if (!IsPlaying || CurrentAnimation == null || CurrentAnimation.Frames.Count == 0)
 			return;
 
 		timer += dt;
@@ -128,21 +128,21 @@ public class Animator //this is the "instance" using those said "assets"
 		{
 			timer = 0;
 			frameIndex++;
-			NormalizedTime = (float)frameIndex / (float)currentAnimation.Frames.Count;
+			NormalizedTime = (float)frameIndex / (float)CurrentAnimation.Frames.Count;
 
-			OnFrameChanged?.Publish((currentAnimation.Name, frameIndex, NormalizedTime));
+			OnFrameChanged?.Publish((CurrentAnimation.Name, frameIndex, NormalizedTime));
 
-			if (frameIndex >= currentAnimation.Frames.Count) //this loop runs at fixed 60hz (not fps), so it's guaranteed to be consistent anyway. dt = 1 / 60 constant
+			if (frameIndex >= CurrentAnimation.Frames.Count) //this loop runs at fixed 60hz (not fps), so it's guaranteed to be consistent anyway. dt = 1 / 60 constant
 			{
-				if (currentAnimation.LoopStartIndex >= 0)
+				if (CurrentAnimation.LoopStartIndex >= 0)
 				{
-					frameIndex = currentAnimation.LoopStartIndex;
-					NormalizedTime = (float)frameIndex / (float)currentAnimation.Frames.Count;
+					frameIndex = CurrentAnimation.LoopStartIndex;
+					NormalizedTime = (float)frameIndex / (float)CurrentAnimation.Frames.Count;
 				}
 				else
 				{
-					OnAnimationEnd?.Publish(currentAnimation.Name);
-					frameIndex = currentAnimation.Frames.Count - 1;
+					OnAnimationEnd?.Publish(CurrentAnimation.Name);
+					frameIndex = CurrentAnimation.Frames.Count - 1;
 					NormalizedTime = 1.0f;
 
 					IsPlaying = false;
@@ -162,10 +162,10 @@ public class Animator //this is the "instance" using those said "assets"
 
 	public Sprite GetFrameSprite()
 	{
-		if (currentAnimation == null || currentAnimation.Sprites.Count == 0)
+		if (CurrentAnimation == null || CurrentAnimation.Sprites.Count == 0)
 			return null; //intended to be null (not missing)
 
-		return currentAnimation.Sprites[frameIndex];
+		return CurrentAnimation.Sprites[frameIndex];
 	}
 
 	public bool Play(string animationName, bool forceRestart = false, string nextAnimationName = null, bool ignorePriority = false, float targetStartTime = 0f) //nextAnimationName will be commonly used (ex. attack to idle) without coding massive amount of FSM handling
@@ -173,26 +173,26 @@ public class Animator //this is the "instance" using those said "assets"
 		if (!Animations.TryGetValue(animationName, out var anim))
 			throw new ArgumentException($"Animation '{animationName}' not found.");
 
-		if (IsPlaying && currentAnimation != null)
+		if (IsPlaying && CurrentAnimation != null)
 		{
-			if (!forceRestart && currentAnimation.Name == animationName)
+			if (!forceRestart && CurrentAnimation.Name == animationName)
 				return false;
 
-			if (!ignorePriority && priority[currentAnimation.Name] > priority[animationName])
+			if (!ignorePriority && priority[CurrentAnimation.Name] > priority[animationName])
 				return false;
 
-			OnAnimationEnd?.Publish(currentAnimation.Name);
+			OnAnimationEnd?.Publish(CurrentAnimation.Name);
 		}
 
 		Reset();
-		currentAnimation = anim;
+		CurrentAnimation = anim;
 		this.nextAnimationName = nextAnimationName; //lazy check
 		IsPlaying = true;
 		NormalizedTime = 0f;
-		CurrentDuration = currentAnimation.Frames.Count * Animation.FRAME_RATE;
-		frameIndex = (int)(targetStartTime * currentAnimation.Frames.Count);
+		CurrentDuration = CurrentAnimation.Frames.Count * Animation.FRAME_RATE;
+		frameIndex = (int)(targetStartTime * CurrentAnimation.Frames.Count);
 
-		IsPlayingOneShot = currentAnimation.LoopStartIndex < 0;
+		IsPlayingOneShot = CurrentAnimation.LoopStartIndex < 0;
 		OnAnimationBegin?.Publish(animationName);
 
 		return true;

@@ -1,4 +1,5 @@
 using Main.Effects;
+using Tween;
 
 namespace Main.Core;
 
@@ -7,6 +8,7 @@ public static class RenderingManager
     public class RendererFilter
     {
         public string ShaderLocationString;
+        public readonly string TweenID;
         public int ShaderLocation;
         public float CurrentValue;
         public float TargetValue;
@@ -14,11 +16,16 @@ public static class RenderingManager
         public RendererFilter(string locString)
         {
             ShaderLocationString = locString;
+            TweenID = $"{TWEEN_KEY}-{locString}";
+        }
+
+        public void Play(float from, float to, float duration, EasingFunction easing = null)
+        {
+            TweenManager.Add(new Tween<float>(() => CurrentValue, n => CurrentValue = n, to, duration, from, TweenID, true).SetEasing(easing ?? Easing.QuadInOut));
         }
 
         public void Use(Shader shader)
         {
-            CurrentValue = Raymath.Lerp(CurrentValue, TargetValue, Time.UnscaledDeltaTime * 20);
             Raylib.SetShaderValue(shader, ShaderLocation, CurrentValue, ShaderUniformDataType.Float);
         }
     }
@@ -26,12 +33,14 @@ public static class RenderingManager
     public enum Filters
     {
         None,
-        Nightvision
+        Nightvision,
+        Hurt
     }
 
     public const int VIRTUAL_WIDTH = 800; //hardcoded for now, might be actual 1080p by default (or at least 720p)
     public const int VIRTUAL_HEIGHT = 450;
 
+    public const string TWEEN_KEY = "Filter";
     const string POST_FX = "Assets/Shaders/postfx.fs";
 
     public static Shader PostShader { get; private set; }
@@ -53,7 +62,8 @@ public static class RenderingManager
 
     private static readonly Dictionary<Filters, RendererFilter> AllFilters = new()
     {
-        { Filters.Nightvision, new("nightAmt") }
+        { Filters.Nightvision, new("nightAmt") },
+        { Filters.Hurt, new("hurtAmt") }
     };
 
     public static void Init()
@@ -66,6 +76,8 @@ public static class RenderingManager
         tiledTexLocY = Raylib.GetShaderLocation(SpriteTiled, "tilingY");
 
         ReloadShader(AssetWatcher.Add(POST_FX, ReloadShader));
+
+        TweenManager.ClearByPrefix(TWEEN_KEY);
     }
 
     public static void BeginMaskedShader()
@@ -171,13 +183,14 @@ public static class RenderingManager
             Raylib.EndShaderMode();
     }
 
-    public static void SetFilter(Filters filters, bool enabled)
+    public static void SetFilter(Filters filters, bool enabled, float duration = 0.2f, EasingFunction easing = null)
     {
-        AllFilters[filters].TargetValue = enabled ? 1 : 0;
+        AllFilters[filters].Play(enabled ? 0 : 1, enabled ? 1 : 0, duration, easing);
     }
 
     public static void ResetAllFilters()
     {
+        TweenManager.ClearByPrefix(TWEEN_KEY);
         foreach (var i in AllFilters)
         {
             i.Value.TargetValue = 0;
