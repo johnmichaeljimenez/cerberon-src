@@ -66,7 +66,7 @@ public class AIDirectorManager : BaseManager
 
 	//this enemy attack token system prevents the player from get shredded quickly by horde of enemies
 	private const int MAX_ATTACKING_ENEMY = 2;
-	private const float TOKEN_COOLDOWN = 1.5f;
+	private const float TOKEN_COOLDOWN = 0.5f;
 	private readonly float[] attackTokenCooldowns = new float[MAX_ATTACKING_ENEMY];
 
 	public AIDirectorManager(GameplayState gameplayState) : base(gameplayState)
@@ -317,7 +317,7 @@ public class AIDirectorManager : BaseManager
 		{
 			if (attackTokenCooldowns[i] <= 0)
 			{
-				attackTokenCooldowns[i] = -1f;
+				attackTokenCooldowns[i] = float.MaxValue;
 				return i;
 			}
 		}
