@@ -1,5 +1,10 @@
 namespace Main.Core;
 
+public struct Unit
+{
+    public static Unit Default { get; private set; }
+}
+
 public sealed class Signal<T>
 {
     private readonly List<Action<T>> _handlers = new();

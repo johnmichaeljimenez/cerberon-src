@@ -14,6 +14,9 @@ public class AIDirectorManager : BaseManager
 	//MOOD is for atmosphere and emotion (music, colors, effects)
 	public enum MoodState { Calm, Anxious, Dread, Terror }
 
+	private float emaTensionLock;
+	private float emaMoodLock;
+
 	public readonly HysteresisState<TensionState> CurrentTensionState = new(new List<(TensionState, float)>()
 		{
 			(TensionState.Calm, 0f),
@@ -58,7 +61,7 @@ public class AIDirectorManager : BaseManager
 	private PlayerEntity player;
 	private GameplayManager gameplayManager;
 
-	private bool paused = false;
+	public bool Paused = false;
 
 
 	//this enemy attack token system prevents the player from get shredded quickly by horde of enemies
@@ -97,13 +100,17 @@ public class AIDirectorManager : BaseManager
 			emaPlayerHurt.AddSample(dmg * 40);
 			emaMood.AddSample(emaMood.Current + (dmg * 0.5f));
 		}).AddTo(disposables);
+	}
 
+	public void Begin()
+	{
+		Paused = false;
 		OnMoodChanged();
 	}
 
 	public override void Update(float dt, float udt)
 	{
-		if (PauseHandler.IsPaused || paused) return;
+		if (PauseHandler.IsPaused || Paused) return;
 
 		base.Update(dt, udt);
 
@@ -230,10 +237,9 @@ public class AIDirectorManager : BaseManager
 	private void UpdateMood()
 	{
 		float moodInput = (1.0f - emaPlayerHealth.Current) * 0.45f + //low health = more intense mood
-						  emaNearbyEnemyCount.Current * 0.45f +
+						  emaNearbyEnemyCount.Current * 0.5f +
+						  emaKillCount.Current * 0.1f +
 						  emaAmmoCount.Current * 0.1f;
-
-		moodInput *= 2.3f;
 
 		moodInput = Math.Clamp(moodInput, 0f, 1f);
 		emaMood.AddSample(moodInput);
@@ -284,7 +290,7 @@ public class AIDirectorManager : BaseManager
 	public override void DrawImGui()
 	{
 		base.DrawImGui();
-		ImGui.Checkbox("Pause", ref paused);
+		ImGui.Checkbox("Pause", ref Paused);
 		ImGui.SeparatorText($"AI Director: (Tension: {CurrentTensionState.CurrentState}, Mood: {CurrentMood.CurrentState})");
 		ImGui.ProgressBar(Tension, new(340, 25), $"Overall Tension: {emaTension.Current:F2}");
 		ImGui.ProgressBar(Mood, new(340, 25), $"Mood: {emaMood.Current:F2}");
@@ -334,6 +340,9 @@ public class AIDirectorManager : BaseManager
 			case MoodState.Dread:
 			case MoodState.Terror:
 				AudioHandler.PlayMusic("bgm/intense");
+				break;
+			case MoodState.Calm:
+				AudioHandler.PlayMusic("bgm/start");
 				break;
 			default:
 				AudioHandler.PlayMusic("bgm/default");

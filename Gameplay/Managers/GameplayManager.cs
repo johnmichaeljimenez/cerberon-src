@@ -1,5 +1,6 @@
 using Main.Core;
 using Main.Gameplay.Entities.Player;
+using Main.Gameplay.Events;
 using Main.Helpers;
 using Main.UI;
 
@@ -13,6 +14,10 @@ public class GameplayManager : BaseManager
 
 	public bool Running { get; private set; }
 	public float NormalizedTime { get; internal set; }
+
+	public readonly Signal<Unit> OnGameStart = new();
+
+	private EventSetup events = new();
 
 	public GameplayManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -37,11 +42,20 @@ public class GameplayManager : BaseManager
 		base.Init();
 		Running = true;
 		_gameTime = MaxGameTime;
+
+		events.Setup(gameplayState, gameplayState.GetManager<GameplayEventManager>());
+	}
+
+	public override void OnEnter()
+	{
+		base.OnEnter();
+		OnGameStart.Publish(Unit.Default);
 	}
 
 	public override void Dispose()
 	{
 		base.Dispose();
+		events.Dispose();
 		Running = false;
 	}
 

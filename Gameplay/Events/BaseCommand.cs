@@ -90,7 +90,7 @@ public class PlayAudio : BaseCommand
 	private Vector2? soundPosition;
 	private bool wait;
 
-	public PlayAudio(string id, Vector2 pos, bool wait = false)
+	public PlayAudio(string id, Vector2? pos, bool wait = false)
 	{
 		soundID = id;
 		soundPosition = pos;
@@ -113,7 +113,7 @@ public class PlayAudio : BaseCommand
 
 public class SpawnEnemy : BaseCommand
 {
-	public Vector2 position;
+	private Vector2 position;
 
 	public SpawnEnemy(Vector2 pos)
 	{
@@ -127,5 +127,25 @@ public class SpawnEnemy : BaseCommand
 			e.Persistent = true;
 			e.Position = position;
 		});
+	}
+}
+
+public class Exec : BaseCommand
+{
+	private Action onAction;
+	
+	public Exec(Action onAction)
+	{
+		this.onAction = onAction;
+	}
+	
+	public override void OnEnter()
+	{
+		onAction?.Invoke();
+	}
+
+	public override bool Update(float dt)
+	{
+		return true;
 	}
 }
