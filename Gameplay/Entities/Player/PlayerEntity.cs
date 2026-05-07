@@ -123,16 +123,6 @@ public class PlayerEntity : CharacterEntity
 			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin, 1);
 	}
 
-	public override void Draw()
-	{
-		base.Draw();
-
-		Raylib.DrawLineV(Position, Weapons.LaserHit.HitPosition, Colors.RED.Fade(Weapons.LaserHit.Body != null ? 1 : 0.4f));
-
-		if (Weapons.LaserHit.Body != null)
-			Raylib.DrawCircleV(Weapons.LaserHit.HitPosition, 0.3f, Colors.RED);
-	}
-
 	public override void Dispose()
 	{
 		base.Dispose();

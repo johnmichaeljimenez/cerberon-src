@@ -116,8 +116,7 @@ public class PlayerWeapons : IDisposable
 
 	private PlayerEntity player;
 	private GameplayState gameplayState;
-	public LinecastHit LaserHit => laserHit;
-	private LinecastHit laserHit;
+	private LinecastHit weaponHit;
 	private bool isIraqiReload;
 
 	private LinecastHit spreadHit;
@@ -170,8 +169,6 @@ public class PlayerWeapons : IDisposable
 
 	public void Update(float dt, float udt)
 	{
-		gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (player.FacingDirection * 100), CollisionHeight.Mid, out laserHit, player.CollisionBody);
-
 		if (muzzleFlash != null)
 		{
 			if (muzzleFlash.Color.A > 0)
@@ -277,7 +274,8 @@ public class PlayerWeapons : IDisposable
 
 						if (CurrentWeapon.SpreadCount == 0)
 						{
-							if (LaserHit.Body != null && LaserHit.Body.SourceEntity is EnemyEntity z)
+							gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (player.FacingDirection * 100), CollisionHeight.Mid, out weaponHit, player.CollisionBody);
+							if (weaponHit.Body != null && weaponHit.Body.SourceEntity is EnemyEntity z)
 							{
 								hitCount++;
 								HitBullet(z);
