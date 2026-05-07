@@ -106,7 +106,7 @@ public class World : IDisposable //aka Level loader
 	public List<WorldSpriteRenderer> EnvironmentSprites { get; private set; } = new();
 
 	[JsonIgnore]
-	public readonly Dictionary<int, List<WorldSpriteRenderer>> Sprites = new();
+	public readonly SortedDictionary<int, List<WorldSpriteRenderer>> Sprites = new(); //ensure that key is sorted (ascending)
 
 	[JsonIgnore]
 	public readonly Dictionary<string, List<BaseEntity>> EntityGroups = new();
@@ -124,7 +124,6 @@ public class World : IDisposable //aka Level loader
 	private int _nextID;
 
 	public readonly Signal<BaseEntity> OnEntityDespawn = new();
-
 	private readonly Dictionary<WorldCollider, (List<Wall>, Shadow)> colliderWalls = new();
 	public static void InitRegistry()
 	{
