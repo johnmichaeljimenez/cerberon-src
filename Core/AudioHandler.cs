@@ -3,7 +3,7 @@ using Tween;
 
 namespace Main.Core;
 
-public class MusicSource
+public class MusicSource	//TODO: add float array to tell the Music track which are the nearest points to transition instead of doing it immediately on current time
 {
 	public Music Music;
 	public string ID;
@@ -68,7 +68,7 @@ public class AudioSource
 public static class AudioHandler
 {
 	private const int ALIAS_COUNT = 10;
-	private const float MUSIC_BASE_VOLUME = 0.3f;
+	private const float MUSIC_BASE_VOLUME = 0.4f;
 
 	private static readonly List<AudioSource> activeAudioSources = new();
 	private static readonly Dictionary<string, MusicSource> musicAssets = new();
@@ -96,7 +96,7 @@ public static class AudioHandler
 			if (IsMusicPlaying(music.Music))
 			{
 				Raylib.UpdateMusicStream(music.Music);
-				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME);
+				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME * (PauseHandler.IsPaused? 0.4f : 1));
 
 				if (!music.IsPlaying && music.Volume <= 0.01f) //requested to stop and volume is near zero
 				{
