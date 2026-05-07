@@ -270,6 +270,11 @@ public class World : IDisposable //aka Level loader
 	{
 		foreach (var i in Sprites)
 		{
+			if (i.Key == 0)
+			{
+				DecalSystem.Draw();
+			}
+
 			foreach (var j in i.Value)
 			{
 				j.Draw();
@@ -277,7 +282,19 @@ public class World : IDisposable //aka Level loader
 
 			if (i.Key == 0)
 			{
-				DecalSystem.Draw();
+				var shadowSprite = AssetManager.GetSprite("blob-shadow");
+				RenderingManager.BeginMaskedShader();
+				foreach (var j in Entities)
+				{
+					if (j.IsDestroyed || !j.IsActive)
+						continue;
+
+					if (j is not CharacterEntity c)
+						continue;
+
+					shadowSprite.Draw(j.Position, c.CollisionBody.Radius * 4, 0, Color.Black);
+				}
+				Raylib.EndShaderMode();
 
 				foreach (var j in Entities)
 				{
