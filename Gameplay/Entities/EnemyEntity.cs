@@ -238,12 +238,12 @@ public class EnemyEntity : CharacterEntity
 		Animator.Play("roach-death");
 	}
 
-	public override void Draw()
-	{
-		RenderingManager.BeginMaskedShader();
-		base.Draw();
-		Raylib.EndShaderMode();
-	}
+	// public override void Draw()
+	// {
+	// 	RenderingManager.BeginMaskedShader();
+	// 	base.Draw();
+	// 	Raylib.EndShaderMode();
+	// }
 
 	private void ReleaseAttack()
 	{

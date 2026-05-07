@@ -281,8 +281,8 @@ public class World : IDisposable //aka Level loader
 
 			if (i.Key == 0)
 			{
-				var shadowSprite = AssetManager.GetSprite("blob-shadow");
 				RenderingManager.BeginMaskedShader();
+				var shadowSprite = AssetManager.GetSprite("blob-shadow");
 				foreach (var j in Entities)
 				{
 					if (j.IsDestroyed || !j.IsActive)
@@ -293,7 +293,6 @@ public class World : IDisposable //aka Level loader
 
 					shadowSprite.Draw(j.Position, c.CollisionBody.Radius * 4, 0, Color.Black);
 				}
-				Raylib.EndShaderMode();
 
 				foreach (var j in Entities)
 				{
@@ -302,6 +301,7 @@ public class World : IDisposable //aka Level loader
 
 					j.Draw();
 				}
+				Raylib.EndShaderMode();
 
 				foreach (var j in EnvironmentColliders)
 				{
