@@ -1,4 +1,33 @@
 {
+	"player-low-idle": {
+		"Name": "player-low-idle",
+		"Frames": [
+			"player/feet/idle/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-low-move": {
+		"Name": "player-low-move",
+		"Frames": [
+			"player/feet/run/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-low-strafe-right": {
+		"Name": "player-low-strafe-right",
+		"Frames": [
+			"player/feet/strafe_right/*"
+		],
+		"LoopStartIndex": 0
+	},
+	"player-low-strafe-left": {
+		"Name": "player-low-strafe-left",
+		"Frames": [
+			"player/feet/strafe_left/*"
+		],
+		"LoopStartIndex": 0
+	},
+
 	"player-handgun-idle": {
 		"Name": "player-handgun-idle",
 		"Frames": [

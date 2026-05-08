@@ -21,6 +21,9 @@ public class PlayerEntity : CharacterEntity
 
 	public PlayerWeapons Weapons { get; private set; }
 
+	private Animator lowerBodyAnimator;
+	private float lowerBodyAngle;
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
@@ -35,6 +38,9 @@ public class PlayerEntity : CharacterEntity
 		flashLight = LightingSystem.AddLight("flashlight", Position, Color.White.Value(0.5f), FacingAngle, 10, flashLightOn, new(0f, 0.5f), Light.ShadowTypes.Dynamic); //redundant shadow but it is what it is
 
 		Animator.Play(Weapons.CurrentWeapon.ANIM_IDLE);
+
+		lowerBodyAnimator = new("player-low-idle", "player-low-move", "player-low-strafe-left", "player-low-strafe-right");
+		lowerBodyAngle = FacingAngle;
 	}
 
 	protected override void OnAnimationBegin(string animationName)
@@ -76,13 +82,47 @@ public class PlayerEntity : CharacterEntity
 			}
 		}
 
+		dot = Raymath.Vector2DotProduct(FacingDirection, InputManager.Movement);
+
+		bool isMoving = velocity.LengthSquared() > 0.5f;
+
+		if (isMoving)
+		{
+			var moveDir = Raymath.Vector2Normalize(InputManager.Movement);
+			var dot = Raymath.Vector2DotProduct(FacingDirection, moveDir);
+			var cross = FacingDirection.X * moveDir.Y - FacingDirection.Y * moveDir.X;
+
+			string animationName;
+
+			if (dot > 0.65f || dot < -0.5f)
+			{
+				animationName = "player-low-move";
+			}
+			else
+			{
+				animationName = (cross > 0) ? "player-low-strafe-right" : "player-low-strafe-left";
+			}
+
+			lowerBodyAnimator.Play(animationName);
+		}
+		else
+		{
+			lowerBodyAnimator.Play("player-low-idle");
+		}
+
+		lowerBodyAngle = Raymath.LerpAngle(lowerBodyAngle, FacingAngle, dt * 8f);
+		// Log.Send($"{dot:F2}");
+
 		Weapons.Update(dt, udt);
 	}
+
+	float dot;
 
 	public override void LateUpdate(float dt, float udt)
 	{
 		base.LateUpdate(dt, udt);
 
+		lowerBodyAnimator.Update(dt, udt);
 		float rotSpeed = 12;
 		FacingAngle = Raymath.LerpAngle(FacingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
 
@@ -149,5 +189,11 @@ public class PlayerEntity : CharacterEntity
 		IsActive = false; //TODO: spawn a player death animation false entity
 
 		gameplayState.GetManager<PlayerManager>().OnPlayerDeath.Publish(this);
+	}
+
+	public override void Draw()
+	{
+		lowerBodyAnimator.GetFrameSprite()?.Draw(Position, 1, lowerBodyAngle, origin: Origin);
+		base.Draw();
 	}
 }
