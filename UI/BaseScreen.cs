@@ -100,6 +100,10 @@ public abstract class BaseScreen : IDisposable
 			}
 		}
 
+
+		if (Raylib.IsMouseButtonReleased(0))
+			pressElement = null;
+
 		if (pressElement == null && Raylib.IsKeyPressed(KeyboardKey.Escape))
 		{
 			OnBack();
