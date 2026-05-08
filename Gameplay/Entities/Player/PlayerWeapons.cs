@@ -2,6 +2,7 @@ using Main.Core;
 using Main.Effects;
 using Main.Gameplay.Managers;
 using Main.Helpers;
+using Tween;
 
 namespace Main.Gameplay.Entities.Player;
 
@@ -376,6 +377,7 @@ public class PlayerWeapons : IDisposable
 
 		if (hit)
 		{
+			PauseHandler.ApplyHitstop();
 			Game.Instance.Camera.Shake(0.4f, player.GetFacingAngleOffset(90));
 			hitCount++;
 			AudioHandler.PlaySound(SFX_MELEE_HIT);
