@@ -9,6 +9,9 @@ namespace Main.Gameplay.Managers;
 //TODO: track the player's most frequently visited locations and make items spawn there
 public class AIDirectorManager : BaseManager
 {
+	[DataConfig(defaultValue: true)]
+	public static bool Enabled;
+
 	//TENSION is for gameplay difficulty (spawn rates, aggression, events)
 	public enum TensionState { Calm, Tense, Panic, Critical }
 	//MOOD is for atmosphere and emotion (music, colors, effects)
@@ -105,12 +108,13 @@ public class AIDirectorManager : BaseManager
 	public void Begin()
 	{
 		Paused = false;
-		OnMoodChanged();
+		if (Enabled)
+			OnMoodChanged();
 	}
 
 	public override void Update(float dt, float udt)
 	{
-		if (PauseHandler.IsPaused || Paused) return;
+		if (!Enabled || PauseHandler.IsPaused || Paused) return;
 
 		base.Update(dt, udt);
 
