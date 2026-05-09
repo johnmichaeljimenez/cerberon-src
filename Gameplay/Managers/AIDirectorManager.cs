@@ -59,7 +59,6 @@ public class AIDirectorManager : BaseManager
 	public float Tension { get; private set; }
 	public float Mood { get; private set; }
 
-	private const int MAX_ENEMY_COUNT = 50;
 	private const int MAX_ITEM_HEALTH_COUNT = 3;
 	private const int MAX_ITEM_AMMO_COUNT = 5;
 	private const int MAX_ITEM_WEAPON_COUNT = 1;
@@ -78,6 +77,8 @@ public class AIDirectorManager : BaseManager
 	private const int MAX_ATTACKING_ENEMY = 2;
 	private const float TOKEN_COOLDOWN = 0.5f;
 	private readonly float[] attackTokenCooldowns = new float[MAX_ATTACKING_ENEMY];
+
+	private float currentCost;
 
 	public AIDirectorManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -103,6 +104,7 @@ public class AIDirectorManager : BaseManager
 			{
 				if (z.HP <= 0)
 				{
+					currentCost -= z.Cost;
 					emaKillCount.AddSample(60.0f); //large bump to compensate for decay (add must be faster than reduction)
 				}
 			}
@@ -120,6 +122,11 @@ public class AIDirectorManager : BaseManager
 		Paused = false;
 		if (Enabled)
 			OnMoodChanged();
+	}
+
+	public float GetEnemyCostToSpawn()
+	{
+		return 1.0f; //TODO: add ema for enemy "cause of death" to counter player's moveset (ex. too much AOE melee will spawn bigger tougher roaches, and too much rifles will spawn tiny fast roaches
 	}
 
 	public override void Update(float dt, float udt)
@@ -142,12 +149,17 @@ public class AIDirectorManager : BaseManager
 		if (enemySpawnTimer <= 0)
 		{
 			enemySpawnTimer = CalculateEnemySpawnInterval();
-			int current = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity)).Count;
-			if (current < MAX_ENEMY_COUNT)
-			{
-				int toSpawn = CalculateEnemysToSpawn();
+			var maxCost = CalculateEnemysToSpawn();
+			// int currentCost = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity)).Count;
 
-				for (int i = 0; i < toSpawn; i++) SpawnEnemy();
+			if (currentCost < maxCost)
+			{
+				var spawnCost = GetEnemyCostToSpawn();
+				for (float i = 0; i < maxCost; i += spawnCost)
+				{
+					SpawnEnemy(spawnCost);
+					currentCost += spawnCost;
+				}
 			}
 		}
 
@@ -310,10 +322,11 @@ public class AIDirectorManager : BaseManager
 		e.Position = GetSpawnPosition();
 	});
 
-	private void SpawnEnemy() => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
+	private void SpawnEnemy(float cost) => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
 	{
 		e.Position = GetSpawnPosition() + RNG.Position(0.2f);
 		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Critical && RNG.Chance(0.5f); //jumpscare + escalate pressure (but only if player can sustain it)
+		e.Cost = cost;
 	});
 
 	public override void DrawImGui()
