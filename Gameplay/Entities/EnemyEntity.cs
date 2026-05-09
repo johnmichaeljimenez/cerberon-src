@@ -25,7 +25,7 @@ public class EnemyEntity : CharacterEntity
 	[JsonProperty]
 	public bool IsFlyer { get; set; } = false;
 	[JsonProperty]
-	public float cost = 1;
+	public float Cost { get; set; } = 0.5f;
 
 	private bool flying;
 	private Vector2 flyTarget;
@@ -37,14 +37,17 @@ public class EnemyEntity : CharacterEntity
 	private readonly List<Vector2> nodes = new();
 
 	private int attackDamage;
+	private float normalizedCost;
 
 	public override void Init(GameplayState gameplayState)
 	{
+		normalizedCost = Raymath.Remap(Cost, 0f, 2f, 2f, 0.5f);
 		lifetime = LIFETIME;
 		attackRequestIndex = -1;
 		SetStats();
 
 		base.Init(gameplayState);
+		Animator.BaseSpeed = normalizedCost;
 
 		Animator.Add("roach-idle", 0);
 		Animator.Add("roach-move", 0);
@@ -58,12 +61,13 @@ public class EnemyEntity : CharacterEntity
 
 	private void SetStats()
 	{
-		Scale = cost;
-		MaxHP = Math.Max(1, (int)(STATS_BASE_HP * cost));
+		Scale = Cost;
+		MaxHP = Math.Max(1, (int)(STATS_BASE_HP * Cost));
 		Radius = STATS_BASE_RADIUS;
-		MovementSpeed = STATS_BASE_MOVEMENT_SPEED * Raymath.Remap(cost, 0f, 2f, 2, 0.5f);
+		MovementSpeed = STATS_BASE_MOVEMENT_SPEED * normalizedCost;
+		attackDamage = Math.Max(1, (int)(STATS_BASE_DAMAGE * Cost));
+
 		Origin = new(0.4f, 0.5f);
-		attackDamage = Math.Max(1, (int)(STATS_BASE_DAMAGE * cost));
 	}
 
 	protected override void OnAnimationEnd(string animationName)

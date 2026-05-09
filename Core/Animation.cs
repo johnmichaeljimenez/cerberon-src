@@ -61,6 +61,8 @@ public class Animator //this is the "instance" using those said "assets"
 	private string nextAnimationName;
 	private int frameIndex;
 	private float timer;
+	public float BaseSpeed { get; set; } = 1.0f;
+	public float CurrentSpeed { get; private set; }
 
 	public float NormalizedTime { get; private set; }
 	public float CurrentDuration { get; private set; }
@@ -123,7 +125,7 @@ public class Animator //this is the "instance" using those said "assets"
 		if (!IsPlaying || CurrentAnimation == null || CurrentAnimation.Frames.Count == 0)
 			return;
 
-		timer += dt;
+		timer += dt * CurrentSpeed;
 		if (timer >= Animation.FRAME_RATE)
 		{
 			timer = 0;
@@ -168,7 +170,7 @@ public class Animator //this is the "instance" using those said "assets"
 		return CurrentAnimation.Sprites[frameIndex];
 	}
 
-	public bool Play(string animationName, bool forceRestart = false, string nextAnimationName = null, bool ignorePriority = false, float targetStartTime = 0f) //nextAnimationName will be commonly used (ex. attack to idle) without coding massive amount of FSM handling
+	public bool Play(string animationName, bool forceRestart = false, string nextAnimationName = null, bool ignorePriority = false, float targetStartTime = 0f, float? speed = null) //nextAnimationName will be commonly used (ex. attack to idle) without coding massive amount of FSM handling
 	{
 		if (!Animations.TryGetValue(animationName, out var anim))
 			throw new ArgumentException($"Animation '{animationName}' not found.");
@@ -183,6 +185,8 @@ public class Animator //this is the "instance" using those said "assets"
 
 			OnAnimationEnd?.Publish(CurrentAnimation.Name);
 		}
+
+		CurrentSpeed = speed ?? BaseSpeed;
 
 		Reset();
 		CurrentAnimation = anim;
