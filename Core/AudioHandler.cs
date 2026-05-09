@@ -3,15 +3,16 @@ using Tween;
 
 namespace Main.Core;
 
-public class MusicSource	//TODO: add float array to tell the Music track which are the nearest points to transition instead of doing it immediately on current time
+public class MusicSource    //TODO: add float array to tell the Music track which are the nearest points to transition instead of doing it immediately on current time
 {
 	public Music Music;
 	public string ID;
 	public bool IsPlaying;
 	public float Volume;
 	public float LastTime;
+	public Dictionary<string, List<float>> transitionPoints = new();
 
-	public void SetActive(bool isPlaying)
+	public void SetActive(bool isPlaying, string context = null)
 	{
 		IsPlaying = isPlaying;
 		Volume = isPlaying ? 0 : 1;
@@ -31,9 +32,48 @@ public class MusicSource	//TODO: add float array to tell the Music track which a
 			Raylib.PlayMusicStream(Music);
 			Raylib.SetMusicVolume(Music, Volume);
 
-			if (LastTime > 0)
-				Raylib.SeekMusicStream(Music, LastTime); //resume last music position if it already played
+			var t = LastTime; //resume last music position if it already played (default)
+			if (!string.IsNullOrWhiteSpace(context))
+			{
+				t = GetNearestTransitionPoint(context, LastTime);
+			}
+
+			Raylib.SeekMusicStream(Music, t);
 		}
+	}
+
+	public float GetNextTransitionPoint(string section, float currentTime)
+	{
+		if (!transitionPoints.TryGetValue(section, out var points) || points.Count == 0)
+			return -1f;
+
+		foreach (var point in points)
+		{
+			if (point > currentTime + 0.05f)
+				return point;
+		}
+
+		return points[0];
+	}
+
+	public float GetNearestTransitionPoint(string section, float currentTime)
+	{
+		if (!transitionPoints.TryGetValue(section, out var points) || points.Count == 0)
+			return currentTime;
+
+		float nearest = points[0];
+		float minDiff = Math.Abs(currentTime - nearest);
+
+		foreach (var p in points)
+		{
+			float diff = Math.Abs(currentTime - p);
+			if (diff < minDiff)
+			{
+				minDiff = diff;
+				nearest = p;
+			}
+		}
+		return nearest;
 	}
 }
 
@@ -96,7 +136,7 @@ public static class AudioHandler
 			if (IsMusicPlaying(music.Music))
 			{
 				Raylib.UpdateMusicStream(music.Music);
-				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME * (PauseHandler.IsPaused? 0.4f : 1));
+				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME * (PauseHandler.IsPaused ? 0.4f : 1));
 
 				if (!music.IsPlaying && music.Volume <= 0.01f) //requested to stop and volume is near zero
 				{
@@ -186,21 +226,26 @@ public static class AudioHandler
 
 			if (files.Count == 0) continue;
 
-			if (!string.IsNullOrEmpty(groupKey) && groupKey.StartsWith("bgm", StringComparison.OrdinalIgnoreCase)) //all audios under Audio/bgm is treated as music automatically
+			if (!string.IsNullOrEmpty(groupKey) && groupKey.StartsWith("bgm", StringComparison.OrdinalIgnoreCase))
 			{
+				var folderPath = files.Count > 0 ? Path.GetDirectoryName(files[0]) ?? "" : "";
+
 				foreach (var filePath in files)
 				{
-					string fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
-					string musicKey = $"{groupKey}";
+					var fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
+					var musicKey = $"{groupKey}";
 
-					Music music = Raylib.LoadMusicStream(filePath);
-					musicAssets[musicKey] = new()
+					var music = Raylib.LoadMusicStream(filePath);
+
+					musicAssets[musicKey] = new MusicSource
 					{
 						ID = musicKey,
 						IsPlaying = false,
 						Volume = 0,
-						Music = music
+						Music = music,
+						transitionPoints = new Dictionary<string, List<float>>(LoadTransitionPoints(folderPath))
 					};
+
 					totalLoaded++;
 				}
 				continue;
@@ -335,18 +380,18 @@ public static class AudioHandler
 		return Raylib.IsSoundPlaying(sound);
 	}
 
-	public static MusicSource PlayMusic(string key)
+	public static MusicSource PlayMusic(string key, string context = null)
 	{
-		if (!musicAssets.TryGetValue(key, out var music))
+		if (!musicAssets.TryGetValue($"bgm/{key}", out var music))
 			return null;
 
-		if (CurrentMusic == music && music.IsPlaying)
-			return music;
+		// if (CurrentMusic == music && music.IsPlaying) 
+		// 	return music;
 
 		StopMusic();
 
 		CurrentMusic = music;
-		CurrentMusic.SetActive(true);
+		CurrentMusic.SetActive(true, context);
 		return music;
 	}
 
@@ -375,5 +420,35 @@ public static class AudioHandler
 	public static bool IsMusicPlaying(Music music)
 	{
 		return Raylib.IsMusicStreamPlaying(music);
+	}
+
+	//this is for switching music but with proper transition points so that the system knows where to jump in a specific track depending on the context, instead of transitioning abruptly
+	private static Dictionary<string, List<float>> LoadTransitionPoints(string folderPath)
+	{
+		var transitionPoints = new Dictionary<string, List<float>>(StringComparer.OrdinalIgnoreCase);
+
+		if (string.IsNullOrEmpty(folderPath))
+			return transitionPoints;
+
+		var jsonPath = Path.Combine(folderPath, "transitions.json");
+		if (!File.Exists(jsonPath))
+			return transitionPoints;
+
+		try
+		{
+			var json = File.ReadAllText(jsonPath);
+			var loaded = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, List<float>>>(json);
+			if (loaded != null)
+				transitionPoints = loaded;
+
+			foreach (var list in transitionPoints.Values)
+				list.Sort();
+		}
+		catch (Exception ex)
+		{
+			Log.Send($"[Audio] Failed to load transitions.json: {ex.Message}");
+		}
+
+		return transitionPoints;
 	}
 }
