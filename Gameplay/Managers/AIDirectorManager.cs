@@ -50,6 +50,7 @@ public class AIDirectorManager : BaseManager
 	private readonly EMA emaAmmoCount = new(0.05f);
 	private readonly EMA emaPlayerAccuracy = new(0.005f);
 	private readonly EMA emaKillCount = new(0.003f);
+	private readonly EMA emaWeaponUseType = new(0.001f);
 	private readonly EMA emaPlayerHurt = new(0.003f);
 	private readonly EMA emaNearbyEnemyCount = new(0.003f);
 
@@ -58,6 +59,8 @@ public class AIDirectorManager : BaseManager
 
 	public float Tension { get; private set; }
 	public float Mood { get; private set; }
+
+	private float killType;
 
 	private const int MAX_ITEM_HEALTH_COUNT = 3;
 	private const int MAX_ITEM_AMMO_COUNT = 5;
@@ -92,6 +95,7 @@ public class AIDirectorManager : BaseManager
 	{
 		base.OnEnter();
 
+		//TODO: play a count-in hihat sfx here before playing bgm
 		BGMList.Shuffle();
 		bgmIndex = 0;
 
@@ -112,9 +116,18 @@ public class AIDirectorManager : BaseManager
 
 		player.OnTakeDamage.Subscribe(dmg =>
 		{
-			emaPlayerHurt.AddSample(dmg * 40);
+			emaPlayerHurt.AddSample(dmg * 20);
 			emaMood.AddSample(emaMood.Current + (dmg * 0.5f));
 		}).AddTo(disposables);
+
+		player.Weapons.OnWeaponHit.Subscribe(e =>
+		{
+			var amt = -1f;
+			if (e.Item3 || e.Item1.ID == "shotgun") //is melee or shotgun
+				amt = 1f;
+
+			emaWeaponUseType.AddSample(amt * 30);
+		});
 	}
 
 	public void Begin()
@@ -122,11 +135,6 @@ public class AIDirectorManager : BaseManager
 		Paused = false;
 		if (Enabled)
 			OnMoodChanged();
-	}
-
-	public float GetEnemyCostToSpawn()
-	{
-		return 1.0f; //TODO: add ema for enemy "cause of death" to counter player's moveset (ex. too much AOE melee will spawn bigger tougher roaches, and too much rifles will spawn tiny fast roaches
 	}
 
 	public override void Update(float dt, float udt)
@@ -154,7 +162,12 @@ public class AIDirectorManager : BaseManager
 
 			if (currentCost < maxCost)
 			{
-				var spawnCost = GetEnemyCostToSpawn();
+				//TODO: this makes the player's moveset countered (ex. too much AOE melee will spawn bigger tougher roaches, and too much rifles will spawn tiny fast roaches
+				//baseline is 1.0
+				//if shotguns or melee are used too much, drag it downward (subtract) until it reaches 0.001 something (zerg-like roaches)
+				//if pistol or AK are used too much, lift it up (add) until it reaches 2.0 (tank roaches)
+
+				var spawnCost = killType;
 				for (float i = 0; i < maxCost; i += spawnCost)
 				{
 					SpawnEnemy(spawnCost);
@@ -223,6 +236,9 @@ public class AIDirectorManager : BaseManager
 
 	private void TensionUpdate(float dt)
 	{
+		emaWeaponUseType.AddSample(0f); //no need to lock
+		killType = Raymath.Clamp(Raymath.Remap(emaWeaponUseType.Current, -1f, 1f, 0.5f, 2f), 0.5f, 2f);
+
 		if (emaTensionLock > 0)
 			return;
 
@@ -282,6 +298,10 @@ public class AIDirectorManager : BaseManager
 
 		if (CurrentMood.Update(Mood))
 		{
+			//TODO: get the difference between previous and current (changed) mood.
+			//if it rises sharply, play a guitar pick slide/grind sfx before switching music
+			//if it drops sharply, play a guitar feedback fading out tone sfx before switching music
+
 			TweenManager.Add(new Tween<float>(() => emaMoodLock, p => emaMoodLock = p, 0, 10f, 1, "MoodLock", false).SetEasing(Easing.QuadIn));
 			OnMoodChanged();
 		}
@@ -346,6 +366,9 @@ public class AIDirectorManager : BaseManager
 		ImGui.ProgressBar(emaAmmoCount.Current, new(340, 25), $"Ammo: {emaAmmoCount.Current:F2}");
 		ImGui.ProgressBar(emaPlayerHurt.Current, new(340, 25), $"Damage Taken: {emaPlayerHurt.Current:F2}");
 		ImGui.ProgressBar(emaNearbyEnemyCount.Current, new(340, 25), $"Nearby enemy Count: {emaNearbyEnemyCount.Current:F2}");
+
+		var kt = Raymath.Remap(killType, 0.1f, 2f, 0f, 1f);
+		ImGui.ProgressBar(kt, new(340, 25), $"Kill Type: {kt:F2}");
 
 		ImGui.SeparatorText("Attack tokens");
 		for (int i = 0; i < attackTokenCooldowns.Length; i++)

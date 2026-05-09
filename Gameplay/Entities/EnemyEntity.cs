@@ -11,7 +11,7 @@ public class EnemyEntity : CharacterEntity
 
 	[DataConfig(0.8f)] static float STATS_BASE_RADIUS;
 
-	[DataConfig(5)] static int STATS_BASE_DAMAGE;
+	[DataConfig(10)] static int STATS_BASE_DAMAGE;
 
 	[DataConfig(7)] static float STATS_BASE_MOVEMENT_SPEED;
 
@@ -61,7 +61,7 @@ public class EnemyEntity : CharacterEntity
 
 	private void SetStats()
 	{
-		Scale = Cost;
+		Scale = Math.Max(0.1f, Cost);
 		MaxHP = Math.Max(1, (int)(STATS_BASE_HP * Cost));
 		Radius = STATS_BASE_RADIUS;
 		MovementSpeed = STATS_BASE_MOVEMENT_SPEED * normalizedCost;
@@ -92,7 +92,7 @@ public class EnemyEntity : CharacterEntity
 
 		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
 		var d = player.Position - Position;
-		if (!player.IsDead && FacingDirection.IsInFront(player.Position - Position, 4, 50))
+		if (!player.IsDead && FacingDirection.IsInFront(player.Position - Position, Raymath.Lerp(3, 6, Cost / 2), 50))
 		{
 			player.ApplyDamage(attackDamage);
 		}

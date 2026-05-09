@@ -125,8 +125,8 @@ public class PlayerWeapons : IDisposable
 	public readonly Signal<Weapon> OnWeaponSelected = new();
 	public readonly Signal<Weapon> OnWeaponAmmoChanged = new();
 	public readonly Signal<Weapon> OnWeaponFire = new();
-	public readonly Signal<(Weapon, BaseEntity)> OnWeaponHit = new();
-	public readonly Signal<(Weapon, BaseEntity)> OnWeaponKill = new();
+	public readonly Signal<(Weapon, BaseEntity, bool)> OnWeaponHit = new();
+	public readonly Signal<(Weapon, BaseEntity, bool)> OnWeaponKill = new();
 
 	public float NormalizedTotalAmmoCount { get; private set; }
 	public float Accuracy => fireCount < 3 ? 0 : (float)hitCount / (float)fireCount;
@@ -335,12 +335,12 @@ public class PlayerWeapons : IDisposable
 	private void HitBullet(EnemyEntity z)
 	{
 		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
-		OnWeaponHit.Publish((CurrentWeapon, z));
+		OnWeaponHit.Publish((CurrentWeapon, z, false));
 		ApplyKick(z, Raymath.Vector2Normalize(z.Position - player.Position), CurrentWeapon.RangedKick);
 		z.ApplyDamage(CurrentWeapon.Damage);
 
 		if (z.IsDead)
-			OnWeaponKill.Publish((CurrentWeapon, z));
+			OnWeaponKill.Publish((CurrentWeapon, z, false));
 	}
 
 	public void OnAnimationBegin(string animationName)
@@ -370,9 +370,13 @@ public class PlayerWeapons : IDisposable
 			if (!player.FacingDirection.IsInFront(d, 6, 90))
 				continue;
 
+			OnWeaponHit.Publish((CurrentWeapon, z, true));
 			ApplyKick(z, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
 			z.ApplyDamage(CurrentWeapon.AltDamage);
 			hit = true;
+
+			if (z.IsDead)
+				OnWeaponKill.Publish((CurrentWeapon, z, true));
 		}
 
 		if (hit)

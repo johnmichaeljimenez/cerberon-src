@@ -51,7 +51,7 @@ public class WaypointManager : BaseManager
 
 	public Vector2 GetNodePosition(Vector2 origin, float minDistance = 10f, float maxDistance = 20f) //useful for "crawling" the map and picking reasonable and reachable positions from point of origin (uses real travel distance, not euclidean)
 	{
-		var start = GetNearestVisibleNode(origin);
+		var start = GetNearestNode(origin);
 
 		if (start == null)
 			return origin;
