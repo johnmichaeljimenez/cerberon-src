@@ -51,12 +51,15 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	protected Tween<Vector2> externalForceTween;
 	protected Vector2 externalForce;
 
+	[JsonIgnore]
+	public float Scale { get; protected set; } = 1;
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
 
 		HP = MaxHP;
-		CollisionBody = gameplayState.GetManager<CollisionManager>().AddBody(Position, Radius, CollisionHeight.Mid, this);
+		CollisionBody = gameplayState.GetManager<CollisionManager>().AddBody(Position, Radius * Scale, CollisionHeight.Mid, this);
 
 		Animator = new Animator();
 		Animator.OnAnimationBegin.Subscribe(OnAnimationBegin).AddTo(disposables);
@@ -96,7 +99,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		if (hasVelocity || hasExternalForce)
 		{
 			var cm = gameplayState.GetManager<CollisionManager>();
-			var vel = (hasExternalForce? externalForce : velocity) * dt;
+			var vel = (hasExternalForce ? externalForce : velocity) * dt;
 			cm.Move(CollisionBody, ref vel); //super smooth and accurate collision detection and resolution
 			cm.MoveRepelBody(CollisionBody, ref vel);
 			Position += vel;
@@ -114,7 +117,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	public override void Draw()
 	{
-		CurrentSprite?.Draw(Position, rotation: FacingAngle, origin: Origin);
+		CurrentSprite?.Draw(Position, Scale, rotation: FacingAngle, origin: Origin);
 	}
 
 	public override void DrawDebug()
