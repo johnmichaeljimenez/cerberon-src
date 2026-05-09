@@ -22,6 +22,17 @@ public class CameraController
 		};
 	}
 
+	public Vector2 GetParallaxPosition(Vector2 from, float amt)
+	{
+		if (MathF.Abs(amt) >= 0.001f)
+		{
+			var dir = from - Camera.Target;
+			return dir * amt; // value > 0 for tall objects, < 0 for low objects
+		}
+
+		return Vector2.Zero;
+	}
+
 	public void Update(float dt)
 	{
 		AudioHandler.ListenerPosition = Camera.Target;
@@ -58,7 +69,7 @@ public class CameraController
 			)
 			{
 				Parameter1 = 1,
-				Parameter2 = 0.2f	
+				Parameter2 = 0.2f
 			}.SetEasing(Easing.RandomShake)
 		);
 	}

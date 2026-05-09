@@ -56,12 +56,7 @@ public class WorldSpriteRenderer //same with this
 
 	public void Draw()
 	{
-		var pos = Position;
-		if (MathF.Abs(Parallax) >= 0.001f)
-		{
-			var dir = Position - Game.Instance.Camera.Camera.Target;
-			pos += dir * Parallax; // value > 0 for tall objects, < 0 for low objects
-		}
+		var pos = Position + Game.Instance.Camera.GetParallaxPosition(Position, Parallax);
 
 		if (RenderType == RenderTypes.Tiled)
 		{
