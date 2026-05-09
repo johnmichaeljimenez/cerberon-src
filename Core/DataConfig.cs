@@ -9,6 +9,12 @@ public class DataConfigAttribute : Attribute
 	public string? Key { get; }
 	public object? DefaultValue { get; }
 
+	public DataConfigAttribute(object defaultValue)
+	{
+		Key = null;
+		DefaultValue = defaultValue;
+	}
+
 	public DataConfigAttribute(string? key = null, object? defaultValue = null)
 	{
 		Key = key;

@@ -7,36 +7,42 @@ namespace Main.Gameplay.Entities;
 
 public class EnemyEntity : CharacterEntity
 {
-	const float LIFETIME = 20f;
-	public override Teams Team => Teams.Enemy;
-	private int attackDamage = 5;
+	[DataConfig(70f)] static float STATS_BASE_HP;
 
-	private readonly List<Vector2> nodes = new();
+	[DataConfig(0.8f)] static float STATS_BASE_RADIUS;
+
+	[DataConfig(5)] static int STATS_BASE_DAMAGE;
+
+	[DataConfig(7)] static float STATS_BASE_MOVEMENT_SPEED;
+
+	const float LIFETIME = 20f;
+
+
+	public override Teams Team => Teams.Enemy;
 
 	[JsonIgnore]
 	public bool Persistent { get; set; }
-
-	private float fsTimer = 0;
-
-	private float lifetime; //despawn far-away enemys after certain time
-
 	[JsonProperty]
 	public bool IsFlyer { get; set; } = false;
+	[JsonProperty]
+	public float cost = 1;
+
 	private bool flying;
 	private Vector2 flyTarget;
 	private float visibleTime = 0;
-
 	private int attackRequestIndex = -1;
+	private float lifetime; //despawn far-away enemies after certain time
+	private float fsTimer = 0;
+
+	private readonly List<Vector2> nodes = new();
+
+	private int attackDamage;
 
 	public override void Init(GameplayState gameplayState)
 	{
 		lifetime = LIFETIME;
-		MaxHP = 70;
-		Radius = 0.8f;
-		MovementSpeed = 7.0f;
-		Log.Send($"Spawned enemy #{ID}");
-		Origin = new(0.4f, 0.5f);
 		attackRequestIndex = -1;
+		SetStats();
 
 		base.Init(gameplayState);
 
@@ -45,8 +51,19 @@ public class EnemyEntity : CharacterEntity
 		Animator.Add("roach-fly", 0);
 		Animator.Add("roach-attack", 50);
 		Animator.Add("roach-death", 100);
-
 		Animator.Play("roach-idle");
+
+		Log.Send($"Spawned enemy #{ID}");
+	}
+
+	private void SetStats()
+	{
+		Scale = cost;
+		MaxHP = Math.Max(1, (int)(STATS_BASE_HP * cost));
+		Radius = STATS_BASE_RADIUS;
+		MovementSpeed = STATS_BASE_MOVEMENT_SPEED * Raymath.Remap(cost, 0f, 2f, 2, 0.5f);
+		Origin = new(0.4f, 0.5f);
+		attackDamage = Math.Max(1, (int)(STATS_BASE_DAMAGE * cost));
 	}
 
 	protected override void OnAnimationEnd(string animationName)
@@ -59,7 +76,7 @@ public class EnemyEntity : CharacterEntity
 
 		if (animationName == "roach-death")
 		{
-			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin);
+			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin, Scale);
 			Despawn();
 		}
 	}
