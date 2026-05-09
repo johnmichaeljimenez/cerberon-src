@@ -2,6 +2,7 @@ using Main.Core;
 using Main.Gameplay.Entities;
 using Main.Gameplay.Entities.Player;
 using Main.Helpers;
+using Tween;
 
 namespace Main.Gameplay.Managers;
 
@@ -9,6 +10,13 @@ namespace Main.Gameplay.Managers;
 //TODO: track the player's most frequently visited locations and make items spawn there
 public class AIDirectorManager : BaseManager
 {
+	private readonly List<string> BGMList = new(){
+		"bone shredder",
+		"carnivore diet",
+		"cerebral mutilation"
+	};
+	private int bgmIndex;
+
 	[DataConfig(defaultValue: true)]
 	public static bool Enabled;
 
@@ -66,7 +74,6 @@ public class AIDirectorManager : BaseManager
 
 	public bool Paused = false;
 
-
 	//this enemy attack token system prevents the player from get shredded quickly by horde of enemies
 	private const int MAX_ATTACKING_ENEMY = 2;
 	private const float TOKEN_COOLDOWN = 0.5f;
@@ -83,6 +90,9 @@ public class AIDirectorManager : BaseManager
 	public override void OnEnter()
 	{
 		base.OnEnter();
+
+		BGMList.Shuffle();
+		bgmIndex = 0;
 
 		gameplayManager = gameplayState.GetManager<GameplayManager>();
 		player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
@@ -124,6 +134,7 @@ public class AIDirectorManager : BaseManager
 		}
 
 		TensionUpdate(dt);
+		MoodUpdate(dt);
 
 		if (emaPlayerHealth.Current <= 0) return;
 
@@ -200,6 +211,9 @@ public class AIDirectorManager : BaseManager
 
 	private void TensionUpdate(float dt)
 	{
+		if (emaTensionLock > 0)
+			return;
+
 		emaKillCount.AddSample(0f);
 		emaPlayerHurt.AddSample(0f);
 
@@ -230,24 +244,35 @@ public class AIDirectorManager : BaseManager
 		newTension = Math.Clamp(newTension, 0f, 1f);
 		emaTension.AddSample(newTension);
 
-		Tension = emaTension.Current;
-		UpdateMood();
+		if (emaTensionLock <= 0)
+			Tension = Raymath.Lerp(Tension, emaTension.Current, 5f * dt);
 
-		CurrentTensionState.Update(Tension);
-		if (CurrentMood.Update(Mood))
-			OnMoodChanged();
+		if (CurrentTensionState.Update(Tension))
+		{
+			TweenManager.Add(new Tween<float>(() => emaTensionLock, p => emaTensionLock = p, 0, 10f, 1, "TensionLock", false).SetEasing(Easing.QuadIn));
+		}
 	}
 
-	private void UpdateMood()
+	private void MoodUpdate(float dt)
 	{
+		if (emaMoodLock > 0)
+			return;
+
 		float moodInput = (1.0f - emaPlayerHealth.Current) * 0.45f + //low health = more intense mood
 						  emaNearbyEnemyCount.Current * 0.5f +
-						  emaKillCount.Current * 0.1f +
+						  emaKillCount.Current * 0.3f +
 						  emaAmmoCount.Current * 0.1f;
 
 		moodInput = Math.Clamp(moodInput, 0f, 1f);
 		emaMood.AddSample(moodInput);
+
 		Mood = emaMood.Current;
+
+		if (CurrentMood.Update(Mood))
+		{
+			TweenManager.Add(new Tween<float>(() => emaMoodLock, p => emaMoodLock = p, 0, 10f, 1, "MoodLock", false).SetEasing(Easing.QuadIn));
+			OnMoodChanged();
+		}
 	}
 
 	private float CalculateEnemySpawnInterval() => 9.5f - Tension * 7.8f;
@@ -296,6 +321,8 @@ public class AIDirectorManager : BaseManager
 		base.DrawImGui();
 		ImGui.Checkbox("Pause", ref Paused);
 		ImGui.SeparatorText($"AI Director: (Tension: {CurrentTensionState.CurrentState}, Mood: {CurrentMood.CurrentState})");
+		ImGui.Text($"Tension Lock: {emaTensionLock:F2}");
+		ImGui.Text($"Mood Lock: {emaMoodLock:F2}");
 		ImGui.ProgressBar(Tension, new(340, 25), $"Overall Tension: {emaTension.Current:F2}");
 		ImGui.ProgressBar(Mood, new(340, 25), $"Mood: {emaMood.Current:F2}");
 
@@ -339,18 +366,13 @@ public class AIDirectorManager : BaseManager
 
 	private void OnMoodChanged()
 	{
-		switch (CurrentMood.CurrentState)
+		AudioHandler.PlayMusic(BGMList[bgmIndex], CurrentMood.CurrentState.ToString().ToLower());
+
+		bgmIndex++;
+		if (bgmIndex >= BGMList.Count)
 		{
-			case MoodState.Dread:
-			case MoodState.Terror:
-				AudioHandler.PlayMusic("bgm/intense");
-				break;
-			case MoodState.Calm:
-				AudioHandler.PlayMusic("bgm/start");
-				break;
-			default:
-				AudioHandler.PlayMusic("bgm/default");
-				break;
+			BGMList.Shuffle();
+			bgmIndex = 0;
 		}
 	}
 }

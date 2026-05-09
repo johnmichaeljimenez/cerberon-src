@@ -2,7 +2,7 @@ namespace Main.Helpers;
 
 public static class RNG
 {
-	private static readonly Random rng = new Random();
+	private static readonly Random rng = new Random(); //TODO: used this for all new Random scattered everywhere
 
 	public static float Range(float min, float max)
 	{
@@ -20,7 +20,7 @@ public static class RNG
 	public static bool Chance(float percentage)
 	{
 		percentage = Raymath.Clamp01(percentage);
-		
+
 		var roll = rng.NextDouble();
 		return roll < percentage;
 	}
@@ -32,5 +32,18 @@ public static class RNG
 			pos = Raymath.Vector2Normalize(pos);
 
 		return pos * range;
+	}
+
+	public static void Shuffle<T>(this IList<T> list)
+	{
+		int n = list.Count;
+		while (n > 1)
+		{
+			n--;
+			int k = rng.Next(n + 1);
+			T value = list[k];
+			list[k] = list[n];
+			list[n] = value;
+		}
 	}
 };
