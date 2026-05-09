@@ -67,9 +67,21 @@ public class UIElement
 			Raylib.DrawRectangleLinesEx(Rect, 1, Color.White);
 
 		var tint = Color.White.Value(Clickable && hovered ? 1.0f : 0.8f);
-		if (sprite != null)
+
+		if (sprite != null) //draw as correct aspect ratio contained inside Rect
 		{
-			Raylib.DrawTexturePro(sprite.Texture, new Rectangle(0, 0, sprite.Width, sprite.Height), Rect, Vector2.Zero, 0, tint);
+			var scale = Math.Min(Rect.Width / sprite.Width, Rect.Height / sprite.Height);
+			var size = new Vector2(sprite.Width * scale, sprite.Height * scale);
+
+			var pos = new Vector2(
+				Rect.X + (Rect.Width - size.X) / 2f,
+				Rect.Y + (Rect.Height - size.Y) / 2f
+			);
+
+			Raylib.DrawTexturePro(sprite.Texture,
+				new Rectangle(0, 0, sprite.Width, sprite.Height),
+				new Rectangle(pos.X, pos.Y, size.X, size.Y),
+				Vector2.Zero, 0, tint);
 		}
 
 		if (TextSize > 0 && !string.IsNullOrWhiteSpace(Text))
