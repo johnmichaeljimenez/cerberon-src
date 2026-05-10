@@ -108,6 +108,7 @@ public class Light : IDisposable
 	public bool Enabled { get; set; }
 	public VisionEffects VisionEffect { get; set; }
 	public bool Flicker { get; set; }
+	public float AmbientMultiplier { get; set; } //0 = no ambient influence (indoor light), 1 = full ambient influence (outdoor light)
 
 	public ShadowTypes ShadowType { get; set; }
 	public RenderTexture2D? ShadowRenderTexture { get; private set; }
@@ -272,7 +273,7 @@ public static class LightingSystem
 				Raylib.ClearBackground(Color.Black);
 				Raylib.BeginMode2D(lightCam);
 
-				i.Sprite.Draw(i.Position, tint: i.Color, rotation: i.Rotation, origin: i.Origin, scale: i.Scale);
+				i.Sprite.Draw(i.Position, tint: Color.White, rotation: i.Rotation, origin: i.Origin, scale: i.Scale); //let the actual light rendering handle color
 
 				foreach (var shadow in shadows)
 				{
@@ -294,13 +295,15 @@ public static class LightingSystem
 			if (!i.Enabled)
 				continue;
 
-			var flicker = i.Flicker? QuakeFlicker.GetIntensity() : 1.0f;
+			var flicker = i.Flicker ? QuakeFlicker.GetIntensity() : 1.0f;
 			if (flicker <= 0)
 				continue;
 
+			var color = Raylib.ColorLerp(i.Color.Value(flicker), AmbientLightColor, i.AmbientMultiplier);
+
 			if (i.ShadowType == Light.ShadowTypes.None)
 			{
-				i.Sprite.Draw(i.Position, tint: i.Color.Value(flicker), rotation: i.Rotation, origin: i.Origin, scale: i.Scale);
+				i.Sprite.Draw(i.Position, tint: color, rotation: i.Rotation, origin: i.Origin, scale: i.Scale);
 				continue;
 			}
 
@@ -318,8 +321,7 @@ public static class LightingSystem
 				);
 
 				Rectangle src = new Rectangle(0, 0, rt.Texture.Width, -rt.Texture.Height);
-
-				Raylib.DrawTexturePro(rt.Texture, src, dest, Vector2.Zero, 0f, Color.White.Value(flicker));
+				Raylib.DrawTexturePro(rt.Texture, src, dest, Vector2.Zero, 0f, color);
 			}
 		}
 
