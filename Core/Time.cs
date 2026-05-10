@@ -3,6 +3,7 @@ namespace Main.Core;
 public static class Time
 {
 	public static float CurrentTime { get; private set; }
+	public static float UnscaledCurrentTime { get; private set; }
 	public static float DeltaTime => PauseHandler.IsPaused ? 0 : UnscaledDeltaTime;
 	public static float UnscaledDeltaTime => Raylib.GetFrameTime();
 	public static float Alpha => _accumulator / FixedDeltaTime;
@@ -13,7 +14,8 @@ public static class Time
 
 	public static void Update(Action<float, float> onUpdate) //fixed, unscaled fixed
 	{
-		CurrentTime += UnscaledDeltaTime;
+		CurrentTime += DeltaTime;
+		UnscaledCurrentTime += UnscaledDeltaTime;
 
 		float frameTime = UnscaledDeltaTime;
 		if (frameTime > 0.25f) frameTime = 0.25f;

@@ -166,7 +166,7 @@ public static class RenderingManager
             Raylib.BeginShaderMode(PostShader);
             Raylib.SetShaderValueTexture(PostShader, lightTexLoc, LightingSystem.LightingRenderTexture.Texture);
             Raylib.SetShaderValueTexture(PostShader, visionTexLoc, LightingSystem.VisionRenderTexture.Texture);
-            Raylib.SetShaderValue(PostShader, timeLoc, Time.CurrentTime, ShaderUniformDataType.Float);
+            Raylib.SetShaderValue(PostShader, timeLoc, Time.UnscaledCurrentTime, ShaderUniformDataType.Float);
             Raylib.SetShaderValue(PostShader, fadeLoc, fadeAmount, ShaderUniformDataType.Float);
 
             foreach (var i in AllFilters)

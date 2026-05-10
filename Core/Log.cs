@@ -7,7 +7,7 @@ public static class Log
 
 	public static void Send(string msg)
 	{
-		Messages += $"[{Time.CurrentTime:F2}] {msg}\n";
+		Messages += $"[{Time.UnscaledCurrentTime:F2}] {msg}\n";
 		scrollNow = true;
 	}
 
