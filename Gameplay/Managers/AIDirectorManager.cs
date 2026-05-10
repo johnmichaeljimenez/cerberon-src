@@ -6,6 +6,7 @@ using Tween;
 
 namespace Main.Gameplay.Managers;
 
+
 //TODO: make all magic numbers editable outside
 //TODO: track the player's most frequently visited locations and make items spawn there
 public class AIDirectorManager : BaseManager
@@ -83,6 +84,10 @@ public class AIDirectorManager : BaseManager
 
 	private float currentCost;
 
+	private Vector2 playerPreviousPosition;
+	private EMA emaPlayerPosition = new(0.01f);
+	private EMA emaMovementRate = new(0.01f);
+
 	public AIDirectorManager(GameplayState gameplayState) : base(gameplayState)
 	{
 		enemySpawnTimer = 1f;
@@ -128,10 +133,13 @@ public class AIDirectorManager : BaseManager
 
 			emaWeaponUseType.AddSample(amt * 30);
 		});
+
+		playerPreviousPosition = player.Position;
 	}
 
 	public void Begin()
 	{
+		playerPreviousPosition = player.Position;
 		Paused = false;
 		if (Enabled)
 			OnMoodChanged();
@@ -139,7 +147,30 @@ public class AIDirectorManager : BaseManager
 
 	public override void Update(float dt, float udt)
 	{
-		if (!Enabled || PauseHandler.IsPaused || Paused) return;
+		if (PauseHandler.IsPaused)
+			return;
+
+		var prevSample = emaPlayerPosition.Current;
+		playerPreviousPosition = Vector2.Lerp(playerPreviousPosition, player.Position, dt * 4);
+		var diff = player.Position - playerPreviousPosition;
+		var magnitude = diff.Length();
+		var threshold = 1.5f;
+		var scale = 0f;
+
+		if (magnitude < threshold)
+		{
+			diff = Vector2.Zero;
+		}
+		else
+		{
+			scale = (magnitude - threshold) / magnitude;
+			diff = diff * scale;
+		}
+
+		emaPlayerPosition.AddSample(scale);
+		emaMovementRate.AddSample(prevSample * 5);	//used to check if player moves or camps a lot
+
+		if (!Enabled || Paused) return;
 
 		base.Update(dt, udt);
 
@@ -167,7 +198,7 @@ public class AIDirectorManager : BaseManager
 				//if shotguns or melee are used too much, drag it downward (subtract) until it reaches 0.001 something (zerg-like roaches)
 				//if pistol or AK are used too much, lift it up (add) until it reaches 2.0 (tank roaches)
 
-				var spawnCost = killType;
+				var spawnCost = 1.0f;
 				for (float i = 0; i < maxCost; i += spawnCost)
 				{
 					SpawnEnemy(spawnCost);
@@ -345,7 +376,9 @@ public class AIDirectorManager : BaseManager
 	private void SpawnEnemy(float cost) => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
 	{
 		e.Position = GetSpawnPosition() + RNG.Position(0.2f);
-		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Critical && RNG.Chance(0.5f); //jumpscare + escalate pressure (but only if player can sustain it)
+
+		//make enemies fly if player camps too much (but only if player can sustain the pressure)
+		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Panic && emaMovementRate.Current < 0.1f && RNG.Chance(0.5f);
 		e.Cost = cost;
 	});
 
@@ -366,6 +399,7 @@ public class AIDirectorManager : BaseManager
 		ImGui.ProgressBar(emaAmmoCount.Current, new(340, 25), $"Ammo: {emaAmmoCount.Current:F2}");
 		ImGui.ProgressBar(emaPlayerHurt.Current, new(340, 25), $"Damage Taken: {emaPlayerHurt.Current:F2}");
 		ImGui.ProgressBar(emaNearbyEnemyCount.Current, new(340, 25), $"Nearby enemy Count: {emaNearbyEnemyCount.Current:F2}");
+		ImGui.ProgressBar(emaMovementRate.Current, new(340, 25), $"Player movement rate: {emaMovementRate.Current:F2}");
 
 		var kt = Raymath.Remap(killType, 0.1f, 2f, 0f, 1f);
 		ImGui.ProgressBar(kt, new(340, 25), $"Kill Type: {kt:F2}");
