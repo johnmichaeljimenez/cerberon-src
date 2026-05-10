@@ -94,7 +94,7 @@ public class EnemyEntity : CharacterEntity
 		var d = player.Position - Position;
 		if (!player.IsDead && FacingDirection.IsInFront(player.Position - Position, Raymath.Lerp(3, 6, Cost / 2), 50))
 		{
-			player.ApplyDamage(attackDamage);
+			player.ApplyDamage(attackDamage, this);
 		}
 	}
 
@@ -245,11 +245,6 @@ public class EnemyEntity : CharacterEntity
 				Log.Send($"Despawned enemy #{ID}");
 			}
 		}
-	}
-
-	protected override void OnHit(float amt, bool isDead)
-	{
-		base.OnHit(amt, isDead);
 	}
 
 	protected override void OnDeath()

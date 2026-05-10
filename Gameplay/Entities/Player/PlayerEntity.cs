@@ -174,9 +174,11 @@ public class PlayerEntity : CharacterEntity
 		LightingSystem.RemoveLight(lightSelf);
 	}
 
-	protected override void OnHit(float amt, bool isDead)
+	protected override void OnHit(float amt, bool isDead, CharacterEntity from)
 	{
-		base.OnHit(amt, isDead);
+		base.OnHit(amt, isDead, from);
+
+		SetExternalForce(Vector2.Normalize(Position - from.Position), 30, 0.1f); //knockback
 		AudioHandler.PlaySound("generic/player-hit");
 
 		Game.Instance.Camera.Shake(0.8f, GetFacingAngleOffset(90));

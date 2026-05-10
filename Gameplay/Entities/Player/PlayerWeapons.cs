@@ -337,7 +337,7 @@ public class PlayerWeapons : IDisposable
 		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
 		OnWeaponHit.Publish((CurrentWeapon, z, false));
 		ApplyKick(z, Raymath.Vector2Normalize(z.Position - player.Position), CurrentWeapon.RangedKick);
-		z.ApplyDamage(CurrentWeapon.Damage);
+		z.ApplyDamage(CurrentWeapon.Damage, player);
 
 		if (z.IsDead)
 			OnWeaponKill.Publish((CurrentWeapon, z, false));
@@ -372,7 +372,7 @@ public class PlayerWeapons : IDisposable
 
 			OnWeaponHit.Publish((CurrentWeapon, z, true));
 			ApplyKick(z, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
-			z.ApplyDamage(CurrentWeapon.AltDamage);
+			z.ApplyDamage(CurrentWeapon.AltDamage, player);
 			hit = true;
 
 			if (z.IsDead)

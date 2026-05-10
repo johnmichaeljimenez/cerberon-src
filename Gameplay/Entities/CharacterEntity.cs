@@ -140,7 +140,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		return true;
 	}
 
-	public bool ApplyDamage(int amt)
+	public bool ApplyDamage(int amt, CharacterEntity from)
 	{
 		if (IsDead)
 			return false;
@@ -148,7 +148,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		DecalSystem.PaintBlood(Position);
 		HP -= amt;
 		HP = Math.Max(0, HP);
-		OnHit(amt, HP <= 0);
+		OnHit(amt, HP <= 0, from);
 		OnTakeDamage.Publish(amt);
 		OnHPChanged.Publish(HP);
 
@@ -164,7 +164,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		return true;
 	}
 
-	protected virtual void OnHit(float amt, bool isDead)
+	protected virtual void OnHit(float amt, bool isDead, CharacterEntity from)
 	{
 
 	}
