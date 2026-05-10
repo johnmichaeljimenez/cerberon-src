@@ -27,12 +27,14 @@ public class ConfigEntry
 	public MemberInfo Member { get; }
 	public string Key { get; }
 	public Type ValueType { get; }
+	public object? DefaultValue { get; }
 
-	public ConfigEntry(MemberInfo member, string key)
+	public ConfigEntry(MemberInfo member, string key, object? defaultValue)
 	{
 		Member = member;
 		Key = key;
 		ValueType = member is FieldInfo fi ? fi.FieldType : ((PropertyInfo)member).PropertyType;
+		DefaultValue = defaultValue;
 	}
 
 	public void SetValue(object? value)
@@ -66,6 +68,20 @@ public static class DataConfigManager
 					TryAddMember(prop);
 			}
 		}
+
+		LoadFromDefault();
+	}
+
+	private static void ResetToDefaults()
+	{
+		foreach (var entry in _cache.Values)
+		{
+			if (entry.DefaultValue != null)
+			{
+				entry.SetValue(entry.DefaultValue);
+				Log.Send($"'{entry.Key}' reset to default: {entry.DefaultValue}");
+			}
+		}
 	}
 
 	private static void TryAddMember(MemberInfo member)
@@ -73,26 +89,28 @@ public static class DataConfigManager
 		var attr = member.GetCustomAttribute<DataConfigAttribute>();
 		if (attr == null) return;
 
-		string key = attr.Key ?? $"{member.DeclaringType?.Name}.{member.Name}";
+		var key = attr.Key ?? $"{member.DeclaringType?.Name}.{member.Name}";
 
-		var entry = new ConfigEntry(member, key);
+		var entry = new ConfigEntry(member, key, attr.DefaultValue);
 		_cache[key] = entry;
 
 		if (attr.DefaultValue != null)
 		{
 			entry.SetValue(attr.DefaultValue);
-			Log.Send($"'{key}' value reset: {attr.DefaultValue}");
 		}
 	}
 
-	public static void LoadFromJson(string jsonString)
+	public static void LoadFromDefault()
 	{
-		if (string.IsNullOrWhiteSpace(jsonString)) return;
+		ResetToDefaults();
+
+		var path = "Assets/config.json";
+		if (!File.Exists(path))
+			return;
 
 		try
 		{
-			var data = JsonConvert.DeserializeObject<Dictionary<string, object?>>(jsonString);
-			LoadData(data);
+			LoadFromJson(File.ReadAllText(path), false);
 		}
 		catch (JsonReaderException ex)
 		{
@@ -100,13 +118,38 @@ public static class DataConfigManager
 		}
 	}
 
-	public static void LoadData(Dictionary<string, object?>? data)
+	public static void LoadFromJson(string jsonString, bool resetToDefaults = true)
 	{
+		if (string.IsNullOrWhiteSpace(jsonString))
+		{
+			if (resetToDefaults)
+				ResetToDefaults();
+			return;
+		}
+
+		try
+		{
+			var data = JsonConvert.DeserializeObject<Dictionary<string, object?>>(jsonString);
+			LoadData(data, resetToDefaults);
+		}
+		catch (JsonReaderException ex)
+		{
+			Log.Send($"Invalid JSON: {ex.Message}");
+		}
+	}
+
+	public static void LoadData(Dictionary<string, object?>? data, bool resetToDefaults = true)
+	{
+		if (resetToDefaults)
+		{
+			ResetToDefaults();
+		}
+
 		if (data == null || data.Count == 0) return;
 
 		foreach (var kvp in data)
 		{
-			string key = kvp.Key;
+			var key = kvp.Key;
 			if (string.IsNullOrEmpty(key)) continue;
 
 			if (_cache.TryGetValue(key, out var entry))

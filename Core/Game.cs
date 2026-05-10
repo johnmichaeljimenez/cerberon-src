@@ -38,6 +38,8 @@ public class Game
         Raylib.MaximizeWindow();
         Raylib.SetExitKey(0);
 
+        DataConfigManager.Initialize();
+
         _target = Raylib.LoadRenderTexture(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
         RenderingManager.Init();
 
