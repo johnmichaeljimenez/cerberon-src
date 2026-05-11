@@ -274,4 +274,37 @@ public static class Colors
 	{
 		return new((byte)((float)c.R * amt), (byte)((float)c.G * amt), (byte)((float)c.B * amt), c.A);
 	}
+
+	public static Color Lerp(this Color a, Color b, float t)    //raylib-cs implementation is bugged at the moment
+	{
+		t = Math.Clamp(t, 0f, 1f);
+
+		return new Color(
+			(byte)(a.R + t * (b.R - a.R)),
+			(byte)(a.G + t * (b.G - a.G)),
+			(byte)(a.B + t * (b.B - a.B)),
+			(byte)(a.A + t * (b.A - a.A))
+		);
+	}
+
+	public static Color LerpGradient(this List<Color> colors, float t)
+	{
+		if (colors == null || colors.Count == 0)
+			return default;
+
+		if (colors.Count == 1)
+			return colors[0];
+
+		t = Math.Clamp(t, 0f, 1f);
+
+		var cap = colors.Count - 1;
+		var scaled = t * cap;
+		var i = (int)scaled;
+		var frac = scaled - i;
+
+		if (i >= cap)
+			return colors[cap];
+
+		return colors[i].Lerp(colors[i + 1], frac);
+	}
 }

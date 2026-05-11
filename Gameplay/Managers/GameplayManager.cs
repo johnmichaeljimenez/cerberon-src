@@ -1,4 +1,5 @@
 using Main.Core;
+using Main.Effects;
 using Main.Gameplay.Entities.Player;
 using Main.Gameplay.Events;
 using Main.Helpers;
@@ -8,9 +9,29 @@ namespace Main.Gameplay.Managers;
 
 public class GameplayManager : BaseManager
 {
+	[DataConfig]
+	public static List<Color> AmbientGradient = new()
+	{
+		new(20, 20, 34),
+		new(34, 34, 34),
+		new(20, 20, 20),
+		new(34, 34, 34),
+		new(60, 34, 34),
+		new(255, 34, 34),
+		new(255, 34, 34),
+		new(255, 34, 34),
+		new(34, 34, 34),
+		new(34, 34, 34),
+		new(80, 80, 50),
+		new(80, 80, 50),
+		new(140, 140, 120)
+	};
+
+	[DataConfig]
+	public static float MaxGameTime = 30f;
+
 	public float GameTime => _gameTime;
 	private float _gameTime;
-	public readonly float MaxGameTime = 180f; //temporary hardcoded
 
 	public bool Running { get; private set; }
 	public float NormalizedTime { get; internal set; }
@@ -66,6 +87,7 @@ public class GameplayManager : BaseManager
 		if (Running)
 		{
 			NormalizedTime = _gameTime / MaxGameTime;
+			LightingSystem.AmbientLightColor = AmbientGradient.LerpGradient(1.0f - NormalizedTime);
 			if (Utils.Countdown(ref _gameTime, dt))
 			{
 				End(true);
