@@ -28,7 +28,7 @@ public class GameplayManager : BaseManager
 	};
 
 	[DataConfig]
-	public static float MaxGameTime = 30f;
+	public static float MaxGameTime = 300f;
 
 	public float GameTime => _gameTime;
 	private float _gameTime;

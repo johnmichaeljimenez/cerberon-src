@@ -123,6 +123,9 @@ public class World : IDisposable //aka Level loader
 
 	public readonly Signal<BaseEntity> OnEntityDespawn = new();
 	private readonly Dictionary<WorldCollider, (List<Wall>, Shadow)> colliderWalls = new();
+
+	private Sprite wallSprite;
+
 	public static void InitRegistry()
 	{
 		entityRegistry.Clear();
@@ -137,6 +140,8 @@ public class World : IDisposable //aka Level loader
 	{
 		this.gameplayState = gameplayState;
 		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
+
+		wallSprite = AssetManager.GetSprite("misc-softrect");
 
 		foreach (var i in EnvironmentColliders)
 		{
@@ -306,14 +311,7 @@ public class World : IDisposable //aka Level loader
 					if (!j.Flags.HasFlag(Wall.WallFlags.DrawOverlay))
 						continue;
 
-					Rectangle rect = new Rectangle(
-						j.Position,// - j.Size * 0.5f,
-						j.Size
-					);
-
-					Vector2 origin = j.Size * 0.5f;
-
-					Raylib.DrawRectanglePro(rect, origin, j.Rotation, Color.Black);
+					wallSprite.Draw9Sliced(j.Position, j.Size + Vector2.One * 0.2f, j.Rotation, tint: Color.Black);
 				}
 			}
 		}
