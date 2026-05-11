@@ -12,6 +12,7 @@ public class Sprite : IDisposable
 	public int Width { get; private set; }
 	public int Height { get; private set; }
 	public Vector2 UnitSize { get; private set; }
+	public Rectangle Rect { get; private set; }
 
 	public Sprite(string name, Texture2D texture2D)
 	{
@@ -20,11 +21,27 @@ public class Sprite : IDisposable
 		Width = texture2D.Width;
 		Height = texture2D.Height;
 		UnitSize = new((float)Width / PIXELS_PER_UNIT, (float)Height / PIXELS_PER_UNIT);
+
+		Rect = new(0, 0, Width, Height);
 	}
 
 	public void Dispose()
 	{
 		Raylib.UnloadTexture(Texture);
+	}
+
+	public void Draw9Sliced(Vector2 position, Vector2 size, float rotation, int sliceAmt = 36, Color? tint = null)
+	{
+		var tintColor = tint ?? Color.White;
+		Raylib.DrawTextureNPatch(Texture, new()
+		{
+			Source =Rect,
+			Layout = NPatchLayout.NinePatch,
+			Bottom = sliceAmt,
+			Left = sliceAmt,
+			Right = sliceAmt,
+			Top = sliceAmt
+		}, new(position, size), size * 0.5f, rotation, tintColor);
 	}
 
 	public void Draw(Vector2 position, float scale = 1, float rotation = 0, Color? tint = null, Vector2? origin = null, bool flipX = false, bool flipY = false)
