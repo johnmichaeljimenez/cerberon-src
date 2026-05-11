@@ -33,15 +33,32 @@ public class Sprite : IDisposable
 	public void Draw9Sliced(Vector2 position, Vector2 size, float rotation, int sliceAmt = 36, Color? tint = null)
 	{
 		var tintColor = tint ?? Color.White;
-		Raylib.DrawTextureNPatch(Texture, new()
-		{
-			Source =Rect,
-			Layout = NPatchLayout.NinePatch,
-			Bottom = sliceAmt,
-			Left = sliceAmt,
-			Right = sliceAmt,
-			Top = sliceAmt
-		}, new(position, size), size * 0.5f, rotation, tintColor);
+
+		//let it operate on real pixel unit and let rlgl convert it to world space
+		Vector2 sizePixels = size * PIXELS_PER_UNIT;
+
+		Rlgl.PushMatrix();
+		Rlgl.Translatef(position.X, position.Y, 0f);
+		Rlgl.Scalef(1f / PIXELS_PER_UNIT, 1f / PIXELS_PER_UNIT, 1f);
+
+		Raylib.DrawTextureNPatch(
+			Texture,
+			new NPatchInfo
+			{
+				Source = Rect,
+				Layout = NPatchLayout.NinePatch,
+				Left = sliceAmt,
+				Right = sliceAmt,
+				Top = sliceAmt,
+				Bottom = sliceAmt
+			},
+			new Rectangle(0f, 0f, sizePixels.X, sizePixels.Y),
+			sizePixels * 0.5f,
+			rotation,
+			tintColor
+		);
+
+		Rlgl.PopMatrix();
 	}
 
 	public void Draw(Vector2 position, float scale = 1, float rotation = 0, Color? tint = null, Vector2? origin = null, bool flipX = false, bool flipY = false)
