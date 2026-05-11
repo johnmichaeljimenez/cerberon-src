@@ -70,6 +70,16 @@ public class Shadow
 	}
 }
 
+public class AmbientLight //cheap rectangular lights that doesn't cast shadows but overwrites global ambient light (can be used for indoor areas)
+{
+	public Vector2 Position { get; set; }
+	public Vector2 Size { get; set; }
+	public float Rotation { get; set; }
+	public Color Color { get; set; }
+	public float AmbientMultiplier { get; set; }
+	public bool Flicker { get; set; }
+}
+
 public class Light : IDisposable
 {
 	public enum VisionEffects
@@ -188,11 +198,16 @@ public static class LightingSystem
 	public const float SCALE = 2.0f;
 
 	private static readonly List<Light> lights = new();
+	private static readonly List<AmbientLight> ambientLights = new();
 	private static readonly List<Shadow> shadows = new();
 	private static readonly List<Light> visionLights = new();
 
+	private static Sprite ambientLightSprite;
+
 	public static void Init(int width, int height)
 	{
+		ambientLightSprite = AssetManager.GetSprite("misc-softrect");
+
 		LightingRenderTexture = Raylib.LoadRenderTexture((int)(width / SCALE), (int)(height / SCALE));
 		Raylib.SetTextureFilter(LightingRenderTexture.Texture, TextureFilter.Bilinear);
 
@@ -251,7 +266,7 @@ public static class LightingSystem
 		shadows.Remove(shadow);
 	}
 
-	private static void DrawLights(Camera2D cam, RenderTexture2D tex, List<Light> l, Color bgColor)
+	private static void DrawLights(Camera2D cam, RenderTexture2D tex, List<Light> l, Color bgColor, bool visionOnly)
 	{
 		foreach (var i in l)
 		{
@@ -287,9 +302,22 @@ public static class LightingSystem
 
 		Raylib.BeginTextureMode(tex);
 		Raylib.BeginMode2D(cam);
-		Raylib.BeginBlendMode(BlendMode.Additive);
 		Raylib.ClearBackground(bgColor);
 
+		if (!visionOnly)    //let ambient lights overwrite previous color as base light color before setting to additive
+		{
+			foreach (var i in ambientLights)
+			{
+				var flicker = i.Flicker ? QuakeFlicker.GetIntensity() : 1.0f;
+				if (flicker <= 0)
+					continue;
+
+				var color = Colors.Lerp(i.Color.Value(flicker), AmbientLightColor, i.AmbientMultiplier);
+				ambientLightSprite.Draw9Sliced(i.Position, i.Size, i.Rotation, tint: color);
+			}
+		}
+
+		Raylib.BeginBlendMode(BlendMode.Additive);
 		foreach (var i in l)
 		{
 			if (!i.Enabled)
@@ -299,7 +327,7 @@ public static class LightingSystem
 			if (flicker <= 0)
 				continue;
 
-			var color = Raylib.ColorLerp(i.Color.Value(flicker), AmbientLightColor, i.AmbientMultiplier);
+			var color = Colors.Lerp(i.Color.Value(flicker), AmbientLightColor, i.AmbientMultiplier);
 
 			if (i.ShadowType == Light.ShadowTypes.None)
 			{
@@ -339,8 +367,8 @@ public static class LightingSystem
 		cam.Offset = new Vector2(LightingRenderTexture.Texture.Width, LightingRenderTexture.Texture.Height) / 2f;
 		cam.Zoom /= SCALE; //optimization and it ironically makes the lighting look better (non-HD means players fill the gaps by their imagination)
 
-		DrawLights(cam, LightingRenderTexture, lights, AmbientLightColor);
-		DrawLights(cam, VisionRenderTexture, visionLights, Color.Black);
+		DrawLights(cam, LightingRenderTexture, lights, AmbientLightColor, false);
+		DrawLights(cam, VisionRenderTexture, visionLights, Color.Black, true);
 	}
 
 	public static void Dispose()

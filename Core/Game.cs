@@ -1,5 +1,6 @@
 using Main.Effects;
 using Main.Gameplay;
+using Main.Helpers;
 using Main.UI;
 using Tween;
 
@@ -59,7 +60,7 @@ public class Game
         Tween<float>.RegisterLerper(Raymath.Lerp);
         Tween<Vector2>.RegisterLerper(Raymath.Vector2Lerp);
         Tween<Vector3>.RegisterLerper(Raymath.Vector3Lerp);
-        Tween<Color>.RegisterLerper(Raylib.ColorLerp);
+        Tween<Color>.RegisterLerper(Colors.Lerp);
         Tween<Rectangle>.RegisterLerper((from, to, amt) => new Rectangle(
             Raymath.Lerp(from.X, to.X, amt),
             Raymath.Lerp(from.Y, to.Y, amt),
