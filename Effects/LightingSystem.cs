@@ -218,6 +218,16 @@ public static class LightingSystem
 		Raylib.SetTextureFilter(AssetManager.GetSprite("flashlight").Texture, TextureFilter.Bilinear);
 	}
 
+	public static void SetAmbientLights(IEnumerable<AmbientLight> list)
+	{
+		ambientLights.Clear();
+
+		if (list == null)
+			return;
+
+		ambientLights.AddRange(list);
+	}
+
 	public static Light AddLight(Light light)
 	{
 		light.Init();
@@ -386,5 +396,6 @@ public static class LightingSystem
 		}
 
 		lights.Clear();
+		ambientLights.Clear();
 	}
 }

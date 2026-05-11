@@ -98,6 +98,9 @@ public class World : IDisposable //aka Level loader
 	public List<Light> Lights { get; private set; } = new();
 
 	[JsonProperty]
+	public List<AmbientLight> AmbientLights { get; private set; } = new();
+
+	[JsonProperty]
 	public List<WorldCollider> EnvironmentColliders { get; private set; } = new();
 
 	[JsonProperty]
@@ -171,6 +174,8 @@ public class World : IDisposable //aka Level loader
 		{
 			LightingSystem.AddLight(i);
 		}
+
+		LightingSystem.SetAmbientLights(AmbientLights); //ambient lights are static anyway
 
 		DecalSystem.Init(Vector2.Zero, WorldSettings.WorldSize);
 
@@ -311,7 +316,7 @@ public class World : IDisposable //aka Level loader
 					if (!j.Flags.HasFlag(Wall.WallFlags.DrawOverlay))
 						continue;
 
-					wallSprite.Draw9Sliced(j.Position, j.Size + Vector2.One * 0.2f, j.Rotation, tint: Color.Black);
+					wallSprite.Draw9Sliced(j.Position, j.Size + Vector2.One * 0.5f, j.Rotation, tint: Color.Black);
 				}
 			}
 		}
