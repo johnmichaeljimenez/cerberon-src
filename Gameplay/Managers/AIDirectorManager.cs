@@ -111,9 +111,10 @@ public class AIDirectorManager : BaseManager
 		{
 			if (e is EnemyEntity z)
 			{
+				currentCost -= z.Cost;
+
 				if (z.HP <= 0)
 				{
-					currentCost -= z.Cost;
 					emaKillCount.AddSample(60.0f); //large bump to compensate for decay (add must be faster than reduction)
 				}
 			}
@@ -168,7 +169,7 @@ public class AIDirectorManager : BaseManager
 		}
 
 		emaPlayerPosition.AddSample(scale);
-		emaMovementRate.AddSample(prevSample * 5);	//used to check if player moves or camps a lot
+		emaMovementRate.AddSample(prevSample * 5);  //used to check if player moves or camps a lot
 
 		if (!Enabled || Paused) return;
 
