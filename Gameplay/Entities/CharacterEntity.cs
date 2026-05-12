@@ -3,6 +3,7 @@ using Main.Effects;
 using Main.Gameplay.Managers;
 using Main.Helpers;
 using Tween;
+using static Main.Gameplay.Managers.WaypointManager;
 
 namespace Main.Gameplay.Entities;
 
@@ -52,6 +53,10 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	protected Vector2 externalForce;
 
 	[JsonIgnore]
+	public Node NearestNode { get; private set; }
+	protected Vector2 lastPos { get; private set; }
+
+	[JsonIgnore]
 	public float Scale { get; protected set; } = 1;
 
 	public override void Init(GameplayState gameplayState)
@@ -65,6 +70,9 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		Animator.OnAnimationBegin.Subscribe(OnAnimationBegin).AddTo(disposables);
 		Animator.OnAnimationEnd.Subscribe(OnAnimationEnd).AddTo(disposables);
 		Animator.OnFrameChanged.Subscribe(OnAnimationFrameChanged).AddTo(disposables);
+
+		lastPos = Position;
+		OnPositionChanged();
 	}
 
 	protected virtual void OnAnimationEnd(string animationName)
@@ -112,6 +120,12 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 			var spr = Animator.GetFrameSprite();
 			if (spr != null)
 				CurrentSprite = Animator.GetFrameSprite();
+		}
+
+		if ((Position -  lastPos).LengthSquared() >= 0.1f * 0.1f)
+		{
+			lastPos = Position;
+			OnPositionChanged();
 		}
 	}
 
@@ -173,6 +187,11 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	{
 		velocity = Vector2.Zero;
 		CollisionBody.Enabled = false;
+	}
+
+	protected virtual void OnPositionChanged()
+	{
+		NearestNode = gameplayState.GetManager<WaypointManager>().GetNearestNode(Position);
 	}
 
 	public Vector2 GetFacingAngleOffset(float angleOffset)

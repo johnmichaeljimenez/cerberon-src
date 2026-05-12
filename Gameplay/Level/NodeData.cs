@@ -1,5 +1,6 @@
 using Main.Effects;
 using Main.Gameplay.Managers;
+using Main.Helpers;
 using static Main.Gameplay.Managers.WaypointManager;
 
 namespace Main.Gameplay.Level;
@@ -51,5 +52,11 @@ public class NodeData
 				OutdoorLight = newLightValues[node]
 			};
 		}
+	}
+
+	public bool IsOutdoor(Node n, bool withOutdoorLight)
+	{
+		LightingSystem.AmbientLightColor.GetHSV(out var h, out var s, out var amb);
+		return Nodes[n].OutdoorLight >= 0.5f && (!withOutdoorLight || amb >= 0.4f); //outdoor enough and outdoor light is bright enough
 	}
 }

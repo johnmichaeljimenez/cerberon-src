@@ -21,4 +21,11 @@ public class PlayerManager : BaseManager
 			e.Position = position;
 		});
 	}
+
+	public override void DrawImGui()
+	{
+		base.DrawImGui();
+
+		ImGui.Text($"Player outdoor: {gameplayState.CurrentWorld.NodeData.IsOutdoor(PlayerCharacter.NearestNode, false)}");
+	}
 }
