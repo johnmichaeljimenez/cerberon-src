@@ -20,6 +20,7 @@
     <None Update="Assets\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Remove="Assets\**\package.json" />
   </ItemGroup>
 
   <ItemGroup>
