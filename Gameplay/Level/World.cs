@@ -57,6 +57,9 @@ public class World : IDisposable //aka Level loader
 
 	private Sprite wallSprite;
 
+	[JsonIgnore]
+	public NodeData NodeData { get; private set; }
+
 	public static void InitRegistry()
 	{
 		entityRegistry.Clear();
@@ -129,6 +132,7 @@ public class World : IDisposable //aka Level loader
 			Sprites.Add(0, new()); //add middleground rendering for entity and decal's baseline layer
 
 		gameplayState.GetManager<TriggerManager>().SetupTriggers(Triggers);
+		NodeData = new(gameplayState);
 	}
 
 	public void Update(float dt, float udt)
@@ -333,6 +337,11 @@ public class World : IDisposable //aka Level loader
 		foreach (var i in worldBounds)
 		{
 			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Colors.RED);
+		}
+
+		foreach (var i in NodeData.Nodes)
+		{
+			Raylib.DrawCircleV(i.Key.Position, 1.0f, Color.Yellow.Value(i.Value.OutdoorLight));
 		}
 	}
 

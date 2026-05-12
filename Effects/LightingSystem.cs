@@ -398,4 +398,23 @@ public static class LightingSystem
 		lights.Clear();
 		ambientLights.Clear();
 	}
+
+	public static float GetOutdoorLightFactor(Vector2 position)
+	{
+		if (ambientLights.Count == 0)
+			return 1;
+
+		var n = 0;
+		var f = 0f;
+		foreach (var i in ambientLights)
+		{
+			if (!Utils.IsPointInRotatedRectangle(position, i.Position, i.Size, i.Rotation))
+				continue;
+
+			f += i.AmbientMultiplier;
+			n++;
+		}
+
+		return n == 0? 1.0f : Raymath.Clamp01(f / n);
+	}
 }
