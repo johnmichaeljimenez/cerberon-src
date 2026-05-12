@@ -32,6 +32,7 @@ public class GameplayState : IGameState
 		AddManager<WaypointManager>();
 		AddManager<AIDirectorManager>();
 		AddManager<GameplayEventManager>();
+		AddManager<TriggerManager>();
 
 		RenderingManager.ResetAllFilters();
 

@@ -95,6 +95,9 @@ public class World : IDisposable //aka Level loader
 	public List<BaseEntity> Entities { get; private set; } = new();
 
 	[JsonProperty]
+	public List<Trigger> Triggers { get; private set; } = new();
+
+	[JsonProperty]
 	public List<Light> Lights { get; private set; } = new();
 
 	[JsonProperty]
@@ -199,6 +202,8 @@ public class World : IDisposable //aka Level loader
 
 		if (!Sprites.ContainsKey(0))
 			Sprites.Add(0, new()); //add middleground rendering for entity and decal's baseline layer
+
+		gameplayState.GetManager<TriggerManager>().SetupTriggers(Triggers);
 	}
 
 	public void Update(float dt, float udt)

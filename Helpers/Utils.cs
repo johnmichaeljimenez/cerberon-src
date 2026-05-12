@@ -217,6 +217,44 @@ public static class Utils
 		return MathF.Abs(local.X) <= size.X * 0.5f && MathF.Abs(local.Y) <= size.Y * 0.5f;
 	}
 
+	public static bool CheckCollisionCircleRec(
+		Vector2 circleCenter,
+		float circleRadius,
+		Vector2 rectCenter,
+		Vector2 rectSize,
+		float rotationDeg
+	)
+	{
+		if (circleRadius <= 0f)
+			return false;
+
+		if (MathF.Abs(rotationDeg) < 0.0001f)
+		{
+			var rect = new Rectangle(rectCenter - rectSize * 0.5f, rectSize);
+			return Raylib.CheckCollisionCircleRec(circleCenter, circleRadius, rect);
+		}
+
+		var offset = circleCenter - rectCenter;
+		var rad = -rotationDeg * MathF.PI / 180f;
+		var cos = MathF.Cos(rad);
+		var sin = MathF.Sin(rad);
+
+		var local = new Vector2(
+			offset.X * cos - offset.Y * sin,
+			offset.X * sin + offset.Y * cos
+		);
+
+		var halfSize = rectSize * 0.5f;
+
+		var closest = new Vector2(
+			Math.Clamp(local.X, -halfSize.X, halfSize.X),
+			Math.Clamp(local.Y, -halfSize.Y, halfSize.Y)
+		);
+
+		var delta = local - closest;
+		return delta.LengthSquared() <= (circleRadius * circleRadius);
+	}
+
 	public static List<T> GetPage<T>(List<T> source, int pageSize, ref int page, out int totalPages)
 	{
 		if (source == null) throw new ArgumentNullException(nameof(source));
