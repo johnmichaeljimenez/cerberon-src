@@ -1,6 +1,6 @@
 using Main.Core;
 using Main.Effects;
-using Main.Gameplay.Entities;
+using Main.Gameplay.Level;
 using Main.Gameplay.Managers;
 using Main.Helpers;
 using Main.UI;

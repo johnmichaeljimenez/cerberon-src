@@ -1,4 +1,5 @@
 using Main.Core;
+using Main.Gameplay.Level;
 using Main.Helpers;
 
 namespace Main.Gameplay.Managers;
@@ -21,6 +22,7 @@ public class WaypointManager : BaseManager
 		}
 	}
 
+	public List<Node> Nodes => nodes;
 	private readonly List<Node> nodes = new();
 	private readonly List<(Vector2, Vector2)> obstacleLines = new(); //from, to
 
