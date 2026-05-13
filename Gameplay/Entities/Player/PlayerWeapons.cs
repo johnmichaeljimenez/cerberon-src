@@ -104,7 +104,7 @@ public class PlayerWeapons : IDisposable
 		new Weapon("knife", "Knife", 0, 70, 0f, 0, 0, true),
 		new Weapon("handgun", "Sig Sauer", 50, 50, 0f, 15, 60, true),
 		new Weapon("rifle", "AK-47", 80, 60, 0.1f, 30, 120),
-		new Weapon("shotgun", "Sawn-off Shotgun", 70, 60, 0f, 2, 30, true, rangedKick: 80){
+		new Weapon("shotgun", "Sawn-off Shotgun", 70, 60, 0f, 2, 30, false, rangedKick: 80){
 			SpreadAngle = 60,
 			SpreadCount = 20
 		} //2-shot
