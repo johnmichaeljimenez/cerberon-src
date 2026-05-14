@@ -223,7 +223,7 @@ public class World : IDisposable //aka Level loader
 
 			if (i.Key == 0)
 			{
-				RenderingManager.BeginMaskedShader();
+				RenderingManager.BeginEntityShader();
 				var shadowSprite = AssetManager.GetSprite("blob-shadow");
 				foreach (var j in Entities)
 				{

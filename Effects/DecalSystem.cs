@@ -112,7 +112,7 @@ public static class DecalSystem
 
 	public static void Draw() //TODO: draw only visible in camera
 	{
-		RenderingManager.BeginMaskedShader();
+		RenderingManager.BeginEntityShader();
 		foreach (var r in regions)
 		{
 			Raylib.DrawTexturePro(

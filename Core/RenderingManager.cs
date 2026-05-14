@@ -5,6 +5,72 @@ namespace Main.Core;
 
 public static class RenderingManager
 {
+    public class ShaderSet : IDisposable
+    {
+        public Shader Shader;
+        public readonly Dictionary<string, int> Keys = new();
+
+        private string path;
+
+        public ShaderSet(string path, params string[] keys)
+        {
+            this.path = $"Assets/Shaders/{path}.fs";
+            foreach (var i in keys)
+            {
+                Keys.Add(i, -1);
+            }
+        }
+
+        public void Init()
+        {
+            Shader = Raylib.LoadShader(null, path);
+            foreach (var i in Keys)
+            {
+                Keys[i.Key] = Raylib.GetShaderLocation(Shader, i.Key);
+            }
+        }
+
+        public void Dispose()
+        {
+            if (Raylib.IsShaderValid(Shader))
+            {
+                Raylib.UnloadShader(Shader);
+                Shader = default;
+            }
+        }
+
+        public void Begin()
+        {
+            Raylib.BeginShaderMode(Shader);
+        }
+
+        public void SetValue(string key, float t)
+        {
+            Raylib.SetShaderValue(Shader, Keys[key], t, ShaderUniformDataType.Float);
+        }
+
+        public void SetValue(string key, Texture2D texture)
+        {
+            Raylib.SetShaderValueTexture(Shader, Keys[key], texture);
+        }
+
+        public void SetValue(string keyX, string keyY, Vector2 t)
+        {
+            Raylib.SetShaderValue(Shader, Keys[keyX], t.X, ShaderUniformDataType.Float); //TODO: use vector2 (for some reason it doesnt work on that)
+            Raylib.SetShaderValue(Shader, Keys[keyY], t.Y, ShaderUniformDataType.Float);
+        }
+
+        public void SetValue(string key, int t)
+        {
+            Raylib.SetShaderValue(Shader, Keys[key], t, ShaderUniformDataType.Int);
+        }
+
+        public void SetValue(string key, bool t)
+        {
+            Raylib.SetShaderValue(Shader, Keys[key], t ? 1 : 0, ShaderUniformDataType.Int);
+        }
+    }
+
     public class RendererFilter
     {
         public string ShaderLocationString;
@@ -44,7 +110,6 @@ public static class RenderingManager
     const string POST_FX = "Assets/Shaders/postfx.fs";
 
     public static Shader PostShader { get; private set; }
-    public static Shader SpriteMasked { get; private set; }
     public static Shader SpriteTiled { get; private set; }
 
     private static int lightTexLoc;
@@ -52,13 +117,17 @@ public static class RenderingManager
     private static int timeLoc;
     private static int fadeLoc;
 
-    private static int maskVisionTexLoc;
     private static int tiledTexLocX, tiledTexLocY;
 
     public static float Scale;
     public static Vector2 Offset;
 
     private static float fadeAmount;
+
+    public static readonly Dictionary<string, ShaderSet> ShaderSets = new()
+    {
+        { "SpriteEntity", new("sprite-entity", "visionTex") }
+    };
 
     private static readonly Dictionary<Filters, RendererFilter> AllFilters = new()
     {
@@ -68,10 +137,13 @@ public static class RenderingManager
 
     public static void Init()
     {
-        SpriteMasked = Raylib.LoadShader(null, "Assets/Shaders/sprite-masked.fs");
         SpriteTiled = Raylib.LoadShader(null, "Assets/Shaders/sprite-tiled.fs");
 
-        maskVisionTexLoc = Raylib.GetShaderLocation(SpriteMasked, "visionTex");
+        foreach (var i in ShaderSets)
+        {
+            i.Value.Init();
+        }
+
         tiledTexLocX = Raylib.GetShaderLocation(SpriteTiled, "tilingX");
         tiledTexLocY = Raylib.GetShaderLocation(SpriteTiled, "tilingY");
 
@@ -80,10 +152,12 @@ public static class RenderingManager
         TweenManager.ClearByPrefix(TWEEN_KEY);
     }
 
-    public static void BeginMaskedShader()
+    public static void BeginEntityShader()
     {
-        Raylib.BeginShaderMode(SpriteMasked);
-        Raylib.SetShaderValueTexture(SpriteMasked, maskVisionTexLoc, LightingSystem.VisionRenderTexture.Texture);
+        var shaderSet = ShaderSets["SpriteEntity"];
+
+        shaderSet.Begin();
+        shaderSet.SetValue("visionTex", LightingSystem.VisionRenderTexture.Texture);
     }
 
     public static void BeginTiledShader(Sprite sprite, Vector2 size)
@@ -93,7 +167,7 @@ public static class RenderingManager
                 size.Y * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Height);
 
         Raylib.BeginShaderMode(SpriteTiled);
-        Raylib.SetShaderValue(SpriteTiled, tiledTexLocX, tiling.X, ShaderUniformDataType.Float); //TODO: use vector2 (for some reason it doesnt work on that)
+        Raylib.SetShaderValue(SpriteTiled, tiledTexLocX, tiling.X, ShaderUniformDataType.Float);
         Raylib.SetShaderValue(SpriteTiled, tiledTexLocY, tiling.Y, ShaderUniformDataType.Float);
     }
 
@@ -121,16 +195,15 @@ public static class RenderingManager
     {
         AssetWatcher.Remove(POST_FX);
 
+        foreach (var i in ShaderSets)
+        {
+            i.Value.Dispose();
+        }
+
         if (SpriteTiled.Id != 0)
         {
             Raylib.UnloadShader(SpriteTiled);
             SpriteTiled = default;
-        }
-
-        if (SpriteMasked.Id != 0)
-        {
-            Raylib.UnloadShader(SpriteMasked);
-            SpriteMasked = default;
         }
 
         if (PostShader.Id != 0)
