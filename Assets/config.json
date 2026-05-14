@@ -1,3 +1,4 @@
 {
-	"AIDirectorManager.Enabled": true
+	"GameplayManager.Enabled": false,
+	"GameplayManager.MaxGameTime": 60
 }

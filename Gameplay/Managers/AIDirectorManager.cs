@@ -18,9 +18,6 @@ public class AIDirectorManager : BaseManager
 	};
 	private int bgmIndex;
 
-	[DataConfig(defaultValue: true)]
-	public static bool Enabled;
-
 	//TENSION is for gameplay difficulty (spawn rates, aggression, events)
 	public enum TensionState { Calm, Tense, Panic, Critical }
 	//MOOD is for atmosphere and emotion (music, colors, effects)
@@ -75,7 +72,7 @@ public class AIDirectorManager : BaseManager
 	private PlayerEntity player;
 	private GameplayManager gameplayManager;
 
-	public bool Paused = false;
+	public bool Paused = true;
 
 	//this enemy attack token system prevents the player from get shredded quickly by horde of enemies
 	private const int MAX_ATTACKING_ENEMY = 2;
@@ -106,6 +103,13 @@ public class AIDirectorManager : BaseManager
 
 		gameplayManager = gameplayState.GetManager<GameplayManager>();
 		player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
+
+		gameplayManager.OnFightStart.Subscribe(e =>
+		{
+			playerPreviousPosition = player.Position;
+			Paused = false;
+			OnMoodChanged();
+		});
 
 		gameplayState.CurrentWorld.OnEntityDespawn.Subscribe(e =>
 		{
@@ -138,14 +142,6 @@ public class AIDirectorManager : BaseManager
 		playerPreviousPosition = player.Position;
 	}
 
-	public void Begin()
-	{
-		playerPreviousPosition = player.Position;
-		Paused = false;
-		if (Enabled)
-			OnMoodChanged();
-	}
-
 	public override void Update(float dt, float udt)
 	{
 		if (PauseHandler.IsPaused)
@@ -171,7 +167,7 @@ public class AIDirectorManager : BaseManager
 		emaPlayerPosition.AddSample(scale);
 		emaMovementRate.AddSample(prevSample * 5);  //used to check if player moves or camps a lot
 
-		if (!Enabled || Paused) return;
+		if (Paused) return;
 
 		base.Update(dt, udt);
 

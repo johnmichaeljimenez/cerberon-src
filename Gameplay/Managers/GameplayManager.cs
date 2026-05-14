@@ -9,6 +9,10 @@ namespace Main.Gameplay.Managers;
 
 public class GameplayManager : BaseManager
 {
+
+	[DataConfig(defaultValue: true)]
+	public static bool Enabled;
+
 	[DataConfig]
 	public static List<Color> AmbientGradient = new()
 	{
@@ -42,6 +46,8 @@ public class GameplayManager : BaseManager
 	public PlayerEntity PlayerCharacter { get; private set; }
 	public readonly Signal<PlayerEntity> OnPlayerDeath = new();
 	public readonly Signal<Unit> OnGameStart = new();
+	public readonly Signal<Unit> OnFightStart = new();
+	public readonly Signal<Unit> OnFightEnd = new();
 
 	public GameplayManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -64,7 +70,7 @@ public class GameplayManager : BaseManager
 	public override void Init()
 	{
 		base.Init();
-		Running = true;
+		Running = Enabled;
 		_gameTime = MaxGameTime;
 
 		events.Setup(gameplayState, gameplayState.GetManager<GameplayEventManager>());
@@ -93,6 +99,7 @@ public class GameplayManager : BaseManager
 			LightingSystem.AmbientLightColor = AmbientGradient.LerpGradient(1.0f - NormalizedTime);
 			if (Utils.Countdown(ref _gameTime, dt))
 			{
+				OnFightEnd.Publish(Unit.Default);
 				Running = false;
 			}
 		}
@@ -112,5 +119,12 @@ public class GameplayManager : BaseManager
 		{
 			e.Position = position;
 		});
+	}
+
+	public void Begin()
+	{
+		Enabled = true;
+		Running = true;
+		OnFightStart?.Publish(Unit.Default);
 	}
 }
