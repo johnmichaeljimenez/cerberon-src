@@ -1,8 +1,8 @@
 {
   "WorldSettings": {
     "PlayerSpawnPoint": {
-      "X": -7.08,
-      "Y": 2.75
+      "X": -6.51,
+      "Y": -13.73
     },
     "WorldSize": {
       "X": 128.0,
@@ -1000,6 +1000,36 @@
         "X": 53.7953529,
         "Y": 41.32683
       }
+    }
+  ],
+  "Triggers": [
+    {
+      "Position": {
+        "X": -7.027,
+        "Y": -6.849
+      },
+      "Rotation": 0.0,
+      "Size": {
+        "X": 21.479557,
+        "Y": 4.13896465
+      },
+      "TriggerID": "StartFight",
+      "SortingIndex": 0,
+      "Enabled": true
+    },
+    {
+      "Position": {
+        "X": -73.13,
+        "Y": 4.5
+      },
+      "Rotation": 0.0,
+      "Size": {
+        "X": 6.63127232,
+        "Y": 18.018877
+      },
+      "TriggerID": "Ending",
+      "SortingIndex": 0,
+      "Enabled": false
     }
   ]
 }
