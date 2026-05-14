@@ -31,6 +31,8 @@ public class Trigger
 	public int SortingIndex { get; set; }
 	[JsonProperty]
 	public float Rotation { get; set; }
+	[JsonProperty]
+	public bool Enabled { get; set; } = true;
 
 	[JsonIgnore]
 	public bool IsTriggered { get; set; }
@@ -79,6 +81,9 @@ public class TriggerManager : BaseManager
 
 		foreach (var t in triggers)
 		{
+			if (!t.Enabled)
+				continue;
+
 			bool isInside = Utils.CheckCollisionCircleRec(pc.Position, pc.Radius, t.Position, t.Size, t.Rotation);
 
 			if (isInside)
@@ -139,5 +144,10 @@ public class TriggerManager : BaseManager
 				return;
 			}
 		}
+	}
+
+	public List<Trigger> Find(string id)
+	{
+		return triggers.Where(p => p.TriggerID == id).ToList();
 	}
 }
