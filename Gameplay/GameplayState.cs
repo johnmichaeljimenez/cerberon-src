@@ -27,7 +27,6 @@ public class GameplayState : IGameState
 		AudioHandler.ClearMusicStates();
 		LightingSystem.Clear();
 		AddManager<CollisionManager>();
-		AddManager<PlayerManager>();
 		AddManager<GameplayManager>();
 		AddManager<WaypointManager>();
 		AddManager<AIDirectorManager>();
@@ -60,7 +59,7 @@ public class GameplayState : IGameState
 			DataConfigManager.LoadData(CurrentWorld.WorldSettings.Config);
 		}
 
-		GetManager<PlayerManager>().SpawnPlayer(CurrentWorld.WorldSettings.PlayerSpawnPoint);
+		GetManager<GameplayManager>().SpawnPlayer(CurrentWorld.WorldSettings.PlayerSpawnPoint);
 
 		foreach (var i in managers)
 		{

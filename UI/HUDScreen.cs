@@ -17,7 +17,7 @@ public class HUDScreen : BaseScreen
 	{
 		gameplayState = context as GameplayState;
 
-		playerEntity = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+		playerEntity = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 		playerEntity.OnHPChanged.Subscribe(OnHPUpdate).AddTo(disposables);
 
 		weapons = playerEntity.Weapons;

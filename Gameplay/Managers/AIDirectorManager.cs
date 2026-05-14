@@ -105,7 +105,7 @@ public class AIDirectorManager : BaseManager
 		bgmIndex = 0;
 
 		gameplayManager = gameplayState.GetManager<GameplayManager>();
-		player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+		player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 
 		gameplayState.CurrentWorld.OnEntityDespawn.Subscribe(e =>
 		{
@@ -189,7 +189,7 @@ public class AIDirectorManager : BaseManager
 		if (enemySpawnTimer <= 0)
 		{
 			enemySpawnTimer = CalculateEnemySpawnInterval();
-			var maxCost = CalculateEnemysToSpawn();
+			var maxCost = CalculateEnemiesToSpawn();
 			// int currentCost = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity)).Count;
 
 			if (currentCost < maxCost)
@@ -340,8 +340,12 @@ public class AIDirectorManager : BaseManager
 	}
 
 	private float CalculateEnemySpawnInterval() => 9.5f - Tension * 7.8f;
-	private int CalculateEnemysToSpawn() =>
-		CurrentTensionState.CurrentState switch
+	private int CalculateEnemiesToSpawn()
+	{
+		if (gameplayManager.NormalizedTime >= 1.0f)
+			return 0;
+
+		return CurrentTensionState.CurrentState switch
 		{
 			TensionState.Calm => 1,
 			TensionState.Tense => 2,
@@ -349,6 +353,7 @@ public class AIDirectorManager : BaseManager
 			TensionState.Critical => 5,
 			_ => 2
 		};
+	}
 
 	private Vector2 GetSpawnPosition() =>
 		gameplayState.GetManager<WaypointManager>().GetNodePosition(

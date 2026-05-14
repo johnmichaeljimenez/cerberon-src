@@ -48,7 +48,7 @@ public class ItemPickupEntity : BaseEntity
 	{
 		base.Update(dt, udt);
 
-		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+		var player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 		var d = (player.Position - Position).Length();
 		if (d <= 1.5f)
 		{

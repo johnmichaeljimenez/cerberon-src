@@ -72,7 +72,7 @@ public class TriggerManager : BaseManager
 	{
 		base.Update(dt, udt);
 
-		var pc = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+		var pc = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 
 		if (pc.IsDead)
 			return;

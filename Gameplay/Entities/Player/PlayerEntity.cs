@@ -192,7 +192,7 @@ public class PlayerEntity : CharacterEntity
 		base.OnDeath();
 		IsActive = false; //TODO: spawn a player death animation false entity
 
-		gameplayState.GetManager<PlayerManager>().OnPlayerDeath.Publish(this);
+		gameplayState.GetManager<GameplayManager>().PlayerDead(this);
 	}
 
 	public override void Draw()

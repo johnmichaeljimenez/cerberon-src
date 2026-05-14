@@ -94,7 +94,7 @@ public class EnemyEntity : CharacterEntity
 		if (frameData.Item1 != "roach-attack" || frameData.Item2 != 6) //guaranteed to be frame-perfect than using normalized time
 			return;
 
-		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+		var player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 		var d = player.Position - Position;
 		if (!player.IsDead && FacingDirection.IsInFront(player.Position - Position, Raymath.Lerp(3, 6, Cost / 2), 50))
 		{
@@ -109,7 +109,7 @@ public class EnemyEntity : CharacterEntity
 		if (IsDead)
 			return;
 
-		var player = gameplayState.GetManager<PlayerManager>().PlayerCharacter;
+		var player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 		var d = player.Position - Position;
 
 		if (flying)
