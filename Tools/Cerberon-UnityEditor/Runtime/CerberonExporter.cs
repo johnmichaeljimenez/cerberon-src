@@ -16,6 +16,7 @@ namespace CerberonEditor.Main
         public Transform walls;
         public Transform ambientLightContainers;
         public Transform lightContainers;
+        public Transform triggerContainers;
         public Transform worldBounds;
         public Transform propsContainers;
         public Transform environmentSprites;
@@ -30,6 +31,7 @@ namespace CerberonEditor.Main
             var ambientLights = new List<object>();
             var lights = new List<object>();
             var colliders = new List<object>();
+            var triggers = new List<object>();
 
             float posSnap = 0.5f;
             float scaleSnap = 1f;
@@ -69,6 +71,29 @@ namespace CerberonEditor.Main
                     Flags = 1,
                     Height = 2
                 });
+            }
+
+            foreach (var i in triggerContainers.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                var t = new
+                {
+                    Position = new
+                    {
+                        X = i.transform.position.x,
+                        Y = -i.transform.position.y
+                    },
+                    Rotation = -i.transform.eulerAngles.z,
+                    Size = new
+                    {
+                        X = i.size.x,
+                        Y = i.size.y
+                    },
+                    TriggerID = i.gameObject.name,
+                    SortingIndex = i.sortingOrder,
+                    Enabled = i.gameObject.activeInHierarchy
+                };
+
+                triggers.Add(t);
             }
 
             foreach (var i in ambientLightContainers.GetComponentsInChildren<SpriteRenderer>())
@@ -253,7 +278,8 @@ namespace CerberonEditor.Main
                 EnvironmentSprites = sprites,
                 EnvironmentColliders = colliders,
                 Lights = lights,
-                AmbientLights = ambientLights
+                AmbientLights = ambientLights,
+                Triggers = triggers
             };
 
             string jsonString = JsonConvert.SerializeObject(world, Formatting.Indented);
