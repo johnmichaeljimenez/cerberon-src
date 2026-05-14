@@ -1,4 +1,4 @@
 {
 	"GameplayManager.Enabled": false,
-	"GameplayManager.MaxGameTime": 60
+	"GameplayManager.MaxGameTime": 300
 }

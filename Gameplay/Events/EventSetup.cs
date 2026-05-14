@@ -20,7 +20,7 @@ public class EventSetup : IDisposable
 			// ev.RunEvent("start");
 		}).AddTo(disposables);
 
-		//start of game
+		//end of game
 		state.GetManager<GameplayManager>().OnFightEnd.Subscribe(_ =>
 		{
 			state.GetManager<TriggerManager>().Find(nameof(Ending))[0].Enabled = true;
@@ -35,7 +35,7 @@ public class EventSetup : IDisposable
 					StartFight();
 					break;
 				case nameof(Ending):
-					StartFight();
+					Ending();
 					break;
 				default:
 					return;
