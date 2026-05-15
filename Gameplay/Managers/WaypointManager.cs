@@ -10,6 +10,7 @@ public class WaypointManager : BaseManager
 	{
 		public Vector2 Position;
 		public readonly List<Node> Connections = new();
+		public float Exposure = 0.5f;
 
 		public Node(float x, float y)
 		{
@@ -21,6 +22,9 @@ public class WaypointManager : BaseManager
 			Position = position;
 		}
 	}
+
+	public const float PosterizeSize = 3f;
+	public const float PosterizeStep = 1f / PosterizeSize;
 
 	public List<Node> Nodes => nodes;
 	private readonly List<Node> nodes = new();
@@ -164,6 +168,7 @@ public class WaypointManager : BaseManager
 		// 2. use poisson disc sampling to make random node points in the game world
 		// 3. remove all node points that are inside rectangle colliders
 		// 4. connect all node points that can directly "see" each other
+		// 5. post process nodes and calculate gameplay-relevant data
 
 
 		obstacleLines.Clear();
@@ -233,6 +238,9 @@ public class WaypointManager : BaseManager
 				j.Connections.Add(i);
 			}
 		}
+
+		//step 5
+		ComputeExposures();
 	}
 
 	public override void DrawDebug()
@@ -350,5 +358,66 @@ public class WaypointManager : BaseManager
 		}
 		path.Reverse();
 		return path;
+	}
+
+	private void ComputeExposures(float maxGraphDistance = 3f)
+	{
+		if (nodes.Count == 0) return;
+
+		var rawScores = new Dictionary<Node, float>(nodes.Count);
+
+		foreach (var node in nodes)
+		{
+			var score = CalculateRawExposureScore(node, maxGraphDistance);
+			rawScores[node] = score;
+		}
+
+		// min-max normalize
+		var minScore = float.MaxValue;
+		var maxScore = float.MinValue;
+		foreach (var score in rawScores.Values)
+		{
+			if (score < minScore) minScore = score;
+			if (score > maxScore) maxScore = score;
+		}
+
+		foreach (var node in nodes)
+		{
+			var normalized = (maxScore - minScore > 0.001f)
+				? (rawScores[node] - minScore) / (maxScore - minScore)
+				: 0.5f;
+
+			node.Exposure = MathF.Round(normalized / PosterizeStep) * PosterizeStep;
+			node.Exposure = Math.Clamp(node.Exposure, 0f, 1f);
+		}
+	}
+
+	private float CalculateRawExposureScore(Node start, float maxGraphDistance)	//TODO: improve consistency
+	{
+		var visited = new HashSet<Node>();
+		var queue = new Queue<(Node node, float distFromStart)>();
+		queue.Enqueue((start, 0f));
+		visited.Add(start);
+
+		while (queue.Count > 0)
+		{
+			var (current, dist) = queue.Dequeue();
+
+			if (dist >= maxGraphDistance)
+				continue;
+
+			foreach (var neighbor in current.Connections)
+			{
+				if (visited.Add(neighbor))
+				{
+					var edgeDist = Vector2.Distance(current.Position, neighbor.Position);
+					var newDist = dist + edgeDist;
+					if (newDist <= maxGraphDistance)
+						queue.Enqueue((neighbor, newDist));
+				}
+			}
+		}
+
+		return visited.Count - 1;   //exclude self
 	}
 }
