@@ -1,4 +1,5 @@
 using Main.Effects;
+using Main.Gameplay;
 using Tween;
 
 namespace Main.Core;
@@ -254,7 +255,8 @@ public static class RenderingManager
 
     public static void DrawToScreen(RenderTexture2D target)
     {
-        if (PostShader.Id != 0)
+        var drawPost = PostShader.Id != 0 && !GameplayState.EnableDrawDebug;
+        if (drawPost)
         {
             LightingSystem.Draw();
             Raylib.BeginShaderMode(PostShader);
@@ -273,7 +275,7 @@ public static class RenderingManager
         Rectangle dest = new(Offset.X, Offset.Y, VIRTUAL_WIDTH * Scale, VIRTUAL_HEIGHT * Scale);
         Raylib.DrawTexturePro(target.Texture, source, dest, Vector2.Zero, 0.0f, Color.White);
 
-        if (PostShader.Id != 0)
+        if (drawPost)
             Raylib.EndShaderMode();
     }
 

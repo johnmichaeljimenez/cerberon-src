@@ -17,7 +17,7 @@ public class GameplayState : IGameState
 
 	public World CurrentWorld { get; private set; }
 
-	private bool drawDebug = false;
+	public static bool EnableDrawDebug = false;
 
 	public GameplayState(GameplayOptions options)
 	{
@@ -69,6 +69,7 @@ public class GameplayState : IGameState
 
 	public void Exit()
 	{
+		EnableDrawDebug = false;
 		CurrentWorld.Dispose();
 
 		foreach (var i in managers)
@@ -118,7 +119,7 @@ public class GameplayState : IGameState
 	{
 		CurrentWorld.Draw();
 
-		if (drawDebug)
+		if (EnableDrawDebug)
 		{
 			DrawDebug();
 		}
@@ -144,7 +145,7 @@ public class GameplayState : IGameState
 				if (ImGui.Button("Menu"))
 					Game.Instance.GoToMenu();
 
-				ImGui.Checkbox("Draw Debug", ref drawDebug);
+				ImGui.Checkbox("Draw Debug", ref EnableDrawDebug);
 
 				ImGui.Text($"Paused? {PauseHandler.IsPaused}");
 				if (ImGui.Button("Pause"))
