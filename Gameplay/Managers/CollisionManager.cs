@@ -199,7 +199,7 @@ public class CollisionManager : BaseManager
 		return collided;
 	}
 
-	public bool Linecast(Vector2 from, Vector2 to, CollisionHeight height, out LinecastHit hitInfo, CircleBody fromBody = null)
+	public bool Linecast(Vector2 from, Vector2 to, CollisionHeight height, out LinecastHit hitInfo, CircleBody fromBody = null, bool ignoreBodies = false)
 	{
 		hitInfo = new LinecastHit
 		{
@@ -244,44 +244,47 @@ public class CollisionManager : BaseManager
 			}
 		}
 
-		foreach (var other in bodies)
+		if (!ignoreBodies)
 		{
-			if (height > other.Height)
-				continue;
-
-			if (other == null ||
-				other == fromBody ||
-				!other.Enabled) //linecast will hit bodies regardless of height (no uses yet for the opposite case)
+			foreach (var other in bodies)
+			{
+				if (height > other.Height)
 					continue;
 
-			Vector2 oc = from - other.Position;
-			float a = 1f;
-			float b = 2f * Vector2.Dot(rayDir, oc);
-			float c = Vector2.Dot(oc, oc) - other.Radius * other.Radius;
+				if (other == null ||
+					other == fromBody ||
+					!other.Enabled) //linecast will hit bodies regardless of height (no uses yet for the opposite case)
+					continue;
 
-			float discriminant = b * b - 4 * a * c;
-			if (discriminant >= 0f)
-			{
-				float sqrtDisc = MathF.Sqrt(discriminant);
-				float t1 = (-b - sqrtDisc) / (2 * a);
-				float t2 = (-b + sqrtDisc) / (2 * a);
+				Vector2 oc = from - other.Position;
+				float a = 1f;
+				float b = 2f * Vector2.Dot(rayDir, oc);
+				float c = Vector2.Dot(oc, oc) - other.Radius * other.Radius;
 
-				float t = float.MaxValue;
-				if (t1 >= 0f && t1 <= totalLength) t = t1;
-				if (t2 >= 0f && t2 <= totalLength && t2 < t) t = t2;
-
-				if (t < float.MaxValue)
+				float discriminant = b * b - 4 * a * c;
+				if (discriminant >= 0f)
 				{
-					float distSqThis = t * t;
-					if (distSqThis < minDistSq)
+					float sqrtDisc = MathF.Sqrt(discriminant);
+					float t1 = (-b - sqrtDisc) / (2 * a);
+					float t2 = (-b + sqrtDisc) / (2 * a);
+
+					float t = float.MaxValue;
+					if (t1 >= 0f && t1 <= totalLength) t = t1;
+					if (t2 >= 0f && t2 <= totalLength && t2 < t) t = t2;
+
+					if (t < float.MaxValue)
 					{
-						minDistSq = distSqThis;
-						hasHit = true;
-						Vector2 hitPos = from + rayDir * t;
-						hitInfo.Wall = null;
-						hitInfo.Body = other;
-						hitInfo.HitPosition = hitPos;
-						hitInfo.Distance = t;
+						float distSqThis = t * t;
+						if (distSqThis < minDistSq)
+						{
+							minDistSq = distSqThis;
+							hasHit = true;
+							Vector2 hitPos = from + rayDir * t;
+							hitInfo.Wall = null;
+							hitInfo.Body = other;
+							hitInfo.HitPosition = hitPos;
+							hitInfo.Distance = t;
+						}
 					}
 				}
 			}

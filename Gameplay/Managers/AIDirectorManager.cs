@@ -11,6 +11,11 @@ namespace Main.Gameplay.Managers;
 //TODO: track the player's most frequently visited locations and make items spawn there
 public class AIDirectorManager : BaseManager
 {
+	[DataConfig(15)]
+	public static float SpawnDistanceMin;
+	[DataConfig(50)]
+	public static float SpawnDistanceMax;
+
 	private readonly List<string> BGMList = new(){
 		"bone shredder",
 		"carnivore diet",
@@ -353,10 +358,15 @@ public class AIDirectorManager : BaseManager
 
 	private Vector2 GetSpawnPosition(bool hidden)
 	{
-		if (hidden)
-			return gameplayState.CurrentWorld.NodeData.GetHiddenNode(player.Position, 25f, 30f).Position;
+		var l = gameplayState.GetManager<CollisionManager>();
+		Func<Vector2, Vector2, bool> func = (from, to) => {
+			return l.Linecast(from, to, CollisionHeight.Mid, out var info, null, true);
+		};
 
-		return gameplayState.CurrentWorld.NodeData.GetExposedNode(player.Position, 25f, 30f).Position;
+		if (hidden)
+			return gameplayState.CurrentWorld.NodeData.GetHiddenNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
+
+		return gameplayState.CurrentWorld.NodeData.GetExposedNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
 	}
 
 	private void SpawnHealthItem() => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
