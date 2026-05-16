@@ -351,33 +351,36 @@ public class AIDirectorManager : BaseManager
 		};
 	}
 
-	private Vector2 GetSpawnPosition() =>
-		gameplayState.GetManager<WaypointManager>().GetNodePosition(
-			player.Position, 28f, 36f
-		);
+	private Vector2 GetSpawnPosition(bool hidden)
+	{
+		if (hidden)
+			return gameplayState.CurrentWorld.NodeData.GetHiddenNode(player.Position, 25f, 30f).Position;
+
+		return gameplayState.CurrentWorld.NodeData.GetExposedNode(player.Position, 25f, 30f).Position;
+	}
 
 	private void SpawnHealthItem() => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
 	{
 		e.ItemType = ItemPickupEntity.ItemTypes.Health;
 		e.Amount = 30;
-		e.Position = GetSpawnPosition();
+		e.Position = GetSpawnPosition(false);
 	});
 
 	private void SpawnAmmoItem() => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
 	{
 		e.ItemType = ItemPickupEntity.ItemTypes.Ammo;
-		e.Position = GetSpawnPosition();
+		e.Position = GetSpawnPosition(false);
 	});
 
 	private void SpawnWeaponItem(string id) => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
 	{
 		e.ItemType = id == "shotgun" ? ItemPickupEntity.ItemTypes.WeaponShotgun : ItemPickupEntity.ItemTypes.WeaponAK;
-		e.Position = GetSpawnPosition();
+		e.Position = GetSpawnPosition(false);
 	});
 
 	private void SpawnEnemy(float cost) => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
 	{
-		e.Position = GetSpawnPosition() + RNG.Position(0.2f);
+		e.Position = GetSpawnPosition(true) + RNG.Position(0.2f);
 
 		//make enemies fly if player camps too much (but only if player can sustain the pressure)
 		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Panic && emaMovementRate.Current < 0.1f && RNG.Chance(0.5f);

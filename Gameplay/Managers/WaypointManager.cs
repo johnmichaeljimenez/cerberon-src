@@ -23,7 +23,7 @@ public class WaypointManager : BaseManager
 		}
 	}
 
-	public const float PosterizeSize = 3f;
+	public const float PosterizeSize = 5f;
 	public const float PosterizeStep = 1f / PosterizeSize;
 
 	public List<Node> Nodes => nodes;
