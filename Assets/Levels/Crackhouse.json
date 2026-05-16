@@ -476,6 +476,75 @@
         "B": 255,
         "A": 255
       }
+    },
+    {
+      "SpriteID": "env/toilet",
+      "Position": {
+        "X": 8.38,
+        "Y": -21.63
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/sink",
+      "Position": {
+        "X": 20.66,
+        "Y": -13.41
+      },
+      "Parallax": 0.0,
+      "Rotation": -180.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/bed-1",
+      "Position": {
+        "X": 30.89,
+        "Y": 17.98
+      },
+      "Parallax": 0.0,
+      "Rotation": -201.716309,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
     }
   ],
   "EnvironmentColliders": [
@@ -920,6 +989,45 @@
       "Rotation": -38.7011223,
       "Flags": 0,
       "Height": 0
+    },
+    {
+      "Position": {
+        "X": 8.38,
+        "Y": -21.63
+      },
+      "Size": {
+        "X": 2.1875,
+        "Y": 3.375
+      },
+      "Rotation": 0.0,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 20.66,
+        "Y": -13.41
+      },
+      "Size": {
+        "X": 2.1875,
+        "Y": 1.625
+      },
+      "Rotation": -180.0,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 30.89,
+        "Y": 17.98
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 6.0
+      },
+      "Rotation": -201.716309,
+      "Flags": 0,
+      "Height": 0
     }
   ],
   "Lights": [
@@ -947,13 +1055,13 @@
     {
       "SpriteID": "light",
       "Position": {
-        "X": 9.24,
-        "Y": 17.48
+        "X": 6.7,
+        "Y": 3.5
       },
       "Color": {
-        "R": 51,
-        "G": 47,
-        "B": 36,
+        "R": 33,
+        "G": 50,
+        "B": 55,
         "A": 255
       },
       "Rotation": 0.0,
@@ -963,6 +1071,48 @@
       },
       "Enabled": true,
       "Scale": 50.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": -7.39,
+        "Y": 3.5
+      },
+      "Color": {
+        "R": 33,
+        "G": 50,
+        "B": 55,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 27.97,
+        "Y": 17.2
+      },
+      "Color": {
+        "R": 94,
+        "G": 90,
+        "B": 47,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 30.0,
       "ShadowType": 1
     }
   ],
@@ -1000,6 +1150,23 @@
         "X": 53.7953529,
         "Y": 41.32683
       }
+    },
+    {
+      "Position": {
+        "X": -50.807,
+        "Y": -18.853
+      },
+      "Color": {
+        "R": 58,
+        "G": 58,
+        "B": 50,
+        "A": 179
+      },
+      "Rotation": 0.0,
+      "Size": {
+        "X": 22.9749565,
+        "Y": 23.2195663
+      }
     }
   ],
   "Triggers": [
@@ -1019,7 +1186,7 @@
     },
     {
       "Position": {
-        "X": -73.13,
+        "X": -62.2,
         "Y": 4.5
       },
       "Rotation": 0.0,
