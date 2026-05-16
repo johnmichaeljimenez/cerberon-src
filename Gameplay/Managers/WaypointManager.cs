@@ -165,6 +165,7 @@ public class WaypointManager : BaseManager
 
 		//we are going to make a DIY homemade Probabilistic Roadmap (PRM) instead of A* grid here
 		// 1. take all static rectangle colliders and expand them by minkowski sum, then generate node points
+		// 1.5 add nodes on walls that opposite each other to ensure chokepoints and doorways will not get skipped
 		// 2. use poisson disc sampling to make random node points in the game world
 		// 3. remove all node points that are inside rectangle colliders
 		// 4. connect all node points that can directly "see" each other
@@ -182,8 +183,6 @@ public class WaypointManager : BaseManager
 				collider.Position, collider.Size, collider.Rotation, r);
 			nodes.AddRange(expandedCorners.Select(p => new Node(p)));
 
-			//TODO: step 1.5: for long rectangles, add more nodes (ex. if characterRadius = 1, then every 1 unit for a 5x5 square, instead of 4 points only on corners, it will have +3 on each edge
-
 			var obstacleEdges = Utils.GetRectangleEdges(
 				collider.Position, collider.Size - (Vector2.One * 0.1f), collider.Rotation); //breathing room for avoiding epsilon-level false positives
 			foreach (var edge in obstacleEdges)
@@ -192,8 +191,42 @@ public class WaypointManager : BaseManager
 			}
 		}
 
+		//step 1.5
+		var midNodes = new List<Node>();
+		for (int a = 0; a < obstacleLines.Count; a++)
+		{
+			for (int b = a + 1; b < obstacleLines.Count; b++)
+			{
+				var i = obstacleLines[a];
+				var j = obstacleLines[b];
+
+				//add only if:
+				// "opposite enough" facing walls
+				// near enough
+				// so basically typical hallways and doorways
+
+				var center1 = (i.Item1 + i.Item2) * 0.5f;
+				var center2 = (j.Item1 + j.Item2) * 0.5f;
+				
+				var dir1 = i.Item2 - i.Item1;
+				var dir2 = j.Item2 - j.Item1;
+
+				var dist1 = dir1.Length();
+				var dist2 = dir2.Length();
+
+				if ((center1 - center2).Length() >= characterRadius * 4 || MathF.Abs(dist1 - dist2) > 0.1f)
+					continue;
+				
+				var center = (center1 + center2) * 0.5f;
+
+				midNodes.Add(new Node(center));
+			}
+		}
+
+		nodes.AddRange(midNodes);
+
 		// //step 2
-		var distributionRadius = characterRadius * 2;
+		var distributionRadius = characterRadius * 4;
 		var poisson = PoissonDisc.Sample(new(-worldSize / 2, worldSize), distributionRadius); // TODO: seed for determinism
 		nodes.AddRange(poisson.Select(p => new Node(p)));
 
@@ -227,7 +260,7 @@ public class WaypointManager : BaseManager
 				var to = j.Position;
 				var dist = (to - from).Length();
 
-				if (dist >= distributionRadius * 2)
+				if (dist >= characterRadius * 8)
 					continue;
 
 				if (!IsVisible(from, to))
@@ -392,7 +425,7 @@ public class WaypointManager : BaseManager
 		}
 	}
 
-	private float CalculateRawExposureScore(Node start, float maxGraphDistance)	//TODO: improve consistency
+	private float CalculateRawExposureScore(Node start, float maxGraphDistance) //TODO: improve consistency
 	{
 		var visited = new HashSet<Node>();
 		var queue = new Queue<(Node node, float distFromStart)>();

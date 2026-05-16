@@ -156,7 +156,7 @@ public class EnemyEntity : CharacterEntity
 		else
 		{
 			var w = gameplayState.GetManager<WaypointManager>();
-			if (w.IsVisible(Position, player.Position)) //go straight to player if directly visible (not true FOV yet)
+			if (!gameplayState.GetManager<CollisionManager>().Linecast(Position, player.Position, CollisionHeight.High, out var info, null, true)) //go straight to player if directly visible (not true FOV yet)
 			{
 				visibleTime += dt;
 				lifetime = LIFETIME;

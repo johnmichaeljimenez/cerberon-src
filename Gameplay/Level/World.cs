@@ -324,8 +324,6 @@ public class World : IDisposable //aka Level loader
 
 	public void DrawDebug()
 	{
-		Raylib.DrawCircle(0, 0, 1, Colors.BLUE); //world origin sample
-
 		foreach (var i in Entities)
 		{
 			if (i.IsDestroyed || !i.IsActive)
