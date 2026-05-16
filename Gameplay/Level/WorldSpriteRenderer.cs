@@ -8,8 +8,7 @@ public class WorldSpriteRenderer //same with this
 	public enum RenderTypes
 	{
 		Default,
-		Tiled,
-		Masked
+		Tiled
 	}
 
 	[JsonProperty]
@@ -41,16 +40,17 @@ public class WorldSpriteRenderer //same with this
 	public void Draw()
 	{
 		var pos = Position + Game.Instance.Camera.GetParallaxPosition(Position, Parallax);
+		RenderingManager.BeginEnvironmentShader(RenderType == RenderTypes.Tiled, SortingGroup > 0, Sprite, TileSize);
 
 		if (RenderType == RenderTypes.Tiled)
 		{
-			RenderingManager.BeginTiledShader(Sprite, TileSize);
 			Sprite.DrawTiled(pos, TileSize, Rotation, Tint);
-			Raylib.EndShaderMode();
 		}
 		else
 		{
 			Sprite.Draw(pos, Scale, Rotation, Tint, Vector2.One * 0.5f);
 		}
+		
+		Raylib.EndShaderMode();
 	}
 }

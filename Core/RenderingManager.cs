@@ -126,7 +126,8 @@ public static class RenderingManager
 
     public static readonly Dictionary<string, ShaderSet> ShaderSets = new()
     {
-        { "SpriteEntity", new("sprite-entity", "visionTex") }
+        { "SpriteEntity", new("sprite-entity", "visionTex") },
+        { "SpriteEnvironment", new("sprite-environment", "eraseVision", "visionTex", "tilingX", "tilingY", "tilingMode") }
     };
 
     private static readonly Dictionary<Filters, RendererFilter> AllFilters = new()
@@ -152,12 +153,32 @@ public static class RenderingManager
         TweenManager.ClearByPrefix(TWEEN_KEY);
     }
 
-    public static void BeginEntityShader()
+    public static ShaderSet BeginEntityShader()
     {
         var shaderSet = ShaderSets["SpriteEntity"];
 
         shaderSet.Begin();
         shaderSet.SetValue("visionTex", LightingSystem.VisionRenderTexture.Texture);
+
+        return shaderSet;
+    }
+
+    public static ShaderSet BeginEnvironmentShader(bool tiling, bool eraseVision, Sprite sprite, Vector2 size)
+    {
+        var shaderSet = ShaderSets["SpriteEnvironment"];
+
+        shaderSet.Begin();
+        shaderSet.SetValue("visionTex", LightingSystem.VisionRenderTexture.Texture);
+        shaderSet.SetValue("eraseVision", eraseVision);
+        shaderSet.SetValue("tilingMode", tiling);
+
+        var tile = new Vector2(
+                size.X * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Width,
+                size.Y * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Height);
+
+        shaderSet.SetValue("tilingX", "tilingY", tile);
+
+        return shaderSet;
     }
 
     public static void BeginTiledShader(Sprite sprite, Vector2 size)
