@@ -73,8 +73,8 @@ public class DialogueManager : BaseManager
 
 	public override void Dispose()
 	{
-		base.Dispose();
 		AssetWatcher.Remove(DIALOGUE);
+		base.Dispose();
 	}
 
 	public bool ShowDialogue(string id)

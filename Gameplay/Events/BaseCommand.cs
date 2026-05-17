@@ -155,10 +155,12 @@ public class ShowDialogue : BaseCommand
 {
 	private string id;
 	private DialogueManager dm;
+	private bool wait;
 
-	public ShowDialogue(string id)
+	public ShowDialogue(string id, bool wait)
 	{
 		this.id = id;
+		this.wait = wait;
 	}
 
 	public override void OnEnter()
@@ -170,6 +172,6 @@ public class ShowDialogue : BaseCommand
 
 	public override bool Update(float dt)
 	{
-		return dm.CurrentDialogue == null || dm.CurrentDialogue.ID != id;
+		return !wait || dm.CurrentDialogue == null || dm.CurrentDialogue.ID != id;
 	}
 }
