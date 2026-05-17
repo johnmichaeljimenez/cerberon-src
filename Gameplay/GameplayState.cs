@@ -32,6 +32,7 @@ public class GameplayState : IGameState
 		AddManager<AIDirectorManager>();
 		AddManager<GameplayEventManager>();
 		AddManager<TriggerManager>();
+		AddManager<DialogueManager>();
 
 		RenderingManager.ResetAllFilters();
 

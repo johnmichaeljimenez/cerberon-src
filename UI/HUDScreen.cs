@@ -16,6 +16,8 @@ public class HUDScreen : BaseScreen
 	public HUDScreen(object context) : base(context)
 	{
 		gameplayState = context as GameplayState;
+		gameplayState.GetManager<GameplayManager>().OnFightStart.Subscribe(_ => UpdateVisibility()).AddTo(disposables);
+		gameplayState.GetManager<DialogueManager>().OnDialogueShow.Subscribe(_ => UpdateVisibility()).AddTo(disposables);
 
 		playerEntity = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 		playerEntity.OnHPChanged.Subscribe(OnHPUpdate).AddTo(disposables);
@@ -28,6 +30,8 @@ public class HUDScreen : BaseScreen
 	public override void OnEnter()
 	{
 		base.OnEnter();
+
+		UpdateVisibility();
 
 		OnWeaponUpdate(weapons.CurrentWeapon);
 		OnHPUpdate(playerEntity.HP);
@@ -53,7 +57,8 @@ public class HUDScreen : BaseScreen
 
 			references["time-text"].Text = timeString;
 		}
-		else{
+		else
+		{
 			references["time-text"].Text = "--:--";
 		}
 
@@ -68,5 +73,23 @@ public class HUDScreen : BaseScreen
 	private void OnWeaponUpdate(Weapon w)
 	{
 		references["ammo-text"].Text = w.UsesAmmo ? $"{w.Name} ({w.CurrentAmmo}/{w.CurrentMaxAmmo})" : $"{w.Name}";
+	}
+
+	private void UpdateVisibility()
+	{
+		var showHUD = GameplayManager.Enabled;
+		var showDialogue = gameplayState.GetManager<DialogueManager>().CurrentDialogue != null;
+
+		foreach (var i in elements)
+		{
+			if (i.ID == "dialogue-text")
+			{
+				i.Visible = showDialogue;
+			}
+			else
+			{
+				i.Visible = !showDialogue && showHUD;
+			}
+		}
 	}
 }
