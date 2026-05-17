@@ -1,4 +1,5 @@
 using Main.Core;
+using Main.Helpers;
 
 namespace Main.Gameplay.Managers;
 
@@ -7,6 +8,8 @@ public class Dialogue
 	public string ID { get; set; }
 	public string CharacterID { get; set; }
 	public string Message { get; set; }
+
+	public float Duration => MathF.Max(Message.Length * 0.1f, 2);
 }
 
 public class DialogueManager : BaseManager
@@ -17,6 +20,7 @@ public class DialogueManager : BaseManager
 
 	private string currentDialogueID;
 	private int currentIndex;
+	private float timer;
 
 	public bool Running { get; private set; }
 	public Dialogue CurrentDialogue { get; private set; }
@@ -95,19 +99,33 @@ public class DialogueManager : BaseManager
 
 	public void Next()
 	{
+		currentIndex++;
 		if (currentIndex >= dialogues[currentDialogueID].Count)
 		{
 			EndDialogue();
 			return;
 		}
 
-		currentIndex++;
 		UpdateDialogue();
 	}
 
 	private void UpdateDialogue()
 	{
 		CurrentDialogue = dialogues[currentDialogueID][currentIndex];
+		timer = CurrentDialogue.Duration;
 		OnDialogueShow.Publish(CurrentDialogue);
+	}
+
+	public override void Update(float dt, float udt)
+	{
+		base.Update(dt, udt);
+
+		if (CurrentDialogue == null)
+			return;
+
+		if (Utils.Countdown(ref timer, dt))
+		{
+			Next();
+		}
 	}
 }

@@ -1,5 +1,6 @@
 using Main.Core;
 using Main.Gameplay.Entities;
+using Main.Gameplay.Managers;
 
 namespace Main.Gameplay.Events;
 
@@ -147,5 +148,28 @@ public class Exec : BaseCommand
 	public override bool Update(float dt)
 	{
 		return true;
+	}
+}
+
+public class ShowDialogue : BaseCommand
+{
+	private string id;
+	private DialogueManager dm;
+
+	public ShowDialogue(string id)
+	{
+		this.id = id;
+	}
+
+	public override void OnEnter()
+	{
+		base.OnEnter();
+		dm = gameplayState.GetManager<DialogueManager>();
+		dm.ShowDialogue(id);
+	}
+
+	public override bool Update(float dt)
+	{
+		return dm.CurrentDialogue == null || dm.CurrentDialogue.ID != id;
 	}
 }

@@ -65,6 +65,12 @@ public class HUDScreen : BaseScreen
 		base.Draw();
 	}
 
+	public override void UpdateElements(List<UIElement> elements)
+	{
+		base.UpdateElements(elements);
+		UpdateVisibility();
+	}
+
 	private void OnHPUpdate(int amt)
 	{
 		references["hp-text"].Text = $"HP: {amt}/{playerEntity.MaxHP}";
@@ -78,17 +84,21 @@ public class HUDScreen : BaseScreen
 	private void UpdateVisibility()
 	{
 		var showHUD = GameplayManager.Enabled;
-		var showDialogue = gameplayState.GetManager<DialogueManager>().CurrentDialogue != null;
+		var dialogue = gameplayState.GetManager<DialogueManager>().CurrentDialogue;
 
 		foreach (var i in elements)
 		{
 			if (i.ID == "dialogue-text")
 			{
-				i.Visible = showDialogue;
+				i.Visible = dialogue != null;
+				if (dialogue != null)
+				{
+					i.Text = $"[{dialogue.CharacterID}] {dialogue.Message}";
+				}
 			}
 			else
 			{
-				i.Visible = !showDialogue && showHUD;
+				i.Visible = showHUD;
 			}
 		}
 	}
