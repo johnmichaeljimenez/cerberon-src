@@ -21,8 +21,12 @@ public class EventSetup : IDisposable
 		}).AddTo(disposables);
 
 		//end of game
-		state.GetManager<GameplayManager>().OnFightEnd.Subscribe(_ =>
+		state.GetManager<GameplayManager>().OnTimeEnd.Subscribe(_ =>
 		{
+			gameplayEventManager.RunEvent("end-1",
+				new ShowDialogue("end-1", true)
+			);
+
 			state.GetManager<TriggerManager>().Find(nameof(Ending))[0].Enabled = true;
 		}).AddTo(disposables);
 
@@ -51,14 +55,22 @@ public class EventSetup : IDisposable
 	private void StartFight()
 	{
 		gameplayEventManager.RunEvent("startfight",
-			new PlayAudio("break", null),
-			new Wait(0.3f),
-			new PlayAudio("break", null),
-			new Wait(0.3f),
-			new PlayAudio("break", null),
-			new Wait(0.3f),
-			new PlayAudio("break", null),
+			new PlayAudio("knock-slam", null),
+			new Wait(0.2f),
+			new PlayAudio("knock-slam", null),
+			new Wait(0.5f),
+			new ShowDialogue("intro-1", true),
+			new Wait(0.5f),
+			new PlayAudio("knock-slam", null),
+			new Wait(0.2f),
+			new PlayAudio("knock-slam", null),
+			new Wait(0.2f),
+			new PlayAudio("knock-slam", null),
 			new Wait(0.1f),
+			new PlayAudio("break", null),
+			new Wait(1f),
+			new ShowDialogue("intro-2", false),
+			new Wait(0.5f),
 			new Exec(() =>
 			{
 				gameplayState.GetManager<GameplayManager>().Begin();
@@ -68,6 +80,13 @@ public class EventSetup : IDisposable
 
 	private void Ending()
 	{
-		gameplayState.GetManager<GameplayManager>().End(true);
+		gameplayEventManager.RunEvent("end-2",
+			new ShowDialogue("end-2", true),
+			new Wait(0.5f),
+			new Exec(() =>
+			{
+				gameplayState.GetManager<GameplayManager>().End(true);
+			})
+		);
 	}
 }

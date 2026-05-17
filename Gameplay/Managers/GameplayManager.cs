@@ -47,7 +47,7 @@ public class GameplayManager : BaseManager
 	public readonly Signal<PlayerEntity> OnPlayerDeath = new();
 	public readonly Signal<Unit> OnGameStart = new();
 	public readonly Signal<Unit> OnFightStart = new();
-	public readonly Signal<Unit> OnFightEnd = new();
+	public readonly Signal<Unit> OnTimeEnd = new();
 
 	public GameplayManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -99,7 +99,7 @@ public class GameplayManager : BaseManager
 			LightingSystem.AmbientLightColor = AmbientGradient.LerpGradient(1.0f - NormalizedTime);
 			if (Utils.Countdown(ref _gameTime, dt))
 			{
-				OnFightEnd.Publish(Unit.Default);
+				OnTimeEnd.Publish(Unit.Default);
 				Running = false;
 			}
 		}
