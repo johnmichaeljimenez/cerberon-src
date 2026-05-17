@@ -78,6 +78,18 @@ public class AmbientLight //cheap rectangular lights that doesn't cast shadows b
 	public Color Color { get; set; }
 	public float AmbientMultiplier { get; set; }
 	public bool Flicker { get; set; }
+
+	public void Init()
+	{
+		var c = Color;
+		var alphaRatio = c.A / 255.0f;
+
+		var r = (byte)(c.R * alphaRatio);
+		var g = (byte)(c.G * alphaRatio);
+		var b = (byte)(c.B * alphaRatio);
+
+		Color = new Color(r, g, b, (byte)255);
+	}
 }
 
 public class Light : IDisposable
@@ -226,6 +238,7 @@ public static class LightingSystem
 			return;
 
 		ambientLights.AddRange(list);
+		ambientLights.ForEach(p => p.Init());
 	}
 
 	public static Light AddLight(Light light)
