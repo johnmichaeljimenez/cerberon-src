@@ -116,7 +116,11 @@ public class TriggerManager : BaseManager
 
 	private void OnTriggerExecuteEvent(PlayerEntity c, Trigger t)
 	{
-		t.IsTriggered = true;  //no need for multi-shot triggers right now
+		foreach (var i in triggers)
+		{
+			if (i == t || i.TriggerID == t.TriggerID)
+				i.IsTriggered = true; //no need for multi-shot triggers right now, and disable all triggers with same group on activate
+		}
 
 		Log.Send("Trigger execute by player");
 		OnTriggerExecute.Publish((c, t));
