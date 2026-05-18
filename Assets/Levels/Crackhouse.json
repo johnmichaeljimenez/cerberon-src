@@ -1,8 +1,8 @@
 {
   "WorldSettings": {
     "PlayerSpawnPoint": {
-      "X": -6.51,
-      "Y": -13.73
+      "X": 25.56,
+      "Y": 17.75
     },
     "WorldSize": {
       "X": 128.0,
@@ -545,6 +545,75 @@
         "B": 255,
         "A": 255
       }
+    },
+    {
+      "SpriteID": "env/crate-4",
+      "Position": {
+        "X": 30.2,
+        "Y": -2.69
+      },
+      "Parallax": 0.0,
+      "Rotation": -201.716309,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 2.0377,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/crate-4",
+      "Position": {
+        "X": 27.1400013,
+        "Y": -2.85
+      },
+      "Parallax": 0.0,
+      "Rotation": -164.758057,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 2.0377,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/crate-4",
+      "Position": {
+        "X": 31.66,
+        "Y": 7.04
+      },
+      "Parallax": 0.0,
+      "Rotation": -262.830383,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.64210081,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
     }
   ],
   "EnvironmentColliders": [
@@ -1028,6 +1097,45 @@
       "Rotation": -201.716309,
       "Flags": 0,
       "Height": 0
+    },
+    {
+      "Position": {
+        "X": 30.2,
+        "Y": -2.69
+      },
+      "Size": {
+        "X": 1.71875,
+        "Y": 1.75
+      },
+      "Rotation": -201.716309,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 27.1400013,
+        "Y": -2.85
+      },
+      "Size": {
+        "X": 1.71875,
+        "Y": 1.75
+      },
+      "Rotation": -164.758057,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 31.66,
+        "Y": 7.04
+      },
+      "Size": {
+        "X": 1.71875,
+        "Y": 1.75
+      },
+      "Rotation": -262.830383,
+      "Flags": 0,
+      "Height": 0
     }
   ],
   "Lights": [
@@ -1041,27 +1149,6 @@
         "R": 51,
         "G": 47,
         "B": 36,
-        "A": 255
-      },
-      "Rotation": 0.0,
-      "Origin": {
-        "X": 0.5,
-        "Y": 0.5
-      },
-      "Enabled": true,
-      "Scale": 50.0,
-      "ShadowType": 1
-    },
-    {
-      "SpriteID": "light",
-      "Position": {
-        "X": 6.7,
-        "Y": 3.5
-      },
-      "Color": {
-        "R": 33,
-        "G": 50,
-        "B": 55,
         "A": 255
       },
       "Rotation": 0.0,
@@ -1101,9 +1188,9 @@
         "Y": 17.2
       },
       "Color": {
-        "R": 94,
-        "G": 90,
-        "B": 47,
+        "R": 120,
+        "G": 113,
+        "B": 33,
         "A": 255
       },
       "Rotation": 0.0,
@@ -1113,6 +1200,111 @@
       },
       "Enabled": true,
       "Scale": 30.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 6.7,
+        "Y": 3.5
+      },
+      "Color": {
+        "R": 33,
+        "G": 50,
+        "B": 55,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 37.47,
+        "Y": 29.04
+      },
+      "Color": {
+        "R": 51,
+        "G": 47,
+        "B": 36,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 39.62,
+        "Y": 8.7
+      },
+      "Color": {
+        "R": 51,
+        "G": 47,
+        "B": 36,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 9.4,
+        "Y": 17.79
+      },
+      "Color": {
+        "R": 33,
+        "G": 50,
+        "B": 55,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 1
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 24.89,
+        "Y": 2.4
+      },
+      "Color": {
+        "R": 33,
+        "G": 50,
+        "B": 55,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
       "ShadowType": 1
     }
   ],
@@ -1172,13 +1364,27 @@
   "Triggers": [
     {
       "Position": {
-        "X": -7.027,
-        "Y": -6.849
+        "X": 25.18,
+        "Y": 9.72
       },
       "Rotation": 0.0,
       "Size": {
-        "X": 21.479557,
-        "Y": 4.13896465
+        "X": 5.0,
+        "Y": 1.0
+      },
+      "TriggerID": "StartFight",
+      "SortingIndex": 0,
+      "Enabled": true
+    },
+    {
+      "Position": {
+        "X": 14.52,
+        "Y": 18.18
+      },
+      "Rotation": -90.0,
+      "Size": {
+        "X": 5.0,
+        "Y": 1.0
       },
       "TriggerID": "StartFight",
       "SortingIndex": 0,
