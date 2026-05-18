@@ -270,6 +270,34 @@ public static class Utils
 
 		return source.Skip(start).Take(count).ToList();
 	}
+
+	public static List<float> Shatter(ref float total, float minSize = 0.1f, float maxSize = 1, float? bias = null)
+	{
+		minSize = MathF.Max(0.1f, minSize); //prevent infinite loop
+
+		var list = new List<float>();
+		var biasItem = bias ?? 0f;
+
+		if (biasItem > 0)   //use bias if you want a guaranteed fixed-size item to be included, then the remaining can be divided as usual
+		{
+			list.Add(biasItem);
+			total -= biasItem;
+		}
+
+		while (total > minSize)
+		{
+			var upper = MathF.Min(maxSize, total); //prevent exceeding the budget
+			if (upper < minSize) break;
+
+			var newItem = RNG.Range(minSize, upper);
+			list.Add(newItem);
+			total -= newItem;
+		}
+
+		//any excess total will be ignored and kept for next round
+
+		return list;
+	}
 }
 
 public static class Colors
