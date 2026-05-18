@@ -60,7 +60,7 @@ public class EnemyEntity : CharacterEntity
 		Animator.Add("roach-death", 100);
 		Animator.Play("roach-idle");
 
-		Log.Send($"Spawned enemy #{ID}");
+		Log.Send($"Spawned enemy #{ID} {Cost}");
 	}
 
 	private void SetStats()

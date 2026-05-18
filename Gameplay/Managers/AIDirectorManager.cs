@@ -84,11 +84,11 @@ public class AIDirectorManager : BaseManager
 	private const float TOKEN_COOLDOWN = 0.5f;
 	private readonly float[] attackTokenCooldowns = new float[MAX_ATTACKING_ENEMY];
 
-	private float currentCost;
-
 	private Vector2 playerPreviousPosition;
 	private EMA emaPlayerPosition = new(0.01f);
 	private EMA emaMovementRate = new(0.01f);
+
+	private float currentBudget;
 
 	public AIDirectorManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -120,8 +120,6 @@ public class AIDirectorManager : BaseManager
 		{
 			if (e is EnemyEntity z)
 			{
-				currentCost -= z.Cost;
-
 				if (z.HP <= 0)
 				{
 					emaKillCount.AddSample(60.0f); //large bump to compensate for decay (add must be faster than reduction)
@@ -190,22 +188,12 @@ public class AIDirectorManager : BaseManager
 		if (enemySpawnTimer <= 0)
 		{
 			enemySpawnTimer = CalculateEnemySpawnInterval();
-			var maxCost = CalculateEnemiesToSpawn();
-			// int currentCost = gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity)).Count;
-
-			if (currentCost < maxCost)
+			var maxCost = CalculateEnemiesToSpawn();	//TODO: improve
+			
+			var cost = Utils.Shatter(ref maxCost, 0.5f, Raymath.Remap((float)CurrentTensionState.CurrentState, 0f, 3f, 0.5f, 1f));
+			foreach (var i in cost)
 			{
-				//TODO: this makes the player's moveset countered (ex. too much AOE melee will spawn bigger tougher roaches, and too much rifles will spawn tiny fast roaches
-				//baseline is 1.0
-				//if shotguns or melee are used too much, drag it downward (subtract) until it reaches 0.001 something (zerg-like roaches)
-				//if pistol or AK are used too much, lift it up (add) until it reaches 2.0 (tank roaches)
-
-				var spawnCost = 1.0f;
-				for (float i = 0; i < maxCost; i += spawnCost)
-				{
-					SpawnEnemy(spawnCost);
-					currentCost += spawnCost;
-				}
+				SpawnEnemy(i);
 			}
 		}
 
@@ -235,7 +223,7 @@ public class AIDirectorManager : BaseManager
 			if (weaponSpawnTimer <= 0)
 			{
 				weaponSpawnTimer = 5.0f;
-				if (gameplayManager.NormalizedTime <= 0.25f || emaTension.Current >= 0.6f)
+				if (gameplayManager.NormalizedTime <= 0.1f || emaTension.Current >= 0.4f)
 				{
 					var allWeaponsUnlocked = player.Weapons.Weapons.All(p => p.IsUnlocked);
 					if (allWeaponsUnlocked)
@@ -296,7 +284,7 @@ public class AIDirectorManager : BaseManager
 
 		emaNearbyEnemyCount.AddSample(((float)nearbyEnemyCount / 5) * 2);
 
-		var newTension = emaKillCount.Current * 0.4f +
+		var newTension = emaKillCount.Current * 0.8f +
 						 emaPlayerAccuracy.Current * 0.1f +
 						 emaPlayerHealth.Current * 0.5f;
 
@@ -340,8 +328,8 @@ public class AIDirectorManager : BaseManager
 		}
 	}
 
-	private float CalculateEnemySpawnInterval() => 9.5f - Tension * 7.8f;
-	private int CalculateEnemiesToSpawn()
+	private float CalculateEnemySpawnInterval() => Raymath.Remap(Raymath.Clamp01(Tension), 0f, 1f, 3f, 7f);
+	private float CalculateEnemiesToSpawn()
 	{
 		if (gameplayManager.NormalizedTime >= 1.0f)
 			return 0;
@@ -359,7 +347,8 @@ public class AIDirectorManager : BaseManager
 	private Vector2 GetSpawnPosition(bool hidden)
 	{
 		var l = gameplayState.GetManager<CollisionManager>();
-		Func<Vector2, Vector2, bool> func = (from, to) => {
+		Func<Vector2, Vector2, bool> func = (from, to) =>
+		{
 			return l.Linecast(from, to, CollisionHeight.Mid, out var info, null, true);
 		};
 

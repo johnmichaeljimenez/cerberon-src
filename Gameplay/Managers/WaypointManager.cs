@@ -226,7 +226,7 @@ public class WaypointManager : BaseManager
 		nodes.AddRange(midNodes);
 
 		// //step 2
-		var distributionRadius = characterRadius * 4;
+		var distributionRadius = characterRadius * 2;
 		var poisson = PoissonDisc.Sample(new(-worldSize / 2, worldSize), distributionRadius); // TODO: seed for determinism
 		nodes.AddRange(poisson.Select(p => new Node(p)));
 
