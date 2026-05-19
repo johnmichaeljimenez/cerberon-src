@@ -118,6 +118,7 @@ namespace CerberonEditor.Main
                         X = i.size.x,
                         Y = i.size.y
                     },
+                    Flicker = i.gameObject.name.ToLower().Contains("flicker")
                 };
 
                 ambientLights.Add(l);
@@ -149,7 +150,8 @@ namespace CerberonEditor.Main
                     Enabled = true,
                     Scale = Mathf.Max(i.transform.localScale.x, i.transform.localScale.y),
 
-                    ShadowType = i.CompareTag("Shadow") ? 1 : 0
+                    ShadowType = i.CompareTag("Shadow") ? 1 : 0,
+                    Flicker = i.gameObject.name.ToLower().Contains("flicker")
                 };
 
                 lights.Add(l);
