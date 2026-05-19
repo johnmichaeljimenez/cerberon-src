@@ -1,0 +1,856 @@
+{
+  "WorldSettings": {
+    "PlayerSpawnPoint": {
+      "X": 18.96,
+      "Y": -8.03
+    },
+    "WorldSize": {
+      "X": 128.0,
+      "Y": 128.0
+    },
+    "AmbientColor": {
+      "R": 38,
+      "G": 38,
+      "B": 38,
+      "A": 255
+    }
+  },
+  "Entities": [],
+  "EnvironmentSprites": [
+    {
+      "SpriteID": "env/wood-13",
+      "Position": {
+        "X": -0.16,
+        "Y": -22.1
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": -1,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 53.888134,
+        "Y": 32.994915
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/wood-13",
+      "Position": {
+        "X": 2.92,
+        "Y": 6.59
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": -1,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 47.72494,
+        "Y": 25.41933
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/wood-13",
+      "Position": {
+        "X": -11.13,
+        "Y": 23.695
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": -1,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 19.6200333,
+        "Y": 9.483891
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/tile-2",
+      "Position": {
+        "X": 2.168,
+        "Y": -31.113
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": -1,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 18.775322,
+        "Y": 14.4871893
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/wood-10",
+      "Position": {
+        "X": 12.235,
+        "Y": 28.114
+      },
+      "Parallax": 0.0,
+      "Rotation": -90.0,
+      "SortingGroup": -1,
+      "SortingIndex": -1,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 17.2401962,
+        "Y": 28.4627419
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/paper-3",
+      "Position": {
+        "X": 14.88,
+        "Y": -5.99
+      },
+      "Parallax": 0.0,
+      "Rotation": -20.0309753,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.5688,
+      "TileSize": {
+        "X": 22.1964245,
+        "Y": 34.67359
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/paper-1",
+      "Position": {
+        "X": 11.59,
+        "Y": -10.19
+      },
+      "Parallax": 0.0,
+      "Rotation": -342.228516,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.5688,
+      "TileSize": {
+        "X": 22.1964245,
+        "Y": 34.67359
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/paper-4",
+      "Position": {
+        "X": 9.92,
+        "Y": -2.76
+      },
+      "Parallax": 0.0,
+      "Rotation": -358.414917,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.5688,
+      "TileSize": {
+        "X": 22.1964245,
+        "Y": 34.67359
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/toilet",
+      "Position": {
+        "X": 4.1,
+        "Y": -31.36
+      },
+      "Parallax": 0.0,
+      "Rotation": -90.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/toilet",
+      "Position": {
+        "X": -1.08,
+        "Y": -31.36
+      },
+      "Parallax": 0.0,
+      "Rotation": -270.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/sink",
+      "Position": {
+        "X": -0.61,
+        "Y": -26.92
+      },
+      "Parallax": 0.0,
+      "Rotation": -270.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/sink",
+      "Position": {
+        "X": 3.36,
+        "Y": -26.92
+      },
+      "Parallax": 0.0,
+      "Rotation": -90.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/bed-1",
+      "Position": {
+        "X": 21.41,
+        "Y": -14.03
+      },
+      "Parallax": 0.0,
+      "Rotation": -2.12027645,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/chair-5",
+      "Position": {
+        "X": 17.6,
+        "Y": -5.99
+      },
+      "Parallax": 0.0,
+      "Rotation": -2.12027645,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/table-4",
+      "Position": {
+        "X": 15.73,
+        "Y": -6.02
+      },
+      "Parallax": 0.0,
+      "Rotation": -97.72552,
+      "SortingGroup": 0,
+      "SortingIndex": 1,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    }
+  ],
+  "EnvironmentColliders": [
+    {
+      "Position": {
+        "X": 0.0,
+        "Y": 19.0
+      },
+      "Size": {
+        "X": 4.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -1.0,
+        "Y": 19.5
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 20.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -12.0,
+        "Y": 28.0
+      },
+      "Size": {
+        "X": 21.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -21.0,
+        "Y": 17.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 22.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -0.5,
+        "Y": 35.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 9.5,
+        "Y": 35.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 25.0,
+        "Y": 35.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 16.0,
+        "Y": 19.0
+      },
+      "Size": {
+        "X": 20.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 26.0,
+        "Y": -9.5
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 60.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -27.0,
+        "Y": -22.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 35.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -13.0,
+        "Y": -6.0
+      },
+      "Size": {
+        "X": 26.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -21.0,
+        "Y": -4.5
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 6.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -1.0,
+        "Y": -38.0
+      },
+      "Size": {
+        "X": 52.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 16.0,
+        "Y": -18.5
+      },
+      "Size": {
+        "X": 20.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 15.5,
+        "Y": 1.5
+      },
+      "Size": {
+        "X": 19.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 7.0,
+        "Y": -6.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 14.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -1.0,
+        "Y": -24.0
+      },
+      "Size": {
+        "X": 14.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -6.5,
+        "Y": -18.5
+      },
+      "Size": {
+        "X": 13.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -12.0,
+        "Y": -13.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 12.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -1.0,
+        "Y": -15.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 8.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 1.5,
+        "Y": -31.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 12.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 11.5,
+        "Y": -30.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 14.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -7.0,
+        "Y": -33.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 12.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -22.5,
+        "Y": -15.0
+      },
+      "Size": {
+        "X": 11.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -3.0,
+        "Y": 10.5
+      },
+      "Size": {
+        "X": 5.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 10.5,
+        "Y": -24.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 7.0,
+        "Y": -17.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 4.1,
+        "Y": -31.36
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 3.0
+      },
+      "Rotation": -90.0,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": -1.08,
+        "Y": -31.36
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 3.0
+      },
+      "Rotation": -270.0,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": -0.61,
+        "Y": -26.92
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 2.0
+      },
+      "Rotation": -270.0,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 3.36,
+        "Y": -26.92
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 2.0
+      },
+      "Rotation": -90.0,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 21.41,
+        "Y": -14.03
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 6.0
+      },
+      "Rotation": -2.12027645,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 17.6,
+        "Y": -5.99
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": -2.12027645,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 15.73,
+        "Y": -6.02
+      },
+      "Size": {
+        "X": 6.0,
+        "Y": 3.0
+      },
+      "Rotation": -97.72552,
+      "Flags": 0,
+      "Height": 0
+    }
+  ],
+  "Lights": [],
+  "AmbientLights": [],
+  "Triggers": [
+    {
+      "Position": {
+        "X": 25.18,
+        "Y": 9.72
+      },
+      "Rotation": 0.0,
+      "Size": {
+        "X": 5.0,
+        "Y": 1.0
+      },
+      "TriggerID": "StartFight",
+      "SortingIndex": 0,
+      "Enabled": false
+    },
+    {
+      "Position": {
+        "X": 14.52,
+        "Y": 18.18
+      },
+      "Rotation": -90.0,
+      "Size": {
+        "X": 5.0,
+        "Y": 1.0
+      },
+      "TriggerID": "StartFight",
+      "SortingIndex": 0,
+      "Enabled": false
+    },
+    {
+      "Position": {
+        "X": -62.2,
+        "Y": 4.5
+      },
+      "Rotation": 0.0,
+      "Size": {
+        "X": 6.63127232,
+        "Y": 18.018877
+      },
+      "TriggerID": "Ending",
+      "SortingIndex": 0,
+      "Enabled": false
+    }
+  ]
+}
