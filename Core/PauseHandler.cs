@@ -1,3 +1,4 @@
+using Main.Helpers;
 using Tween;
 
 namespace Main.Core;
@@ -6,30 +7,29 @@ public static class PauseHandler
 {
 	public static bool IsPaused { get; private set; }
 	private static float hitstop;
-	private static readonly HashSet<string> pauseList = new(); //used not only for pause menu but also for ex. dialogues, inventory, or even millisecond hitstops during combat
+	private static readonly RefCount pauseList = new() //used not only for pause menu but also for ex. dialogues, inventory, or even millisecond hitstops during combat
+	{
+		OnChanged = UpdatePause
+	};
 
 	public static void Pause(string id)
 	{
-		if (pauseList.Add(id))
-			UpdatePause();
+		pauseList.Add(id);
 	}
 
 	public static void Unpause(string id)
 	{
-		if (pauseList.Remove(id))
-			UpdatePause();
+		pauseList.Remove(id);
 	}
 
 	public static void Clear()
 	{
-		hitstop = 0;
 		pauseList.Clear();
-		UpdatePause();
 	}
 
 	private static void UpdatePause()
 	{
-		IsPaused = pauseList.Count > 0;
+		IsPaused = pauseList.IsActive;
 	}
 
 	public static void ApplyHitstop(float duration = 0.1f)
