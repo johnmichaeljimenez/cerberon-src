@@ -79,6 +79,8 @@ public class AmbientLight //cheap rectangular lights that doesn't cast shadows b
 	public float AmbientMultiplier { get; set; }
 	public bool Flicker { get; set; }
 
+	public int FlickerSeed;
+
 	public void Init()
 	{
 		var c = Color;
@@ -89,6 +91,9 @@ public class AmbientLight //cheap rectangular lights that doesn't cast shadows b
 		var b = (byte)(c.B * alphaRatio);
 
 		Color = new Color(r, g, b, (byte)255);
+
+		if (Flicker)
+			FlickerSeed = LightingSystem.GetFlickerSeed();
 	}
 }
 
@@ -137,6 +142,8 @@ public class Light : IDisposable
 	public Camera2D? ShadowCamera { get; private set; }
 	private const float SHADOW_MAP_RESOLUTION = 256f;
 	private bool updatedShadow;
+
+	public int FlickerSeed;
 
 	public bool ShouldUpdateShadow()
 	{
@@ -250,6 +257,9 @@ public static class LightingSystem
 		else if (light.VisionEffect == Light.VisionEffects.VisionOnly)
 			visionLights.Add(light);
 
+		if (light.Flicker)
+			light.FlickerSeed = GetFlickerSeed();
+
 		return light;
 	}
 
@@ -261,6 +271,9 @@ public static class LightingSystem
 			lights.Add(light);
 		else if (visionEffect == Light.VisionEffects.VisionOnly)
 			visionLights.Add(light);
+
+		if (light.Flicker)
+			light.FlickerSeed = GetFlickerSeed();
 
 		return light;
 	}
@@ -331,7 +344,7 @@ public static class LightingSystem
 		{
 			foreach (var i in ambientLights)
 			{
-				var flicker = i.Flicker ? QuakeFlicker.GetIntensity() : 1.0f;
+				var flicker = i.Flicker ? QuakeFlicker.GetIntensity(i.FlickerSeed) : 1.0f;
 				if (flicker <= 0)
 					continue;
 
@@ -346,7 +359,7 @@ public static class LightingSystem
 			if (!i.Enabled)
 				continue;
 
-			var flicker = i.Flicker ? QuakeFlicker.GetIntensity() : 1.0f;
+			var flicker = i.Flicker ? QuakeFlicker.GetIntensity(i.FlickerSeed) : 1.0f;
 			if (flicker <= 0)
 				continue;
 
@@ -429,5 +442,10 @@ public static class LightingSystem
 		}
 
 		return n == 0? 1.0f : Raymath.Clamp01(f / n);
+	}
+
+	public static int GetFlickerSeed()
+	{
+		return RNG.Range(-5, 5);
 	}
 }
