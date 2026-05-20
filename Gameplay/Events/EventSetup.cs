@@ -54,20 +54,23 @@ public class EventSetup : IDisposable
 
 	private void StartFight()
 	{
+		var mk = gameplayState.CurrentWorld.FindMarkerPosition("intro-sfx");
+		Vector2? sfxPosition = mk == null? null : mk.Position;
+		
 		gameplayEventManager.RunEvent("startfight",
-			new PlayAudio("knock-slam", null),
+			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.2f),
-			new PlayAudio("knock-slam", null),
+			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.5f),
 			new ShowDialogue("intro-1", true),
 			new Wait(0.5f),
-			new PlayAudio("knock-slam", null),
+			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.2f),
-			new PlayAudio("knock-slam", null),
+			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.2f),
-			new PlayAudio("knock-slam", null),
+			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.1f),
-			new PlayAudio("break", null),
+			new PlayAudio("break", sfxPosition),
 			new Wait(1f),
 			new ShowDialogue("intro-2", false),
 			new Wait(0.5f),

@@ -34,6 +34,9 @@ public class World : IDisposable //aka Level loader
 	[JsonProperty]
 	public List<WorldSpriteRenderer> EnvironmentSprites { get; private set; } = new();
 
+	[JsonProperty]
+	public List<WorldMarker> Markers { get; private set; } = new();
+
 	[JsonIgnore]
 	public readonly SortedDictionary<int, List<WorldSpriteRenderer>> Sprites = new(); //ensure that key is sorted (ascending)
 
@@ -74,6 +77,18 @@ public class World : IDisposable //aka Level loader
 	{
 		this.gameplayState = gameplayState;
 		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
+		
+		if (Markers == null)
+			Markers = new();
+
+		if (EnvironmentSprites == null)
+			EnvironmentSprites = new();
+
+		if (Lights == null)
+			Lights = new();
+
+		if (AmbientLights == null)
+			AmbientLights = new();
 
 		wallSprite = AssetManager.GetSprite("misc-softrect");
 
@@ -111,9 +126,6 @@ public class World : IDisposable //aka Level loader
 		DecalSystem.Init(Vector2.Zero, WorldSettings.WorldSize);
 
 		Sprites.Clear();
-
-		if (EnvironmentSprites == null)
-			EnvironmentSprites = new();
 
 		foreach (var i in EnvironmentSprites)
 		{
@@ -388,5 +400,14 @@ public class World : IDisposable //aka Level loader
 		if (entityRegistry.TryGetValue(name, out var type))
 			return type;
 		return null;
+	}
+
+	public WorldMarker FindMarkerPosition(string id)
+	{
+		var mk = Markers.FirstOrDefault(p => p.ID == id);
+		if (mk == null)
+			Log.Send($"Warning: Marker '{id}' not found.");
+
+		return mk;
 	}
 }
