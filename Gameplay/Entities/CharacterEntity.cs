@@ -59,6 +59,8 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 	[JsonIgnore]
 	public float Scale { get; protected set; } = 1;
 
+	protected Vector2 actualVelocity { get; private set; }
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
@@ -102,6 +104,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		base.LateUpdate(dt, udt);
 
 		var hasVelocity = velocity.LengthSquared() > 0;
+		var oldPos = Position;
 		var hasExternalForce = externalForce.LengthSquared() > 0;
 
 		if (hasVelocity || hasExternalForce)
@@ -122,11 +125,13 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 				CurrentSprite = Animator.GetFrameSprite();
 		}
 
-		if ((Position -  lastPos).LengthSquared() >= 0.1f * 0.1f)
+		if ((Position - lastPos).LengthSquared() >= 0.1f * 0.1f)
 		{
 			lastPos = Position;
 			OnPositionChanged();
 		}
+
+		actualVelocity = Position - oldPos;
 	}
 
 	public override void Draw()

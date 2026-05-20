@@ -119,7 +119,7 @@ public class EnemyEntity : CharacterEntity
 			velocity = Vector2.Normalize(d) * MovementSpeed * 2;
 			CollisionBody.Height = CollisionHeight.High;
 
-			if (d.Length() <= 2)
+			if (d.Length() <= 2 || actualVelocity.LengthSquared() <= 0.1f)
 			{
 				flying = false;
 				CollisionBody.Height = CollisionHeight.Mid;
@@ -156,12 +156,17 @@ public class EnemyEntity : CharacterEntity
 		else
 		{
 			var w = gameplayState.GetManager<WaypointManager>();
-			if (!gameplayState.GetManager<CollisionManager>().Linecast(Position, player.Position, CollisionHeight.High, out var info, null, true)) //go straight to player if directly visible (not true FOV yet)
+			// if (!gameplayState.GetManager<CollisionManager>().Linecast(Position, player.Position, CollisionHeight.Low, out var info, null, true)) //go straight to player if directly visible (not true FOV yet)
+			if (w.IsVisible(Position, player.Position))
 			{
 				visibleTime += dt;
-				lifetime = LIFETIME;
-				if (nodes.Count > 0)
-					nodes.Clear();
+				if (visibleTime >= 0.2f)
+				{
+					lifetime = LIFETIME;
+
+					if (nodes.Count > 0)
+						nodes.Clear();
+				}
 			}
 			else
 			{
@@ -171,7 +176,8 @@ public class EnemyEntity : CharacterEntity
 
 				if (nodes.Count == 0) //change the path only when the current path is reached for immersion, but will add cooldown for frequency control
 				{
-					w.Move(Position, player.Position, nodes);
+					if (!w.Move(Position, player.Position, nodes, Radius))
+						GetRandomNearbyPoint();
 				}
 
 				if (nodes.Count > 0)
@@ -182,7 +188,8 @@ public class EnemyEntity : CharacterEntity
 						nodes.RemoveAt(0);
 						if (nodes.Count == 0)
 						{
-							w.Move(Position, player.Position, nodes);
+							if (!w.Move(Position, player.Position, nodes, Radius))
+								GetRandomNearbyPoint();
 						}
 						else
 						{
@@ -218,6 +225,17 @@ public class EnemyEntity : CharacterEntity
 		}
 	}
 
+	private void GetRandomNearbyPoint()
+	{
+		//make them wander around when they can't reach player
+		
+		//TODO: improve this
+		var index = RNG.Range(0, NearestNode.Connections.Count);
+		nodes.Clear();
+		nodes.Add(Position);
+		nodes.Add(NearestNode.Connections[index].Position);
+	}
+
 	public override void LateUpdate(float dt, float udt)
 	{
 		base.LateUpdate(dt, udt);
@@ -251,7 +269,7 @@ public class EnemyEntity : CharacterEntity
 
 		if (!Persistent)
 		{
-			lifetime -= dt;
+			lifetime -= dt * (actualVelocity.LengthSquared() <= 0.01f ? 2 : 1);
 			if (lifetime <= 0)
 			{
 				Despawn();

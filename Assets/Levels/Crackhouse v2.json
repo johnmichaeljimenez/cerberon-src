@@ -386,6 +386,29 @@
       }
     },
     {
+      "SpriteID": "env/grass-1",
+      "Position": {
+        "X": 0.04,
+        "Y": 0.9
+      },
+      "Parallax": -0.05,
+      "Rotation": -90.0,
+      "SortingGroup": -1,
+      "SortingIndex": -10,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 92.2867661,
+        "Y": 74.68034
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
       "SpriteID": "env/grate_albedo",
       "Position": {
         "X": -6.453,
@@ -1486,13 +1509,13 @@
     {
       "SpriteID": "light",
       "Position": {
-        "X": 11.2,
-        "Y": 11.9
+        "X": 15.27,
+        "Y": 10.5
       },
       "Color": {
-        "R": 33,
-        "G": 40,
-        "B": 40,
+        "R": 54,
+        "G": 67,
+        "B": 67,
         "A": 255
       },
       "Rotation": 0.0,
@@ -1501,7 +1524,7 @@
         "Y": 0.5
       },
       "Enabled": true,
-      "Scale": 50.0,
+      "Scale": 32.0,
       "ShadowType": 1,
       "Flicker": false
     },
@@ -1746,6 +1769,50 @@
       "Scale": 32.0,
       "ShadowType": 1,
       "Flicker": false
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": -17.4,
+        "Y": -24.8
+      },
+      "Color": {
+        "R": 60,
+        "G": 70,
+        "B": 70,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 1,
+      "Flicker": false
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": -20.45,
+        "Y": -10.72
+      },
+      "Color": {
+        "R": 36,
+        "G": 36,
+        "B": 36,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 1,
+      "Flicker": false
     }
   ],
   "AmbientLights": [
@@ -1807,22 +1874,8 @@
   "Triggers": [
     {
       "Position": {
-        "X": 25.18,
-        "Y": 9.72
-      },
-      "Rotation": 0.0,
-      "Size": {
-        "X": 5.0,
-        "Y": 1.0
-      },
-      "TriggerID": "StartFight",
-      "SortingIndex": 0,
-      "Enabled": false
-    },
-    {
-      "Position": {
-        "X": 14.52,
-        "Y": 18.18
+        "X": 7.02,
+        "Y": -14.44
       },
       "Rotation": -90.0,
       "Size": {
@@ -1831,17 +1884,17 @@
       },
       "TriggerID": "StartFight",
       "SortingIndex": 0,
-      "Enabled": false
+      "Enabled": true
     },
     {
       "Position": {
-        "X": -62.2,
-        "Y": 4.5
+        "X": 11.73,
+        "Y": 27.82
       },
-      "Rotation": 0.0,
+      "Rotation": -90.0,
       "Size": {
-        "X": 6.63127232,
-        "Y": 18.018877
+        "X": 16.6795788,
+        "Y": 28.6887436
       },
       "TriggerID": "Ending",
       "SortingIndex": 0,

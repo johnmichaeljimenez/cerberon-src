@@ -353,9 +353,9 @@ public class AIDirectorManager : BaseManager
 		};
 
 		if (hidden)
-			return gameplayState.CurrentWorld.NodeData.GetHiddenNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
+			return gameplayState.CurrentWorld.NodeData.GetExposedNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
 
-		return gameplayState.CurrentWorld.NodeData.GetExposedNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
+		return gameplayState.CurrentWorld.NodeData.GetHiddenNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
 	}
 
 	private void SpawnHealthItem() => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
