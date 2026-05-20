@@ -339,6 +339,9 @@ public class World : IDisposable //aka Level loader
 
 		foreach (var i in NodeData.Nodes)
 		{
+			if (i.Key.Clearance >= 1.5f)
+				Raylib.DrawCircleLinesV(i.Key.Position, i.Key.Clearance, Color.Green);
+
 			Raylib.DrawCircleV(i.Key.Position, 1.0f, Color.Yellow.Value(i.Key.Exposure));
 		}
 	}

@@ -11,6 +11,7 @@ public class WaypointManager : BaseManager
 		public Vector2 Position;
 		public readonly List<Node> Connections = new();
 		public float Exposure = 0.5f;
+		public float Clearance = 10;
 
 		public Node(float x, float y)
 		{
@@ -23,7 +24,7 @@ public class WaypointManager : BaseManager
 		}
 	}
 
-	public const float PosterizeSize = 5f;
+	public const float PosterizeSize = 4f;
 	public const float PosterizeStep = 1f / PosterizeSize;
 
 	public List<Node> Nodes => nodes;
@@ -109,20 +110,20 @@ public class WaypointManager : BaseManager
 		return chosen.Position;
 	}
 
-	public void Move(Vector2 from, Vector2 to, List<Vector2> outputNodes)
+	public bool Move(Vector2 from, Vector2 to, List<Vector2> outputNodes, float? radius = null)
 	{
 		outputNodes.Clear();
 
 		if (nodes.Count == 0 || Vector2.DistanceSquared(from, to) < 0.001f)
 		{
 			outputNodes.Add(to);
-			return;
+			return true;
 		}
 
 		if (IsVisible(from, to))
 		{
 			outputNodes.Add(to);
-			return;
+			return true;
 		}
 
 		Node startNode = GetNearestVisibleNode(from);
@@ -131,23 +132,23 @@ public class WaypointManager : BaseManager
 		if (startNode == null || goalNode == null)
 		{
 			outputNodes.Add(to);
-			return;
+			return true;
 		}
 
 		if (startNode == goalNode)
 		{
 			outputNodes.Add(startNode.Position);
 			outputNodes.Add(to);
-			return;
+			return true;
 		}
 
-		var nodePath = FindPath(startNode, goalNode);
+		var nodePath = FindPath(startNode, goalNode, radius);
 
 		if (nodePath == null || nodePath.Count == 0)
 		{
 			outputNodes.Add(startNode.Position);
 			outputNodes.Add(to);
-			return;
+			return false;	//failed to find path, might rush straight into obstacles
 		}
 
 		foreach (var node in nodePath)
@@ -157,6 +158,7 @@ public class WaypointManager : BaseManager
 
 		outputNodes.Add(to);
 		//TODO: add string pulling algorithm to simplify path (ex. start -> a -> b -> c -> goal, and c is already visible, make it start -> c -> goal)
+		return true;
 	}
 
 	public void Bake(IEnumerable<WorldCollider> rawObstacles, Vector2 worldSize, float characterRadius)
@@ -207,7 +209,7 @@ public class WaypointManager : BaseManager
 
 				var center1 = (i.Item1 + i.Item2) * 0.5f;
 				var center2 = (j.Item1 + j.Item2) * 0.5f;
-				
+
 				var dir1 = i.Item2 - i.Item1;
 				var dir2 = j.Item2 - j.Item1;
 
@@ -216,7 +218,7 @@ public class WaypointManager : BaseManager
 
 				if ((center1 - center2).Length() >= characterRadius * 4 || MathF.Abs(dist1 - dist2) > 0.1f)
 					continue;
-				
+
 				var center = (center1 + center2) * 0.5f;
 
 				midNodes.Add(new Node(center));
@@ -226,7 +228,7 @@ public class WaypointManager : BaseManager
 		nodes.AddRange(midNodes);
 
 		// //step 2
-		var distributionRadius = characterRadius * 2;
+		var distributionRadius = characterRadius * 3;
 		var poisson = PoissonDisc.Sample(new(-worldSize / 2, worldSize), distributionRadius); // TODO: seed for determinism
 		nodes.AddRange(poisson.Select(p => new Node(p)));
 
@@ -274,23 +276,24 @@ public class WaypointManager : BaseManager
 
 		//step 5
 		ComputeExposures();
+		ComputeClearance();
 	}
 
 	public override void DrawDebug()
 	{
 		foreach (var i in nodes)
 		{
-			Raylib.DrawCircleV(i.Position, 0.5f, Colors.GREEN);
+			// Raylib.DrawCircleV(i.Position, 0.5f, Colors.GREEN);
 			foreach (var j in i.Connections)
 			{
-				Raylib.DrawLineV(i.Position, j.Position, Colors.GREEN);
+				Raylib.DrawLineV(i.Position, j.Position, Colors.BLUE);
 			}
 		}
 
-		foreach (var line in obstacleLines)
-		{
-			Raylib.DrawLineV(line.Item1, line.Item2, Colors.RED);
-		}
+		// foreach (var line in obstacleLines)
+		// {
+		// 	Raylib.DrawLineV(line.Item1, line.Item2, Colors.RED);
+		// }
 	}
 
 	public bool IsVisible(Vector2 a, Vector2 b)
@@ -337,11 +340,12 @@ public class WaypointManager : BaseManager
 		return nearestVisible ?? nearestAny;
 	}
 
-	private List<Node> FindPath(Node start, Node goal)
+	private List<Node> FindPath(Node start, Node goal, float? radius = null)
 	{
 		//TODO: try to reuse collections
 		if (start == goal) return new List<Node> { start };
 
+		var rad = radius ?? 0f;
 		var cameFrom = new Dictionary<Node, Node>();
 		var gScore = new Dictionary<Node, float>();
 		var openSet = new PriorityQueue<Node, float>();
@@ -364,6 +368,9 @@ public class WaypointManager : BaseManager
 
 			foreach (var neighbor in current.Connections)
 			{
+				if (radius > 0 && (neighbor.Clearance < radius || current.Clearance < radius))
+					continue;
+
 				float tentativeGScore = gScore[current] + Vector2.Distance(current.Position, neighbor.Position);
 
 				if (!gScore.TryGetValue(neighbor, out float neighborGScore) || tentativeGScore < neighborGScore)
@@ -452,5 +459,41 @@ public class WaypointManager : BaseManager
 		}
 
 		return visited.Count - 1;   //exclude self
+	}
+
+	private float DistancePointToSegment(Vector2 point, Vector2 a, Vector2 b)
+	{
+		var ba = b - a;
+		var len2 = Vector2.Dot(ba, ba);
+
+		if (len2 == 0) return Vector2.Distance(point, a);
+
+		var pa = point - a;
+		var t = Math.Clamp(Vector2.Dot(pa, ba) / len2, 0f, 1f);
+		var projection = a + ba * t;
+
+		return Vector2.Distance(point, projection);
+	}
+
+	private void ComputeClearance()
+	{
+		if (nodes.Count == 0 || obstacleLines.Count == 0)
+		{
+			foreach (var node in nodes)
+				node.Clearance = 10f;	//failsafe
+
+			return;
+		}
+
+		foreach (var node in nodes)
+		{
+			var minDist = float.MaxValue;
+			foreach (var line in obstacleLines)
+			{
+				float d = DistancePointToSegment(node.Position, line.Item1, line.Item2);
+				if (d < minDist) minDist = d;
+			}
+			node.Clearance = minDist;
+		}
 	}
 }
