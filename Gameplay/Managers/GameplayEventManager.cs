@@ -35,6 +35,10 @@ public class GameplayEventManager : BaseManager
 		if (commands.Length == 0)
 			throw new InvalidDataException($"Empty command list for: {id}");
 
+		var existing = sequences.FirstOrDefault(p => p.ID == id);
+		if (existing != null)
+			sequences.Remove(existing);
+
 		var sequence = new Sequence(gameplayState, id, commands);
 		sequences.Add(sequence);
 

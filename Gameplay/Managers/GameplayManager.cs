@@ -79,6 +79,8 @@ public class GameplayManager : BaseManager
 	public override void OnEnter()
 	{
 		base.OnEnter();
+		
+		LightingSystem.AmbientLightColor = AmbientGradient[0];
 		OnGameStart.Publish(Unit.Default);
 	}
 
