@@ -190,7 +190,7 @@ public class PlayerEntity : CharacterEntity
 	protected override void OnDeath()
 	{
 		base.OnDeath();
-		IsActive = false; //TODO: spawn a player death animation false entity
+		SetActive(false); //TODO: spawn a player death animation false entity
 
 		gameplayState.GetManager<GameplayManager>().PlayerDead(this);
 	}

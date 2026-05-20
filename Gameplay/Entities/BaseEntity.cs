@@ -7,13 +7,15 @@ public abstract class BaseEntity : IDisposable
 {
 	[JsonProperty]
 	public int ID { get; set; }
+	[JsonProperty]
+	public string NameTag { get; set; }
 
 	[JsonProperty]
 	public Vector2 Position { get; set; }
 
 	[JsonProperty]
 	[DefaultValue(true)]
-	public bool IsActive { get; set; } = true;
+	public bool IsActive { get; private set; } = true;
 
 	[JsonIgnore]
 	public int SortingIndex { get; set; } = 0;
@@ -87,6 +89,17 @@ public abstract class BaseEntity : IDisposable
 
 
 	public virtual void DrawDebug()
+	{
+
+	}
+
+	public void SetActive(bool isActive)
+	{
+		IsActive = isActive;
+		OnActiveStateChanged(isActive);
+	}
+
+	protected virtual void OnActiveStateChanged(bool isActive)
 	{
 
 	}
