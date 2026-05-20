@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace CerberonEditor.Main
 {
@@ -17,9 +18,11 @@ namespace CerberonEditor.Main
         public Transform ambientLightContainers;
         public Transform lightContainers;
         public Transform triggerContainers;
+        public Transform markerContainers;
         public Transform worldBounds;
         public Transform propsContainers;
         public Transform environmentSprites;
+        public Transform entityContainers;
         public Color ambientColor;
 
         [ContextMenu("Export")]
@@ -32,9 +35,38 @@ namespace CerberonEditor.Main
             var lights = new List<object>();
             var colliders = new List<object>();
             var triggers = new List<object>();
+            var markers = new List<object>();
 
             float posSnap = 0.5f;
             float scaleSnap = 1f;
+
+            foreach (var i in entityContainers.GetComponentsInChildren<Transform>(true))
+            {
+                if (i == entityContainers)
+                    continue;
+
+                var nameTag = "";
+                var entityName = Normalize(i.gameObject.name).Split('#');
+                if (entityName.Length == 2)
+                    nameTag = entityName[1];
+                
+                var t = entityName[0];
+
+                var en = new
+                {
+                    Type = entityName[0],
+                    NameTag = nameTag,
+                    Position = new
+                    {
+                        X = i.transform.position.x,
+                        Y = -i.transform.position.y
+                    },
+                    Rotation = -i.transform.eulerAngles.z,
+                    IsActive = i.gameObject.activeInHierarchy
+                };
+
+                entities.Add(en);
+            }
 
             foreach (var wall in walls.GetComponentsInChildren<SpriteRenderer>())
             {
@@ -155,6 +187,23 @@ namespace CerberonEditor.Main
                 };
 
                 lights.Add(l);
+            }
+
+            for (int i = 0; i < markerContainers.childCount; i++)
+            {
+                var t = markerContainers.GetChild(i);
+
+                var m = new
+                {
+                    Position = new
+                    {
+                        X = t.transform.position.x,
+                        Y = -t.transform.position.y
+                    },
+                    ID = t.gameObject.name
+                };
+
+                markers.Add(m);
             }
 
             foreach (var i in environmentSprites.GetComponentsInChildren<SpriteRenderer>())
@@ -281,11 +330,18 @@ namespace CerberonEditor.Main
                 EnvironmentColliders = colliders,
                 Lights = lights,
                 AmbientLights = ambientLights,
-                Triggers = triggers
+                Triggers = triggers,
+                Markers = markers
             };
 
             string jsonString = JsonConvert.SerializeObject(world, Formatting.Indented);
             File.WriteAllText($@"E:\Projects\cerberon-src\Assets\Levels\{gameObject.scene.name}.json", jsonString);
+        }
+
+        string Normalize(string s)
+        {
+            var m = Regex.Match(s, @"^(?<base>.+?)(?:\s*\(\d+\))?$");
+            return m.Success ? m.Groups["base"].Value : s;
         }
     }
 }
