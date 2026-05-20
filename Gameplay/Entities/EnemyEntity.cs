@@ -35,6 +35,7 @@ public class EnemyEntity : CharacterEntity
 	private int attackRequestIndex = -1;
 	private float lifetime; //despawn far-away enemies after certain time
 	private float fsTimer = 0;
+	private float stuckTime = 0;
 
 	private readonly List<Vector2> nodes = new();
 
@@ -135,6 +136,11 @@ public class EnemyEntity : CharacterEntity
 			return;
 		}
 
+		if (actualVelocity.LengthSquared() <= 0.05f)
+			stuckTime += dt;
+		else
+			stuckTime = 0;
+
 		var dist = d.Length();
 		if (dist <= 3f)
 		{
@@ -156,11 +162,11 @@ public class EnemyEntity : CharacterEntity
 		else
 		{
 			var w = gameplayState.GetManager<WaypointManager>();
-			// if (!gameplayState.GetManager<CollisionManager>().Linecast(Position, player.Position, CollisionHeight.Low, out var info, null, true)) //go straight to player if directly visible (not true FOV yet)
-			if (w.IsVisible(Position, player.Position))
+			if (!gameplayState.GetManager<CollisionManager>().Linecast(Position, player.Position, null, out var info, null, true)) //go straight to player if directly visible (not true FOV yet)
+			// if (w.IsVisible(Position, player.Position))
 			{
 				visibleTime += dt;
-				if (visibleTime >= 0.2f)
+				if (visibleTime >= 0.5f)
 				{
 					lifetime = LIFETIME;
 
@@ -174,8 +180,9 @@ public class EnemyEntity : CharacterEntity
 				if (d.Length() <= 10)
 					lifetime = LIFETIME;
 
-				if (nodes.Count == 0) //change the path only when the current path is reached for immersion, but will add cooldown for frequency control
+				if (nodes.Count == 0 || stuckTime >= 1f) //change the path only when the current path is reached for immersion, but will add cooldown for frequency control
 				{
+					stuckTime = 0;
 					if (!w.Move(Position, player.Position, nodes, Radius))
 						GetRandomNearbyPoint();
 				}
@@ -228,7 +235,7 @@ public class EnemyEntity : CharacterEntity
 	private void GetRandomNearbyPoint()
 	{
 		//make them wander around when they can't reach player
-		
+
 		//TODO: improve this
 		var index = RNG.Range(0, NearestNode.Connections.Count);
 		nodes.Clear();
