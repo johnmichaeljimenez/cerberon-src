@@ -105,14 +105,13 @@ public class World : IDisposable //aka Level loader
 			colliderWalls.Add(i, (l, shadow));
 		}
 
-		gameplayState.GetManager<WaypointManager>().Bake(EnvironmentColliders, WorldSettings.WorldSize, 1f);
-
 		foreach (var i in Entities)
 		{
 			OnAdd(i);
 			i.Init(gameplayState);
 		}
 
+		gameplayState.GetManager<WaypointManager>().Bake(EnvironmentColliders, WorldSettings.WorldSize, 1f, Entities.Where(p => p is IWaypointModifier).Cast<IWaypointModifier>().ToList());
 		gameplayState.GetManager<CollisionManager>().AddWalls(Vector2.Zero, WorldSettings.WorldSize, worldBounds, Wall.WallFlags.None, CollisionHeight.Low, true);
 
 		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
@@ -351,6 +350,9 @@ public class World : IDisposable //aka Level loader
 
 		foreach (var i in NodeData.Nodes)
 		{
+			if (!i.Key.Enabled)
+				continue;
+				
 			if (i.Key.Clearance >= 1.5f)
 				Raylib.DrawCircleLinesV(i.Key.Position, i.Key.Clearance, Color.Green);
 
@@ -387,6 +389,11 @@ public class World : IDisposable //aka Level loader
 		}
 	}
 
+	public T GetEntityByNameTag<T>(string nameTag) where T : BaseEntity
+	{
+		return Entities.FirstOrDefault(p => !p.IsDestroyed && p.NameTag == nameTag) as T;
+	}
+
 	public List<BaseEntity> GetEntitiesByGroup(string groupName)
 	{
 		if (!EntityGroups.ContainsKey(groupName))
@@ -397,7 +404,7 @@ public class World : IDisposable //aka Level loader
 
 	public static Type? GetRegisteredEntityType(string name)
 	{
-		if (entityRegistry.TryGetValue(name, out var type))
+		if (entityRegistry.TryGetValue($"{name}Entity", out var type))
 			return type;
 		return null;
 	}

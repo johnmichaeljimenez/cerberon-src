@@ -27,6 +27,7 @@ public class Wall
 	public float Length { get; set; }
 	public WallFlags Flags { get; set; }
 	public CollisionHeight Height { get; set; }
+	public bool Enabled { get; set; } = true;
 }
 
 public struct LinecastHit
@@ -146,6 +147,9 @@ public class CollisionManager : BaseManager
 
 		foreach (var w in walls)
 		{
+			if (!w.Enabled)
+				continue;
+
 			Vector2 d = proposed - w.Midpoint;
 
 			if (Vector2.Dot(w.Normal, d) > 0f) //backface culling optimizes it and also ensures that it doesn't do collision checks on stray walls. 99% of walls must be enclosed as polygons (whether normal or inverted polygons).
@@ -199,7 +203,7 @@ public class CollisionManager : BaseManager
 		return collided;
 	}
 
-	public bool Linecast(Vector2 from, Vector2 to, CollisionHeight height, out LinecastHit hitInfo, CircleBody fromBody = null, bool ignoreBodies = false)
+	public bool Linecast(Vector2 from, Vector2 to, CollisionHeight? height, out LinecastHit hitInfo, CircleBody fromBody = null, bool ignoreBodies = false)
 	{
 		hitInfo = new LinecastHit
 		{
@@ -222,7 +226,10 @@ public class CollisionManager : BaseManager
 		Vector2 dirForCulling = from - to;
 		foreach (var w in walls)
 		{
-			if (height > w.Height) //pass through if line is higher than this wall
+			if (!w.Enabled)
+				continue;
+
+			if (height.HasValue && height > w.Height) //pass through if line is higher than this wall
 				continue;
 
 			if (Vector2.Dot(w.Normal, dirForCulling) > 0f)
@@ -324,6 +331,9 @@ public class CollisionManager : BaseManager
 
 		foreach (var i in walls)
 		{
+			if (!i.Enabled)
+				continue;
+
 			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Colors.RED);
 		}
 	}

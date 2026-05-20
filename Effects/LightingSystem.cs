@@ -8,6 +8,7 @@ public class Shadow
 	public Vector2 Position;
 	public Vector2 Size;
 	public float Rotation;
+	public bool Enabled = true;
 
 	public readonly Vector2[] Points;
 
@@ -328,6 +329,9 @@ public static class LightingSystem
 
 				foreach (var shadow in shadows)
 				{
+					if (!shadow.Enabled)
+						continue;
+						
 					shadow.DrawShadow(i);
 				}
 
@@ -339,9 +343,15 @@ public static class LightingSystem
 		Raylib.BeginTextureMode(tex);
 		Raylib.BeginMode2D(cam);
 		Raylib.ClearBackground(bgColor);
+		bgColor.A = 255;
 
 		if (!visionOnly)    //let ambient lights overwrite previous color as base light color before setting to additive
 		{
+			foreach (var i in ambientLights)
+			{
+				ambientLightSprite.Draw9Sliced(i.Position, i.Size, i.Rotation, tint: Color.Black);
+			}
+
 			foreach (var i in ambientLights)
 			{
 				var flicker = i.Flicker ? QuakeFlicker.GetIntensity(i.FlickerSeed) : 1.0f;
@@ -349,6 +359,8 @@ public static class LightingSystem
 					continue;
 
 				var color = Colors.Lerp(i.Color.Value(flicker), AmbientLightColor, i.AmbientMultiplier);
+				color.A = 255;
+				
 				ambientLightSprite.Draw9Sliced(i.Position, i.Size, i.Rotation, tint: color);
 			}
 		}
@@ -441,7 +453,7 @@ public static class LightingSystem
 			n++;
 		}
 
-		return n == 0? 1.0f : Raymath.Clamp01(f / n);
+		return n == 0 ? 1.0f : Raymath.Clamp01(f / n);
 	}
 
 	public static int GetFlickerSeed()

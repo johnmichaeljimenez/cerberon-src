@@ -4,6 +4,14 @@ using Main.Helpers;
 
 namespace Main.Gameplay.Managers;
 
+public interface IWaypointModifier
+{
+	WaypointManager.Node Node { get; set; }
+	List<Wall> Colliders { get; set; }
+	bool IsActive { get; }
+	Vector2 Position { get; set; }
+}
+
 public class WaypointManager : BaseManager
 {
 	public class Node
@@ -12,6 +20,8 @@ public class WaypointManager : BaseManager
 		public readonly List<Node> Connections = new();
 		public float Exposure = 0.5f;
 		public float Clearance = 10;
+
+		public bool Enabled = true;
 
 		public Node(float x, float y)
 		{
@@ -29,7 +39,7 @@ public class WaypointManager : BaseManager
 
 	public List<Node> Nodes => nodes;
 	private readonly List<Node> nodes = new();
-	private readonly List<(Vector2, Vector2)> obstacleLines = new(); //from, to
+	private readonly List<(Vector2, Vector2, Vector2)> obstacleLines = new(); //from, to, normal
 
 	public WaypointManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -120,11 +130,12 @@ public class WaypointManager : BaseManager
 			return true;
 		}
 
-		if (IsVisible(from, to))
-		{
-			outputNodes.Add(to);
-			return true;
-		}
+		//commented as requesting code should handle this part using real collision system
+		// if (IsVisible(from, to))
+		// {
+		// 	outputNodes.Add(to);
+		// 	return true;
+		// }
 
 		Node startNode = GetNearestVisibleNode(from);
 		Node goalNode = GetNearestVisibleNode(to);
@@ -148,7 +159,7 @@ public class WaypointManager : BaseManager
 		{
 			outputNodes.Add(startNode.Position);
 			outputNodes.Add(to);
-			return false;	//failed to find path, might rush straight into obstacles
+			return false;   //failed to find path, might rush straight into obstacles
 		}
 
 		foreach (var node in nodePath)
@@ -161,22 +172,38 @@ public class WaypointManager : BaseManager
 		return true;
 	}
 
-	public void Bake(IEnumerable<WorldCollider> rawObstacles, Vector2 worldSize, float characterRadius)
+	public void Bake(IEnumerable<WorldCollider> rawObstacles, Vector2 worldSize, float characterRadius, List<IWaypointModifier> dynamicObstacles)
 	{
 		nodes.Clear();
 
 		//we are going to make a DIY homemade Probabilistic Roadmap (PRM) instead of A* grid here
-		// 1. take all static rectangle colliders and expand them by minkowski sum, then generate node points
+		// 1. take all static and dynamic rectangle colliders and expand them by minkowski sum, then generate node points
 		// 1.5 add nodes on walls that opposite each other to ensure chokepoints and doorways will not get skipped
 		// 2. use poisson disc sampling to make random node points in the game world
 		// 3. remove all node points that are inside rectangle colliders
 		// 4. connect all node points that can directly "see" each other
 		// 5. post process nodes and calculate gameplay-relevant data
 
-
+		var tempLines = new List<(int, IWaypointModifier)>();
+		var dynNodes = new List<Node>();
 		obstacleLines.Clear();
 
 		//step 1
+		foreach (var i in dynamicObstacles)
+		{
+			foreach (var edge in i.Colliders)
+			{
+				obstacleLines.Add((edge.From, edge.To, edge.From.GetNormal(edge.To)));
+				tempLines.Add((obstacleLines.Count - 1, i));
+			}
+
+			i.Node = new Node(i.Position);
+			i.Node.Enabled = false;
+
+			nodes.Add(i.Node);
+			dynNodes.Add(i.Node);
+		}
+
 		foreach (var collider in rawObstacles)
 		{
 			var r = characterRadius;
@@ -189,7 +216,7 @@ public class WaypointManager : BaseManager
 				collider.Position, collider.Size - (Vector2.One * 0.1f), collider.Rotation); //breathing room for avoiding epsilon-level false positives
 			foreach (var edge in obstacleEdges)
 			{
-				obstacleLines.Add(edge);
+				obstacleLines.Add((edge.from, edge.to, edge.from.GetNormal(edge.to)));
 			}
 		}
 
@@ -232,10 +259,27 @@ public class WaypointManager : BaseManager
 		var poisson = PoissonDisc.Sample(new(-worldSize / 2, worldSize), distributionRadius); // TODO: seed for determinism
 		nodes.AddRange(poisson.Select(p => new Node(p)));
 
+		foreach (var a in dynNodes)
+		{
+			for (int i = nodes.Count - 1; i >= 0 ; i--)
+			{
+				var b = nodes[i];
+				if (a == b)
+					continue;
+
+				var dist = (a.Position - b.Position).Length();
+				if (dist <= characterRadius)
+					nodes.RemoveAt(i);
+			}
+		}
+
 		//step 3
 		for (int i = nodes.Count - 1; i >= 0; i--)
 		{
 			var nodePos = nodes[i].Position;
+			if (dynNodes.Contains(nodes[i]))
+				continue;
+
 			foreach (var collider in rawObstacles)
 			{
 				float r = characterRadius;
@@ -265,13 +309,18 @@ public class WaypointManager : BaseManager
 				if (dist >= characterRadius * 8)
 					continue;
 
-				if (!IsVisible(from, to))
+				if (!IsVisible(from, to))	//take advantage of backface culling so that nodes used by doors can freely connect to others but not the other way around
 					continue;
 
 				//connect i and j here
 				i.Connections.Add(j);
 				j.Connections.Add(i);
 			}
+		}
+
+		foreach (var i in tempLines)
+		{
+			obstacleLines.RemoveAt(i.Item1);
 		}
 
 		//step 5
@@ -283,9 +332,15 @@ public class WaypointManager : BaseManager
 	{
 		foreach (var i in nodes)
 		{
+			if (!i.Enabled)
+				continue;
+
 			// Raylib.DrawCircleV(i.Position, 0.5f, Colors.GREEN);
 			foreach (var j in i.Connections)
 			{
+				if (!j.Enabled)
+					continue;
+
 				Raylib.DrawLineV(i.Position, j.Position, Colors.BLUE);
 			}
 		}
@@ -300,14 +355,20 @@ public class WaypointManager : BaseManager
 	{
 		if (Vector2.DistanceSquared(a, b) < 0.001f) return true;
 
+		Vector2 dirForCulling = a - b;
 		Vector2 p = default;
+
 		foreach (var line in obstacleLines)
 		{
-			if (Raylib.CheckCollisionLines(a, b, line.Item1, line.Item2, ref p))
+			if (Vector2.Dot(line.Item3, dirForCulling) > 0f)
 			{
-				return false;
+				if (Raylib.CheckCollisionLines(a, b, line.Item1, line.Item2, ref p))
+				{
+					return false;
+				}
 			}
 		}
+
 		return true;
 	}
 
@@ -368,7 +429,7 @@ public class WaypointManager : BaseManager
 
 			foreach (var neighbor in current.Connections)
 			{
-				if (radius > 0 && (neighbor.Clearance < radius || current.Clearance < radius))
+				if (!neighbor.Enabled || (radius > 0 && (neighbor.Clearance < radius || current.Clearance < radius)))
 					continue;
 
 				float tentativeGScore = gScore[current] + Vector2.Distance(current.Position, neighbor.Position);
@@ -480,7 +541,7 @@ public class WaypointManager : BaseManager
 		if (nodes.Count == 0 || obstacleLines.Count == 0)
 		{
 			foreach (var node in nodes)
-				node.Clearance = 10f;	//failsafe
+				node.Clearance = 10f;   //failsafe
 
 			return;
 		}
