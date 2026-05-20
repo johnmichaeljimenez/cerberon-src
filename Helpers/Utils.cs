@@ -298,6 +298,33 @@ public static class Utils
 
 		return list;
 	}
+
+	public static float InverseLerp(this float value, float a, float b)
+	{
+		if (Math.Abs(b - a) < 0.0001f)
+			return 0f;
+
+		return (value - a) / (b - a);
+	}
+
+	public static Vector2 GetNormal(this Vector2 dir)
+	{
+		Vector2 normal = dir.LengthSquared() > 0.0001f
+			? Vector2.Normalize(new Vector2(dir.Y, -dir.X))
+			: Vector2.Zero;
+
+		return normal;
+	}
+
+	public static Vector2 GetNormal(this Vector2 from, Vector2 to)
+	{
+		Vector2 dir = to - from;
+		Vector2 normal = dir.LengthSquared() > 0.0001f
+			? Vector2.Normalize(new Vector2(dir.Y, -dir.X))
+			: Vector2.Zero;
+
+		return normal;
+	}
 }
 
 public static class Colors
