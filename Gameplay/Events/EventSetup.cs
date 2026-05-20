@@ -1,3 +1,5 @@
+using Main.Core;
+using Main.Gameplay.Entities;
 using Main.Gameplay.Managers;
 using Main.Helpers;
 
@@ -17,7 +19,7 @@ public class EventSetup : IDisposable
 		//start of game
 		state.GetManager<GameplayManager>().OnGameStart.Subscribe(_ =>
 		{
-			// ev.RunEvent("start");
+
 		}).AddTo(disposables);
 
 		//end of game
@@ -54,25 +56,35 @@ public class EventSetup : IDisposable
 
 	private void StartFight()
 	{
+		var door = gameplayState.CurrentWorld.GetEntityByNameTag<DoorEntity>("intro-door");
 		var mk = gameplayState.CurrentWorld.FindMarkerPosition("intro-sfx");
-		Vector2? sfxPosition = mk == null? null : mk.Position;
-		
+		Vector2? sfxPosition = mk == null ? null : mk.Position;
+
 		gameplayEventManager.RunEvent("startfight",
+			new Exec(() => Game.Instance.Camera.Shake(0.8f, null)),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.2f),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.5f),
 			new ShowDialogue("intro-1", true),
 			new Wait(0.5f),
+			new Exec(() => Game.Instance.Camera.Shake(0.8f, null)),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.2f),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.2f),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.1f),
+			new Exec(() => door.SetActive(false)),
 			new PlayAudio("break", sfxPosition),
-			new Wait(1f),
+			new Exec(() => Game.Instance.Camera.Shake(3f, null)),
+			new SpawnEnemy(sfxPosition ?? Vector2.Zero, 1f),
+			new Wait(0.2f),
 			new ShowDialogue("intro-2", false),
+			new Wait(0.5f),
+			new SpawnEnemy(sfxPosition ?? Vector2.Zero, 0.8f),
+			new Wait(0.2f),
+			new SpawnEnemy(sfxPosition ?? Vector2.Zero, 0.8f),
 			new Wait(0.5f),
 			new Exec(() =>
 			{

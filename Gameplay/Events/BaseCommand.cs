@@ -115,10 +115,12 @@ public class PlayAudio : BaseCommand
 public class SpawnEnemy : BaseCommand
 {
 	private Vector2 position;
+	private float cost;
 
-	public SpawnEnemy(Vector2 pos)
+	public SpawnEnemy(Vector2 pos, float cost = 1.0f)
 	{
 		position = pos;
+		this.cost = cost;
 	}
 
 	public override void OnEnter()
@@ -127,6 +129,7 @@ public class SpawnEnemy : BaseCommand
 		{
 			e.Persistent = true;
 			e.Position = position;
+			e.Cost = MathF.Max(0.5f, cost);
 		});
 	}
 }
@@ -134,12 +137,12 @@ public class SpawnEnemy : BaseCommand
 public class Exec : BaseCommand
 {
 	private Action onAction;
-	
+
 	public Exec(Action onAction)
 	{
 		this.onAction = onAction;
 	}
-	
+
 	public override void OnEnter()
 	{
 		onAction?.Invoke();
