@@ -1,21 +1,32 @@
 {
   "WorldSettings": {
     "PlayerSpawnPoint": {
-      "X": 18.96,
-      "Y": -8.03
+      "X": 18.43,
+      "Y": -8.44
     },
     "WorldSize": {
       "X": 128.0,
       "Y": 128.0
     },
     "AmbientColor": {
-      "R": 38,
-      "G": 38,
-      "B": 38,
+      "R": 255,
+      "G": 0,
+      "B": 0,
       "A": 255
     }
   },
-  "Entities": [],
+  "Entities": [
+    {
+      "Type": "Door",
+      "NameTag": "intro-door",
+      "Position": {
+        "X": 7.0,
+        "Y": -14.5
+      },
+      "Rotation": -90.0,
+      "IsActive": true
+    }
+  ],
   "EnvironmentSprites": [
     {
       "SpriteID": "env/wood-13",
@@ -391,15 +402,84 @@
         "X": 0.04,
         "Y": 0.9
       },
-      "Parallax": -0.05,
+      "Parallax": 0.0,
       "Rotation": -90.0,
       "SortingGroup": -1,
       "SortingIndex": -10,
       "RenderType": 1,
       "Scale": 1.0,
       "TileSize": {
-        "X": 92.2867661,
-        "Y": 74.68034
+        "X": 171.99501,
+        "Y": 191.943527
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/rug",
+      "Position": {
+        "X": 14.48,
+        "Y": -11.52
+      },
+      "Parallax": 0.0,
+      "Rotation": -293.1452,
+      "SortingGroup": -1,
+      "SortingIndex": 2,
+      "RenderType": 0,
+      "Scale": 2.71203113,
+      "TileSize": {
+        "X": 22.1964245,
+        "Y": 34.67359
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/concrete-1",
+      "Position": {
+        "X": 40.586,
+        "Y": -54.474
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": -1,
+      "SortingIndex": 0,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 27.3888283,
+        "Y": 9.127146
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/plaster-2",
+      "Position": {
+        "X": 31.433,
+        "Y": -56.416
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": -1,
+      "SortingIndex": 1,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 9.083525,
+        "Y": 13.0115614
       },
       "Tint": {
         "R": 255,
@@ -1223,6 +1303,123 @@
     },
     {
       "Position": {
+        "X": -7.0,
+        "Y": -19.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 11.5,
+        "Y": -19.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 54.0,
+        "Y": -54.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 11.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 31.5,
+        "Y": -62.5
+      },
+      "Size": {
+        "X": 11.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 37.0,
+        "Y": -50.0
+      },
+      "Size": {
+        "X": 22.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 45.0,
+        "Y": -59.0
+      },
+      "Size": {
+        "X": 20.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 36.0,
+        "Y": -60.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 5.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 27.0,
+        "Y": -56.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 14.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 36.0,
+        "Y": -53.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 5.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
         "X": 4.1,
         "Y": -31.36
       },
@@ -1813,6 +2010,28 @@
       "Scale": 50.0,
       "ShadowType": 1,
       "Flicker": false
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 45.1,
+        "Y": -53.7
+      },
+      "Color": {
+        "R": 72,
+        "G": 72,
+        "B": 50,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 50.0,
+      "ShadowType": 1,
+      "Flicker": false
     }
   ],
   "AmbientLights": [
@@ -1854,7 +2073,7 @@
     },
     {
       "Position": {
-        "X": -24.373,
+        "X": -22.922,
         "Y": -21.911
       },
       "Color": {
@@ -1865,27 +2084,13 @@
       },
       "Rotation": 0.0,
       "Size": {
-        "X": 6.79698467,
+        "X": 9.698162,
         "Y": 33.08698
       },
       "Flicker": false
     }
   ],
   "Triggers": [
-    {
-      "Position": {
-        "X": 7.02,
-        "Y": -14.44
-      },
-      "Rotation": -90.0,
-      "Size": {
-        "X": 5.0,
-        "Y": 1.0
-      },
-      "TriggerID": "StartFight",
-      "SortingIndex": 0,
-      "Enabled": true
-    },
     {
       "Position": {
         "X": 11.73,
@@ -1899,6 +2104,57 @@
       "TriggerID": "Ending",
       "SortingIndex": 0,
       "Enabled": false
+    },
+    {
+      "Position": {
+        "X": 16.37,
+        "Y": -10.61
+      },
+      "Rotation": -50.57514,
+      "Size": {
+        "X": 5.0,
+        "Y": 1.0
+      },
+      "TriggerID": "StartFight",
+      "SortingIndex": 0,
+      "Enabled": true
+    },
+    {
+      "Position": {
+        "X": 21.11,
+        "Y": -11.74
+      },
+      "Rotation": -359.6775,
+      "Size": {
+        "X": 5.0,
+        "Y": 1.0
+      },
+      "TriggerID": "StartFight",
+      "SortingIndex": 0,
+      "Enabled": true
+    },
+    {
+      "Position": {
+        "X": 15.32,
+        "Y": -4.23
+      },
+      "Rotation": -91.63717,
+      "Size": {
+        "X": 5.0,
+        "Y": 1.0
+      },
+      "TriggerID": "StartFight",
+      "SortingIndex": 0,
+      "Enabled": true
+    }
+  ],
+  "Markers": [
+    {
+      "Position": {
+        "X": 3.53,
+        "Y": -10.76
+      },
+      "ID": "intro-sfx"
     }
   ]
 }
