@@ -24,7 +24,7 @@ public class GameplayState : IGameState
 		World.InitRegistry();
 		this.options = options;
 
-		AudioHandler.ClearMusicStates();
+		AudioHandler.ClearAll();
 		LightingSystem.Clear();
 		AddManager<CollisionManager>();
 		AddManager<GameplayManager>();
@@ -80,6 +80,7 @@ public class GameplayState : IGameState
 
 		RenderingManager.ResetAllFilters();
 		LightingSystem.Clear();
+		AudioHandler.ClearAll();
 	}
 
 	public void Update(float dt, float udt)

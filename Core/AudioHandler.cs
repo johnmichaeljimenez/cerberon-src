@@ -108,10 +108,12 @@ public class AudioSource
 public static class AudioHandler
 {
 	private const int ALIAS_COUNT = 10;
-	private const float MUSIC_BASE_VOLUME = 0.4f;
+	private const float MUSIC_BASE_VOLUME = 0.3f;
+	private const float AMBIENT_BASE_VOLUME = 0.7f;
 
 	private static readonly List<AudioSource> activeAudioSources = new();
-	private static readonly Dictionary<string, MusicSource> musicAssets = new();
+	private static readonly Dictionary<string, MusicSource> musicAssets = new();	//TODO: change this into reusable group both for music and ambient
+	private static readonly Dictionary<string, MusicSource> ambientAssets = new();
 	private static readonly Dictionary<string, float> soundLengths = new();
 	private static readonly Dictionary<string, Sound> soundAssets = new();
 	private static readonly Dictionary<string, List<Sound>> soundAliases = new();
@@ -120,6 +122,7 @@ public static class AudioHandler
 
 	public static Vector2 ListenerPosition { get; set; }
 	public static MusicSource CurrentMusic { get; set; }
+	public static MusicSource CurrentAmbient { get; set; }
 
 	//soundAssets -> soundAliases -> soundVariations
 
@@ -131,6 +134,25 @@ public static class AudioHandler
 
 	public static void Update()
 	{
+		foreach (var music in ambientAssets.Values)
+		{
+			if (IsMusicPlaying(music.Music))
+			{
+				Raylib.UpdateMusicStream(music.Music);
+				Raylib.SetMusicVolume(music.Music, music.Volume * AMBIENT_BASE_VOLUME * (PauseHandler.IsPaused ? 0.4f : 1));
+
+				if (!music.IsPlaying && music.Volume <= 0.01f) //requested to stop and volume is near zero
+				{
+					music.LastTime = Raylib.GetMusicTimePlayed(music.Music);
+					Raylib.StopMusicStream(music.Music);
+				}
+			}
+			else if (music.IsPlaying)
+			{
+				Raylib.PlayMusicStream(music.Music); //loop
+			}
+		}
+
 		foreach (var music in musicAssets.Values)
 		{
 			if (IsMusicPlaying(music.Music))
@@ -182,6 +204,11 @@ public static class AudioHandler
 		}
 
 		foreach (var music in musicAssets.Values)
+		{
+			Raylib.UnloadMusicStream(music.Music);
+		}
+
+		foreach (var music in ambientAssets.Values)
 		{
 			Raylib.UnloadMusicStream(music.Music);
 		}
@@ -244,6 +271,31 @@ public static class AudioHandler
 						Volume = 0,
 						Music = music,
 						transitionPoints = new Dictionary<string, List<float>>(LoadTransitionPoints(folderPath))
+					};
+
+					totalLoaded++;
+				}
+				continue;
+			}
+
+			if (!string.IsNullOrEmpty(groupKey) && groupKey.StartsWith("ambient", StringComparison.OrdinalIgnoreCase))
+			{
+				var folderPath = files.Count > 0 ? Path.GetDirectoryName(files[0]) ?? "" : "";
+
+				foreach (var filePath in files)
+				{
+					var fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
+					var musicKey = $"{groupKey}";
+
+					var music = Raylib.LoadMusicStream(filePath);
+
+					ambientAssets[musicKey] = new MusicSource
+					{
+						ID = musicKey,
+						IsPlaying = false,
+						Volume = 0,
+						Music = music,
+						transitionPoints = new()
 					};
 
 					totalLoaded++;
@@ -404,6 +456,12 @@ public static class AudioHandler
 		CurrentMusic = null;
 	}
 
+	public static void ClearAll()
+	{
+		ClearMusicStates();
+		ClearAmbientStates();
+	}
+
 	public static void ClearMusicStates()
 	{
 		foreach (var i in musicAssets)
@@ -450,5 +508,37 @@ public static class AudioHandler
 		}
 
 		return transitionPoints;
+	}
+
+	public static void SetAmbient(string key)
+	{
+		StopAmbient();
+		if (!ambientAssets.TryGetValue($"ambient/{key}", out var music))
+			return;
+
+		CurrentAmbient = music;
+		CurrentAmbient.SetActive(true);
+	}
+
+	public static void StopAmbient()
+	{
+		if (CurrentMusic == null)
+			return;
+
+		CurrentAmbient.SetActive(false);
+		CurrentAmbient = null;
+	}
+
+	public static void ClearAmbientStates()
+	{
+		foreach (var i in ambientAssets)
+		{
+			i.Value.IsPlaying = false;
+			i.Value.Volume = 0;
+			i.Value.LastTime = 0;
+
+			if (Raylib.IsMusicStreamPlaying(i.Value.Music))
+				Raylib.StopMusicStream(i.Value.Music);
+		}
 	}
 }

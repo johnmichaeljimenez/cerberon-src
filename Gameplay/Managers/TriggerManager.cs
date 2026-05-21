@@ -68,6 +68,8 @@ public class TriggerManager : BaseManager
 
 		foreach (var t in this.triggers)
 			t.IsTriggered = false;
+
+		RefreshCurrentEnvironment();
 	}
 
 	public override void Update(float dt, float udt)
@@ -129,7 +131,8 @@ public class TriggerManager : BaseManager
 	private void RefreshCurrentEnvironment()
 	{
 		CurrentSurfaceType = TriggerSurfaceType.Default;
-		CurrentAmbientAudio = "";
+		CurrentAmbientAudio = gameplayState.CurrentWorld.WorldSettings.AmbientSound ?? "";
+		AudioHandler.SetAmbient(CurrentAmbientAudio);
 
 		if (activeTriggers.Count == 0)
 			return;
@@ -143,7 +146,10 @@ public class TriggerManager : BaseManager
 					CurrentSurfaceType = t.TriggerSurfaceType.Value;
 
 				if (t.AmbientAudio != null)
+				{
 					CurrentAmbientAudio = t.AmbientAudio;
+					AudioHandler.SetAmbient(CurrentAmbientAudio);
+				}
 
 				return;
 			}
