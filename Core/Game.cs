@@ -34,7 +34,7 @@ public class Game
     public Game()
     {
         Instance = this;
-        Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
+        Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
         Raylib.InitWindow(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT, "Vasodilator");
         Raylib.MaximizeWindow();
         Raylib.SetExitKey(0);
@@ -45,6 +45,7 @@ public class Game
         RenderingManager.Init();
 
         AssetManager.Init();
+        InputManager.Init();
 
         Camera = new(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
         LightingSystem.Init(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
@@ -95,6 +96,7 @@ public class Game
             TweenManager.Clear();
             PauseHandler.Clear();
             AudioHandler.StopMusic();
+            InputManager.ClearCursorState();
             currentState?.Enter();
             nextState = null;
             OnStateChanged?.Publish(currentState);
@@ -144,6 +146,7 @@ public class Game
             Raylib.ClearBackground(Color.Black);
             RenderingManager.DrawToScreen(_target);
             UIManager.Draw();
+            InputManager.DrawCursor();
             FadeHandler.Draw();
 
             if (showIMGUI)

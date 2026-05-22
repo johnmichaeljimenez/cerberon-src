@@ -15,9 +15,21 @@ public class PauseMenuScreen : BaseScreen
 		gameplayState = context as GameplayState;
 	}
 
+	public override void OnEnter()
+	{
+		base.OnEnter();
+		InputManager.SetCursorState("pause", CursorType.DefaultSystem);
+	}
+
+	public override void Dispose()
+	{
+		InputManager.RemoveCursorState("pause");
+		base.Dispose();
+	}
+
 	public override void OnBack()
 	{
-		
+
 	}
 
 	protected override void OnClick(UIElement e)

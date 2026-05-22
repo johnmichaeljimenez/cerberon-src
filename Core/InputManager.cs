@@ -1,4 +1,13 @@
+using Main.Helpers;
+
 namespace Main.Core;
+
+public enum CursorType
+{
+    DefaultSystem,
+    DefaultIngame,
+    Interaction
+}
 
 public class InputButton
 {
@@ -46,13 +55,18 @@ public enum InputAction
     Weapon4,
     Reload,
     Flashlight,
-	Nightvision,
+    Nightvision,
     Pause
 }
 
 public static class InputManager
 {
     const float DEADZONE = 0.15f;
+
+    public static readonly PriorityCount CursorState = new()
+    {
+        OnChanged = OnCursorStateChanged
+    };
 
     public static bool HasGamepad => Raylib.IsGamepadAvailable(0);
     public static Vector2 MousePosition { get; private set; }
@@ -82,6 +96,17 @@ public static class InputManager
         { InputAction.Nightvision, new(KeyboardKey.N, null) },
         { InputAction.Pause, new(KeyboardKey.Escape, null) }
     };
+
+    private static readonly Dictionary<CursorType, Sprite> cursorSprites = new();
+
+    public static void Init()
+    {
+        cursorSprites[CursorType.DefaultSystem] = null;
+        cursorSprites[CursorType.DefaultIngame] = AssetManager.GetSprite("ui/cursor-ingame");
+        cursorSprites[CursorType.Interaction] = null;
+
+        OnCursorStateChanged(0);
+    }
 
     public static void Update(float scale, Vector2 offset, Camera2D camera)
     {
@@ -127,5 +152,42 @@ public static class InputManager
     public static bool IsDown(InputAction action)
     {
         return Actions[action].IsDown;
+    }
+
+    public static void SetCursorState(string id, CursorType cursorType)
+    {
+        CursorState.Add(id, (int)cursorType);
+    }
+
+    public static void RemoveCursorState(string id)
+    {
+        CursorState.Remove(id);
+    }
+
+    public static void ClearCursorState()
+    {
+        CursorState.Clear();
+    }
+
+    private static void OnCursorStateChanged(int value)
+    {
+        var current = (CursorType)value;
+        if (current == CursorType.DefaultSystem)
+            Raylib.ShowCursor();
+        else
+            Raylib.HideCursor();
+    }
+
+    public static void DrawCursor()
+    {
+        var current = (CursorType)CursorState.Current;
+        if (current == CursorType.DefaultSystem)
+            return;
+
+        var sprite = cursorSprites[current];
+        if (sprite == null)
+            return;
+
+        Raylib.DrawTexturePro(sprite.Texture, sprite.Rect, new Rectangle(Raylib.GetMousePosition(), sprite.Rect.Size), sprite.Rect.Size * 0.5f, 0f, Color.White);
     }
 }

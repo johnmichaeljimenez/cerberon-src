@@ -56,8 +56,7 @@ public class PlayerInteraction : EntityModule<PlayerEntity>
 
 		if (current != nearest)
 		{
-			current = nearest;
-			OnInteractableChanged.Publish(current);
+			SetCurrent(nearest);
 		}
 
 		if (current != null && InputManager.IsPressed(InputAction.Interact))
@@ -75,9 +74,19 @@ public class PlayerInteraction : EntityModule<PlayerEntity>
 		{
 			if (current.IsDestroyed)
 			{
-				current = null;
-				OnInteractableChanged.Publish(null);
+				SetCurrent(null);
 			}
 		}
+	}
+
+	private void SetCurrent(IInteractable current)
+	{
+		this.current = current;
+		OnInteractableChanged.Publish(current);
+
+		if (current != null)
+			InputManager.SetCursorState("interact", CursorType.Interaction);
+		else
+			InputManager.RemoveCursorState("interact");
 	}
 }

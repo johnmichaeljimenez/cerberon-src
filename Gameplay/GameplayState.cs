@@ -66,10 +66,13 @@ public class GameplayState : IGameState
 		{
 			i.Value.OnEnter();
 		}
+
+		InputManager.SetCursorState("ingame", CursorType.DefaultIngame);
 	}
 
 	public void Exit()
 	{
+		InputManager.RemoveCursorState("ingame");
 		EnableDrawDebug = false;
 		CurrentWorld.Dispose();
 
