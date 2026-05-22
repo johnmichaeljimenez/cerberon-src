@@ -73,4 +73,9 @@ public class CameraController
 			}.SetEasing(Easing.RandomShake)
 		);
 	}
+
+	public Vector2 WorldToScreen(Vector2 worldPos)
+	{
+		return Raylib.GetWorldToScreen2D(worldPos, Camera);
+	}
 }

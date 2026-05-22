@@ -1,3 +1,4 @@
+using Main.Core;
 using Main.Gameplay;
 using Main.Gameplay.Entities.Player;
 using Main.Gameplay.Managers;
@@ -13,6 +14,8 @@ public class HUDScreen : BaseScreen
 	private PlayerEntity playerEntity;
 	private PlayerWeapons weapons;
 
+	private IInteractable currentInteractable;
+
 	public HUDScreen(object context) : base(context)
 	{
 		gameplayState = context as GameplayState;
@@ -21,10 +24,17 @@ public class HUDScreen : BaseScreen
 
 		playerEntity = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 		playerEntity.OnHPChanged.Subscribe(OnHPUpdate).AddTo(disposables);
+		playerEntity.GetModule<PlayerInteraction>().OnInteractableChanged.Subscribe(OnInteractableChanged).AddTo(disposables);
 
 		weapons = playerEntity.Weapons;
 		weapons.OnWeaponAmmoChanged.Subscribe(OnWeaponUpdate).AddTo(disposables);
 		weapons.OnWeaponSelected.Subscribe(OnWeaponUpdate).AddTo(disposables);
+	}
+
+	private void OnInteractableChanged(IInteractable interactable)
+	{
+		currentInteractable = interactable;
+		references["interact-text"].Visible = currentInteractable != null;
 	}
 
 	public override void OnEnter()
@@ -62,6 +72,15 @@ public class HUDScreen : BaseScreen
 			references["time-text"].Text = "--:--";
 		}
 
+		if (currentInteractable != null)
+		{
+			var pos = Vector2.Lerp(currentInteractable.Position, InputManager.MouseWorldPosition, 0.25f);
+			pos = Game.Instance.Camera.WorldToScreen(pos);
+
+			var el = references["interact-text"];
+			el.Position = pos;
+		}
+
 		base.Draw();
 	}
 
@@ -88,6 +107,9 @@ public class HUDScreen : BaseScreen
 
 		foreach (var i in elements)
 		{
+			if (i.ID == "interact-text")
+				continue;
+
 			if (i.ID == "dialogue-text")
 			{
 				i.Visible = dialogue != null;
