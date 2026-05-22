@@ -48,6 +48,11 @@ public abstract class BaseEntity : IDisposable
 
 	//due to how the lifecycle works, constructor is not recommended to use for public-facing values, but it's not totally banned like in Unity
 
+	[JsonIgnore]
+	public bool SpawnedIngame { get; set; }
+
+	private readonly Dictionary<Type, IEntityModule> entityModules = new();
+
 	public virtual void Init(GameplayState gameplayState)
 	{
 		this.gameplayState = gameplayState;
@@ -55,14 +60,46 @@ public abstract class BaseEntity : IDisposable
 		Groups.Add(GetType().Name);
 	}
 
+	public void ModulesInit()
+	{
+		foreach (var i in entityModules)
+		{
+			i.Value.Init();
+		}
+	}
+
+	protected T AddModule<T>() where T : IEntityModule
+	{
+		var module = Activator.CreateInstance(typeof(T), gameplayState, this) as IEntityModule;
+		entityModules.Add(typeof(T), module);
+
+		return (T)module;
+	}
+
 	public virtual void Update(float dt, float udt)
 	{
-
+		
 	}
 
 	public virtual void LateUpdate(float dt, float udt)
 	{
 
+	}
+
+	public void ModulesUpdate(float dt, float udt)
+	{
+		foreach (var i in entityModules)
+		{
+			i.Value.Update(dt, udt);
+		}
+	}
+
+	public void ModulesLateUpdate(float dt, float udt)
+	{
+		foreach (var i in entityModules)
+		{
+			i.Value.LateUpdate(dt, udt);
+		}
 	}
 
 	public virtual void Draw()
@@ -73,6 +110,11 @@ public abstract class BaseEntity : IDisposable
 
 	public virtual void Dispose()
 	{
+		foreach (var i in entityModules)
+		{
+			i.Value.Dispose();
+		}
+		
 		disposables.ForEach(p => p?.Dispose());
 	}
 
@@ -102,5 +144,10 @@ public abstract class BaseEntity : IDisposable
 	protected virtual void OnActiveStateChanged(bool isActive)
 	{
 
+	}
+
+	public T GetModule<T>() where T : IEntityModule
+	{
+		return (T)entityModules[typeof(T)];
 	}
 }

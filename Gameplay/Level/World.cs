@@ -107,8 +107,9 @@ public class World : IDisposable //aka Level loader
 
 		foreach (var i in Entities)
 		{
-			OnAdd(i);
 			i.Init(gameplayState);
+			OnAdd(i);
+			i.ModulesInit();
 		}
 
 		gameplayState.GetManager<WaypointManager>().Bake(EnvironmentColliders, WorldSettings.WorldSize, 1f, Entities.Where(p => p is IWaypointModifier).Cast<IWaypointModifier>().ToList());
@@ -163,6 +164,7 @@ public class World : IDisposable //aka Level loader
 				continue;
 
 			i.Update(dt, udt);
+			i.ModulesUpdate(dt, udt);
 		}
 	}
 
@@ -183,6 +185,7 @@ public class World : IDisposable //aka Level loader
 				continue;
 
 			i.LateUpdate(dt, udt);
+			i.ModulesLateUpdate(dt, udt);
 		}
 
 		var changed = false;
@@ -322,7 +325,9 @@ public class World : IDisposable //aka Level loader
 		_nextID++;
 
 		onSpawn?.Invoke(obj); //set custom data here before Init() triggers
+		obj.SpawnedIngame = true;
 		obj.Init(gameplayState);
+		obj.ModulesInit();
 
 		toAddEntities.Add(obj);
 		return obj;
