@@ -1,10 +1,11 @@
 using Main.Core;
+using Main.Gameplay.Entities.Player;
 using Main.Gameplay.Managers;
 using Main.Helpers;
 
 namespace Main.Gameplay.Entities;
 
-public class ItemPickupEntity : BaseEntity
+public class ItemPickupEntity : BaseEntity, IInteractable
 {
 	public enum ItemTypes
 	{
@@ -20,12 +21,16 @@ public class ItemPickupEntity : BaseEntity
 	[JsonProperty]
 	public int Amount { get; set; }
 
+	public bool Interactable => true;
+
 	private float lifeTime;
 	private const int MAX_LIFETIME = 20;
 
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
+
+		Groups.Add(nameof(IInteractable));
 
 		if (ItemType == ItemTypes.Health)
 		{
@@ -50,29 +55,7 @@ public class ItemPickupEntity : BaseEntity
 
 		var player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 		var d = (player.Position - Position).Length();
-		if (d <= 1.5f)
-		{
-			var pickedUp = false;
-
-			if (ItemType == ItemTypes.Health)
-				pickedUp = player.Heal(Amount);
-
-			if (ItemType == ItemTypes.Ammo)
-				pickedUp = player.Weapons.PickupAmmo();
-
-			if (ItemType == ItemTypes.WeaponAK)
-				pickedUp = player.Weapons.PickupWeapon("rifle");
-
-			if (ItemType == ItemTypes.WeaponShotgun)
-				pickedUp = player.Weapons.PickupWeapon("shotgun");
-
-			if (pickedUp)
-			{
-				AudioHandler.PlaySound("generic/item-pickup");
-				Despawn();
-			}
-		}
-		else if (d >= 25)
+		if (d >= 25 && !SpawnedIngame)
 		{
 			if (Utils.Countdown(ref lifeTime, dt))
 				Despawn();
@@ -88,5 +71,27 @@ public class ItemPickupEntity : BaseEntity
 		base.Draw();
 
 		Raylib.DrawCircleV(Position, 1, Colors.RED);
+	}
+
+	public bool Interact()
+	{
+		var player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
+
+		if (ItemType == ItemTypes.Health)
+			player.Heal(Amount);
+
+		if (ItemType == ItemTypes.Ammo)
+			player.Weapons.PickupAmmo();
+
+		if (ItemType == ItemTypes.WeaponAK)
+			player.Weapons.PickupWeapon("rifle");
+
+		if (ItemType == ItemTypes.WeaponShotgun)
+			player.Weapons.PickupWeapon("shotgun");
+
+		AudioHandler.PlaySound("generic/item-pickup");
+		Despawn();
+		
+		return true;
 	}
 }

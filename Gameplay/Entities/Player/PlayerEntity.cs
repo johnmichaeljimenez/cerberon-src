@@ -8,6 +8,7 @@ namespace Main.Gameplay.Entities.Player;
 
 //put all of them here for now, component architecture is a tomorrow's problem if i can mow down zombies right now with this code. if this is a god class then call this project mt. olympus for now
 //UPDATE: added PlayerWeapons.cs (moved weapon-related stuff there) it can be considered as component now, but from now on each component that I will make must be "deserving immediately now" of being a component. otherwise they will stay for now in each of their own entity classes.
+//UPDATE: added EntityModule.cs as I started to add PlayerInteraction.cs too
 public class PlayerEntity : CharacterEntity
 {
 	private Light lightSelf;
@@ -29,7 +30,8 @@ public class PlayerEntity : CharacterEntity
 		base.Init(gameplayState);
 
 		Origin = new Vector2(0.3f, 0.7f);
-		Weapons = new(gameplayState, this);
+		Weapons = AddModule<PlayerWeapons>();
+		AddModule<PlayerInteraction>();
 		SortingIndex = 10;
 
 		Game.Instance.Camera.Follow(Position);

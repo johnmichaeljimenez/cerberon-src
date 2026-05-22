@@ -89,7 +89,7 @@ public class Weapon
 	}
 }
 
-public class PlayerWeapons : IDisposable
+public class PlayerWeapons : EntityModule<PlayerEntity>
 {
 	private const string SFX_DRYFIRE = "weapon/generic/dryfire";
 	private const string SFX_READY = "weapon/generic/ready";
@@ -103,7 +103,7 @@ public class PlayerWeapons : IDisposable
 	{
 		new Weapon("knife", "Knife", 0, 70, 0f, 0, 0, true),
 		new Weapon("handgun", "Sig Sauer", 50, 50, 0f, 15, 60, true),
-		new Weapon("rifle", "AK-47", 80, 60, 0.1f, 30, 120),
+		new Weapon("rifle", "AK-47", 80, 60, 0.1f, 30, 120, false),
 		new Weapon("shotgun", "Sawn-off Shotgun", 70, 60, 0f, 2, 30, false, rangedKick: 80){
 			SpreadAngle = 60,
 			SpreadCount = 20
@@ -115,7 +115,6 @@ public class PlayerWeapons : IDisposable
 	private float fireTimer;
 	private Light muzzleFlash;
 
-	private PlayerEntity player;
 	private GameplayState gameplayState;
 	private LinecastHit weaponHit;
 	private bool isIraqiReload;
@@ -133,19 +132,23 @@ public class PlayerWeapons : IDisposable
 
 	private int fireCount, hitCount;
 
-	public PlayerWeapons(GameplayState gameplayState, PlayerEntity player)
+	public PlayerWeapons(GameplayState gameplayState, PlayerEntity playerEntity) : base(gameplayState, playerEntity)
 	{
-		this.player = player;
 		this.gameplayState = gameplayState;
 
 		foreach (var i in Weapons)
 		{
-			player.Animator.Add(i.ANIM_IDLE, 0);
-			player.Animator.Add(i.ANIM_MOVE, 0);
-			player.Animator.Add(i.ANIM_SHOOT, 50);
-			player.Animator.Add(i.ANIM_MELEE, 50);
-			player.Animator.Add(i.ANIM_RELOAD, 50);
+			Entity.Animator.Add(i.ANIM_IDLE, 0);
+			Entity.Animator.Add(i.ANIM_MOVE, 0);
+			Entity.Animator.Add(i.ANIM_SHOOT, 50);
+			Entity.Animator.Add(i.ANIM_MELEE, 50);
+			Entity.Animator.Add(i.ANIM_RELOAD, 50);
 		}
+	}
+
+	public override void Init()
+	{
+		base.Init();
 
 		OnWeaponSelected.Publish(CurrentWeapon);
 		UpdateAmmoCount();
@@ -162,14 +165,18 @@ public class PlayerWeapons : IDisposable
 		NormalizedTotalAmmoCount = Weapons.Sum(p => p.NormalizedCurrentAmmoCount) / Weapons.Count;
 	}
 
-	public void Dispose()
+	public override void Dispose()
 	{
+		base.Dispose();
+
 		if (muzzleFlash != null)
 			LightingSystem.RemoveLight(muzzleFlash);
 	}
 
-	public void Update(float dt, float udt)
+	public override void Update(float dt, float udt)
 	{
+		base.Update(dt, udt);
+		
 		if (muzzleFlash != null)
 		{
 			if (muzzleFlash.Color.A > 0)
@@ -193,7 +200,7 @@ public class PlayerWeapons : IDisposable
 		{
 			if (InputManager.IsPressed(InputAction.AltFire) && CurrentWeapon.UsesAmmo)
 			{
-				if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
+				if (Entity.Animator.Play(CurrentWeapon.ANIM_MELEE))
 				{
 					fireCount++;
 					AudioHandler.PlaySound(SFX_MELEE_START);
@@ -220,7 +227,7 @@ public class PlayerWeapons : IDisposable
 				//this game has no charging handle for guns, so trigger is the closest alternative
 
 				isIraqiReload = CurrentWeapon.FiringRate > 0 && CurrentWeapon.CurrentAmmo == 0 && InputManager.IsDown(InputAction.Fire);
-				if (player.Animator.Play(CurrentWeapon.ANIM_RELOAD, targetStartTime: isIraqiReload ? 0.4f : 0f))
+				if (Entity.Animator.Play(CurrentWeapon.ANIM_RELOAD, targetStartTime: isIraqiReload ? 0.4f : 0f))
 				{
 					if (isIraqiReload)
 						AudioHandler.PlaySound(SFX_RELOADFAST);
@@ -244,7 +251,7 @@ public class PlayerWeapons : IDisposable
 			{
 				if (!CurrentWeapon.UsesAmmo)
 				{
-					if (player.Animator.Play(CurrentWeapon.ANIM_MELEE))
+					if (Entity.Animator.Play(CurrentWeapon.ANIM_MELEE))
 					{
 						fireCount++;
 						OnWeaponFire.Publish(CurrentWeapon);
@@ -261,9 +268,9 @@ public class PlayerWeapons : IDisposable
 					{
 						fireCount++;
 
-						Game.Instance.Camera.Shake(CurrentWeapon.RangedKick / MAX_KICK, player.FacingDirection); //forward shake relative to player
+						Game.Instance.Camera.Shake(CurrentWeapon.RangedKick / MAX_KICK, Entity.FacingDirection); //forward shake relative to player
 						OnWeaponFire.Publish(CurrentWeapon);
-						player.Animator.Play(CurrentWeapon.ANIM_SHOOT);
+						Entity.Animator.Play(CurrentWeapon.ANIM_SHOOT);
 						AudioHandler.PlaySound(CurrentWeapon.SFX_FIRE);
 
 						if (muzzleFlash != null)
@@ -271,11 +278,11 @@ public class PlayerWeapons : IDisposable
 							LightingSystem.RemoveLight(muzzleFlash);
 						}
 
-						muzzleFlash = LightingSystem.AddLight("light", player.Position, new(80, 30, 0), 0, 14);
+						muzzleFlash = LightingSystem.AddLight("light", Entity.Position, new(80, 30, 0), 0, 14);
 
 						if (CurrentWeapon.SpreadCount == 0)
 						{
-							gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (player.FacingDirection * 100), CollisionHeight.Mid, out weaponHit, player.CollisionBody);
+							gameplayState.GetManager<CollisionManager>().Linecast(Entity.Position, Entity.Position + (Entity.FacingDirection * 100), CollisionHeight.Mid, out weaponHit, Entity.CollisionBody);
 							if (weaponHit.Body != null && weaponHit.Body.SourceEntity is EnemyEntity z)
 							{
 								hitCount++;
@@ -290,9 +297,9 @@ public class PlayerWeapons : IDisposable
 							{
 								var half = CurrentWeapon.SpreadAngle / 2;
 								var a = Raymath.LerpAngle(-half, half, (float)i / CurrentWeapon.SpreadCount);
-								var d = player.GetFacingAngleOffset(a);
+								var d = Entity.GetFacingAngleOffset(a);
 
-								gameplayState.GetManager<CollisionManager>().Linecast(player.Position, player.Position + (d * 100), CollisionHeight.Mid, out spreadHit, player.CollisionBody);
+								gameplayState.GetManager<CollisionManager>().Linecast(Entity.Position, Entity.Position + (d * 100), CollisionHeight.Mid, out spreadHit, Entity.CollisionBody);
 								if (spreadHit.Body != null && spreadHit.Body.SourceEntity is EnemyEntity z)
 								{
 									if (!hit)
@@ -325,7 +332,7 @@ public class PlayerWeapons : IDisposable
 
 	private void SwitchWeapon(int i)
 	{
-		player.Animator.Stop(); //bypass hierarchy to switch animations immediately
+		Entity.Animator.Stop(); //bypass hierarchy to switch animations immediately
 		currentWeaponIndex = i;
 		OnWeaponSelected.Publish(CurrentWeapon);
 		Log.Send($"Switched to: {CurrentWeapon.Name}");
@@ -336,8 +343,8 @@ public class PlayerWeapons : IDisposable
 	{
 		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
 		OnWeaponHit.Publish((CurrentWeapon, z, false));
-		ApplyKick(z, Raymath.Vector2Normalize(z.Position - player.Position), CurrentWeapon.RangedKick);
-		z.ApplyDamage(CurrentWeapon.Damage, player);
+		ApplyKick(z, Raymath.Vector2Normalize(z.Position - Entity.Position), CurrentWeapon.RangedKick);
+		z.ApplyDamage(CurrentWeapon.Damage, Entity);
 
 		if (z.IsDead)
 			OnWeaponKill.Publish((CurrentWeapon, z, false));
@@ -345,10 +352,10 @@ public class PlayerWeapons : IDisposable
 
 	public void OnAnimationBegin(string animationName)
 	{
-		player.Origin = CurrentWeapon.ID == "knife" ? new(0.3f, 0.45f) : new(0.3f, 0.7f);
+		Entity.Origin = CurrentWeapon.ID == "knife" ? new(0.3f, 0.45f) : new(0.3f, 0.7f);
 
 		if (animationName == CurrentWeapon.ANIM_MELEE)
-			Game.Instance.Camera.Shake(CurrentWeapon.MeleeKick / MAX_KICK, player.GetFacingAngleOffset(90)); //side-by-side shake relative to player
+			Game.Instance.Camera.Shake(CurrentWeapon.MeleeKick / MAX_KICK, Entity.GetFacingAngleOffset(90)); //side-by-side shake relative to player
 	}
 
 	public void OnFrameChanged((string, int, float) frameData)
@@ -366,13 +373,13 @@ public class PlayerWeapons : IDisposable
 			if (z.IsDead)
 				continue;
 
-			var d = i.Position - player.Position;
-			if (!player.FacingDirection.IsInFront(d, 6, 90))
+			var d = i.Position - Entity.Position;
+			if (!Entity.FacingDirection.IsInFront(d, 6, 90))
 				continue;
 
 			OnWeaponHit.Publish((CurrentWeapon, z, true));
 			ApplyKick(z, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
-			z.ApplyDamage(CurrentWeapon.AltDamage, player);
+			z.ApplyDamage(CurrentWeapon.AltDamage, Entity);
 			hit = true;
 
 			if (z.IsDead)
@@ -382,7 +389,7 @@ public class PlayerWeapons : IDisposable
 		if (hit)
 		{
 			PauseHandler.ApplyHitstop();
-			Game.Instance.Camera.Shake(0.4f, player.GetFacingAngleOffset(90));
+			Game.Instance.Camera.Shake(0.4f, Entity.GetFacingAngleOffset(90));
 			hitCount++;
 			AudioHandler.PlaySound(SFX_MELEE_HIT);
 		}
@@ -411,7 +418,7 @@ public class PlayerWeapons : IDisposable
 	{
 		if (animationName == CurrentWeapon.ANIM_RELOAD)
 		{
-			if (player.Animator.NormalizedTime >= 1.0f)
+			if (Entity.Animator.NormalizedTime >= 1.0f)
 			{
 				if (CurrentWeapon.DoReload())
 				{
