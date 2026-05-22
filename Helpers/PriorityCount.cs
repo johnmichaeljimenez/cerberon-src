@@ -5,7 +5,7 @@ public class PriorityCount
 	public int Current { get; private set; }
 	private readonly Dictionary<string, int> activeIDs = new();
 
-	public Action OnChanged;
+	public Action<int> OnChanged;
 
 	public void Add(string id, int value)
 	{
@@ -31,6 +31,6 @@ public class PriorityCount
 	private void Update()
 	{
 		Current = activeIDs.Count > 0? activeIDs.Max(p => p.Value) : 0;	//TODO: optimize if needed
-		OnChanged?.Invoke();
+		OnChanged?.Invoke(Current);
 	}
 }
