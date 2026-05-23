@@ -52,7 +52,7 @@ public static class TsvParser
 				if (string.IsNullOrEmpty(raw)) continue; //let the default values to be used if column is blank for this row
 
 				raw = raw.Replace("\\n", "\n") //allow common escape characters to be used
-						.Replace("\\t", "\t")  
+						.Replace("\\t", "\t")
 						.Replace("\\r", "\r")
 						.Replace("\\\\", "\\");
 
@@ -78,8 +78,7 @@ public static class TsvParser
 
 		if (underlying == typeof(Vector2))
 		{
-			var split = raw.Replace(" ", "").Split(","); //ex: 10,4 or 10, 4
-
+			var split = raw.Replace(" ", "").Split(','); //ex: 10,4 or 10, 4
 			return new Vector2(
 				float.Parse(split[0], CultureInfo.InvariantCulture),
 				float.Parse(split[1], CultureInfo.InvariantCulture)
@@ -94,6 +93,27 @@ public static class TsvParser
 				return false;
 
 			return bool.Parse(raw);
+		}
+
+		//List<string> properties can be generated from pipe-delimited values
+		if (underlying == typeof(List<string>) || underlying == typeof(IList<string>))
+		{
+			if (string.IsNullOrWhiteSpace(raw))
+				return new List<string>();
+
+			return raw.Split('|', StringSplitOptions.TrimEntries)
+					  .Where(s => !string.IsNullOrEmpty(s))
+					  .ToList();
+		}
+
+		if (underlying == typeof(string[]))
+		{
+			if (string.IsNullOrWhiteSpace(raw))
+				return Array.Empty<string>();
+
+			return raw.Split('|', StringSplitOptions.TrimEntries)
+					  .Where(s => !string.IsNullOrEmpty(s))
+					  .ToArray();
 		}
 
 		// numeric
