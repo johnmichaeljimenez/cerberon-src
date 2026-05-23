@@ -26,6 +26,9 @@ public class UIElement
 	public string SpriteName { get; set; }
 	private Sprite sprite;
 
+	public bool CurrentVisibility;
+	public List<string> VisibilityGroups { get; set; } = new();
+
 	public Rectangle Rect => RenderingManager.GetRect(Position, Size);
 	public float ScaledTextSize => TextSize * RenderingManager.Scale;
 	public Rectangle GetTextRect

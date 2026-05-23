@@ -12,6 +12,8 @@ public abstract class BaseScreen : IDisposable
 	protected UIElement pressElement { get; private set; }
 	protected readonly List<IDisposable> disposables = new();
 
+	private readonly Dictionary<string, bool> visibilityGroups = new();
+
 	private float inputStartDelay;
 
 	public BaseScreen()
@@ -37,13 +39,15 @@ public abstract class BaseScreen : IDisposable
 		{
 			this.references[i.ID] = i;
 		}
+
+		UpdateVisibility();
 	}
 
 	public virtual void Draw()
 	{
 		foreach (var item in elements)
 		{
-			if (!item.Visible)
+			if (!item.CurrentVisibility)
 				continue;
 
 			item.Draw(hoveredElement == item);
@@ -53,6 +57,52 @@ public abstract class BaseScreen : IDisposable
 	public virtual void OnEnter()
 	{
 		inputStartDelay = 0.4f;
+		UpdateVisibility();
+	}
+
+	public void SetVisibility(UIElement e, bool visible)
+	{
+		e.Visible = visible;
+		UpdateVisibility();
+	}
+
+	public void SetVisibility(string group, bool isVisible)
+	{
+		visibilityGroups[group] = isVisible;
+		UpdateVisibility();
+	}
+
+	protected void UpdateVisibility()
+	{
+		foreach (var i in elements)
+		{
+			if (!i.Visible)
+			{
+				i.CurrentVisibility = false;
+				continue;
+			}
+
+			var vis = true;
+			foreach (var j in visibilityGroups)
+			{
+				if (!vis)
+					break;
+
+				foreach (var k in i.VisibilityGroups)
+				{
+					if (k != j.Key)
+						continue;
+
+					if (!j.Value)
+					{
+						vis = false;
+						break;
+					}
+				}
+			}
+
+			i.CurrentVisibility = vis;
+		}
 	}
 
 	public virtual void Update(float dt, float udt)
@@ -68,7 +118,7 @@ public abstract class BaseScreen : IDisposable
 		for (int i = elements.Count - 1; i >= 0; i--)
 		{
 			var e = elements[i];
-			if (!e.Visible)
+			if (!e.CurrentVisibility)
 				continue;
 
 			if (!e.Clickable)

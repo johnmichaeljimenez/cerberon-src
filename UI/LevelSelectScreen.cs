@@ -43,15 +43,15 @@ public class LevelSelectScreen : BaseScreen
 			var id = $"btn-level-{i + 1}";
 			var e = references[id];
 
-			e.Visible = visibleLevels.Count > i;
+			SetVisibility(e, visibleLevels.Count > i);
 			if (!e.Visible)
 				continue;
 
 			e.Text = AssetManager.LevelFiles[visibleLevels[i]];
 		}
 
-		references["btn-level-prev"].Visible = page > 1;
-		references["btn-level-next"].Visible = page < pageCount - 1;
+		SetVisibility(references["btn-level-prev"], page > 1);
+		SetVisibility(references["btn-level-next"], page < pageCount - 1);
 	}
 
 	protected override void OnClick(UIElement e)

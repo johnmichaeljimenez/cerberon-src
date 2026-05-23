@@ -19,11 +19,20 @@ public class HUDScreen : BaseScreen
 	public HUDScreen(object context) : base(context)
 	{
 		gameplayState = context as GameplayState;
-		gameplayState.GetManager<GameplayManager>().OnFightStart.Subscribe(_ => UpdateVisibility()).AddTo(disposables);
-		gameplayState.GetManager<DialogueManager>().OnDialogueShow.Subscribe(_ => UpdateVisibility()).AddTo(disposables);
+
+		gameplayState.GetManager<GameplayManager>().OnFightStart.Subscribe(_ =>
+		{
+			SetVisibility("HUD", true);
+		}).AddTo(disposables);
+
+		gameplayState.GetManager<DialogueManager>().OnDialogueShow.Subscribe(OnDialogueShow).AddTo(disposables);
 
 		playerEntity = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
+
 		playerEntity.OnHPChanged.Subscribe(OnHPUpdate).AddTo(disposables);
+		playerEntity.OnHealHold.Subscribe(OnHealHold).AddTo(disposables);
+		playerEntity.OnHealItemChanged.Subscribe(OnHealItemChanged).AddTo(disposables);
+
 		playerEntity.GetModule<PlayerInteraction>().OnInteractableChanged.Subscribe(OnInteractableChanged).AddTo(disposables);
 
 		weapons = playerEntity.Weapons;
@@ -31,20 +40,39 @@ public class HUDScreen : BaseScreen
 		weapons.OnWeaponSelected.Subscribe(OnWeaponUpdate).AddTo(disposables);
 	}
 
+	private void OnDialogueShow(Dialogue dialogue)
+	{
+		var dialogueText = references["dialogue-text"];
+		SetVisibility(dialogueText, dialogue != null);
+
+		if (dialogue != null)
+		{
+			dialogueText.Text = $"[{dialogue.CharacterID}] {dialogue.Message}";
+		}
+	}
+
+	private void OnHealItemChanged(int amt)
+	{
+		references["health-item-text"].Text = $"Item: {amt}";
+	}
+
+	private void OnHealHold(bool hold)
+	{
+		SetVisibility(references["health-item-text"], hold);
+	}
+
 	private void OnInteractableChanged(IInteractable interactable)
 	{
 		currentInteractable = interactable;
-		references["interact-text"].Visible = currentInteractable != null;
+		SetVisibility(references["interact-text"], currentInteractable != null);
 	}
 
 	public override void OnEnter()
 	{
 		base.OnEnter();
-
-		UpdateVisibility();
-
 		OnWeaponUpdate(weapons.CurrentWeapon);
 		OnHPUpdate(playerEntity.HP);
+		OnDialogueShow(gameplayState.GetManager<DialogueManager>().CurrentDialogue);
 	}
 
 	public override void OnBack()
@@ -84,12 +112,6 @@ public class HUDScreen : BaseScreen
 		base.Draw();
 	}
 
-	public override void UpdateElements(List<UIElement> elements)
-	{
-		base.UpdateElements(elements);
-		UpdateVisibility();
-	}
-
 	private void OnHPUpdate(int amt)
 	{
 		references["hp-text"].Text = $"HP: {amt}/{playerEntity.MaxHP}";
@@ -98,30 +120,5 @@ public class HUDScreen : BaseScreen
 	private void OnWeaponUpdate(Weapon w)
 	{
 		references["ammo-text"].Text = w.UsesAmmo ? $"{w.Name} ({w.CurrentAmmo}/{w.CurrentMaxAmmo})" : $"{w.Name}";
-	}
-
-	private void UpdateVisibility()
-	{
-		var showHUD = GameplayManager.Enabled;
-		var dialogue = gameplayState.GetManager<DialogueManager>().CurrentDialogue;
-
-		foreach (var i in elements)
-		{
-			if (i.ID == "interact-text")
-				continue;
-
-			if (i.ID == "dialogue-text")
-			{
-				i.Visible = dialogue != null;
-				if (dialogue != null)
-				{
-					i.Text = $"[{dialogue.CharacterID}] {dialogue.Message}";
-				}
-			}
-			else
-			{
-				i.Visible = showHUD;
-			}
-		}
 	}
 }
