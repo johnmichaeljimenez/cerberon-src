@@ -25,6 +25,13 @@ public class PlayerEntity : CharacterEntity
 	private Animator lowerBodyAnimator;
 	private float lowerBodyAngle;
 
+	public int HealthCount { get; private set; }
+	private float healHoldTime = 0;
+
+	public readonly Signal<bool> OnHealHold = new();
+	public readonly Signal<Unit> OnHealUse = new();
+	public readonly Signal<int> OnHealItemChanged = new();
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
@@ -87,6 +94,28 @@ public class PlayerEntity : CharacterEntity
 		dot = Raymath.Vector2DotProduct(FacingDirection, InputManager.Movement);
 
 		bool isMoving = velocity.LengthSquared() > 0.5f;
+
+		if (HealthCount > 0 && InputManager.IsDown(InputAction.Heal) && !isMoving && !Animator.IsPlayingOneShot)
+		{
+			if (healHoldTime <= 0)
+				OnHealHold.Publish(true);
+
+			healHoldTime += dt;
+			if (healHoldTime >= 1.0f)
+			{
+				OnHealHold.Publish(false);
+				healHoldTime = 0;
+				UseHealthItem();
+			}
+		}
+		else
+		{
+			if (healHoldTime > 0)
+			{
+				OnHealHold.Publish(false);
+				healHoldTime = 0;
+			}
+		}
 
 		if (isMoving)
 		{
@@ -182,7 +211,7 @@ public class PlayerEntity : CharacterEntity
 
 		if (from != null)
 			SetExternalForce(Vector2.Normalize(Position - from.Position), 30, 0.1f); //knockback
-			
+
 		AudioHandler.PlaySound("generic/player-hit");
 
 		Game.Instance.Camera.Shake(0.8f, GetFacingAngleOffset(90));
@@ -201,5 +230,21 @@ public class PlayerEntity : CharacterEntity
 	{
 		lowerBodyAnimator.GetFrameSprite()?.Draw(Position, 1, lowerBodyAngle, origin: Origin);
 		base.Draw();
+	}
+
+	public void PickupHealthItem()
+	{
+		HealthCount++;
+	}
+
+	public bool UseHealthItem()
+	{
+		// if (HP >= MaxHP)
+		// 	return false;
+
+		Heal(30);
+		HealthCount--;
+		OnHealUse.Publish(Unit.Default);
+		return true;
 	}
 }

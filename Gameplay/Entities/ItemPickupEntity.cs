@@ -78,7 +78,7 @@ public class ItemPickupEntity : BaseEntity, IInteractable
 		var player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 
 		if (ItemType == ItemTypes.Health)
-			player.Heal(Amount);
+			player.PickupHealthItem();
 
 		if (ItemType == ItemTypes.Ammo)
 			player.Weapons.PickupAmmo();

@@ -56,7 +56,8 @@ public enum InputAction
     Reload,
     Flashlight,
     Nightvision,
-    Pause
+    Pause,
+	Heal
 }
 
 public static class InputManager
@@ -87,6 +88,7 @@ public static class InputManager
         { InputAction.Fire, new(null, MouseButton.Left) },
         { InputAction.AltFire, new(null, MouseButton.Right) },
         { InputAction.Interact, new(KeyboardKey.Space, null) },
+        { InputAction.Heal, new(KeyboardKey.Q, null) },
         { InputAction.Flashlight, new(KeyboardKey.F, null) },
         { InputAction.Reload, new(KeyboardKey.R, null) },
         { InputAction.Weapon1, new(KeyboardKey.One, null) },
