@@ -124,8 +124,6 @@ public abstract class BaseEntity : IDisposable
 			return false;
 
 		IsDestroyed = true;
-		Dispose();
-
 		return true;
 	}
 

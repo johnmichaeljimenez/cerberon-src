@@ -207,6 +207,7 @@ public class World : IDisposable //aka Level loader
 			changed = true;
 			foreach (var i in toRemoveEntities)
 			{
+				i.Dispose();
 				OnEntityDespawn.Publish(i);
 				Entities.Remove(i);
 				OnRemove(i);
