@@ -11,6 +11,9 @@ namespace Main.Gameplay.Entities.Player;
 //UPDATE: added EntityModule.cs as I started to add PlayerInteraction.cs too
 public class PlayerEntity : CharacterEntity
 {
+	[DataConfig(1.5f)]
+	public static float HealHoldDuration;
+
 	private Light lightSelf;
 	private Light lightSelfVision;
 	private Light flashLight;
@@ -25,7 +28,7 @@ public class PlayerEntity : CharacterEntity
 	private Animator lowerBodyAnimator;
 	private float lowerBodyAngle;
 
-	public int HealCount { get; private set; }
+	public int HealCount { get; private set; } = 1;
 	private float healHoldTime = 0;
 
 	public readonly Signal<Unit> OnHealUse = new();
@@ -100,7 +103,7 @@ public class PlayerEntity : CharacterEntity
 				OnHealItemUpdate.Publish((true, HealCount));
 
 			healHoldTime += dt;
-			if (healHoldTime >= 1.0f)
+			if (healHoldTime >= HealHoldDuration)
 			{
 				healHoldTime = 0;
 				UseHealthItem();
@@ -188,9 +191,6 @@ public class PlayerEntity : CharacterEntity
 			target = Position + Raymath.Vector2ClampValue(target, 0, 5);
 			Game.Instance.Camera.Follow(target, 2f);
 		}
-
-		if (Raylib.IsKeyPressed(KeyboardKey.Q))
-			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin, 1);
 	}
 
 	public override void Dispose()

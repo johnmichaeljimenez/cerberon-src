@@ -13,7 +13,7 @@ public interface IInteractable
 
 public class PlayerInteraction : EntityModule<PlayerEntity>
 {
-	[DataConfig(1f)]
+	[DataConfig(2f)]
 	public static float RADIUS_MOUSE;
 	[DataConfig(5f)]
 	public static float RADIUS_PLAYER;
@@ -46,6 +46,8 @@ public class PlayerInteraction : EntityModule<PlayerEntity>
 
 			var dir = i.Position - mousePos;
 			var dist = dir.Length();
+			if (dPlayer < dist)
+				dPlayer = dist;
 
 			if (dist > maxDist)
 				continue;
