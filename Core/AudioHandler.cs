@@ -522,7 +522,7 @@ public static class AudioHandler
 
 	public static void StopAmbient()
 	{
-		if (CurrentMusic == null)
+		if (CurrentAmbient == null)
 			return;
 
 		CurrentAmbient.SetActive(false);
