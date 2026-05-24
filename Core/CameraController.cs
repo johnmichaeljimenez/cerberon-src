@@ -5,6 +5,9 @@ namespace Main.Core;
 
 public class CameraController
 {
+	[DataConfig(Sprite.PIXELS_PER_UNIT / 4)] //PIXELS_PER_UNIT = 1:1 sprite size on screen, 16 = default zoom level (higher value = closer zoom)
+	public static float DefaultZoom;
+
 	public Camera2D Camera;
 
 	private float followSpeed;
@@ -18,7 +21,7 @@ public class CameraController
 			Target = Vector2.Zero,
 			Offset = new Vector2(virtualWidth, virtualHeight) / 2f,
 			Rotation = 0f,
-			Zoom = Sprite.PIXELS_PER_UNIT / 4 //PIXELS_PER_UNIT = 1:1 sprite size on screen, 16 = default zoom level (higher value = closer zoom)
+			Zoom = DefaultZoom
 		};
 	}
 
