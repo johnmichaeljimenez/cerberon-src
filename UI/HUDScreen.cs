@@ -8,6 +8,9 @@ namespace Main.UI;
 
 public class HUDScreen : BaseScreen
 {
+	[DataConfig(false)]
+	public static bool EnabledOnStart;
+
 	public override string UIGroup => "HUD";
 
 	private GameplayState gameplayState;
@@ -20,6 +23,7 @@ public class HUDScreen : BaseScreen
 	{
 		gameplayState = context as GameplayState;
 
+		SetVisibility("HUD", EnabledOnStart);
 		gameplayState.GetManager<GameplayManager>().OnFightStart.Subscribe(_ =>
 		{
 			SetVisibility("HUD", true);
@@ -30,8 +34,7 @@ public class HUDScreen : BaseScreen
 		playerEntity = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
 
 		playerEntity.OnHPChanged.Subscribe(OnHPUpdate).AddTo(disposables);
-		playerEntity.OnHealHold.Subscribe(OnHealHold).AddTo(disposables);
-		playerEntity.OnHealItemChanged.Subscribe(OnHealItemChanged).AddTo(disposables);
+		playerEntity.OnHealItemUpdate.Subscribe(OnHealItemUpdate).AddTo(disposables);
 
 		playerEntity.GetModule<PlayerInteraction>().OnInteractableChanged.Subscribe(OnInteractableChanged).AddTo(disposables);
 
@@ -51,14 +54,11 @@ public class HUDScreen : BaseScreen
 		}
 	}
 
-	private void OnHealItemChanged(int amt)
+	private void OnHealItemUpdate((bool, int) data)
 	{
-		references["health-item-text"].Text = $"Item: {amt}";
-	}
-
-	private void OnHealHold(bool hold)
-	{
-		SetVisibility(references["health-item-text"], hold);
+		var healing = data.Item1;
+		var healItemCount = data.Item2;
+		references["health-item-text"].Text = healing ? "Healing..." : $"Heal: {healItemCount}";
 	}
 
 	private void OnInteractableChanged(IInteractable interactable)
@@ -73,6 +73,7 @@ public class HUDScreen : BaseScreen
 		OnWeaponUpdate(weapons.CurrentWeapon);
 		OnHPUpdate(playerEntity.HP);
 		OnDialogueShow(gameplayState.GetManager<DialogueManager>().CurrentDialogue);
+		OnHealItemUpdate((false, playerEntity.HealCount));
 	}
 
 	public override void OnBack()

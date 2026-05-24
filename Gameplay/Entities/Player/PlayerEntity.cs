@@ -25,12 +25,11 @@ public class PlayerEntity : CharacterEntity
 	private Animator lowerBodyAnimator;
 	private float lowerBodyAngle;
 
-	public int HealthCount { get; private set; }
+	public int HealCount { get; private set; }
 	private float healHoldTime = 0;
 
-	public readonly Signal<bool> OnHealHold = new();
 	public readonly Signal<Unit> OnHealUse = new();
-	public readonly Signal<int> OnHealItemChanged = new();
+	public readonly Signal<(bool, int)> OnHealItemUpdate = new();
 
 	public override void Init(GameplayState gameplayState)
 	{
@@ -95,24 +94,24 @@ public class PlayerEntity : CharacterEntity
 
 		bool isMoving = velocity.LengthSquared() > 0.5f;
 
-		if (HealthCount > 0 && InputManager.IsDown(InputAction.Heal) && !isMoving && !Animator.IsPlayingOneShot)
+		if (HealCount > 0 && InputManager.IsDown(InputAction.Heal) && !isMoving && !Animator.IsPlayingOneShot)
 		{
 			if (healHoldTime <= 0)
-				OnHealHold.Publish(true);
+				OnHealItemUpdate.Publish((true, HealCount));
 
 			healHoldTime += dt;
 			if (healHoldTime >= 1.0f)
 			{
-				OnHealHold.Publish(false);
 				healHoldTime = 0;
 				UseHealthItem();
+				OnHealItemUpdate.Publish((false, HealCount));
 			}
 		}
 		else
 		{
 			if (healHoldTime > 0)
 			{
-				OnHealHold.Publish(false);
+				OnHealItemUpdate.Publish((false, HealCount));
 				healHoldTime = 0;
 			}
 		}
@@ -234,7 +233,8 @@ public class PlayerEntity : CharacterEntity
 
 	public void PickupHealthItem()
 	{
-		HealthCount++;
+		HealCount++;
+		OnHealItemUpdate.Publish((false, HealCount));
 	}
 
 	public bool UseHealthItem()
@@ -243,7 +243,7 @@ public class PlayerEntity : CharacterEntity
 		// 	return false;
 
 		Heal(30);
-		HealthCount--;
+		HealCount--;
 		OnHealUse.Publish(Unit.Default);
 		return true;
 	}
