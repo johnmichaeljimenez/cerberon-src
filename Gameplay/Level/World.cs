@@ -77,7 +77,7 @@ public class World : IDisposable //aka Level loader
 	{
 		this.gameplayState = gameplayState;
 		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
-		
+
 		if (Markers == null)
 			Markers = new();
 
@@ -354,15 +354,18 @@ public class World : IDisposable //aka Level loader
 			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Colors.RED);
 		}
 
+		var max = NodeData.Nodes.Max(p => p.Key.ClearanceWeighted);
 		foreach (var i in NodeData.Nodes)
 		{
 			if (!i.Key.Enabled)
 				continue;
-				
-			if (i.Key.Clearance >= 1.5f)
-				Raylib.DrawCircleLinesV(i.Key.Position, i.Key.Clearance, Color.Green);
 
-			Raylib.DrawCircleV(i.Key.Position, 1.0f, Color.Yellow.Value(i.Key.Exposure));
+			Raylib.DrawCircleV(i.Key.Position, 1.5f, Colors.GREEN.Value(i.Key.ClearanceWeighted / max).Fade(0.6f));
+
+			// if (i.Key.Clearance >= 1.5f)
+			// Raylib.DrawCircleLinesV(i.Key.Position, i.Key.ClearanceWeighted, Colors.GREEN);
+
+			// Raylib.DrawCircleV(i.Key.Position, 1.0f, Color.Yellow.Value(i.Key.Exposure));
 		}
 	}
 

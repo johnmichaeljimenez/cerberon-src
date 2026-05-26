@@ -20,6 +20,7 @@ public class WaypointManager : BaseManager
 		public readonly List<Node> Connections = new();
 		public float Exposure = 0.5f;
 		public float Clearance = 10;
+		public float ClearanceWeighted = 10;
 
 		public bool Enabled = true;
 
@@ -541,7 +542,10 @@ public class WaypointManager : BaseManager
 		if (nodes.Count == 0 || obstacleLines.Count == 0)
 		{
 			foreach (var node in nodes)
+			{
 				node.Clearance = 10f;   //failsafe
+				node.ClearanceWeighted = 10f;
+			}
 
 			return;
 		}
@@ -555,6 +559,13 @@ public class WaypointManager : BaseManager
 				if (d < minDist) minDist = d;
 			}
 			node.Clearance = minDist;
+		}
+		
+
+		var clearances = Nodes.Select(p => p.Clearance).Blur(2);
+		for (int i = 0; i < Nodes.Count; i++)
+		{
+			Nodes[i].ClearanceWeighted = clearances[i];
 		}
 	}
 }

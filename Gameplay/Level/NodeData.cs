@@ -65,6 +65,9 @@ public class NodeData
 
 	public bool IsOutdoor(Node n, bool withOutdoorLight)
 	{
+		if (n == null)
+			return false;
+
 		LightingSystem.AmbientLightColor.GetHSV(out var h, out var s, out var amb);
 		return (!withOutdoorLight || amb >= 0.2f) && Nodes[n].OutdoorLight >= 0.5f; //outdoor enough and outdoor light is bright enough
 	}

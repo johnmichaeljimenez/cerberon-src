@@ -307,6 +307,22 @@ public static class Utils
 		return (value - a) / (b - a);
 	}
 
+	public static float GetSegmentT(this Vector2 current, Vector2 from, Vector2 to)
+	{
+		var segment = to - from;
+		var toCurrent = current - from;
+		if (toCurrent.LengthSquared() <= 0f)
+			return 1;
+
+		var dot = Vector2.Dot(toCurrent, segment);
+		var segLenSq = segment.LengthSquared();
+		if (segLenSq <= 0)
+			return 0;
+
+		var t = dot / segLenSq;
+		return Math.Clamp(t, 0f, 1f);
+	}
+
 	public static Vector2 GetNormal(this Vector2 dir)
 	{
 		Vector2 normal = dir.LengthSquared() > 0.0001f
@@ -324,6 +340,42 @@ public static class Utils
 			: Vector2.Zero;
 
 		return normal;
+	}
+
+	public static List<float> Blur(this IEnumerable<float> rawSource, int radius = 1, bool normalize = true)
+	{
+		if (rawSource == null) throw new ArgumentNullException(nameof(rawSource));
+		if (radius < 0) throw new ArgumentOutOfRangeException(nameof(radius));
+
+		var source = rawSource.ToList();
+		var n = source.Count;
+		var result = new List<float>(n);
+
+		//box kernel
+		var kernelSize = 2 * radius + 1;
+		var kernel = new float[kernelSize];
+		for (int i = 0; i < kernelSize; i++) kernel[i] = 1f;
+
+		float norm = normalize ? kernel.Sum() : 1f;
+
+		for (int i = 0; i < n; i++)
+		{
+			var acc = 0f;
+			for (int k = -radius; k <= radius; k++)
+			{
+				var idx = i + k;
+				if (idx < 0)
+					idx = -idx;
+				else if (idx >= n)
+					idx = 2 * n - idx - 2;
+
+				acc += source[idx] * kernel[k + radius];
+			}
+
+			result.Add(acc / norm);
+		}
+
+		return result;
 	}
 }
 
@@ -360,7 +412,7 @@ public static class Colors
 
 	public static Color Fade(this Color c, float alpha)
 	{
-		return new(c.R, c.G, c.B, alpha);
+		return new((byte)c.R, (byte)c.G, (byte)c.B, (byte)((float)alpha * 255f));
 	}
 
 	public static Color Value(this Color c, float amt)
