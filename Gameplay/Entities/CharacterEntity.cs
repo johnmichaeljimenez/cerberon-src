@@ -54,12 +54,17 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	[JsonIgnore]
 	public Node NearestNode { get; private set; }
+
+	[JsonIgnore]
+	public Node PreviousNode { get; private set; }
 	protected Vector2 lastPos { get; private set; }
 
 	[JsonIgnore]
 	public float Scale { get; protected set; } = 1;
 
 	protected Vector2 actualVelocity { get; private set; }
+
+	public readonly Signal<Vector2> OnPositionChanged = new();
 
 	public override void Init(GameplayState gameplayState)
 	{
@@ -74,7 +79,8 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		Animator.OnFrameChanged.Subscribe(OnAnimationFrameChanged).AddTo(disposables);
 
 		lastPos = Position;
-		OnPositionChanged();
+		UpdatePosition();
+		OnPositionChanged.Publish(lastPos);
 	}
 
 	protected virtual void OnAnimationEnd(string animationName)
@@ -128,7 +134,7 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		if ((Position - lastPos).LengthSquared() >= 0.1f * 0.1f)
 		{
 			lastPos = Position;
-			OnPositionChanged();
+			UpdatePosition();
 		}
 
 		actualVelocity = Position - oldPos;
@@ -194,9 +200,14 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		CollisionBody.Enabled = false;
 	}
 
-	protected virtual void OnPositionChanged()
+	private void UpdatePosition()
 	{
+		lastPos = Position;
+		if (PreviousNode != NearestNode)
+			PreviousNode = NearestNode;
+
 		NearestNode = gameplayState.GetManager<WaypointManager>().GetNearestNode(Position);
+		OnPositionChanged.Publish(lastPos);
 	}
 
 	public Vector2 GetFacingAngleOffset(float angleOffset)

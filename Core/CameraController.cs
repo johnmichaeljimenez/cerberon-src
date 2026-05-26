@@ -14,14 +14,17 @@ public class CameraController
 	private Vector2 followTarget;
 	private Vector2 shakeOffset;
 
+	public readonly ModifiedFloat Zoom;
+
 	public CameraController(int virtualWidth, int virtualHeight)
 	{
+		Zoom = new(DefaultZoom);
 		Camera = new Camera2D
 		{
 			Target = Vector2.Zero,
 			Offset = new Vector2(virtualWidth, virtualHeight) / 2f,
 			Rotation = 0f,
-			Zoom = DefaultZoom
+			Zoom = Zoom.CurrentValue
 		};
 	}
 
@@ -43,6 +46,8 @@ public class CameraController
 		//runs at fixed update (from Game) but still super smooth and accurate (unlike Cinemachine where simple camera teleporting needs complex code), but I don't know why tbh, it's like black magic for real
 		if (followSpeed > 0)
 			Camera.Target = Vector2.Lerp(Camera.Target, followTarget, followSpeed * dt) + shakeOffset;
+
+		Camera.Zoom = Zoom.CurrentValue;
 	}
 
 	public void Follow(Vector2 target, float speed = 0)

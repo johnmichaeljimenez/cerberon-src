@@ -34,7 +34,7 @@ public class Game
     public Game()
     {
         Instance = this;
-        Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
+        Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
         Raylib.InitWindow(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT, "Vasodilator");
         Raylib.MaximizeWindow();
         Raylib.SetExitKey(0);
