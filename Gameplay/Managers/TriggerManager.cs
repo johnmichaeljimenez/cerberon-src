@@ -128,6 +128,17 @@ public class TriggerManager : BaseManager
 		OnTriggerExecute.Publish((c, t));
 	}
 
+	public override void DrawDebug()
+	{
+		base.DrawDebug();
+
+		foreach (var i in triggers)
+		{
+			var rec = new Rectangle(i.Position, i.Size);
+			Raylib.DrawRectanglePro(rec, rec.Size * 0.5f, i.Rotation, Color.Green);
+		}
+	}
+
 	private void RefreshCurrentEnvironment()
 	{
 		CurrentSurfaceType = TriggerSurfaceType.Default;
