@@ -188,8 +188,8 @@ public class AIDirectorManager : BaseManager
 		if (enemySpawnTimer <= 0)
 		{
 			enemySpawnTimer = CalculateEnemySpawnInterval();
-			var maxCost = CalculateEnemiesToSpawn();	//TODO: improve
-			
+			var maxCost = CalculateEnemiesToSpawn();    //TODO: improve
+
 			var cost = Utils.Shatter(ref maxCost, 0.5f, Raymath.Remap((float)CurrentTensionState.CurrentState, 0f, 3f, 0.5f, 1f));
 			foreach (var i in cost)
 			{
@@ -352,10 +352,13 @@ public class AIDirectorManager : BaseManager
 			return l.Linecast(from, to, CollisionHeight.Mid, out var info, null, true);
 		};
 
+		var pos = Vector2.Zero;
 		if (hidden)
-			return gameplayState.CurrentWorld.NodeData.GetExposedNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
+			pos = gameplayState.CurrentWorld.NodeData.GetExposedNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
+		else
+			pos = gameplayState.CurrentWorld.NodeData.GetHiddenNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
 
-		return gameplayState.CurrentWorld.NodeData.GetHiddenNode(player.Position, SpawnDistanceMin, SpawnDistanceMax, func).Position;
+		return pos + RNG.Position(0.4f);
 	}
 
 	private void SpawnHealthItem() => gameplayState.CurrentWorld.SpawnEntity<ItemPickupEntity>(e =>
@@ -379,10 +382,10 @@ public class AIDirectorManager : BaseManager
 
 	private void SpawnEnemy(float cost) => gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(e =>
 	{
-		e.Position = GetSpawnPosition(true) + RNG.Position(0.2f);
+		e.Position = GetSpawnPosition(true);
 
 		//make enemies fly if player camps too much (but only if player can sustain the pressure)
-		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Panic && emaMovementRate.Current < 0.1f && RNG.Chance(0.5f);
+		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Panic && RNG.Chance(0.5f); //&& emaMovementRate.Current < 0.1f
 		e.Cost = cost;
 	});
 
