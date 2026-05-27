@@ -13,9 +13,7 @@ public interface IInteractable
 
 public class PlayerInteraction : EntityModule<PlayerEntity>
 {
-	[DataConfig(2f)]
-	public static float RADIUS_MOUSE;
-	[DataConfig(5f)]
+	[DataConfig(3f)]
 	public static float RADIUS_PLAYER;
 
 	private IInteractable current;
@@ -32,7 +30,7 @@ public class PlayerInteraction : EntityModule<PlayerEntity>
 	{
 		base.Update(dt, udt);
 
-		var maxDist = RADIUS_MOUSE;
+		var maxDist = RADIUS_PLAYER;
 		IInteractable nearest = null;
 		var mousePos = InputManager.MouseWorldPosition;
 		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(IInteractable)))
