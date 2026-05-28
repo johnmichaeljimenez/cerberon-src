@@ -64,7 +64,12 @@ public class HUDScreen : BaseScreen
 	private void OnInteractableChanged(IInteractable interactable)
 	{
 		currentInteractable = interactable;
-		SetVisibility(references["interact-text"], currentInteractable != null);
+
+		var text = references["interact-text"];
+		if (currentInteractable != null)
+			text.Text = currentInteractable.InteractionType.ToString();
+
+		SetVisibility(text, currentInteractable != null);
 	}
 
 	public override void OnEnter()
