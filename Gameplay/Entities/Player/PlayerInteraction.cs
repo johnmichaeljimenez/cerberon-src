@@ -2,8 +2,15 @@ using Main.Core;
 
 namespace Main.Gameplay.Entities.Player;
 
+public enum InteractionType
+{
+	Use,
+	Pickup
+}
+
 public interface IInteractable
 {
+	InteractionType InteractionType { get; }
 	bool IsDestroyed { get; }
 	bool Interactable { get; }
 	Vector2 Position { get; set; }
@@ -36,6 +43,9 @@ public class PlayerInteraction : EntityModule<PlayerEntity>
 		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(IInteractable)))
 		{
 			if (i.IsDestroyed || i is not IInteractable interactable)
+				continue;
+
+			if (!interactable.Interactable)
 				continue;
 
 			var dPlayer = (i.Position - Entity.Position).Length();

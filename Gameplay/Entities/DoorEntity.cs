@@ -1,12 +1,13 @@
 using System.ComponentModel;
 using Main.Core;
 using Main.Effects;
+using Main.Gameplay.Entities.Player;
 using Main.Gameplay.Level;
 using Main.Gameplay.Managers;
 
 namespace Main.Gameplay.Entities;
 
-public class DoorEntity : BaseEntity, IWaypointModifier
+public class DoorEntity : BaseEntity, IWaypointModifier, IInteractable
 {
 	private readonly Vector2 DEFAULT_SIZE = new Vector2(3, 1);
 
@@ -16,7 +17,8 @@ public class DoorEntity : BaseEntity, IWaypointModifier
 	[JsonProperty]
 	public Vector2 Size { get; set; }
 
-	[JsonIgnore]
+	[JsonProperty]
+	[DefaultValue(true)]
 	public bool Interactable { get; set; }
 
 	[JsonIgnore]
@@ -27,11 +29,14 @@ public class DoorEntity : BaseEntity, IWaypointModifier
 
 	[JsonIgnore]
 	public List<Wall> Colliders { get; set; } = new();
+
+	public InteractionType InteractionType => InteractionType.Use;
 	private Shadow shadow;
 
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
+		Groups.Add(nameof(IInteractable));
 
 		var size = Size;
 		if (MathF.Abs(size.X) <= 0.01f)
@@ -75,5 +80,11 @@ public class DoorEntity : BaseEntity, IWaypointModifier
 		{
 			i.Enabled = !IsOpen && IsActive;
 		}
+	}
+
+	public bool Interact()
+	{
+		SetOpen(!IsOpen);
+		return true;
 	}
 }

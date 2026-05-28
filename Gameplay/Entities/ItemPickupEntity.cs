@@ -23,6 +23,8 @@ public class ItemPickupEntity : BaseEntity, IInteractable
 
 	public bool Interactable => true;
 
+	public InteractionType InteractionType => InteractionType.Pickup;
+
 	private float lifeTime;
 	private const int MAX_LIFETIME = 20;
 
