@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
+using System;
 
 namespace CerberonEditor.Main
 {
@@ -40,30 +41,29 @@ namespace CerberonEditor.Main
             float posSnap = 0.5f;
             float scaleSnap = 1f;
 
-            foreach (var i in entityContainers.GetComponentsInChildren<Transform>(true))
+            foreach (var i in entityContainers.GetComponentsInChildren<EntityObject>(true))
             {
                 if (i == entityContainers)
                     continue;
 
-                var nameTag = "";
-                var entityName = Normalize(i.gameObject.name).Split('#');
-                if (entityName.Length == 2)
-                    nameTag = entityName[1];
-                
-                var t = entityName[0];
-
-                var en = new
+                var en = new Dictionary<string, object>
                 {
-                    Type = entityName[0],
-                    NameTag = nameTag,
-                    Position = new
+                    ["Type"] = i.EntityType,
+                    ["NameTag"] = i.NameTag,
+                    ["Position"] = new
                     {
                         X = i.transform.position.x,
                         Y = -i.transform.position.y
                     },
-                    Rotation = -i.transform.eulerAngles.z,
-                    IsActive = i.gameObject.activeInHierarchy
+                    ["Rotation"] = -i.transform.eulerAngles.z,
+                    ["IsActive"] = i.gameObject.activeInHierarchy
                 };
+
+                var parsedProps = ParseEntityProperties(i.Properties);
+                foreach (var kvp in parsedProps)
+                {
+                    en[kvp.Key] = kvp.Value;
+                }
 
                 entities.Add(en);
             }
@@ -342,6 +342,41 @@ namespace CerberonEditor.Main
         {
             var m = Regex.Match(s, @"^(?<base>.+?)(?:\s*\(\d+\))?$");
             return m.Success ? m.Groups["base"].Value : s;
+        }
+
+        private Dictionary<string, object> ParseEntityProperties(string propertiesText)
+        {
+            var dict = new Dictionary<string, object>(StringComparer.Ordinal);
+
+            if (string.IsNullOrWhiteSpace(propertiesText))
+                return dict;
+
+            var lines = propertiesText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var line in lines)
+            {
+                var trimmed = line.Trim();
+                if (string.IsNullOrEmpty(trimmed) || !trimmed.Contains('='))
+                    continue;
+
+                var parts = trimmed.Split(new[] { '=' }, 2);
+                var key = parts[0].Trim();
+                if (string.IsNullOrEmpty(key))
+                    continue;
+
+                string valueStr = parts.Length > 1 ? parts[1].Trim() : "";
+
+                if (bool.TryParse(valueStr, out bool boolVal))
+                    dict[key] = boolVal;
+                else if (int.TryParse(valueStr, out int intVal))
+                    dict[key] = intVal;
+                else if (float.TryParse(valueStr, out float floatVal))
+                    dict[key] = floatVal;
+                else
+                    dict[key] = valueStr;
+            }
+
+            return dict;
         }
     }
 }
