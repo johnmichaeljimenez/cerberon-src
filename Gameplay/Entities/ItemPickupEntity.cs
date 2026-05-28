@@ -29,6 +29,7 @@ public class ItemPickupEntity : BaseEntity, IInteractable
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
+		Amount = Math.Max(1, Amount);
 
 		Groups.Add(nameof(IInteractable));
 

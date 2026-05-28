@@ -1,5 +1,6 @@
 using Main.Gameplay.Entities;
 using Main.Gameplay.Level;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace Main.Helpers;
@@ -29,7 +30,8 @@ public class EntityJsonConverter : JsonConverter<BaseEntity>
 				DefaultValueHandling = DefaultValueHandling.Populate,
 				ObjectCreationHandling = ObjectCreationHandling.Replace,
 				NullValueHandling = NullValueHandling.Ignore,
-				ContractResolver = serializer.ContractResolver
+				ContractResolver = serializer.ContractResolver,
+				Converters = { new StringEnumConverter() }	//let this specific converter to use string-based enum instead of int
 			};
 
 			return (BaseEntity)JsonSerializer.Create(innerSettings).Deserialize(jr, entityType)!;
@@ -49,7 +51,8 @@ public class EntityJsonConverter : JsonConverter<BaseEntity>
 			ContractResolver = serializer.ContractResolver,
 			NullValueHandling = serializer.NullValueHandling,
 			DefaultValueHandling = serializer.DefaultValueHandling,
-			TypeNameHandling = TypeNameHandling.None
+			TypeNameHandling = TypeNameHandling.None,
+			Converters = { new StringEnumConverter() }
 		};
 		var tempSerializer = JsonSerializer.Create(tempSettings);
 
