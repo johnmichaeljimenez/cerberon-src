@@ -17,6 +17,18 @@
   },
   "Entities": [
     {
+      "Type": "ItemPickup",
+      "NameTag": "",
+      "Position": {
+        "X": 15.83,
+        "Y": -6.03
+      },
+      "Rotation": 0.0,
+      "IsActive": true,
+      "ItemType": "Health",
+      "Amount": 10
+    },
+    {
       "Type": "Door",
       "NameTag": "intro-door",
       "Position": {
@@ -1618,8 +1630,8 @@
     {
       "SpriteID": "light",
       "Position": {
-        "X": 15.98,
-        "Y": -8.46
+        "X": 15.87,
+        "Y": -7.71
       },
       "Color": {
         "R": 122,
@@ -1635,6 +1647,28 @@
       "Enabled": true,
       "Scale": 32.0,
       "ShadowType": 1,
+      "Flicker": true
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": 15.88,
+        "Y": -7.65
+      },
+      "Color": {
+        "R": 79,
+        "G": 79,
+        "B": 79,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 12.0,
+      "ShadowType": 0,
       "Flicker": true
     },
     {
