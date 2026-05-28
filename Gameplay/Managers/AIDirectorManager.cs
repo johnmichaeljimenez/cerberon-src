@@ -385,7 +385,7 @@ public class AIDirectorManager : BaseManager
 		e.Position = GetSpawnPosition(true);
 
 		//make enemies fly if player camps too much (but only if player can sustain the pressure)
-		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Panic && RNG.Chance(0.5f); //&& emaMovementRate.Current < 0.1f
+		e.IsFlyer = CurrentTensionState.CurrentState >= TensionState.Panic && RNG.Chance(0.5f) && emaMovementRate.Current < 0.1f;
 		e.Cost = cost;
 	});
 
