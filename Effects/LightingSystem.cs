@@ -21,6 +21,15 @@ public class Shadow
 		Points = Utils.GetRectangleCorners(centerPosition, size, rotation).Reverse().ToArray();
 	}
 
+	public void Move(Vector2 delta)
+	{
+		Position += delta;
+		for (int i = 0; i < Points.Length; i++)
+		{
+			Points[i] += delta;
+		}
+	}
+
 	public void DrawShadow(Light light)
 	{
 		const float farDistance = 100;

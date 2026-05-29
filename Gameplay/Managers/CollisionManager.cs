@@ -28,6 +28,22 @@ public class Wall
 	public WallFlags Flags { get; set; }
 	public CollisionHeight Height { get; set; }
 	public bool Enabled { get; set; } = true;
+
+	public void Recalculate()
+	{
+		Midpoint = (From + To) * 0.5f;
+		Vector2 dir = To - From;
+		Length = dir.Length();
+
+		if (Length > 0.0001f)
+		{
+			Normal = Vector2.Normalize(new Vector2(dir.Y, -dir.X));
+		}
+		else
+		{
+			Normal = Vector2.Zero;
+		}
+	}
 }
 
 public struct LinecastHit
@@ -111,19 +127,7 @@ public class CollisionManager : BaseManager
 			Flags = flags
 		};
 
-		wall.Midpoint = (from + to) * 0.5f;
-		Vector2 dir = to - from;
-		wall.Length = dir.Length();
-
-		if (wall.Length > 0.0001f)
-		{
-			wall.Normal = Vector2.Normalize(new Vector2(dir.Y, -dir.X));
-		}
-		else
-		{
-			wall.Normal = Vector2.Zero;
-		}
-
+		wall.Recalculate();
 		walls.Add(wall);
 		return wall;
 	}
