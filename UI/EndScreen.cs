@@ -22,6 +22,7 @@ public class EndScreen : BaseScreen
 	{
 		base.OnEnter();
 
+		InputManager.SetCursorState("end", CursorType.DefaultSystem);
 		references["result-text"].Text = win? "Mission Complete" : "Game Over";
 	}
 
