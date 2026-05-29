@@ -83,8 +83,18 @@
       "Type": "Door",
       "NameTag": "",
       "Position": {
-        "X": 7.48,
-        "Y": -24.06
+        "X": 7.5,
+        "Y": -24.0
+      },
+      "Rotation": 0.0,
+      "IsActive": true
+    },
+    {
+      "Type": "Door",
+      "NameTag": "",
+      "Position": {
+        "X": 4.5,
+        "Y": 19.0
       },
       "Rotation": 0.0,
       "IsActive": true
@@ -1015,11 +1025,11 @@
   "EnvironmentColliders": [
     {
       "Position": {
-        "X": 0.0,
+        "X": 0.5,
         "Y": 19.0
       },
       "Size": {
-        "X": 4.0,
+        "X": 5.0,
         "Y": 3.0
       },
       "Rotation": 0.0,
@@ -1223,11 +1233,11 @@
     },
     {
       "Position": {
-        "X": -0.5,
+        "X": -1.0,
         "Y": -24.0
       },
       "Size": {
-        "X": 15.0,
+        "X": 14.0,
         "Y": 2.0
       },
       "Rotation": 0.0,
