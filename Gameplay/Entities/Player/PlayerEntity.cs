@@ -156,7 +156,9 @@ public class PlayerEntity : CharacterEntity
 		base.LateUpdate(dt, udt);
 
 		lowerBodyAnimator.Update(dt, udt);
-		float rotSpeed = 12;
+
+		var to = InputManager.MouseWorldPosition;
+		float rotSpeed = 12 * Raymath.Clamp01((Position - to).Length() / (Radius * 8));
 		FacingAngle = Raymath.LerpAngle(FacingAngle, Position.ToDirection(InputManager.MouseWorldPosition), dt * rotSpeed);
 
 		lightSelf.Position = Position;
