@@ -100,6 +100,18 @@ public class EnemyEntity : CharacterEntity
 		if (!player.IsDead && FacingDirection.IsInFront(player.Position - Position, Raymath.Lerp(3, 6, Cost / 2), 50))
 		{
 			player.ApplyDamage(attackDamage, this);
+			return;
+		}
+
+		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup("door"))
+		{
+			var door = i as DoorEntity;
+			if (door.IsDestroyed || door.IsOpen || !door.IsActive)
+				continue;
+
+			d = i.Position - Position;
+			if (d.Length() <= 5f)
+				door.Hit();
 		}
 	}
 
@@ -136,10 +148,41 @@ public class EnemyEntity : CharacterEntity
 			return;
 		}
 
+		var w = gameplayState.GetManager<WaypointManager>();
 		if (actualVelocity.LengthSquared() <= 0.05f)
+		{
 			stuckTime += dt;
+			if (stuckTime >= 0.2f && NearestNode != null)
+			{
+				var blocked = NearestNode.NodeFlags.HasFlag(WaypointManager.NodeFlags.Blocked);
+				if (!blocked)
+				{
+					foreach (var i in NearestNode.Connections)
+					{
+						if (i.NodeFlags.HasFlag(WaypointManager.NodeFlags.Blocked))
+						{
+							var nodeDist = i.Position - Position;
+							if (nodeDist.Length() <= Radius * 2)
+							{
+								blocked = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if (blocked)
+				{
+					stuckTime = 0;
+					TryAttack();
+					return;
+				}
+			}
+		}
 		else
+		{
 			stuckTime = 0;
+		}
 
 		var dist = d.Length();
 		if (dist <= 3f)
@@ -148,22 +191,12 @@ public class EnemyEntity : CharacterEntity
 			lifetime = LIFETIME;
 			nodes.Clear();
 
-			ReleaseAttack();
-			attackRequestIndex = gameplayState.GetManager<AIDirectorManager>().RequestAttack();
-
-			if (attackRequestIndex >= 0)
-			{
-				if (Animator.Play("roach-attack", false, "roach-idle"))
-				{
-					velocity = Vector2.Zero;
-				}
-			}
+			TryAttack();
 		}
 		else
 		{
-			var w = gameplayState.GetManager<WaypointManager>();
 			if (!gameplayState.GetManager<CollisionManager>().Linecast(Position, player.Position, null, out var info, null, true)) //go straight to player if directly visible (not true FOV yet)
-			// if (w.IsVisible(Position, player.Position))
+																																   // if (w.IsVisible(Position, player.Position))
 			{
 				visibleTime += dt;
 				if (visibleTime >= 0.5f)
@@ -307,6 +340,20 @@ public class EnemyEntity : CharacterEntity
 		}
 
 		attackRequestIndex = -1;
+	}
+
+	private void TryAttack()
+	{
+		ReleaseAttack();
+		attackRequestIndex = gameplayState.GetManager<AIDirectorManager>().RequestAttack();
+
+		if (attackRequestIndex >= 0)
+		{
+			if (Animator.Play("roach-attack", false, "roach-idle"))
+			{
+				velocity = Vector2.Zero;
+			}
+		}
 	}
 
 	// public override void DrawDebug()

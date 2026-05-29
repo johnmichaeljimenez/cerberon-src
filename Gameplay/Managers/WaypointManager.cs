@@ -10,10 +10,18 @@ public interface IWaypointModifier
 	List<Wall> Colliders { get; set; }
 	bool IsActive { get; }
 	Vector2 Position { get; set; }
+	void OnNodeAdded(WaypointManager.Node node);
 }
 
 public class WaypointManager : BaseManager
 {
+	[Flags]
+	public enum NodeFlags
+	{
+		None = 0,
+		Blocked = 1 << 0
+	}
+
 	public class Node
 	{
 		public Vector2 Position;
@@ -23,6 +31,7 @@ public class WaypointManager : BaseManager
 		public float ClearanceWeighted = 10;
 
 		public bool Enabled = true;
+		public NodeFlags NodeFlags;
 
 		public Node(float x, float y)
 		{
@@ -173,7 +182,7 @@ public class WaypointManager : BaseManager
 		return true;
 	}
 
-	public void Bake(IEnumerable<WorldCollider> rawObstacles, Vector2 worldSize, float characterRadius, List<IWaypointModifier> dynamicObstacles)
+	public void Bake(IEnumerable<WorldCollider> rawObstacles, Vector2 worldSize, float characterRadius, List<IWaypointModifier> modifiers)
 	{
 		nodes.Clear();
 
@@ -190,7 +199,7 @@ public class WaypointManager : BaseManager
 		obstacleLines.Clear();
 
 		//step 1
-		foreach (var i in dynamicObstacles)
+		foreach (var i in modifiers)
 		{
 			foreach (var edge in i.Colliders)
 			{
@@ -199,7 +208,7 @@ public class WaypointManager : BaseManager
 			}
 
 			i.Node = new Node(i.Position);
-			i.Node.Enabled = false;
+			i.OnNodeAdded(i.Node);
 
 			nodes.Add(i.Node);
 			dynNodes.Add(i.Node);

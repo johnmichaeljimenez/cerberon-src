@@ -4,10 +4,11 @@ using Main.Effects;
 using Main.Gameplay.Entities.Player;
 using Main.Gameplay.Level;
 using Main.Gameplay.Managers;
+using Main.Helpers;
 
 namespace Main.Gameplay.Entities;
 
-public class DoorEntity : BaseEntity, IWaypointModifier, IInteractable
+public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 {
 	private readonly Vector2 DEFAULT_SIZE = new Vector2(3, 1);
 
@@ -33,10 +34,17 @@ public class DoorEntity : BaseEntity, IWaypointModifier, IInteractable
 	public InteractionType InteractionType => InteractionType.Use;
 	private Shadow shadow;
 
+	private float lifeCooldown; //if a door is closed, enemies can bash it repeatedly until it opens, and player cannot close it immediately during certain cooldown
+	private int hitCount;
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
 		Groups.Add(nameof(IInteractable));
+		Groups.Add("door");
+
+		hitCount = 3;
+		lifeCooldown = 5;
 
 		var size = Size;
 		if (MathF.Abs(size.X) <= 0.01f)
@@ -48,6 +56,24 @@ public class DoorEntity : BaseEntity, IWaypointModifier, IInteractable
 
 		gameplayState.GetManager<CollisionManager>().AddWalls(Position, Size, Colliders, Wall.WallFlags.DrawOverlay, CollisionHeight.High, false, Rotation);
 		shadow = LightingSystem.AddShadow(Position, Size, Rotation);
+	}
+
+	public void Hit()
+	{
+		if (hitCount <= 0)
+			return;
+
+		Game.Instance.Camera.Shake(0.8f, null);
+		AudioHandler.PlaySound("knock-slam", Position);
+		hitCount -= 1;
+
+		if (hitCount == 0)
+		{
+			Game.Instance.Camera.Shake(3f, null);
+			AudioHandler.PlaySound("break", Position);
+			SetOpen(true);
+			lifeCooldown = 5;
+		}
 	}
 
 	public override void Dispose()
@@ -73,7 +99,8 @@ public class DoorEntity : BaseEntity, IWaypointModifier, IInteractable
 
 	private void SetState()
 	{
-		Node.Enabled = IsOpen || !IsActive;
+		Node.Enabled = IsOpen || Interactable || !IsActive;
+		Node.NodeFlags = !IsOpen && IsActive ? WaypointManager.NodeFlags.Blocked : WaypointManager.NodeFlags.None;
 
 		shadow.Enabled = !IsOpen && IsActive;
 		foreach (var i in Colliders)
@@ -84,7 +111,28 @@ public class DoorEntity : BaseEntity, IWaypointModifier, IInteractable
 
 	public bool Interact()
 	{
+		if (hitCount <= 0)
+			return false;
+
 		SetOpen(!IsOpen);
 		return true;
+	}
+
+	public override void Update(float dt, float udt)
+	{
+		base.Update(dt, udt);
+
+		if (hitCount <= 0)
+		{
+			if (Utils.Countdown(ref lifeCooldown, dt))
+			{
+				hitCount = 3;
+			}
+		}
+	}
+
+	public void OnNodeAdded(WaypointManager.Node node)
+	{
+		node.NodeFlags = WaypointManager.NodeFlags.Blocked;
 	}
 }
