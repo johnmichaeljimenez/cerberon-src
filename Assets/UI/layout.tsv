@@ -1,9 +1,9 @@
 ID	Position	Size	Group	Visible	Clickable	Text	Align	TextSize	SpriteName	VisibilityGroups
 bg	0,0	800,450	MainMenu	1	0		0			
-title	200,50	400,80	MainMenu	1	0		0			
-btn-start	300,150	200,40	MainMenu	1	1	Start Game	0			
-btn-options	300,210	200,40	MainMenu	1	1	Options	0			
-btn-exit	300,270	200,40	MainMenu	1	1	Exit	0			
+title	200,-80	400,400	MainMenu	1	0				ui/logo	
+btn-start	100,250	200,40	MainMenu	1	1	Start Game	0			
+btn-options	100,310	200,40	MainMenu	1	1	Options	0			
+btn-exit	100,370	200,40	MainMenu	1	1	Exit	0			
 										
 btn-level-1	300, 40	200,40	LevelSelect	1	1	Level 1	0			
 btn-level-2	300, 90	200,40	LevelSelect	1	1	Level 2	0			
