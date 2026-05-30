@@ -97,7 +97,7 @@ public class PlayerEntity : CharacterEntity
 
 		bool isMoving = velocity.LengthSquared() > 0.5f;
 
-		if (HealCount > 0 && InputManager.IsDown(InputAction.Heal) && !isMoving && !Animator.IsPlayingOneShot)
+		if (HealCount > 0 && InputManager.IsDown(InputAction.Heal, true) && !isMoving && !Animator.IsPlayingOneShot)
 		{
 			if (healHoldTime <= 0)
 				OnHealItemUpdate.Publish((true, HealCount));
@@ -106,8 +106,11 @@ public class PlayerEntity : CharacterEntity
 			if (healHoldTime >= HealHoldDuration)
 			{
 				healHoldTime = 0;
-				UseHealthItem();
-				OnHealItemUpdate.Publish((false, HealCount));
+				if (InputManager.ConsumeDown(InputAction.Heal))
+				{
+					UseHealthItem();
+					OnHealItemUpdate.Publish((false, HealCount));
+				}
 			}
 		}
 		else

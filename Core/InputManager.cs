@@ -16,6 +16,7 @@ public class InputButton
 
     public bool IsDown { get; private set; }
     public bool IsPressed { get; private set; }
+    public bool Consumed { get; private set; }
 
     public InputButton(KeyboardKey? keyButton, MouseButton? mouseButton)
     {
@@ -25,21 +26,36 @@ public class InputButton
 
     public void Update()
     {
-        IsDown = (
+        var currentlyDown = (
             KeyButton.HasValue && Raylib.IsKeyDown(KeyButton.Value)) ||
             (MouseButton.HasValue && Raylib.IsMouseButtonDown(MouseButton.Value)
         );
+
+        IsDown = currentlyDown;
 
         IsPressed |= ( //this "latch" mechanism made the render loop -> fixed loop synchronization work
             KeyButton.HasValue && Raylib.IsKeyPressed(KeyButton.Value)) ||
             (MouseButton.HasValue && Raylib.IsMouseButtonPressed(MouseButton.Value)
         );
+
+        if (!currentlyDown)
+            Consumed = false;
     }
 
     public void LateUpdate()
     {
         IsDown = false;
         IsPressed = false;
+    }
+
+    public bool ConsumeDown()
+    {
+        if (IsDown && !Consumed)
+        {
+            Consumed = true;
+            return true;
+        }
+        return false;
     }
 }
 
@@ -57,7 +73,7 @@ public enum InputAction
     Flashlight,
     Nightvision,
     Pause,
-	Heal
+    Heal
 }
 
 public static class InputManager
@@ -151,9 +167,17 @@ public static class InputManager
         return Actions[action].IsPressed;
     }
 
-    public static bool IsDown(InputAction action)
+    public static bool IsDown(InputAction action, bool consumeCheck = false)
     {
+        if (consumeCheck && Actions[action].Consumed)
+            return false;
+
         return Actions[action].IsDown;
+    }
+
+    public static bool ConsumeDown(InputAction action)
+    {
+        return Actions[action].ConsumeDown();
     }
 
     public static void SetCursorState(string id, CursorType cursorType)
