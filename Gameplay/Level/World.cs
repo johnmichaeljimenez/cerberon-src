@@ -76,7 +76,7 @@ public class World : IDisposable //aka Level loader
 	public void Init(GameplayState gameplayState)
 	{
 		this.gameplayState = gameplayState;
-		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 0;
+		_nextID = Entities.Count > 0 ? Entities.Max(e => e.ID) + 1 : 1;
 
 		if (Markers == null)
 			Markers = new();
@@ -107,6 +107,8 @@ public class World : IDisposable //aka Level loader
 
 		foreach (var i in Entities)
 		{
+			if (i.ID == 0)
+				i.ID = _nextID++;
 			i.Init(gameplayState);
 			OnAdd(i);
 			i.ModulesInit();
