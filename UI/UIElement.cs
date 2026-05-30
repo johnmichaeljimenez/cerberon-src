@@ -29,6 +29,8 @@ public class UIElement
 	public bool CurrentVisibility;
 	public List<string> VisibilityGroups { get; set; } = new();
 
+	public Action<UIElement> CustomDrawing = null;
+
 	public Rectangle Rect => RenderingManager.GetRect(Position, Size);
 	public float ScaledTextSize => TextSize * RenderingManager.Scale;
 	public Rectangle GetTextRect
@@ -64,8 +66,27 @@ public class UIElement
 		sprite = AssetManager.GetSprite(SpriteName);
 	}
 
+	public Rectangle GetAspectRatioRectangle(Vector2 size)
+	{
+		var scale = Math.Min(Rect.Width / size.X, Rect.Height / size.Y);
+		size = new Vector2(sprite.Width * scale, sprite.Height * scale);
+
+		var pos = new Vector2(
+			Rect.X + (Rect.Width - size.X) / 2f,
+			Rect.Y + (Rect.Height - size.Y) / 2f
+		);
+
+		return new Rectangle(pos.X, pos.Y, size.X, size.Y);
+	}
+
 	public void Draw(bool hovered)
 	{
+		if (CustomDrawing != null)
+		{
+			CustomDrawing(this);
+			return;
+		}
+
 		if (Clickable)
 			Raylib.DrawRectangleLinesEx(Rect, 1, Color.White);
 
@@ -73,17 +94,11 @@ public class UIElement
 
 		if (sprite != null) //draw as correct aspect ratio contained inside Rect
 		{
-			var scale = Math.Min(Rect.Width / sprite.Width, Rect.Height / sprite.Height);
-			var size = new Vector2(sprite.Width * scale, sprite.Height * scale);
-
-			var pos = new Vector2(
-				Rect.X + (Rect.Width - size.X) / 2f,
-				Rect.Y + (Rect.Height - size.Y) / 2f
-			);
+			var rectangle = GetAspectRatioRectangle(new(sprite.Width, sprite.Height));
 
 			Raylib.DrawTexturePro(sprite.Texture,
 				new Rectangle(0, 0, sprite.Width, sprite.Height),
-				new Rectangle(pos.X, pos.Y, size.X, size.Y),
+				rectangle,
 				Vector2.Zero, 0, tint);
 		}
 
