@@ -47,7 +47,6 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 	{
 		base.Init(gameplayState);
 		Groups.Add(nameof(IInteractable));
-		Groups.Add("door");
 
 		hitCount = 3;
 		lifeCooldown = 5;
@@ -117,6 +116,8 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 
 		if (IsActive)
 		{
+			var openPos = doorPos + (slideDirection * 2.5f);
+
 			TweenManager.Add(new Tween<Vector2>(
 				() => doorPos,
 				pos =>
@@ -132,8 +133,8 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 						i.Recalculate();
 					}
 				},
-				IsOpen? doorPos + (slideDirection * 2.5f) : initialPos,
-				0.1f, null, tweenID).SetEasing(Easing.QuadInOut));
+				IsOpen? openPos : initialPos,
+				0.5f, null, tweenID).SetEasing(Easing.QuadInOut));
 		}
 	}
 

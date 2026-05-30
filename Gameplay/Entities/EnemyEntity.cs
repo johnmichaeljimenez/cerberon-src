@@ -103,7 +103,7 @@ public class EnemyEntity : CharacterEntity
 			return;
 		}
 
-		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup("door"))
+		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(DoorEntity)))
 		{
 			var door = i as DoorEntity;
 			if (door.IsDestroyed || door.IsOpen || !door.IsActive)
