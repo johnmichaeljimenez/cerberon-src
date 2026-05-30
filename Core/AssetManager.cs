@@ -30,7 +30,7 @@ public class Sprite : IDisposable
 		Raylib.UnloadTexture(Texture);
 	}
 
-	public void Draw9Sliced(Vector2 position, Vector2 size, float rotation, int sliceAmt = 36, Color? tint = null)
+	public void Draw9Sliced(Vector2 position, Vector2 size, float rotation, int sliceAmt = 64, Color? tint = null)
 	{
 		var tintColor = tint ?? Color.White;
 
