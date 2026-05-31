@@ -28,6 +28,7 @@ public class Wall
 	public WallFlags Flags { get; set; }
 	public CollisionHeight Height { get; set; }
 	public bool Enabled { get; set; } = true;
+	public BaseEntity Entity { get; set; }
 
 	public void Recalculate()
 	{
@@ -50,6 +51,7 @@ public struct LinecastHit
 {
 	public Wall Wall;
 	public CircleBody Body;
+	public BaseEntity HitEntity;
 	public float Distance;
 	public Vector2 From;
 	public Vector2 HitPosition;
@@ -248,6 +250,7 @@ public class CollisionManager : BaseManager
 						hasHit = true;
 						hitInfo.Wall = w;
 						hitInfo.Body = null;
+						hitInfo.HitEntity = w.Entity;
 						hitInfo.HitPosition = intersection;
 						hitInfo.Distance = MathF.Sqrt(distSq);
 					}
@@ -293,6 +296,7 @@ public class CollisionManager : BaseManager
 							Vector2 hitPos = from + rayDir * t;
 							hitInfo.Wall = null;
 							hitInfo.Body = other;
+							hitInfo.HitEntity = other.SourceEntity;
 							hitInfo.HitPosition = hitPos;
 							hitInfo.Distance = t;
 						}
@@ -318,6 +322,14 @@ public class CollisionManager : BaseManager
 		float t = Vector2.Dot(p - a, ab) / abLenSq;
 		t = Math.Clamp(t, 0f, 1f);
 		return a + ab * t;
+	}
+
+	public static bool CircleIntersectsSegment(Vector2 a, Vector2 b, Vector2 c, float r)
+	{
+		var closest = GetClosestPointOnSegment(a, b, c);
+		var distSq = (closest - c).LengthSquared();
+
+		return distSq <= r * r;
 	}
 
 	public override void DrawImGui()
