@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using Main.Core;
+using Main.Gameplay.Managers;
+using Main.Helpers;
 
 namespace Main.Gameplay.Entities;
 
@@ -10,22 +12,32 @@ public class BreakableEntity : BaseEntity, ICombatEntity
 	public int HitCount { get; set; }
 
 	[JsonProperty]
-	[DefaultValue(2)]
+	[DefaultValue(0.5f)]
 	public float HurtboxRadius { get; set; }
 
 	[JsonProperty]
-	public string BreakSpriteName { get; set; }
+	public string BreakSpriteName { get; set; } //TODO: use this
 
 	public bool IsDead { get; private set; }
 
 	private int hits;
+	private CircleBody circleBody;
 
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
 		Groups.Add(nameof(ICombatEntity));
+		circleBody = gameplayState.GetManager<CollisionManager>().AddBody(Position, HurtboxRadius, CollisionHeight.Low, this);
 
 		hits = HitCount;
+	}
+
+	public override void Dispose()
+	{
+		if (circleBody != null)
+			gameplayState.GetManager<CollisionManager>().RemoveBody(circleBody);
+			
+		base.Dispose();
 	}
 
 	public bool ApplyDamage(int amt, CharacterEntity from)
@@ -51,11 +63,20 @@ public class BreakableEntity : BaseEntity, ICombatEntity
 	{
 		Game.Instance.Camera.Shake(3f, null);
 		AudioHandler.PlaySound("break", Position);
+
+		Despawn();
 	}
 
 	public void OnHit(float amt, bool isDead, CharacterEntity from)
 	{
 		Game.Instance.Camera.Shake(0.8f, null);
 		AudioHandler.PlaySound("break", Position);
+	}
+
+	public override void Draw()
+	{
+		base.Draw();
+
+		Raylib.DrawCircleV(Position, HurtboxRadius, Color.DarkBlue);
 	}
 }

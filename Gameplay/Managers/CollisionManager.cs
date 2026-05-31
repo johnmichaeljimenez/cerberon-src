@@ -262,8 +262,8 @@ public class CollisionManager : BaseManager
 		{
 			foreach (var other in bodies)
 			{
-				if (height > other.Height)
-					continue;
+				// if (height > other.Height)
+				// 	continue;
 
 				if (other == null ||
 					other == fromBody ||
