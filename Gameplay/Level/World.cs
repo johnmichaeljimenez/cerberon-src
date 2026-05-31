@@ -62,6 +62,8 @@ public class World : IDisposable //aka Level loader
 
 	[JsonIgnore]
 	public NodeData NodeData { get; private set; }
+	
+	private readonly List<BaseEntity> emptyList = new();
 
 	public static void InitRegistry()
 	{
@@ -408,7 +410,7 @@ public class World : IDisposable //aka Level loader
 	public List<BaseEntity> GetEntitiesByGroup(string groupName)
 	{
 		if (!EntityGroups.ContainsKey(groupName))
-			return new(); //TODO: optimize
+			return emptyList;
 
 		return EntityGroups[groupName];
 	}
