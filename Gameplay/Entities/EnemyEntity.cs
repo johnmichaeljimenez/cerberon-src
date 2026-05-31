@@ -111,7 +111,7 @@ public class EnemyEntity : CharacterEntity
 
 			d = i.Position - Position;
 			if (d.Length() <= 5f)
-				door.Hit();
+				door.ApplyDamage(1, this);
 		}
 	}
 
@@ -318,7 +318,7 @@ public class EnemyEntity : CharacterEntity
 		}
 	}
 
-	protected override void OnDeath()
+	public override void OnDeath()
 	{
 		base.OnDeath();
 

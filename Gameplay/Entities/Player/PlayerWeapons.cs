@@ -124,8 +124,8 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 	public readonly Signal<Weapon> OnWeaponSelected = new();
 	public readonly Signal<Weapon> OnWeaponAmmoChanged = new();
 	public readonly Signal<Weapon> OnWeaponFire = new();
-	public readonly Signal<(Weapon, BaseEntity, bool)> OnWeaponHit = new();
-	public readonly Signal<(Weapon, BaseEntity, bool)> OnWeaponKill = new();
+	public readonly Signal<(Weapon, ICombatEntity, bool)> OnWeaponHit = new();
+	public readonly Signal<(Weapon, ICombatEntity, bool)> OnWeaponKill = new();
 
 	public float NormalizedTotalAmmoCount { get; private set; }
 	public float Accuracy => fireCount < 3 ? 0 : (float)hitCount / (float)fireCount;
@@ -176,7 +176,7 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 	public override void Update(float dt, float udt)
 	{
 		base.Update(dt, udt);
-		
+
 		if (muzzleFlash != null)
 		{
 			if (muzzleFlash.Color.A > 0)
@@ -283,7 +283,7 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 						if (CurrentWeapon.SpreadCount == 0)
 						{
 							gameplayState.GetManager<CollisionManager>().Linecast(Entity.Position, Entity.Position + (Entity.FacingDirection * 100), CollisionHeight.Mid, out weaponHit, Entity.CollisionBody);
-							if (weaponHit.Body != null && weaponHit.Body.SourceEntity is EnemyEntity z)
+							if (weaponHit.HitEntity != null && weaponHit.HitEntity is ICombatEntity z)
 							{
 								hitCount++;
 								HitBullet(z);
@@ -300,7 +300,7 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 								var d = Entity.GetFacingAngleOffset(a);
 
 								gameplayState.GetManager<CollisionManager>().Linecast(Entity.Position, Entity.Position + (d * 100), CollisionHeight.Mid, out spreadHit, Entity.CollisionBody);
-								if (spreadHit.Body != null && spreadHit.Body.SourceEntity is EnemyEntity z)
+								if (spreadHit.HitEntity != null && spreadHit.HitEntity is ICombatEntity z)
 								{
 									if (!hit)
 									{
@@ -330,6 +330,11 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 		}
 	}
 
+	private bool BulletHit(Vector2 from, Vector2 to, ICombatEntity combatEntity)
+	{
+		return !CollisionManager.CircleIntersectsSegment(from, to, combatEntity.Position, combatEntity.HurtboxRadius);
+	}
+
 	private void SwitchWeapon(int i)
 	{
 		Entity.Animator.Stop(); //bypass hierarchy to switch animations immediately
@@ -339,11 +344,14 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 		AudioHandler.PlaySound(SFX_EQUIP);
 	}
 
-	private void HitBullet(EnemyEntity z)
+	private void HitBullet(ICombatEntity z)
 	{
 		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
 		OnWeaponHit.Publish((CurrentWeapon, z, false));
-		ApplyKick(z, Raymath.Vector2Normalize(z.Position - Entity.Position), CurrentWeapon.RangedKick);
+
+		if (z is EnemyEntity e)
+			ApplyKick(e, Raymath.Vector2Normalize(z.Position - Entity.Position), CurrentWeapon.RangedKick);
+
 		z.ApplyDamage(CurrentWeapon.Damage, Entity);
 
 		if (z.IsDead)
@@ -367,9 +375,9 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 			return;
 
 		var hit = false;
-		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(EnemyEntity)))
+		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(ICombatEntity)))
 		{
-			var z = i as EnemyEntity;
+			var z = i as ICombatEntity;
 			if (z.IsDead)
 				continue;
 
@@ -378,7 +386,10 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 				continue;
 
 			OnWeaponHit.Publish((CurrentWeapon, z, true));
-			ApplyKick(z, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
+
+			if (z is CharacterEntity c)
+				ApplyKick(c, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
+
 			z.ApplyDamage(CurrentWeapon.AltDamage, Entity);
 			hit = true;
 

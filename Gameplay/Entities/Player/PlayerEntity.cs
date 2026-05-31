@@ -209,7 +209,7 @@ public class PlayerEntity : CharacterEntity
 		LightingSystem.RemoveLight(lightSelf);
 	}
 
-	protected override void OnHit(float amt, bool isDead, CharacterEntity from)
+	public override void OnHit(float amt, bool isDead, CharacterEntity from)
 	{
 		base.OnHit(amt, isDead, from);
 
@@ -222,7 +222,7 @@ public class PlayerEntity : CharacterEntity
 		RenderingManager.SetFilter(RenderingManager.Filters.Hurt, true, 0.4f, Easing.QuadInOutLoop);
 	}
 
-	protected override void OnDeath()
+	public override void OnDeath()
 	{
 		base.OnDeath();
 		SetActive(false); //TODO: spawn a player death animation false entity

@@ -7,7 +7,7 @@ using static Main.Gameplay.Managers.WaypointManager;
 
 namespace Main.Gameplay.Entities;
 
-public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc (real npc, not the interactive static mannequin npcs like in other games). all of them share a lot of stuff here
+public abstract class CharacterEntity : BaseEntity, ICombatEntity //used by player, enemy, npc (real npc, not the interactive static mannequin npcs like in other games). all of them share a lot of stuff here
 {
 	public enum Teams
 	{
@@ -64,13 +64,18 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 
 	protected Vector2 actualVelocity { get; private set; }
 
+	[JsonProperty]
+	public float HurtboxRadius { get; set; }
+
 	public readonly Signal<Vector2> OnPositionChanged = new();
 
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
+		Groups.Add(nameof(ICombatEntity));
 
 		HP = MaxHP;
+		HurtboxRadius = Radius;
 		CollisionBody = gameplayState.GetManager<CollisionManager>().AddBody(Position, Radius * Scale, CollisionHeight.Mid, this);
 
 		Animator = new Animator();
@@ -170,7 +175,6 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		if (IsDead)
 			return false;
 
-		DecalSystem.PaintBlood(Position);
 		HP -= amt;
 		HP = Math.Max(0, HP);
 		OnHit(amt, HP <= 0, from);
@@ -189,12 +193,12 @@ public abstract class CharacterEntity : BaseEntity //used by player, enemy, npc 
 		return true;
 	}
 
-	protected virtual void OnHit(float amt, bool isDead, CharacterEntity from)
+	public virtual void OnHit(float amt, bool isDead, CharacterEntity from)
 	{
-
+		DecalSystem.PaintBlood(Position);
 	}
 
-	protected virtual void OnDeath()
+	public virtual void OnDeath()
 	{
 		velocity = Vector2.Zero;
 		CollisionBody.Enabled = false;

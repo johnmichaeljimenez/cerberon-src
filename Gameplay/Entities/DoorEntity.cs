@@ -9,7 +9,7 @@ using Tween;
 
 namespace Main.Gameplay.Entities;
 
-public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
+public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatEntity
 {
 	private readonly Vector2 DEFAULT_SIZE = new Vector2(3, 1);
 
@@ -33,7 +33,10 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 	public List<Wall> Colliders { get; set; } = new();
 
 	public InteractionType InteractionType => InteractionType.Use;
-	private Shadow shadow;	//there was a current bug in lighting system where static (one shot shadow) lights in level preserve the original shadow of this door, and I decided to not fix it as it looks like it renders the doorframe even for a 2d topdown view.
+
+	public float HurtboxRadius => 2f;
+
+	private Shadow shadow;  //there was a current bug in lighting system where static (one shot shadow) lights in level preserve the original shadow of this door, and I decided to not fix it as it looks like it renders the doorframe even for a 2d topdown view.
 
 	private float lifeCooldown; //if a door is closed, enemies can bash it repeatedly until it opens, and player cannot close it immediately during certain cooldown
 	private int hitCount;
@@ -42,11 +45,14 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 	private Vector2 doorPos;
 	private string tweenID;
 	private Vector2 slideDirection;
+	public bool IsDead { get; private set; }
 
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
 		Groups.Add(nameof(IInteractable));
+		Groups.Add(nameof(ICombatEntity));
+		IsDead = false;
 
 		hitCount = 3;
 		lifeCooldown = 5;
@@ -70,23 +76,10 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 
 		gameplayState.GetManager<CollisionManager>().AddWalls(Position, Size, Colliders, Wall.WallFlags.DrawOverlay, CollisionHeight.High, false, Rotation);
 		shadow = LightingSystem.AddShadow(Position, Size, Rotation);
-	}
 
-	public void Hit()
-	{
-		if (hitCount <= 0)
-			return;
-
-		Game.Instance.Camera.Shake(0.8f, null);
-		AudioHandler.PlaySound("knock-slam", Position);
-		hitCount -= 1;
-
-		if (hitCount == 0)
+		foreach (var i  in Colliders)
 		{
-			Game.Instance.Camera.Shake(3f, null);
-			AudioHandler.PlaySound("break", Position);
-			SetOpen(true);
-			lifeCooldown = 5;
+			i.Entity = this;
 		}
 	}
 
@@ -133,8 +126,8 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 						i.Recalculate();
 					}
 				},
-				IsOpen? openPos : initialPos,
-				0.5f, null, tweenID).SetEasing(Easing.QuadInOut));
+				IsOpen ? openPos : initialPos,
+				IsOpen && hitCount <= 0? 0.1f : 0.5f, null, tweenID).SetEasing(Easing.QuadInOut));
 		}
 	}
 
@@ -167,6 +160,7 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 		{
 			if (Utils.Countdown(ref lifeCooldown, dt))
 			{
+				IsDead = false;
 				hitCount = 3;
 			}
 		}
@@ -175,5 +169,36 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier
 	public void OnNodeAdded(WaypointManager.Node node)
 	{
 		node.NodeFlags = WaypointManager.NodeFlags.Blocked;
+	}
+
+	public bool ApplyDamage(int amt, CharacterEntity from)
+	{
+		if (hitCount <= 0)
+			return false;
+
+		hitCount -= 1;
+		OnHit(1, hitCount == 0, from);
+		if (hitCount == 0)
+		{
+			IsDead = true;
+			SetOpen(true);
+			lifeCooldown = 5;
+
+			OnDeath();
+		}
+
+		return true;
+	}
+
+	public void OnHit(float amt, bool isDead, CharacterEntity from)
+	{
+		Game.Instance.Camera.Shake(0.8f, null);
+		AudioHandler.PlaySound("knock-slam", Position);
+	}
+
+	public void OnDeath()
+	{
+		Game.Instance.Camera.Shake(3f, null);
+		AudioHandler.PlaySound("break", Position);
 	}
 }
