@@ -7,12 +7,19 @@ public class MainMenuScreen : BaseScreen
 {
 	public override string UIGroup => "MainMenu";
 
-	private Sprite logoDefault, logoGlow;
+	private Sprite[] frames;
+	private int frameIndex;
+	private readonly EMA flickerEMA = new(0.1f);
 
 	public MainMenuScreen(object context) : base(context)
 	{
-		logoDefault = AssetManager.GetSprite("ui/logo");
-		logoGlow = AssetManager.GetSprite("ui/logo-glow");
+		frames = [
+			AssetManager.GetSprite("ui/logo"),
+			AssetManager.GetSprite("ui/logo-glow"),
+			AssetManager.GetSprite("ui/logo-glow-2"),
+		];
+
+		frameIndex = RNG.Range(0, frames.Length);
 	}
 
 	public override void OnBack()
@@ -28,7 +35,18 @@ public class MainMenuScreen : BaseScreen
 		title.CustomDrawing = (e) =>
 		{
 			var flicker = QuakeFlicker.GetIntensity();
-			var sprite = flicker >= 0.8f ? logoGlow : logoDefault;
+			flickerEMA.AddSample(flicker);
+			if (flickerEMA.Current >= 0.85f)
+			{
+				frameIndex++;
+				if (frameIndex >= frames.Length)
+				{
+					frameIndex = 0;
+					frames.Shuffle();
+				}
+			}
+
+			var sprite = frames[frameIndex];
 			var r = e.GetAspectRatioRectangle(new(sprite.Width, sprite.Height));
 
 			Raylib.DrawTexturePro(sprite.Texture,
