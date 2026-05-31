@@ -173,7 +173,7 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatE
 
 	public bool ApplyDamage(int amt, CharacterEntity from)
 	{
-		if (hitCount <= 0)
+		if (hitCount <= 0 || !Interactable)
 			return false;
 
 		hitCount -= 1;
