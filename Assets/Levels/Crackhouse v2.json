@@ -148,6 +148,26 @@
       },
       "Rotation": -90.0,
       "IsActive": true
+    },
+    {
+      "Type": "Breakable",
+      "NameTag": "",
+      "Position": {
+        "X": -12.073,
+        "Y": 2.619
+      },
+      "Rotation": 0.0,
+      "IsActive": true
+    },
+    {
+      "Type": "Breakable",
+      "NameTag": "",
+      "Position": {
+        "X": -10.96,
+        "Y": 1.76
+      },
+      "Rotation": 0.0,
+      "IsActive": true
     }
   ],
   "EnvironmentSprites": [
