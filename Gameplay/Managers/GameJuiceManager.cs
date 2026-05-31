@@ -15,6 +15,8 @@ public class GameJuiceManager : BaseManager
 	public static float ZoomClearance;
 	[DataConfig(0.5f)]
 	public static float ZoomWeight;
+	[DataConfig(3)]
+	public static float HealZoom;
 
 	private float currentZoom;
 	private float zoomClearance;
@@ -69,7 +71,7 @@ public class GameJuiceManager : BaseManager
 	{
 		var cam = Game.Instance.Camera;
 		var a = 0;
-		var b = 1;
+		var b = HealZoom;
 		var to = healing ? b : a;
 		var duration = healing ? 0.4f : 0.7f;
 
