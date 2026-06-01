@@ -21,7 +21,7 @@ public class MenuState : IGameState
 
 	public void Draw()
 	{
-		
+		Raylib.ClearBackground(Color.DarkGray);
 	}
 
 	public void DrawImGui()

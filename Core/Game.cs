@@ -25,6 +25,8 @@ public class Game
     private IGameState nextState;
     private bool requestExit;
 
+    public bool IsIngame { get; private set; }
+
 
     public CameraController Camera { get; private set; }
 
@@ -127,6 +129,7 @@ public class Game
     private void SetState(IGameState state)
     {
         nextState = state;
+        IsIngame = state is GameplayState;
     }
 
     private void Draw()

@@ -255,7 +255,7 @@ public static class RenderingManager
 
     public static void DrawToScreen(RenderTexture2D target)
     {
-        var drawPost = PostShader.Id != 0 && !GameplayState.EnableDrawDebug;
+        var drawPost = PostShader.Id != 0 && !GameplayState.EnableDrawDebug && Game.Instance.IsIngame;
         if (drawPost)
         {
             LightingSystem.Draw();
