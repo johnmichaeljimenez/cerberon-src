@@ -2,26 +2,28 @@
 setlocal enabledelayedexpansion
 
 set "SOURCE=%~dp0"
-set "TARGET=%~dp0../Assets"
+for %%A in ("%~dp0..\Assets") do set "TARGET=%%~fA"
 
-echo Starting PSD to PNG conversion (recursive + mirror folders)
+echo Starting PSD to PNG conversion (recursive + mirror folders)...
 echo Source: %SOURCE%
 echo Target: %TARGET%
 echo.
 
 for /r "%SOURCE%" %%F in (*.psd) do (
-    set "filedir=%%~dpF"
-    set "reldir=!filedir:%SOURCE%=!"
-    set "outdir=%TARGET%!reldir!"
-
+    set "fullpath=%%F"
+    
+    set "relpath=!fullpath:%SOURCE%=!"
+    
+    set "outfile=%TARGET%\!relpath!"
+    set "outfile=!outfile:.psd=.png!"
+    
+    for %%D in ("!outfile!") do set "outdir=%%~dpD"
     if not exist "!outdir!" (
         mkdir "!outdir!"
         echo   Created folder: !outdir!
     )
 
-    set "outfile=!outdir!%%~nF.png"
-
-    echo   Converting: %%~nxF  into  %%~nF.png
+    echo   Converting: %%~nxF  into  !relpath:.psd=.png!
     magick "%%F[0]" "!outfile!"
 )
 
