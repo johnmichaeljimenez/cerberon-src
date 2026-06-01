@@ -1,7 +1,7 @@
-using Main.Gameplay.Entities;
-using Main.Helpers;
+using Cerberon.Gameplay.Entities;
+using Cerberon.Helpers;
 
-namespace Main.Gameplay.Managers;
+namespace Cerberon.Gameplay.Managers;
 
 
 public enum CollisionHeight //all of these block pathfinding waypoints

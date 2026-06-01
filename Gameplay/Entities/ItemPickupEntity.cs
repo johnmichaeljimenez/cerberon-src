@@ -1,9 +1,9 @@
-using Main.Core;
-using Main.Gameplay.Entities.Player;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Gameplay.Entities.Player;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 
-namespace Main.Gameplay.Entities;
+namespace Cerberon.Gameplay.Entities;
 
 public class ItemPickupEntity : BaseEntity, IInteractable
 {

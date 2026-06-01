@@ -1,6 +1,6 @@
-using Main.Core;
+using Cerberon.Core;
 
-namespace Main.UI;
+namespace Cerberon.UI;
 
 public abstract class BaseScreen : IDisposable
 {

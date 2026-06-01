@@ -1,9 +1,9 @@
-using Main.Core;
-using Main.Gameplay.Entities.Player;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Gameplay.Entities.Player;
+using Cerberon.Helpers;
 using Tween;
 
-namespace Main.Gameplay.Managers;
+namespace Cerberon.Gameplay.Managers;
 
 public class GameJuiceManager : BaseManager
 {

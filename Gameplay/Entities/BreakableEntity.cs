@@ -1,9 +1,9 @@
 using System.ComponentModel;
-using Main.Core;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 
-namespace Main.Gameplay.Entities;
+namespace Cerberon.Gameplay.Entities;
 
 public class BreakableEntity : BaseEntity, ICombatEntity
 {

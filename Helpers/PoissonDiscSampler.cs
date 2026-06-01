@@ -1,7 +1,7 @@
 // Based on Sebastian Lague's implementation
 // Original: https://github.com/SebLague/Poisson-Disc-Sampling
 
-namespace Main.Helpers
+namespace Cerberon.Helpers
 {
     public static class PoissonDisc
     {

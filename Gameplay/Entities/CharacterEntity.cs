@@ -1,11 +1,11 @@
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 using Tween;
-using static Main.Gameplay.Managers.WaypointManager;
+using static Cerberon.Gameplay.Managers.WaypointManager;
 
-namespace Main.Gameplay.Entities;
+namespace Cerberon.Gameplay.Entities;
 
 public abstract class CharacterEntity : BaseEntity, ICombatEntity //used by player, enemy, npc (real npc, not the interactive static mannequin npcs like in other games). all of them share a lot of stuff here
 {

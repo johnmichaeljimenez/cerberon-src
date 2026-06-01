@@ -1,7 +1,6 @@
-﻿using Main.Core;
-using Raylib_cs;
+﻿using Cerberon.Core;
 
-namespace Main;
+namespace Cerberon;
 
 public class Program
 {

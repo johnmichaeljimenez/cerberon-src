@@ -1,8 +1,8 @@
-using Main.Core;
-using Main.Gameplay.Entities;
-using Main.Gameplay.Managers;
+using Cerberon.Core;
+using Cerberon.Gameplay.Entities;
+using Cerberon.Gameplay.Managers;
 
-namespace Main.Gameplay.Events;
+namespace Cerberon.Gameplay.Events;
 
 public abstract class BaseCommand
 {

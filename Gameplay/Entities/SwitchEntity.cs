@@ -1,7 +1,7 @@
 using System.ComponentModel;
-using Main.Gameplay.Entities.Player;
+using Cerberon.Gameplay.Entities.Player;
 
-namespace Main.Gameplay.Entities;
+namespace Cerberon.Gameplay.Entities;
 
 public class SwitchEntity : BaseEntity, IInteractable
 {

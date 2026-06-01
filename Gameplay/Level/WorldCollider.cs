@@ -1,6 +1,6 @@
-using Main.Gameplay.Managers;
+using Cerberon.Gameplay.Managers;
 
-namespace Main.Gameplay.Level;
+namespace Cerberon.Gameplay.Level;
 
 [Serializable]
 //TODO: try to reuse Wall class

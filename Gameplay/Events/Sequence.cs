@@ -1,4 +1,4 @@
-namespace Main.Gameplay.Events;
+namespace Cerberon.Gameplay.Events;
 
 public class Sequence
 {

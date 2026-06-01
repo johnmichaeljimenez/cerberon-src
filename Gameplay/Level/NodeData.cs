@@ -1,11 +1,11 @@
 using System.Security.Cryptography;
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Managers;
-using Main.Helpers;
-using static Main.Gameplay.Managers.WaypointManager;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
+using static Cerberon.Gameplay.Managers.WaypointManager;
 
-namespace Main.Gameplay.Level;
+namespace Cerberon.Gameplay.Level;
 
 public struct NodeProperty
 {

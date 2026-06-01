@@ -1,4 +1,4 @@
-namespace Main.Helpers;
+namespace Cerberon.Helpers;
 
 public class EMA
 {

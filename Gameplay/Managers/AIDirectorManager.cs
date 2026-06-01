@@ -1,10 +1,10 @@
-using Main.Core;
-using Main.Gameplay.Entities;
-using Main.Gameplay.Entities.Player;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Gameplay.Entities;
+using Cerberon.Gameplay.Entities.Player;
+using Cerberon.Helpers;
 using Tween;
 
-namespace Main.Gameplay.Managers;
+namespace Cerberon.Gameplay.Managers;
 
 
 //TODO: make all magic numbers editable outside

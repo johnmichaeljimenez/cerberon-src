@@ -1,13 +1,13 @@
 using System.ComponentModel;
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Entities.Player;
-using Main.Gameplay.Level;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Entities.Player;
+using Cerberon.Gameplay.Level;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 using Tween;
 
-namespace Main.Gameplay.Entities;
+namespace Cerberon.Gameplay.Entities;
 
 public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatEntity
 {

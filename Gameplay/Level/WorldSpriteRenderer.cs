@@ -1,6 +1,6 @@
-using Main.Core;
+using Cerberon.Core;
 
-namespace Main.Gameplay.Level;
+namespace Cerberon.Gameplay.Level;
 
 [Serializable]
 public class WorldSpriteRenderer //same with this

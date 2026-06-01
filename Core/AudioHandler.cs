@@ -1,7 +1,7 @@
-using Main.Helpers;
+using Cerberon.Helpers;
 using Tween;
 
-namespace Main.Core;
+namespace Cerberon.Core;
 
 public class MusicSource    //TODO: add float array to tell the Music track which are the nearest points to transition instead of doing it immediately on current time
 {

@@ -1,4 +1,4 @@
-namespace Main;
+namespace Cerberon.Helpers;
 
 public class HysteresisState<T> where T : Enum
 {

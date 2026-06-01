@@ -1,9 +1,9 @@
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 
-namespace Main.Gameplay.Entities;
+namespace Cerberon.Gameplay.Entities;
 
 public class EnemyEntity : CharacterEntity
 {

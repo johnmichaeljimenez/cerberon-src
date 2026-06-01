@@ -1,10 +1,10 @@
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 using Tween;
 
-namespace Main.Gameplay.Entities.Player;
+namespace Cerberon.Gameplay.Entities.Player;
 
 //put all of them here for now, component architecture is a tomorrow's problem if i can mow down zombies right now with this code. if this is a god class then call this project mt. olympus for now
 //UPDATE: added PlayerWeapons.cs (moved weapon-related stuff there) it can be considered as component now, but from now on each component that I will make must be "deserving immediately now" of being a component. otherwise they will stay for now in each of their own entity classes.

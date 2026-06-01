@@ -1,4 +1,4 @@
-namespace Main.Gameplay.Entities;
+namespace Cerberon.Gameplay.Entities;
 
 public interface IEntityModule : IDisposable //for generic use only
 {

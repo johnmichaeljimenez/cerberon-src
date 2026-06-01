@@ -1,10 +1,10 @@
-using Main.Core;
-using Main.Gameplay;
-using Main.Gameplay.Entities.Player;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Gameplay;
+using Cerberon.Gameplay.Entities.Player;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 
-namespace Main.UI;
+namespace Cerberon.UI;
 
 public class HUDScreen : BaseScreen
 {

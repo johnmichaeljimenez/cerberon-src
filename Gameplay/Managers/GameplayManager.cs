@@ -1,11 +1,11 @@
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Entities.Player;
-using Main.Gameplay.Events;
-using Main.Helpers;
-using Main.UI;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Entities.Player;
+using Cerberon.Gameplay.Events;
+using Cerberon.Helpers;
+using Cerberon.UI;
 
-namespace Main.Gameplay.Managers;
+namespace Cerberon.Gameplay.Managers;
 
 public class GameplayManager : BaseManager
 {

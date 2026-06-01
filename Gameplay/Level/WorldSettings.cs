@@ -1,4 +1,4 @@
-namespace Main.Gameplay.Level;
+namespace Cerberon.Gameplay.Level;
 
 public struct WorldSettings //struct so that it cannot be null
 {

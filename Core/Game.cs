@@ -1,10 +1,10 @@
-using Main.Effects;
-using Main.Gameplay;
-using Main.Helpers;
-using Main.UI;
+using Cerberon.Effects;
+using Cerberon.Gameplay;
+using Cerberon.Helpers;
+using Cerberon.UI;
 using Tween;
 
-namespace Main.Core;
+namespace Cerberon.Core;
 
 public interface IGameState
 {

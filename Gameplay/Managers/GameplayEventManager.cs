@@ -1,8 +1,8 @@
 using System.Text;
-using Main.Core;
-using Main.Gameplay.Events;
+using Cerberon.Core;
+using Cerberon.Gameplay.Events;
 
-namespace Main.Gameplay.Managers;
+namespace Cerberon.Gameplay.Managers;
 
 public class GameplayEventManager : BaseManager
 {

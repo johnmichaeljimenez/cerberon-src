@@ -1,7 +1,7 @@
-using Main.Helpers;
+using Cerberon.Helpers;
 using Tween;
 
-namespace Main.Core;
+namespace Cerberon.Core;
 
 public class CameraController
 {

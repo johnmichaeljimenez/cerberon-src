@@ -1,8 +1,8 @@
-using Main.Effects;
-using Main.Gameplay;
+using Cerberon.Effects;
+using Cerberon.Gameplay;
 using Tween;
 
-namespace Main.Core;
+namespace Cerberon.Core;
 
 public static class RenderingManager
 {

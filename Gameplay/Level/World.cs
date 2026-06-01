@@ -1,11 +1,11 @@
 using System.Reflection;
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Entities;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Entities;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 
-namespace Main.Gameplay.Level;
+namespace Cerberon.Gameplay.Level;
 
 [Serializable]
 public class World : IDisposable //aka Level loader

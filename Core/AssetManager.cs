@@ -1,7 +1,7 @@
-using Main.Helpers;
+using Cerberon.Helpers;
 using System.Text.RegularExpressions;
 
-namespace Main.Core;
+namespace Cerberon.Core;
 
 public class Sprite : IDisposable
 {

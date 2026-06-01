@@ -1,7 +1,7 @@
-using Main.Core;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Helpers;
 
-namespace Main.Effects;
+namespace Cerberon.Effects;
 
 public class Shadow
 {

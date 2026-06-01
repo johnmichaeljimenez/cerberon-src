@@ -1,6 +1,6 @@
-using Main.Helpers;
+using Cerberon.Helpers;
 
-namespace Main.Core;
+namespace Cerberon.Core;
 
 public enum CursorType
 {

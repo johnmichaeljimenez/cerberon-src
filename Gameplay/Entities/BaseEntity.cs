@@ -1,7 +1,7 @@
 using System.ComponentModel;
-using Main.Core;
+using Cerberon.Core;
 
-namespace Main.Gameplay.Entities;
+namespace Cerberon.Gameplay.Entities;
 
 public abstract class BaseEntity : IDisposable
 {

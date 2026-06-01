@@ -1,9 +1,9 @@
-using Main.Core;
-using Main.Gameplay.Entities;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Gameplay.Entities;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 
-namespace Main.Gameplay.Events;
+namespace Cerberon.Gameplay.Events;
 
 public class EventSetup : IDisposable
 {

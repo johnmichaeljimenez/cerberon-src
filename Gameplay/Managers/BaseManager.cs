@@ -1,4 +1,4 @@
-namespace Main.Gameplay.Managers;
+namespace Cerberon.Gameplay.Managers;
 
 public abstract class BaseManager : IDisposable
 {

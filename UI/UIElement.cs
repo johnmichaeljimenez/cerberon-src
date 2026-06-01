@@ -1,7 +1,7 @@
-using Main.Core;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Helpers;
 
-namespace Main.UI;
+namespace Cerberon.UI;
 
 public class UIElement
 {

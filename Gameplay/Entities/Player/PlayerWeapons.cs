@@ -1,10 +1,10 @@
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Managers;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
 using Tween;
 
-namespace Main.Gameplay.Entities.Player;
+namespace Cerberon.Gameplay.Entities.Player;
 
 public class Weapon
 {

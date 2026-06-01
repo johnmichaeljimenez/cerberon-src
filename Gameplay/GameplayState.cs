@@ -1,11 +1,11 @@
-using Main.Core;
-using Main.Effects;
-using Main.Gameplay.Level;
-using Main.Gameplay.Managers;
-using Main.Helpers;
-using Main.UI;
+using Cerberon.Core;
+using Cerberon.Effects;
+using Cerberon.Gameplay.Level;
+using Cerberon.Gameplay.Managers;
+using Cerberon.Helpers;
+using Cerberon.UI;
 
-namespace Main.Gameplay;
+namespace Cerberon.Gameplay;
 
 public class GameplayState : IGameState
 {

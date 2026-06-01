@@ -1,6 +1,6 @@
-using Main.Core;
+using Cerberon.Core;
 
-namespace Main.Gameplay.Entities.Player;
+namespace Cerberon.Gameplay.Entities.Player;
 
 public enum InteractionType
 {

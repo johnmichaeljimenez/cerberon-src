@@ -1,9 +1,9 @@
-using Main.Gameplay.Entities;
-using Main.Gameplay.Level;
+using Cerberon.Gameplay.Entities;
+using Cerberon.Gameplay.Level;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
-namespace Main.Helpers;
+namespace Cerberon.Helpers;
 
 public class EntityJsonConverter : JsonConverter<BaseEntity>
 {

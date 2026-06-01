@@ -1,8 +1,8 @@
-using Main.Core;
-using Main.Gameplay;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Gameplay;
+using Cerberon.Helpers;
 
-namespace Main.UI;
+namespace Cerberon.UI;
 
 public class PauseMenuScreen : BaseScreen
 {

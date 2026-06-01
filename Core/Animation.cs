@@ -1,4 +1,4 @@
-namespace Main.Core;
+namespace Cerberon.Core;
 
 [Serializable]
 public class Animation //this is the "asset"

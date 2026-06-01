@@ -1,6 +1,6 @@
-using Main.Core;
+using Cerberon.Core;
 
-namespace Main.Helpers;
+namespace Cerberon.Helpers;
 
 public static class Utils
 {

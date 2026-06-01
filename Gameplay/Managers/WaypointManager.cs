@@ -1,8 +1,8 @@
-using Main.Core;
-using Main.Gameplay.Level;
-using Main.Helpers;
+using Cerberon.Core;
+using Cerberon.Gameplay.Level;
+using Cerberon.Helpers;
 
-namespace Main.Gameplay.Managers;
+namespace Cerberon.Gameplay.Managers;
 
 public interface IWaypointModifier
 {

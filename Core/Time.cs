@@ -1,4 +1,4 @@
-namespace Main.Core;
+namespace Cerberon.Core;
 
 public static class Time
 {
