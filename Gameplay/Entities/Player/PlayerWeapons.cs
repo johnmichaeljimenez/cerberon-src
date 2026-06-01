@@ -346,16 +346,17 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 
 	private void HitBullet(ICombatEntity z)
 	{
-		AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
-		OnWeaponHit.Publish((CurrentWeapon, z, false));
+		if (z.ApplyDamage(CurrentWeapon.Damage, Entity))
+		{
+			AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
+			OnWeaponHit.Publish((CurrentWeapon, z, false));
 
-		if (z is EnemyEntity e)
-			ApplyKick(e, Raymath.Vector2Normalize(z.Position - Entity.Position), CurrentWeapon.RangedKick);
+			if (z is EnemyEntity e)
+				ApplyKick(e, Raymath.Vector2Normalize(z.Position - Entity.Position), CurrentWeapon.RangedKick);
 
-		z.ApplyDamage(CurrentWeapon.Damage, Entity);
-
-		if (z.IsDead)
-			OnWeaponKill.Publish((CurrentWeapon, z, false));
+			if (z.IsDead)
+				OnWeaponKill.Publish((CurrentWeapon, z, false));
+		}
 	}
 
 	public void OnAnimationBegin(string animationName)
@@ -385,16 +386,18 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 			if (!Entity.FacingDirection.IsInFront(d, 6, 90))
 				continue;
 
-			OnWeaponHit.Publish((CurrentWeapon, z, true));
+			if (z.ApplyDamage(CurrentWeapon.AltDamage, Entity))
+			{
+				OnWeaponHit.Publish((CurrentWeapon, z, true));
 
-			if (z is CharacterEntity c)
-				ApplyKick(c, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
+				if (z is CharacterEntity c)
+					ApplyKick(c, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
 
-			z.ApplyDamage(CurrentWeapon.AltDamage, Entity);
-			hit = true;
+				hit = true;
 
-			if (z.IsDead)
-				OnWeaponKill.Publish((CurrentWeapon, z, true));
+				if (z.IsDead)
+					OnWeaponKill.Publish((CurrentWeapon, z, true));
+			}
 		}
 
 		if (hit)
