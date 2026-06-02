@@ -145,6 +145,7 @@ public class Light : IDisposable
 	public bool Enabled { get; set; }
 	public VisionEffects VisionEffect { get; set; }
 	public bool Flicker { get; set; }
+	public string GroupID { get; set; } = "";
 	public float AmbientMultiplier { get; set; } //0 = no ambient influence (indoor light), 1 = full ambient influence (outdoor light)
 
 	public ShadowTypes ShadowType { get; set; }
@@ -231,6 +232,8 @@ public static class LightingSystem
 	private static readonly List<Shadow> shadows = new();
 	private static readonly List<Light> visionLights = new();
 
+	private static readonly Dictionary<string, RefCount> lightGroups = new();
+
 	private static Sprite ambientLightSprite;
 
 	public static void Init(int width, int height)
@@ -270,26 +273,27 @@ public static class LightingSystem
 		if (light.Flicker)
 			light.FlickerSeed = GetFlickerSeed();
 
+		if (string.IsNullOrEmpty(light.GroupID))
+			light.GroupID = "<default>";
+
+		if (!lightGroups.ContainsKey(light.GroupID))
+			lightGroups[light.GroupID] = new();
+
 		return light;
 	}
 
 	public static Light AddLight(string spriteID, Vector2 position, Color color, float rotation = 0f, float scale = 1, bool enabled = true, Vector2? origin = null, Light.ShadowTypes shadowType = Light.ShadowTypes.None, Light.VisionEffects visionEffect = Light.VisionEffects.Light)
 	{
-		var light = new Light(spriteID, position, color, rotation, scale, enabled, origin, shadowType);
-
-		if (visionEffect == Light.VisionEffects.Light)
-			lights.Add(light);
-		else if (visionEffect == Light.VisionEffects.VisionOnly)
-			visionLights.Add(light);
-
-		if (light.Flicker)
-			light.FlickerSeed = GetFlickerSeed();
+		var light = new Light(spriteID, position, color, rotation, scale, enabled, origin, shadowType, visionEffect);
+		AddLight(light);
 
 		return light;
 	}
 
 	public static void RemoveLight(Light light)
 	{
+		//no need to remove referenced light group entry here
+
 		light.Dispose();
 
 		if (lights.Contains(light))
@@ -312,11 +316,27 @@ public static class LightingSystem
 		shadows.Remove(shadow);
 	}
 
+	public static void DisableLightGroupState(string id)
+	{
+		if (!lightGroups.ContainsKey(id))
+			return;
+
+		lightGroups[id].Add(id);
+	}
+
+	public static void EnableLightGroupState(string id)
+	{
+		if (!lightGroups.ContainsKey(id))
+			return;
+
+		lightGroups[id].Remove(id);
+	}
+
 	private static void DrawLights(Camera2D cam, RenderTexture2D tex, List<Light> l, Color bgColor, bool visionOnly)
 	{
 		foreach (var i in l)
 		{
-			if (!i.Enabled)
+			if (!i.Enabled || lightGroups[i.GroupID].IsActive)
 				continue;
 
 			if (i.ShadowType == Light.ShadowTypes.None)
@@ -340,7 +360,7 @@ public static class LightingSystem
 				{
 					if (!shadow.Enabled)
 						continue;
-						
+
 					shadow.DrawShadow(i);
 				}
 
@@ -369,7 +389,7 @@ public static class LightingSystem
 
 				var color = Colors.Lerp(i.Color.Value(flicker), AmbientLightColor, i.AmbientMultiplier);
 				color.A = 255;
-				
+
 				ambientLightSprite.Draw9Sliced(i.Position, i.Size, i.Rotation, tint: color);
 			}
 		}
@@ -377,7 +397,7 @@ public static class LightingSystem
 		Raylib.BeginBlendMode(BlendMode.Additive);
 		foreach (var i in l)
 		{
-			if (!i.Enabled)
+			if (!i.Enabled || lightGroups[i.GroupID].IsActive)
 				continue;
 
 			var flicker = i.Flicker ? QuakeFlicker.GetIntensity(i.FlickerSeed) : 1.0f;
@@ -442,6 +462,7 @@ public static class LightingSystem
 			i.Dispose();
 		}
 
+		lightGroups.Clear();
 		lights.Clear();
 		ambientLights.Clear();
 	}
