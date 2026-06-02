@@ -1,4 +1,5 @@
 using Cerberon.Core;
+using Cerberon.Effects;
 using Cerberon.Gameplay.Entities;
 using Cerberon.Gameplay.Managers;
 
@@ -176,5 +177,23 @@ public class ShowDialogue : BaseCommand
 	public override bool Update(float dt)
 	{
 		return !wait || dm.CurrentDialogue == null || dm.CurrentDialogue.ID != id;
+	}
+}
+
+public class SetLightGroupState : BaseCommand
+{
+	private string id;
+	private bool enabled;
+
+	public SetLightGroupState(string id, bool enabled)
+	{
+		this.id = id;
+		this.enabled = enabled;
+	}
+
+	public override void OnEnter()
+	{
+		base.OnEnter();
+		LightingSystem.SetLightGroupState(id, !enabled);
 	}
 }

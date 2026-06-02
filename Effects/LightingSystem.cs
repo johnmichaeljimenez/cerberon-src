@@ -316,20 +316,12 @@ public static class LightingSystem
 		shadows.Remove(shadow);
 	}
 
-	public static void DisableLightGroupState(string id)
+	public static void SetLightGroupState(string id, bool disabled)
 	{
 		if (!lightGroups.ContainsKey(id))
 			return;
 
-		lightGroups[id].Add(id);
-	}
-
-	public static void EnableLightGroupState(string id)
-	{
-		if (!lightGroups.ContainsKey(id))
-			return;
-
-		lightGroups[id].Remove(id);
+		lightGroups[id].SetValue(id, disabled);
 	}
 
 	private static void DrawLights(Camera2D cam, RenderTexture2D tex, List<Light> l, Color bgColor, bool visionOnly)
