@@ -128,8 +128,9 @@ namespace CerberonEditor.Main
                 triggers.Add(t);
             }
 
-            foreach (var i in ambientLightContainers.GetComponentsInChildren<SpriteRenderer>())
+            foreach (var i in ambientLightContainers.GetComponentsInChildren<LightObject>())
             {
+                var spr = i.GetComponent<SpriteRenderer>();
                 var l = new
                 {
                     Position = new
@@ -139,28 +140,29 @@ namespace CerberonEditor.Main
                     },
                     Color = new
                     {
-                        R = Mathf.RoundToInt(i.color.r * 255),
-                        G = Mathf.RoundToInt(i.color.g * 255),
-                        B = Mathf.RoundToInt(i.color.b * 255),
-                        A = Mathf.RoundToInt(i.color.a * 255),
+                        R = Mathf.RoundToInt(spr.color.r * 255),
+                        G = Mathf.RoundToInt(spr.color.g * 255),
+                        B = Mathf.RoundToInt(spr.color.b * 255),
+                        A = Mathf.RoundToInt(spr.color.a * 255),
                     },
                     Rotation = -i.transform.eulerAngles.z,
                     Size = new
                     {
-                        X = i.size.x,
-                        Y = i.size.y
+                        X = spr.size.x,
+                        Y = spr.size.y
                     },
-                    Flicker = i.gameObject.name.ToLower().Contains("flicker")
+                    Flicker = i.Flicker
                 };
 
                 ambientLights.Add(l);
             }
 
-            foreach (var i in lightContainers.GetComponentsInChildren<SpriteRenderer>())
+            foreach (var i in lightContainers.GetComponentsInChildren<LightObject>())
             {
+                var spr = i.GetComponent<SpriteRenderer>();
                 var l = new
                 {
-                    SpriteID = $"{i.sprite.name}",
+                    SpriteID = $"{spr.sprite.name}",
                     Position = new
                     {
                         X = i.transform.position.x,
@@ -168,10 +170,10 @@ namespace CerberonEditor.Main
                     },
                     Color = new
                     {
-                        R = Mathf.RoundToInt(i.color.r * 255),
-                        G = Mathf.RoundToInt(i.color.g * 255),
-                        B = Mathf.RoundToInt(i.color.b * 255),
-                        A = Mathf.RoundToInt(i.color.a * 255),
+                        R = Mathf.RoundToInt(spr.color.r * 255),
+                        G = Mathf.RoundToInt(spr.color.g * 255),
+                        B = Mathf.RoundToInt(spr.color.b * 255),
+                        A = Mathf.RoundToInt(spr.color.a * 255),
                     },
                     Rotation = -i.transform.eulerAngles.z,
                     Origin = new
@@ -182,8 +184,8 @@ namespace CerberonEditor.Main
                     Enabled = true,
                     Scale = Mathf.Max(i.transform.localScale.x, i.transform.localScale.y),
 
-                    ShadowType = i.CompareTag("Shadow") ? 1 : 0,
-                    Flicker = i.gameObject.name.ToLower().Contains("flicker")
+                    ShadowType = i.ShadowType,
+                    Flicker = i.Flicker
                 };
 
                 lights.Add(l);
