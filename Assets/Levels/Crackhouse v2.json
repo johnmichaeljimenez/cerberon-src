@@ -163,8 +163,8 @@
       "Type": "Breakable",
       "NameTag": "",
       "Position": {
-        "X": -10.96,
-        "Y": 1.76
+        "X": -11.4,
+        "Y": 3.75
       },
       "Rotation": 0.0,
       "IsActive": true
@@ -2003,55 +2003,11 @@
     {
       "SpriteID": "light",
       "Position": {
-        "X": -9.95,
-        "Y": 2.77
+        "X": -10.0,
+        "Y": 2.62
       },
       "Color": {
-        "R": 94,
-        "G": 94,
-        "B": 94,
-        "A": 255
-      },
-      "Rotation": 0.0,
-      "Origin": {
-        "X": 0.5,
-        "Y": 0.5
-      },
-      "Enabled": true,
-      "Scale": 16.0,
-      "ShadowType": 1,
-      "Flicker": true
-    },
-    {
-      "SpriteID": "light",
-      "Position": {
-        "X": 16.9,
-        "Y": -9.3
-      },
-      "Color": {
-        "R": 75,
-        "G": 91,
-        "B": 91,
-        "A": 255
-      },
-      "Rotation": 0.0,
-      "Origin": {
-        "X": 0.5,
-        "Y": 0.5
-      },
-      "Enabled": true,
-      "Scale": 40.0,
-      "ShadowType": 1,
-      "Flicker": false
-    },
-    {
-      "SpriteID": "light",
-      "Position": {
-        "X": -2.6,
-        "Y": -29.7
-      },
-      "Color": {
-        "R": 109,
+        "R": 128,
         "G": 128,
         "B": 128,
         "A": 255
@@ -2062,18 +2018,18 @@
         "Y": 0.5
       },
       "Enabled": true,
-      "Scale": 20.0,
+      "Scale": 32.0,
       "ShadowType": 1,
       "Flicker": false
     },
     {
       "SpriteID": "light",
       "Position": {
-        "X": 6.7,
-        "Y": -29.6
+        "X": 2.39,
+        "Y": -9.86
       },
       "Color": {
-        "R": 109,
+        "R": 128,
         "G": 128,
         "B": 128,
         "A": 255
@@ -2084,42 +2040,20 @@
         "Y": 0.5
       },
       "Enabled": true,
-      "Scale": 20.0,
-      "ShadowType": 1,
-      "Flicker": true
-    },
-    {
-      "SpriteID": "light",
-      "Position": {
-        "X": 2.76,
-        "Y": -19.85
-      },
-      "Color": {
-        "R": 75,
-        "G": 91,
-        "B": 91,
-        "A": 255
-      },
-      "Rotation": 0.0,
-      "Origin": {
-        "X": 0.5,
-        "Y": 0.5
-      },
-      "Enabled": true,
-      "Scale": 40.0,
+      "Scale": 32.0,
       "ShadowType": 1,
       "Flicker": false
     },
     {
       "SpriteID": "light",
       "Position": {
-        "X": -14.83,
-        "Y": -19.85
+        "X": 10.48,
+        "Y": 9.83
       },
       "Color": {
-        "R": 75,
-        "G": 91,
-        "B": 91,
+        "R": 128,
+        "G": 128,
+        "B": 128,
         "A": 255
       },
       "Rotation": 0.0,
@@ -2128,20 +2062,20 @@
         "Y": 0.5
       },
       "Enabled": true,
-      "Scale": 40.0,
+      "Scale": 32.0,
       "ShadowType": 1,
       "Flicker": false
     },
     {
       "SpriteID": "light",
       "Position": {
-        "X": 8.88,
-        "Y": 9.34
+        "X": -14.31,
+        "Y": -20.32
       },
       "Color": {
-        "R": 75,
-        "G": 91,
-        "B": 91,
+        "R": 128,
+        "G": 128,
+        "B": 128,
         "A": 255
       },
       "Rotation": 0.0,
@@ -2150,29 +2084,7 @@
         "Y": 0.5
       },
       "Enabled": true,
-      "Scale": 40.0,
-      "ShadowType": 1,
-      "Flicker": false
-    },
-    {
-      "SpriteID": "light",
-      "Position": {
-        "X": -10.7,
-        "Y": 18.9
-      },
-      "Color": {
-        "R": 75,
-        "G": 91,
-        "B": 91,
-        "A": 255
-      },
-      "Rotation": 0.0,
-      "Origin": {
-        "X": 0.5,
-        "Y": 0.5
-      },
-      "Enabled": true,
-      "Scale": 40.0,
+      "Scale": 32.0,
       "ShadowType": 1,
       "Flicker": false
     }
