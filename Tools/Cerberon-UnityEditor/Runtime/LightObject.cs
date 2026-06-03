@@ -1,25 +1,28 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
-public class LightObject : MonoBehaviour
+namespace CerberonEditor.Main
 {
-	public enum VisionEffects
+	[RequireComponent(typeof(SpriteRenderer))]
+	public class LightObject : MonoBehaviour
 	{
-		Light,
-		VisionOnly,
-	}
+		public enum VisionEffects
+		{
+			Light,
+			VisionOnly,
+		}
 
-	public enum ShadowTypes
-	{
-		None,
-		Static,
-		Dynamic
+		public enum ShadowTypes
+		{
+			None,
+			Static,
+			Dynamic
+		}
+
+		public bool Flicker;
+		public string GroupID = "";
+		[Range(0f, 1f)]
+		public float AmbientMultiplier;
+		public ShadowTypes ShadowType;
 	}
-	
-	public bool Flicker;
-	public string GroupID = "";
-	[Range(0f, 1f)]
-	public float AmbientMultiplier;
-	public ShadowTypes ShadowType;
 }
