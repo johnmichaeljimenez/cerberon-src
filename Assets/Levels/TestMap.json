@@ -1,0 +1,39 @@
+{
+  "WorldSettings": {
+    "PlayerSpawnPoint": {
+      "X": 0.0,
+      "Y": 0.0
+    },
+    "WorldSize": {
+      "X": 128.0,
+      "Y": 128.0
+    },
+    "AmbientColor": {
+      "R": 255,
+      "G": 0,
+      "B": 0,
+      "A": 255
+    }
+  },
+  "Entities": [],
+  "EnvironmentSprites": [],
+  "EnvironmentColliders": [
+    {
+      "Position": {
+        "X": 1.0,
+        "Y": -5.0
+      },
+      "Size": {
+        "X": 5.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    }
+  ],
+  "Lights": [],
+  "AmbientLights": [],
+  "Triggers": [],
+  "Markers": []
+}
