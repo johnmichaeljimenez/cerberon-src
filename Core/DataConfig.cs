@@ -76,11 +76,8 @@ public static class DataConfigManager
 	{
 		foreach (var entry in _cache.Values)
 		{
-			if (entry.DefaultValue != null)
-			{
-				entry.SetValue(entry.DefaultValue);
-				Log.Send($"'{entry.Key}' reset to default: {entry.DefaultValue}");
-			}
+			entry.SetValue(entry.DefaultValue);
+			Log.Send($"'{entry.Key}' reset to default: {entry.DefaultValue ?? "null"}");
 		}
 	}
 
@@ -91,13 +88,39 @@ public static class DataConfigManager
 
 		var key = attr.Key ?? $"{member.DeclaringType?.Name}.{member.Name}";
 
-		var entry = new ConfigEntry(member, key, attr.DefaultValue);
+		//get the attribute value first, otherwise just take the default set value
+		object? defaultValue = attr.DefaultValue;
+		if (defaultValue == null)
+			defaultValue = GetCurrentValue(member);
+
+		var entry = new ConfigEntry(member, key, defaultValue);
 		_cache[key] = entry;
 
 		if (attr.DefaultValue != null)
 		{
 			entry.SetValue(attr.DefaultValue);
 		}
+	}
+
+	private static object? GetCurrentValue(MemberInfo member)
+	{
+		try
+		{
+			if (member is FieldInfo field)
+			{
+				return field.GetValue(null);
+			}
+			else if (member is PropertyInfo prop && prop.CanRead)
+			{
+				return prop.GetValue(null);
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Send($"Failed to read current value for config member '{member.Name}': {ex.Message}");
+		}
+
+		return null;
 	}
 
 	public static void LoadFromDefault()
