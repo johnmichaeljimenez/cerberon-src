@@ -2,7 +2,17 @@ namespace Cerberon.Helpers;
 
 public static class RNG
 {
-	private static readonly Random rng = new Random(); //TODO: used this for all new Random scattered everywhere
+	private static readonly Random rng = new Random();
+
+	public static float Next()
+	{
+		return Range(0f, 1f);
+	}
+
+	public static int Next(int n)
+	{
+		return Range(0, n);
+	}
 
 	public static float Range(float min, float max)
 	{

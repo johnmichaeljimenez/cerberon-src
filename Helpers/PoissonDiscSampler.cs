@@ -16,7 +16,6 @@ namespace Cerberon.Helpers
             int[,] grid = new int[gridWidth, gridHeight];
             List<Vector2> points = new List<Vector2>();
             List<Vector2> active = new List<Vector2>();
-            Random rng = new Random();  //TODO: make a proper Random static class
 
             Vector2 first = regionSize * 0.5f;
             points.Add(first);
@@ -25,15 +24,15 @@ namespace Cerberon.Helpers
 
             while (active.Count > 0)
             {
-                int index = rng.Next(active.Count);
+                int index = RNG.Next(active.Count);
                 Vector2 center = active[index];
                 bool found = false;
 
                 for (int i = 0; i < k; i++)
                 {
-                    float angle = (float)(rng.NextDouble() * MathF.Tau);
+                    float angle = RNG.Next() * MathF.Tau;
                     Vector2 dir = new Vector2(MathF.Sin(angle), MathF.Cos(angle));
-                    float dist = radius * (1f + (float)rng.NextDouble());
+                    float dist = radius * (1f + RNG.Next());
                     Vector2 candidate = center + dir * dist;
 
                     if (IsValid(candidate, regionSize, cellSize, radius, points, grid))
