@@ -1,7 +1,14 @@
 namespace Cerberon.Gameplay.Entities;
 
+public enum CombatEntityMaterialType
+{
+	Organic,
+	Wood
+}
+
 public interface ICombatEntity
 {
+	CombatEntityMaterialType MaterialType { get; }
 	Vector2 Position { get; }
 	bool IsDead { get; }
 	float HurtboxRadius { get; }

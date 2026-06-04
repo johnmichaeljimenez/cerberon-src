@@ -20,6 +20,9 @@ public class BreakableEntity : BaseEntity, ICombatEntity
 
 	public bool IsDead { get; private set; }
 
+	[JsonProperty]
+	public CombatEntityMaterialType MaterialType { get; set; }
+
 	private int hits;
 	private CircleBody circleBody;
 
@@ -36,7 +39,7 @@ public class BreakableEntity : BaseEntity, ICombatEntity
 	{
 		if (circleBody != null)
 			gameplayState.GetManager<CollisionManager>().RemoveBody(circleBody);
-			
+
 		base.Dispose();
 	}
 

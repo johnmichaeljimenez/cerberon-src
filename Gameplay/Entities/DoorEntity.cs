@@ -32,6 +32,9 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatE
 	[JsonIgnore]
 	public List<Wall> Colliders { get; set; } = new();
 
+	[JsonProperty]
+	public CombatEntityMaterialType MaterialType { get; set; }
+
 	public InteractionType InteractionType => InteractionType.Use;
 
 	public float HurtboxRadius => 2f;

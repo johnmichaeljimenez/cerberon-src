@@ -67,6 +67,9 @@ public abstract class CharacterEntity : BaseEntity, ICombatEntity //used by play
 	[JsonProperty]
 	public float HurtboxRadius { get; set; }
 
+	[JsonIgnore]
+	public CombatEntityMaterialType MaterialType => CombatEntityMaterialType.Organic;
+
 	public readonly Signal<Vector2> OnPositionChanged = new();
 
 	public override void Init(GameplayState gameplayState)
