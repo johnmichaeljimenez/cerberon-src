@@ -282,16 +282,10 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 
 						if (CurrentWeapon.SpreadCount == 0)
 						{
-							gameplayState.GetManager<CollisionManager>().Linecast(Entity.Position, Entity.Position + (Entity.FacingDirection * 100), CollisionHeight.Mid, out weaponHit, Entity.CollisionBody);
-							if (weaponHit.HitEntity != null && weaponHit.HitEntity is ICombatEntity z)
-							{
-								hitCount++;
-								HitBullet(z);
-							}
+							CheckHitBullet();
 						}
 						else
 						{
-							var hit = false;
 							var sc = 0;
 							for (int i = 0; i < CurrentWeapon.SpreadCount; i++)
 							{
@@ -302,14 +296,8 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 								gameplayState.GetManager<CollisionManager>().Linecast(Entity.Position, Entity.Position + (d * 100), CollisionHeight.Mid, out spreadHit, Entity.CollisionBody);
 								if (spreadHit.HitEntity != null && spreadHit.HitEntity is ICombatEntity z)
 								{
-									if (!hit)
-									{
-										hit = true;
-										hitCount++;
-									}
-
-									sc++;
-									HitBullet(z);
+									if (CheckHitBullet())
+										sc++;
 								}
 							}
 
@@ -330,9 +318,28 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 		}
 	}
 
-	private bool BulletHit(Vector2 from, Vector2 to, ICombatEntity combatEntity)
+	private bool CheckHitBullet()
 	{
-		return !CollisionManager.CircleIntersectsSegment(from, to, combatEntity.Position, combatEntity.HurtboxRadius);
+		var hit = false;
+
+		for (int i = 0; i < 3; i++) //max penetration count
+		{
+			gameplayState.GetManager<CollisionManager>().Linecast(Entity.Position, Entity.Position + (Entity.FacingDirection * 100), CollisionHeight.Mid, out weaponHit, Entity.CollisionBody);
+			if (weaponHit.HitEntity == null)
+				break;
+
+			if (weaponHit.HitEntity is not ICombatEntity z)
+				break;
+
+			hit = true;
+			hitCount++;
+			HitBullet(z);
+
+			if (!z.IsDead)
+				break;
+		}
+
+		return hit;
 	}
 
 	private void SwitchWeapon(int i)
