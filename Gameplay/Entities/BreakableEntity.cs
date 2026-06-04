@@ -66,6 +66,7 @@ public class BreakableEntity : BaseEntity, ICombatEntity
 	{
 		Game.Instance.Camera.Shake(3f, null);
 		AudioHandler.PlaySound("break", Position);
+		circleBody.Enabled = false;
 
 		Despawn();
 	}

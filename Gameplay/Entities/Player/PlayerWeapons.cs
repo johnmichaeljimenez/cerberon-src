@@ -331,6 +331,9 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 			if (weaponHit.HitEntity is not ICombatEntity z)
 				break;
 
+			if (z.IsDead)
+				continue;
+
 			hit = true;
 			hitCount++;
 			HitBullet(z);

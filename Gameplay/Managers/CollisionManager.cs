@@ -262,12 +262,14 @@ public class CollisionManager : BaseManager
 		{
 			foreach (var other in bodies)
 			{
+				//linecast will hit bodies regardless of height (no uses yet for the opposite case)
 				// if (height > other.Height)
 				// 	continue;
 
 				if (other == null ||
 					other == fromBody ||
-					!other.Enabled) //linecast will hit bodies regardless of height (no uses yet for the opposite case)
+					!other.Enabled ||
+					(other.SourceEntity != null && (!other.SourceEntity.IsActive || other.SourceEntity.IsDestroyed)))
 					continue;
 
 				Vector2 oc = from - other.Position;
