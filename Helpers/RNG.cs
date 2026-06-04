@@ -1,8 +1,24 @@
+using Cerberon.Core;
+
 namespace Cerberon.Helpers;
 
 public static class RNG
 {
-	private static readonly Random rng = new Random();
+	private static int _seed = 42;
+
+	[DataConfig]
+	private static int Seed
+	{
+		get => _seed;
+		set
+		{
+			_seed = value;
+			Log.Send($"Set SEED to {value}");
+			rng = new Random(_seed);
+		}
+	}
+
+	private static Random rng = new Random(Seed);
 
 	public static float Next()
 	{
