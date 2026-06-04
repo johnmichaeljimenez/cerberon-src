@@ -53,13 +53,14 @@ public class GameplayState : IGameState
 	{
 		string jsonText = File.ReadAllText(options.LevelFileName); //test
 		CurrentWorld = jsonText.FromJson<World>();
-		CurrentWorld.Init(this);
 
 		DataConfigManager.Initialize();
 		if (CurrentWorld.WorldSettings.Config?.Count > 0)
 		{
 			DataConfigManager.LoadData(CurrentWorld.WorldSettings.Config);
 		}
+		
+		CurrentWorld.Init(this);
 
 		GetManager<GameplayManager>().SpawnPlayer(CurrentWorld.WorldSettings.PlayerSpawnPoint);
 
