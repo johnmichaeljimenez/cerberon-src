@@ -124,9 +124,7 @@ public class WaypointManager : BaseManager
 		if (candidates.Count == 0)
 			return start.Position;
 
-		var rnd = new Random(); // TODO: proper Random static class
-		Node chosen = candidates[rnd.Next(candidates.Count)];
-
+		Node chosen = candidates[RNG.Next(candidates.Count)];
 		return chosen.Position;
 	}
 
