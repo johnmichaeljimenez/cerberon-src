@@ -377,6 +377,28 @@ public static class Utils
 
 		return result;
 	}
+
+	public static object? DeepClone(this object? source)
+	{
+		if (source == null)
+			return null;
+
+		var type = source.GetType();
+
+		if (type.IsPrimitive || type.IsEnum || type == typeof(string))
+			return source;
+
+		try
+		{
+			var json = JsonConvert.SerializeObject(source);
+			return JsonConvert.DeserializeObject(json, type);
+		}
+		catch (Exception ex)
+		{
+			Log.Send($"Deep clone failed for type '{type.Name}'. Using original reference. Error: {ex.Message}");
+			return source;
+		}
+	}
 }
 
 public static class Colors
