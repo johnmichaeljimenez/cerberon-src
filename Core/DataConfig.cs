@@ -1,5 +1,6 @@
 using System.Reflection;
 using Cerberon.Core;
+using Cerberon.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -76,7 +77,8 @@ public static class DataConfigManager
 	{
 		foreach (var entry in _cache.Values)
 		{
-			entry.SetValue(entry.DefaultValue);
+			var value = entry.DefaultValue.DeepClone();
+			entry.SetValue(value);
 			Log.Send($"'{entry.Key}' reset to default: {entry.DefaultValue ?? "null"}");
 		}
 	}
@@ -91,7 +93,10 @@ public static class DataConfigManager
 		//get the attribute value first, otherwise just take the default set value
 		object? defaultValue = attr.DefaultValue;
 		if (defaultValue == null)
-			defaultValue = GetCurrentValue(member);
+		{
+			var currentValue = GetCurrentValue(member);
+			defaultValue = currentValue.DeepClone();
+		}
 
 		var entry = new ConfigEntry(member, key, defaultValue);
 		_cache[key] = entry;
