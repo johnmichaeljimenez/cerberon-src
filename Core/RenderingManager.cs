@@ -128,7 +128,7 @@ public static class RenderingManager
     public static readonly Dictionary<string, ShaderSet> ShaderSets = new()
     {
         { "SpriteEntity", new("sprite-entity", "visionTex") },
-        { "SpriteEnvironment", new("sprite-environment", "eraseVision", "visionTex", "tilingX", "tilingY", "tilingMode") }
+        { "SpriteEnvironment", new("sprite-environment", "eraseVision", "visionTex", "tilingX", "tilingY", "tilingMode", "stochasticMode") }
     };
 
     private static readonly Dictionary<Filters, RendererFilter> AllFilters = new()
@@ -171,7 +171,8 @@ public static class RenderingManager
         shaderSet.Begin();
         shaderSet.SetValue("visionTex", LightingSystem.VisionRenderTexture.Texture);
         shaderSet.SetValue("eraseVision", eraseVision);
-        shaderSet.SetValue("tilingMode", tiling);
+        shaderSet.SetValue("tilingMode", tiling || sprite.StochasticMode);
+        shaderSet.SetValue("stochasticMode", sprite.StochasticMode);
 
         var tile = new Vector2(
                 size.X * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Width,

@@ -9,6 +9,7 @@ public class Sprite : IDisposable
 
 	public string Name;
 	public Texture2D Texture;
+	public bool StochasticMode;
 	public int Width { get; private set; }
 	public int Height { get; private set; }
 	public Vector2 UnitSize { get; private set; }
@@ -21,6 +22,9 @@ public class Sprite : IDisposable
 		Width = texture2D.Width;
 		Height = texture2D.Height;
 		UnitSize = new((float)Width / PIXELS_PER_UNIT, (float)Height / PIXELS_PER_UNIT);
+
+		//TODO: use external key-value pair file for rendering type (default, tiling mode, stochastic mode)
+		StochasticMode = !name.Contains("tile", StringComparison.InvariantCultureIgnoreCase) && !name.Contains("wood", StringComparison.InvariantCultureIgnoreCase);
 
 		Rect = new(0, 0, Width, Height);
 	}
