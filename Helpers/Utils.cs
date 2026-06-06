@@ -342,36 +342,44 @@ public static class Utils
 		return normal;
 	}
 
-	public static List<float> Blur(this IEnumerable<float> rawSource, int radius = 1, bool normalize = true)
+	public static List<float> Blur<T>(
+		this IEnumerable<T> source,
+		Func<T, Vector2> getPosition,
+		Func<T, float> getValue,
+		float radius = 1f,
+		bool normalize = true)
 	{
-		if (rawSource == null) throw new ArgumentNullException(nameof(rawSource));
+		if (source == null) throw new ArgumentNullException(nameof(source));
+		if (getPosition == null) throw new ArgumentNullException(nameof(getPosition));
+		if (getValue == null) throw new ArgumentNullException(nameof(getValue));
 		if (radius < 0) throw new ArgumentOutOfRangeException(nameof(radius));
 
-		var source = rawSource.ToList();
-		var n = source.Count;
+		var items = source.ToList();
+		int n = items.Count;
 		var result = new List<float>(n);
 
-		//box kernel
-		var kernelSize = 2 * radius + 1;
-		var kernel = new float[kernelSize];
-		for (int i = 0; i < kernelSize; i++) kernel[i] = 1f;
-
-		float norm = normalize ? kernel.Sum() : 1f;
+		float radiusSq = radius * radius;
 
 		for (int i = 0; i < n; i++)
 		{
-			var acc = 0f;
-			for (int k = -radius; k <= radius; k++)
-			{
-				var idx = i + k;
-				if (idx < 0)
-					idx = -idx;
-				else if (idx >= n)
-					idx = 2 * n - idx - 2;
+			Vector2 posI = getPosition(items[i]);
+			float acc = 0f;
+			float weightSum = 0f;
 
-				acc += source[idx] * kernel[k + radius];
+			for (int j = 0; j < n; j++)
+			{
+				Vector2 posJ = getPosition(items[j]);
+				float distSq = (posI - posJ).LengthSquared();
+
+				if (distSq <= radiusSq + 0.001f)
+				{
+					float w = 1f;
+					acc += getValue(items[j]) * w;
+					weightSum += w;
+				}
 			}
 
+			float norm = (normalize && weightSum > 0f) ? weightSum : 1f;
 			result.Add(acc / norm);
 		}
 

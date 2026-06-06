@@ -569,7 +569,7 @@ public class WaypointManager : BaseManager
 		}
 		
 
-		var clearances = Nodes.Select(p => p.Clearance).Blur(2);
+		var clearances = Nodes.Blur(p => p.Position, p => p.Clearance, 10f, true);
 		for (int i = 0; i < Nodes.Count; i++)
 		{
 			Nodes[i].ClearanceWeighted = clearances[i];
