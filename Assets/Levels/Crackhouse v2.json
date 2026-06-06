@@ -545,6 +545,29 @@
         "B": 255,
         "A": 255
       }
+    },
+    {
+      "SpriteID": "env/grass-1",
+      "Position": {
+        "X": -3.37,
+        "Y": 1.85
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": -1,
+      "SortingIndex": -10,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 150.0,
+        "Y": 150.0
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
     }
   ],
   "EnvironmentColliders": [
@@ -1374,6 +1397,19 @@
       },
       "Size": {
         "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -6.5,
+        "Y": -27.0
+      },
+      "Size": {
+        "X": 6.0,
         "Y": 3.0
       },
       "Rotation": 0.0,
