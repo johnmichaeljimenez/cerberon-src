@@ -1,8 +1,8 @@
 {
   "WorldSettings": {
     "PlayerSpawnPoint": {
-      "X": 24.99,
-      "Y": 0.59
+      "X": 25.41,
+      "Y": -1.0
     },
     "WorldSize": {
       "X": 90.0,
@@ -18,13 +18,14 @@
   "Entities": [
     {
       "Type": "Door",
-      "NameTag": "",
+      "NameTag": "intro-door",
       "Position": {
         "X": 25.5,
         "Y": 4.7
       },
       "Rotation": 0.0,
-      "IsActive": true
+      "IsActive": true,
+      "Interactable": false
     },
     {
       "Type": "Door",
@@ -630,6 +631,52 @@
       "TileSize": {
         "X": 5.51041031,
         "Y": 10.9565563
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/toilet",
+      "Position": {
+        "X": 23.28,
+        "Y": -1.63
+      },
+      "Parallax": 0.0,
+      "Rotation": -90.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/sink",
+      "Position": {
+        "X": 27.26,
+        "Y": 1.58
+      },
+      "Parallax": 0.0,
+      "Rotation": -270.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
       },
       "Tint": {
         "R": 255,
@@ -1484,6 +1531,32 @@
       "Rotation": 0.0,
       "Flags": 1,
       "Height": 2
+    },
+    {
+      "Position": {
+        "X": 23.28,
+        "Y": -1.63
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.75
+      },
+      "Rotation": -90.0,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 27.26,
+        "Y": 1.58
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": -270.0,
+      "Flags": 0,
+      "Height": 0
     }
   ],
   "Lights": [
@@ -2037,7 +2110,7 @@
     },
     {
       "Position": {
-        "X": 18.97,
+        "X": 22.775,
         "Y": 10.4
       },
       "Color": {
@@ -2048,7 +2121,7 @@
       },
       "Rotation": 0.0,
       "Size": {
-        "X": 21.1522331,
+        "X": 28.7620983,
         "Y": 29.9492226
       },
       "Flicker": false
@@ -2161,66 +2234,24 @@
     },
     {
       "Position": {
-        "X": -10.07,
-        "Y": 7.89
+        "X": 25.05,
+        "Y": 4.25
       },
-      "Rotation": -183.45517,
+      "Rotation": 0.0,
       "Size": {
         "X": 8.04263,
         "Y": 1.9957962
       },
       "TriggerID": "StartFight",
       "SortingIndex": 0,
-      "Enabled": false
-    },
-    {
-      "Position": {
-        "X": -13.58,
-        "Y": 3.87
-      },
-      "Rotation": -91.63717,
-      "Size": {
-        "X": 8.04263,
-        "Y": 1.9957962
-      },
-      "TriggerID": "StartFight",
-      "SortingIndex": 0,
-      "Enabled": false
-    },
-    {
-      "Position": {
-        "X": -6.4,
-        "Y": 3.66
-      },
-      "Rotation": -91.63717,
-      "Size": {
-        "X": 8.04263,
-        "Y": 1.9957962
-      },
-      "TriggerID": "StartFight",
-      "SortingIndex": 0,
-      "Enabled": false
-    },
-    {
-      "Position": {
-        "X": -10.54,
-        "Y": 0.04
-      },
-      "Rotation": -183.45517,
-      "Size": {
-        "X": 8.04263,
-        "Y": 1.9957962
-      },
-      "TriggerID": "StartFight",
-      "SortingIndex": 0,
-      "Enabled": false
+      "Enabled": true
     }
   ],
   "Markers": [
     {
       "Position": {
-        "X": -24.92,
-        "Y": 7.64
+        "X": 20.85,
+        "Y": 6.8
       },
       "ID": "intro-sfx"
     }
