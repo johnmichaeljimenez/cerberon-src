@@ -2,20 +2,24 @@ namespace Cerberon.Helpers;
 
 public class EMA
 {
-	private readonly float _alpha;
+	[JsonProperty]
+	public float Alpha { get; private set; }
+
 	private bool hasValue;
 	private float ema;
 
+	public EMA() { }
+
 	public EMA(float alpha)
 	{
-		_alpha = alpha;
+		Alpha = alpha;
 	}
 
 	public void AddSample(float value)
 	{
 		if (hasValue)
 		{
-			ema = _alpha * value + (1f - _alpha) * ema;
+            ema = Alpha * value + (1f - Alpha) * ema;
 		}
 		else
 		{
@@ -24,5 +28,7 @@ public class EMA
 		}
 	}
 
+	[JsonIgnore]
 	public float Current => ema;
+	public void Reset() => hasValue = false;
 }
