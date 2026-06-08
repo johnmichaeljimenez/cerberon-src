@@ -16,11 +16,13 @@ public class AIDirectorManager : BaseManager
 	[DataConfig(50)]
 	public static float SpawnDistanceMax;
 
-	private readonly List<string> BGMList = new(){
+	[DataConfig]
+	private static List<string> BGMList = new(){
 		"bone shredder",
 		"carnivore diet",
 		"cerebral mutilation"
 	};
+
 	private int bgmIndex;
 
 	//TENSION is for gameplay difficulty (spawn rates, aggression, events)
@@ -49,25 +51,37 @@ public class AIDirectorManager : BaseManager
 		}
 	);
 
-	private readonly EMA emaPlayerHealth = new(0.05f);
-	private readonly EMA emaAmmoCount = new(0.05f);
-	private readonly EMA emaPlayerAccuracy = new(0.005f);
-	private readonly EMA emaKillCount = new(0.003f);
-	private readonly EMA emaWeaponUseType = new(0.001f);
-	private readonly EMA emaPlayerHurt = new(0.003f);
-	private readonly EMA emaNearbyEnemyCount = new(0.003f);
+	[DataConfig]
+	private static EMA emaPlayerHealth = new(0.05f);
+	[DataConfig]
+	private static EMA emaAmmoCount = new(0.05f);
+	[DataConfig]
+	private static EMA emaPlayerAccuracy = new(0.005f);
+	[DataConfig]
+	private static EMA emaKillCount = new(0.003f);
+	[DataConfig]
+	private static EMA emaWeaponUseType = new(0.001f);
+	[DataConfig]
+	private static EMA emaPlayerHurt = new(0.003f);
+	[DataConfig]
+	private static EMA emaNearbyEnemyCount = new(0.003f);
 
-	private readonly EMA emaTension = new(0.005f);
-	private readonly EMA emaMood = new(0.005f);
+	[DataConfig]
+	private static EMA emaTension = new(0.005f);
+	[DataConfig]
+	private static EMA emaMood = new(0.005f);
 
 	public float Tension { get; private set; }
 	public float Mood { get; private set; }
 
 	private float killType;
 
-	private const int MAX_ITEM_HEALTH_COUNT = 3;
-	private const int MAX_ITEM_AMMO_COUNT = 5;
-	private const int MAX_ITEM_WEAPON_COUNT = 1;
+	[DataConfig]
+	private static int MaxItemHealthCount = 3;
+	[DataConfig]
+	private static int MaxItemAmmoCount = 5;
+	[DataConfig]
+	private static int MaxItemWeaponCount = 1;
 
 	private float enemySpawnTimer;
 	private float healthSpawnTimer;
@@ -80,13 +94,23 @@ public class AIDirectorManager : BaseManager
 	public bool Paused = true;
 
 	//this enemy attack token system prevents the player from get shredded quickly by horde of enemies
-	private const int MAX_ATTACKING_ENEMY = 2;
+	[DataConfig]
+	private static int MaxAttackingEnemy = 2;
 	private const float TOKEN_COOLDOWN = 0.5f;
-	private readonly float[] attackTokenCooldowns = new float[MAX_ATTACKING_ENEMY];
+	private const float KillCountBump = 60.0f;
+	private const int HurtPlayerBump = 20;
+	private const int WeaponHitBump = 30;
+	private const int CampingDecayScale = 4;
+	private const float CampingDecayThreshold = 1.5f;
+	private const int CampingRateMultiplier = 5;
+	private const int NearbyEnemyMaxDistance = 10;
+	private readonly float[] attackTokenCooldowns = new float[MaxAttackingEnemy];
 
 	private Vector2 playerPreviousPosition;
-	private EMA emaPlayerPosition = new(0.01f);
-	private EMA emaMovementRate = new(0.01f);
+	[DataConfig]
+	private static EMA emaPlayerPosition = new(0.01f);
+	[DataConfig]
+	private static EMA emaMovementRate = new(0.01f);
 
 	private float currentBudget;
 
@@ -122,14 +146,14 @@ public class AIDirectorManager : BaseManager
 			{
 				if (z.HP <= 0)
 				{
-					emaKillCount.AddSample(60.0f); //large bump to compensate for decay (add must be faster than reduction)
+					emaKillCount.AddSample(KillCountBump);
 				}
 			}
 		}).AddTo(disposables);
 
 		player.OnTakeDamage.Subscribe(dmg =>
 		{
-			emaPlayerHurt.AddSample(dmg * 20);
+			emaPlayerHurt.AddSample(dmg * HurtPlayerBump);
 			emaMood.AddSample(emaMood.Current + (dmg * 0.5f));
 		}).AddTo(disposables);
 
@@ -139,7 +163,7 @@ public class AIDirectorManager : BaseManager
 			if (e.Item3 || e.Item1.ID == "shotgun") //is melee or shotgun
 				amt = 1f;
 
-			emaWeaponUseType.AddSample(amt * 30);
+			emaWeaponUseType.AddSample(amt * WeaponHitBump);
 		});
 
 		playerPreviousPosition = player.Position;
@@ -151,24 +175,23 @@ public class AIDirectorManager : BaseManager
 			return;
 
 		var prevSample = emaPlayerPosition.Current;
-		playerPreviousPosition = Vector2.Lerp(playerPreviousPosition, player.Position, dt * 4);
+		playerPreviousPosition = Vector2.Lerp(playerPreviousPosition, player.Position, dt * CampingDecayScale);
 		var diff = player.Position - playerPreviousPosition;
 		var magnitude = diff.Length();
-		var threshold = 1.5f;
 		var scale = 0f;
 
-		if (magnitude < threshold)
+		if (magnitude < CampingDecayThreshold)
 		{
 			diff = Vector2.Zero;
 		}
 		else
 		{
-			scale = (magnitude - threshold) / magnitude;
+			scale = (magnitude - CampingDecayThreshold) / magnitude;
 			diff = diff * scale;
 		}
 
 		emaPlayerPosition.AddSample(scale);
-		emaMovementRate.AddSample(prevSample * 5);  //used to check if player moves or camps a lot
+		emaMovementRate.AddSample(prevSample * CampingRateMultiplier);  //used to check if player moves or camps a lot
 
 		if (Paused) return;
 
@@ -200,7 +223,7 @@ public class AIDirectorManager : BaseManager
 		healthSpawnTimer -= dt;
 		if (healthSpawnTimer <= 0 && (emaPlayerHealth.Current < 0.8f || emaPlayerHurt.Current >= 0.5f)) //allow health spawn when player takes too much damage in short time
 		{
-			if (gameplayState.CurrentWorld.GetEntitiesByGroup("health").Count < MAX_ITEM_HEALTH_COUNT)
+			if (gameplayState.CurrentWorld.GetEntitiesByGroup("health").Count < MaxItemHealthCount)
 			{
 				SpawnHealthItem();
 				healthSpawnTimer = 10f;
@@ -210,7 +233,7 @@ public class AIDirectorManager : BaseManager
 		ammoSpawnTimer -= dt;
 		if (ammoSpawnTimer <= 0 && emaAmmoCount.Current < 0.7f)
 		{
-			if (gameplayState.CurrentWorld.GetEntitiesByGroup("ammo").Count < MAX_ITEM_AMMO_COUNT)
+			if (gameplayState.CurrentWorld.GetEntitiesByGroup("ammo").Count < MaxItemAmmoCount)
 			{
 				SpawnAmmoItem();
 				ammoSpawnTimer = 15f;
@@ -234,7 +257,7 @@ public class AIDirectorManager : BaseManager
 					{
 						var spawned = false;
 
-						if (gameplayState.CurrentWorld.GetEntitiesByGroup("weapon").Count < MAX_ITEM_WEAPON_COUNT)
+						if (gameplayState.CurrentWorld.GetEntitiesByGroup("weapon").Count < MaxItemWeaponCount)
 						{
 							if (!player.Weapons.IsWeaponUnlocked("rifle"))
 							{
@@ -278,7 +301,7 @@ public class AIDirectorManager : BaseManager
 			if (z.IsDestroyed || z.IsDead)
 				continue;
 
-			if ((z.Position - player.Position).LengthSquared() <= 10 * 10)
+			if ((z.Position - player.Position).LengthSquared() <= NearbyEnemyMaxDistance * NearbyEnemyMaxDistance)
 				nearbyEnemyCount++;
 		}
 
@@ -421,7 +444,7 @@ public class AIDirectorManager : BaseManager
 
 	public int RequestAttack()
 	{
-		for (int i = 0; i < MAX_ATTACKING_ENEMY; i++)
+		for (int i = 0; i < MaxAttackingEnemy; i++)
 		{
 			if (attackTokenCooldowns[i] <= 0)
 			{
@@ -434,7 +457,7 @@ public class AIDirectorManager : BaseManager
 
 	public void ReleaseAttack(int tokenIndex)
 	{
-		if (tokenIndex >= 0 && tokenIndex < MAX_ATTACKING_ENEMY)
+		if (tokenIndex >= 0 && tokenIndex < MaxAttackingEnemy)
 		{
 			//give this token a cooldown before being able to be reused
 			attackTokenCooldowns[tokenIndex] = RNG.Range(TOKEN_COOLDOWN * 0.8f, TOKEN_COOLDOWN * 2);
