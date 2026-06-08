@@ -81,6 +81,8 @@ public class Game
         currentState?.Exit();
         UIManager.Dispose();
 
+        DataConfigManager.SaveToJson(CONFIG_PATH);
+
         LightingSystem.Dispose();
         RenderingManager.UnloadPostShader();
         rlImGui.Shutdown();

@@ -201,4 +201,26 @@ public static class DataConfigManager
 			}
 		}
 	}
+
+	public static void SaveToJson(string path)
+	{	try
+		{
+			var data = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var entry in _cache.Values)
+			{
+				var value = GetCurrentValue(entry.Member);
+				data[entry.Key] = value;
+			}
+
+			var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+			
+			File.WriteAllText(path, json);
+			Log.Send($"Config saved to '{path}' ({data.Count} entries)");
+		}
+		catch (Exception ex)
+		{
+			Log.Send($"Failed to save config to '{path}': {ex.Message}");
+		}
+	}
 }
