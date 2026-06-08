@@ -18,7 +18,9 @@ public interface IGameState
 public class Game
 {
     public static Game Instance { get; private set; }
-    public readonly Signal<IGameState> OnStateChanged = new();
+
+	private const string CONFIG_PATH = "Assets/config.json";
+	public readonly Signal<IGameState> OnStateChanged = new();
     private RenderTexture2D _target;
 
     private IGameState currentState;
@@ -42,6 +44,7 @@ public class Game
         Raylib.SetExitKey(0);
 
         DataConfigManager.Initialize();
+        AssetWatcher.Add(CONFIG_PATH, OnDataConfigChanged);
 
         _target = Raylib.LoadRenderTexture(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
         RenderingManager.Init();
@@ -72,7 +75,7 @@ public class Game
         ));
     }
 
-    public void End()
+	public void End()
     {
         TweenManager.Clear();
         currentState?.Exit();
@@ -214,4 +217,9 @@ public class Game
     {
         requestExit = true;
     }
+
+	private void OnDataConfigChanged(string json)
+	{
+        DataConfigManager.LoadFromJson(json, true);
+	}
 }
