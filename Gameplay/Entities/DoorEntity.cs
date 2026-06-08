@@ -53,6 +53,9 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatE
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);
+
+		CurrentSpriteID = "env/door-1";
+
 		Groups.Add(nameof(IInteractable));
 		Groups.Add(nameof(ICombatEntity));
 		IsDead = false;
@@ -203,5 +206,10 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatE
 	{
 		Game.Instance.Camera.Shake(3f, null);
 		AudioHandler.PlaySound("break", Position);
+	}
+
+	public override void Draw()
+	{
+		CurrentSprite?.Draw(doorPos, 1, Rotation);
 	}
 }
