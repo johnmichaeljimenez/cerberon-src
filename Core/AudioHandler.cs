@@ -81,6 +81,7 @@ public class AudioSource
 {
 	public Sound Sound;
 	public float Time;
+	public bool IsPlaying;
 	public bool IsSpatial;
 	public Vector2 Position;
 	public float Radius = 40;
@@ -175,8 +176,9 @@ public static class AudioHandler
 		for (int i = activeAudioSources.Count - 1; i >= 0; i--)
 		{
 			var a = activeAudioSources[i];
-			if (Utils.Countdown(ref a.Time, Time.DeltaTime))
+			if (Utils.Countdown(ref a.Time, Time.UnscaledDeltaTime))
 			{
+				a.IsPlaying = false;
 				activeAudioSources.RemoveAt(i);
 				continue;
 			}
@@ -386,7 +388,7 @@ public static class AudioHandler
 		nextAliasIndex[key] = 0;
 	}
 
-	public static Sound? PlaySound(string key, Vector2? position = null)
+	public static AudioSource? PlaySound(string key, Vector2? position = null)
 	{
 		if (soundVariations.TryGetValue(key, out var variations) && variations.Count > 0)
 		{
@@ -397,7 +399,7 @@ public static class AudioHandler
 		return PlayIndividual(key, position);
 	}
 
-	private static Sound? PlayIndividual(string individualKey, Vector2? position)
+	private static AudioSource? PlayIndividual(string individualKey, Vector2? position)
 	{
 		if (!soundAliases.TryGetValue(individualKey, out var aliases) || aliases.Count == 0)
 			return null;
@@ -414,8 +416,11 @@ public static class AudioHandler
 			Sound = sound,
 			Time = soundLengths[individualKey],
 			IsSpatial = position.HasValue,
-			Position = position ?? Vector2.Zero
+			Position = position ?? Vector2.Zero,
+			IsPlaying = true
 		};
+
+		Log.Send($"Playing sound: {individualKey} -> {source.Time}s");
 
 		if (source.IsSpatial)
 			source.Update(ListenerPosition);
@@ -426,12 +431,7 @@ public static class AudioHandler
 		// Raylib.SetSoundPitch(sound, RNG.Range(0.9f, 1.1f));
 
 		nextAliasIndex[individualKey] = (index + 1) % aliases.Count;
-		return sound;
-	}
-
-	public static bool IsPlaying(Sound sound)
-	{
-		return Raylib.IsSoundPlaying(sound);
+		return source;
 	}
 
 	public static MusicSource PlayMusic(string key, string context = null)
