@@ -61,6 +61,7 @@ public class EventSetup : IDisposable
 		Vector2? sfxPosition = mk == null ? null : mk.Position;
 
 		gameplayEventManager.RunEvent("startfight",
+		
 			new Exec(() => Game.Instance.Camera.Shake(0.8f, null)),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.2f),
@@ -68,6 +69,7 @@ public class EventSetup : IDisposable
 			new Wait(0.5f),
 			new ShowDialogue("intro-1", true),
 			new Wait(0.5f),
+
 			new Exec(() => Game.Instance.Camera.Shake(0.8f, null)),
 			new SetLightGroupState("<default>", false),
 			new PlayAudio("knock-slam", sfxPosition),
@@ -76,18 +78,26 @@ public class EventSetup : IDisposable
 			new Wait(0.2f),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.1f),
+			
 			new Exec(() => door.SetActive(false)),
 			new SetLightGroupState("<default>", true),
 			new PlayAudio("break", sfxPosition),
 			new Exec(() => Game.Instance.Camera.Shake(3f, null)),
 			new SpawnEnemy(sfxPosition ?? Vector2.Zero, 1f),
 			new Wait(0.2f),
-			new ShowDialogue("intro-2", false),
+
+			new ShowDialogue("intro-2-start", false),
 			new Wait(0.5f),
 			new SpawnEnemy(sfxPosition ?? Vector2.Zero, 0.8f),
 			new Wait(0.2f),
 			new SpawnEnemy(sfxPosition ?? Vector2.Zero, 0.8f),
-			new Wait(0.5f),
+			new Wait(1f),
+
+			new PlayAudio("phone", null, true),
+			new Wait(0.1f),
+			new PlayAudio("phone", null, true),
+			new ShowDialogue("intro-2", false),
+			new Wait(0.1f),
 			new Exec(() =>
 			{
 				gameplayState.GetManager<GameplayManager>().Begin();

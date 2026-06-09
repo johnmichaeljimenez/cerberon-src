@@ -87,7 +87,7 @@ public class Fade : BaseCommand
 
 public class PlayAudio : BaseCommand
 {
-	private Sound? sound;
+	private AudioSource sound;
 	private string soundID;
 	private Vector2? soundPosition;
 	private bool wait;
@@ -106,10 +106,10 @@ public class PlayAudio : BaseCommand
 
 	public override bool Update(float dt)
 	{
-		if (!sound.HasValue || !wait)
+		if (sound == null || !wait)
 			return true;
 
-		return AudioHandler.IsPlaying(sound.Value);
+		return !sound.IsPlaying;
 	}
 }
 
