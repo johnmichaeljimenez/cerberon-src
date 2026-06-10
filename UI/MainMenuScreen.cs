@@ -66,6 +66,9 @@ public class MainMenuScreen : BaseScreen
 				UIManager.ShowScreen<LevelSelectScreen>(null, false);
 				// FadeHandler.FadeIn(Game.Instance.GoToIngame, true);
 				break;
+			case "btn-options":
+				UIManager.ShowScreen<OptionsScreen>(null, false);
+				break;
 			case "btn-exit":
 				FadeHandler.FadeIn(Game.Instance.RequestExit);
 				break;
