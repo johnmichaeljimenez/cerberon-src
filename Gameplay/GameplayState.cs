@@ -111,12 +111,12 @@ public class GameplayState : IGameState
 
 		if (isPaused)
 		{
-			PauseHandler.Pause("ingame");
+			PauseHandler.Pause(PauseHandler.PAUSE_FULL);
 			UIManager.ShowScreen<PauseMenuScreen>(this, false);
 		}
 		else
 		{
-			PauseHandler.Unpause("ingame");
+			PauseHandler.Unpause(PauseHandler.PAUSE_FULL);
 			if (UIManager.Current is PauseMenuScreen)
 				UIManager.Back();
 		}

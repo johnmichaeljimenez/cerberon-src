@@ -33,6 +33,11 @@ public class RefCount
 		return result;
 	}
 
+	public bool Contains(string id)
+	{
+		return activeIDs.Contains(id);
+	}
+
 	public void Clear()
 	{
 		activeIDs.Clear();

@@ -107,7 +107,7 @@ public class AudioSource
 
 	public void UpdateVolume(float input)
 	{
-		Raylib.SetSoundVolume(Sound, input * (AudioHandler.SoundEnabled? 1 : 0));
+		Raylib.SetSoundVolume(Sound, input * (AudioHandler.SoundEnabled ? 1 : 0) * (PauseHandler.IsFullyPaused ? 0f : 1));
 	}
 }
 
@@ -123,7 +123,7 @@ public static class AudioHandler
 	private const float AMBIENT_BASE_VOLUME = 0.7f;
 
 	private static readonly List<AudioSource> activeAudioSources = new();
-	private static readonly Dictionary<string, MusicSource> musicAssets = new();	//TODO: change this into reusable group both for music and ambient
+	private static readonly Dictionary<string, MusicSource> musicAssets = new();    //TODO: change this into reusable group both for music and ambient
 	private static readonly Dictionary<string, MusicSource> ambientAssets = new();
 	private static readonly Dictionary<string, float> soundLengths = new();
 	private static readonly Dictionary<string, Sound> soundAssets = new();
@@ -150,7 +150,7 @@ public static class AudioHandler
 			if (IsMusicPlaying(music.Music))
 			{
 				Raylib.UpdateMusicStream(music.Music);
-				Raylib.SetMusicVolume(music.Music, music.Volume * AMBIENT_BASE_VOLUME * (PauseHandler.IsPaused ? 0.4f : 1) * (MusicEnabled? 1 : 0));
+				Raylib.SetMusicVolume(music.Music, music.Volume * AMBIENT_BASE_VOLUME * (PauseHandler.IsFullyPaused ? 0.4f : 1) * (MusicEnabled ? 1 : 0));
 
 				if (!music.IsPlaying && music.Volume <= 0.01f) //requested to stop and volume is near zero
 				{
@@ -169,7 +169,7 @@ public static class AudioHandler
 			if (IsMusicPlaying(music.Music))
 			{
 				Raylib.UpdateMusicStream(music.Music);
-				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME * (PauseHandler.IsPaused ? 0.4f : 1) * (MusicEnabled? 1 : 0));
+				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME * (PauseHandler.IsFullyPaused ? 0.4f : 1) * (MusicEnabled ? 1 : 0));
 
 				if (!music.IsPlaying && music.Volume <= 0.01f) //requested to stop and volume is near zero
 				{
@@ -428,7 +428,7 @@ public static class AudioHandler
 			Position = position ?? Vector2.Zero,
 			IsPlaying = true
 		};
-		
+
 		source.UpdateVolume(1);
 
 		Log.Send($"Playing sound: {individualKey} -> {source.Time}s");

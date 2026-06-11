@@ -5,7 +5,9 @@ namespace Cerberon.Core;
 
 public static class PauseHandler
 {
+	public const string PAUSE_FULL = "pause_full";
 	public static bool IsPaused { get; private set; }
+	public static bool IsFullyPaused { get; private set; }
 	private static float hitstop;
 	private static readonly RefCount pauseList = new() //used not only for pause menu but also for ex. dialogues, inventory, or even millisecond hitstops during combat
 	{
@@ -30,6 +32,7 @@ public static class PauseHandler
 	private static void UpdatePause()
 	{
 		IsPaused = pauseList.IsActive;
+		IsFullyPaused = pauseList.Contains(PAUSE_FULL);
 	}
 
 	public static void ApplyHitstop(float duration = 0.1f)
