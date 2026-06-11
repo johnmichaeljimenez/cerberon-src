@@ -108,6 +108,11 @@ public class AudioSource
 
 public static class AudioHandler
 {
+	[DataConfig]
+	public static bool SoundEnabled = true;
+	[DataConfig]
+	public static bool MusicEnabled = true;
+
 	private const int ALIAS_COUNT = 10;
 	private const float MUSIC_BASE_VOLUME = 0.3f;
 	private const float AMBIENT_BASE_VOLUME = 0.7f;

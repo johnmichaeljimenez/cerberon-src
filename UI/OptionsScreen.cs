@@ -9,7 +9,19 @@ public class OptionsScreen : BaseScreen
 
 	public OptionsScreen(object context) : base(context)
 	{
-		
+
+	}
+
+	public override void UpdateElements(List<UIElement> elements)
+	{
+		base.UpdateElements(elements);
+		UpdateState();
+	}
+
+	private void UpdateState()
+	{
+		references["btn-sfx"].Text = $"Sound Effects: {(AudioHandler.SoundEnabled ? "ON" : "OFF")}";
+		references["btn-music"].Text = $"Music: {(AudioHandler.MusicEnabled ? "ON" : "OFF")}";
 	}
 
 	protected override void OnClick(UIElement e)
@@ -18,14 +30,15 @@ public class OptionsScreen : BaseScreen
 
 		switch (e.ID)
 		{
-			case "btn-start":
-				UIManager.ShowScreen<LevelSelectScreen>(null, false);
-				// FadeHandler.FadeIn(Game.Instance.GoToIngame, true);
+			case "btn-sfx":
+				AudioHandler.SoundEnabled = !AudioHandler.SoundEnabled;
+				UpdateState();
 				break;
-			case "btn-exit":
-				FadeHandler.FadeIn(Game.Instance.RequestExit);
+			case "btn-music":
+				AudioHandler.MusicEnabled = !AudioHandler.MusicEnabled;
+				UpdateState();
 				break;
-			default:
+			case "btn-safe":
 				break;
 		}
 	}
