@@ -7,7 +7,7 @@ btn-exit	320,320	200,40	MainMenu	1	1	Exit	0
 btn-sfx	300,150	200,30	Options	1	1	Sound Effects: ON	0
 btn-music	300,190	200,30	Options	1	1	Music: ON	0
 btn-safe	300,280	200,30	Options	1	1	SAFE MODE: OFF	0
-hint-safe	300,320	200,30	Options	1	0	Changes enemies into safer version	0
+hint-text	300,320	200,30	Options	1	0
 										
 btn-level-1	300, 40	200,40	LevelSelect	1	1	Level 1	0			
 btn-level-2	300, 90	200,40	LevelSelect	1	1	Level 2	0			

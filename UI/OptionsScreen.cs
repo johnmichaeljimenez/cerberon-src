@@ -6,6 +6,12 @@ namespace Cerberon.UI;
 public class OptionsScreen : BaseScreen
 {
 	public override string UIGroup => "Options";
+	private readonly Dictionary<string, string> hints = new()
+	{
+		{"btn-sfx", "Toggles general sound effects on/off"},
+		{"btn-music", "Toggles music on/off"},
+		{"btn-safe", "Changes enemy visuals and audio into safer version"},
+	};
 
 	public OptionsScreen(object context) : base(context)
 	{
@@ -15,6 +21,8 @@ public class OptionsScreen : BaseScreen
 	public override void UpdateElements(List<UIElement> elements)
 	{
 		base.UpdateElements(elements);
+
+		references["hint-text"].CurrentVisibility = false;
 		UpdateState();
 	}
 
@@ -41,5 +49,21 @@ public class OptionsScreen : BaseScreen
 			case "btn-safe":
 				break;
 		}
+	}
+
+	public override void Draw()
+	{
+		var hint = references["hint-text"];
+		if (hoveredElement != null)
+		{
+			hint.Text = hints[hoveredElement.ID];
+			hint.CurrentVisibility = true;
+		}
+		else
+		{
+			hint.CurrentVisibility = false;
+		}
+
+		base.Draw();
 	}
 }
