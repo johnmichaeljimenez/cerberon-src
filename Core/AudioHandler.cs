@@ -101,8 +101,13 @@ public class AudioSource
 			pan = 0.5f + dir.X * 0.5f;
 		}
 
-		Raylib.SetSoundVolume(Sound, volume);
+		UpdateVolume(volume);
 		Raylib.SetSoundPan(Sound, pan); //0 = full left, 0.5 = center, 1 = full right
+	}
+
+	public void UpdateVolume(float input)
+	{
+		Raylib.SetSoundVolume(Sound, input * (AudioHandler.SoundEnabled? 1 : 0));
 	}
 }
 
@@ -145,7 +150,7 @@ public static class AudioHandler
 			if (IsMusicPlaying(music.Music))
 			{
 				Raylib.UpdateMusicStream(music.Music);
-				Raylib.SetMusicVolume(music.Music, music.Volume * AMBIENT_BASE_VOLUME * (PauseHandler.IsPaused ? 0.4f : 1));
+				Raylib.SetMusicVolume(music.Music, music.Volume * AMBIENT_BASE_VOLUME * (PauseHandler.IsPaused ? 0.4f : 1) * (MusicEnabled? 1 : 0));
 
 				if (!music.IsPlaying && music.Volume <= 0.01f) //requested to stop and volume is near zero
 				{
@@ -164,7 +169,7 @@ public static class AudioHandler
 			if (IsMusicPlaying(music.Music))
 			{
 				Raylib.UpdateMusicStream(music.Music);
-				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME * (PauseHandler.IsPaused ? 0.4f : 1));
+				Raylib.SetMusicVolume(music.Music, music.Volume * MUSIC_BASE_VOLUME * (PauseHandler.IsPaused ? 0.4f : 1) * (MusicEnabled? 1 : 0));
 
 				if (!music.IsPlaying && music.Volume <= 0.01f) //requested to stop and volume is near zero
 				{
@@ -414,7 +419,6 @@ public static class AudioHandler
 
 		Raylib.PlaySound(aliases[index]);
 		Raylib.SetSoundPan(sound, 0.5f);
-		Raylib.SetSoundVolume(sound, 1.0f);
 
 		var source = new AudioSource()
 		{
@@ -424,6 +428,8 @@ public static class AudioHandler
 			Position = position ?? Vector2.Zero,
 			IsPlaying = true
 		};
+		
+		source.UpdateVolume(1);
 
 		Log.Send($"Playing sound: {individualKey} -> {source.Time}s");
 
