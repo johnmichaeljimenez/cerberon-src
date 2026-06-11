@@ -81,9 +81,9 @@ public class HUDScreen : BaseScreen
 		OnHealItemUpdate((false, playerEntity.HealCount));
 	}
 
-	public override void OnBack()
+	public override bool OnBack()
 	{
-
+		return false;
 	}
 
 	public override void Draw()

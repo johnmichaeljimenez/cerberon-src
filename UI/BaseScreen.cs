@@ -1,4 +1,5 @@
 using Cerberon.Core;
+using Cerberon.Helpers;
 
 namespace Cerberon.UI;
 
@@ -23,7 +24,13 @@ public abstract class BaseScreen : IDisposable
 
 	public BaseScreen(object context = null)
 	{
-
+		InputManager.GetButtonData(InputAction.Pause).OnPressStart.Subscribe((e) =>
+		{
+			if (pressElement == null && OnBack())
+			{
+				e.IsCancelled = true;
+			}
+		}).AddTo(disposables);
 	}
 
 	public virtual void UpdateElements(List<UIElement> elements)
@@ -153,16 +160,12 @@ public abstract class BaseScreen : IDisposable
 
 		if (Raylib.IsMouseButtonReleased(0))
 			pressElement = null;
-
-		if (pressElement == null && Raylib.IsKeyPressed(KeyboardKey.Escape))
-		{
-			OnBack();
-		}
 	}
 
-	public virtual void OnBack()
+	public virtual bool OnBack()
 	{
 		UIManager.Back();
+		return true;
 	}
 
 	public virtual void Dispose()

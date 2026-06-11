@@ -22,9 +22,9 @@ public class MainMenuScreen : BaseScreen
 		frameIndex = RNG.Range(0, frames.Length);
 	}
 
-	public override void OnBack()
+	public override bool OnBack()
 	{
-
+		return false;
 	}
 
 	public override void UpdateElements(List<UIElement> elements)

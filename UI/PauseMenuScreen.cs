@@ -27,9 +27,9 @@ public class PauseMenuScreen : BaseScreen
 		base.Dispose();
 	}
 
-	public override void OnBack()
+	public override bool OnBack()
 	{
-
+		return false;
 	}
 
 	protected override void OnClick(UIElement e)
@@ -40,6 +40,9 @@ public class PauseMenuScreen : BaseScreen
 		{
 			case "btn-resume":
 				gameplayState.PauseGame(false);
+				break;
+			case "btn-options":
+				UIManager.ShowScreen<OptionsScreen>(null, false);
 				break;
 			case "btn-quit-to-menu":
 				FadeHandler.FadeIn(Game.Instance.GoToMenu, true);
