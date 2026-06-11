@@ -14,6 +14,9 @@ public class InputButton
     public KeyboardKey? KeyButton;
     public MouseButton? MouseButton;
 
+    public readonly Signal<CancelSignal> OnPressStart = new();
+    private readonly CancelSignal cancelSignal = new();
+
     public bool IsDown { get; private set; }
     public bool IsPressed { get; private set; }
     public bool Consumed { get; private set; }
@@ -37,6 +40,17 @@ public class InputButton
             KeyButton.HasValue && Raylib.IsKeyPressed(KeyButton.Value)) ||
             (MouseButton.HasValue && Raylib.IsMouseButtonPressed(MouseButton.Value)
         );
+
+        if (IsPressed)
+        {
+            OnPressStart.Publish(cancelSignal);
+            if (cancelSignal.IsCancelled)
+            {
+                cancelSignal.IsCancelled = false;
+                IsPressed = false;
+                return;
+            }
+        }
 
         if (!currentlyDown)
             Consumed = false;
@@ -215,5 +229,10 @@ public static class InputManager
             return;
 
         Raylib.DrawTexturePro(sprite.Texture, sprite.Rect, new Rectangle(Raylib.GetMousePosition(), sprite.Rect.Size), sprite.Rect.Size * 0.5f, 0f, Color.White);
+    }
+
+    public static InputButton GetButtonData(InputAction action)
+    {
+        return Actions[action];
     }
 }

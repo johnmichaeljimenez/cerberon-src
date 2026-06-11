@@ -28,3 +28,8 @@ public sealed class Signal<T>
         public void Dispose() => _unsubscribe?.Invoke();
     }
 }
+
+public class CancelSignal
+{
+    public bool IsCancelled;
+}
