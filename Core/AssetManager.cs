@@ -1,4 +1,5 @@
 using Cerberon.Helpers;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Cerberon.Core;
@@ -116,8 +117,8 @@ public class Sprite : IDisposable
 
 public class LoadRequest
 {
-	private const int FILES_PER_FRAME = 12; //TODO: change to time-based interval for improvement
-
+	private const double TIME_BUDGET_MS = 16.0;
+	private readonly Stopwatch stopwatch = new Stopwatch();
 	private List<string> pending;
 	private Action<string> onLoad;
 	private Action onEnd;
@@ -139,11 +140,12 @@ public class LoadRequest
 
 	public void Update()
 	{
-		var n = FILES_PER_FRAME;
-		while (n > 0)
+		if (pending == null || pending.Count == 0) return;
+
+		stopwatch.Restart();
+
+		while (pending.Count > 0)
 		{
-			n--;
-			
 			onLoad?.Invoke(pending[0]);
 			pending.RemoveAt(0);
 			Current++;
@@ -152,6 +154,13 @@ public class LoadRequest
 			{
 				onEnd?.Invoke();
 				Running = false;
+				stopwatch.Stop();
+				break;
+			}
+
+			if (stopwatch.Elapsed.TotalMilliseconds >= TIME_BUDGET_MS)
+			{
+				stopwatch.Stop();
 				break;
 			}
 		}
