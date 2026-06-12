@@ -7,17 +7,19 @@ namespace Cerberon.Gameplay.Entities;
 
 public class EnemyEntity : CharacterEntity
 {
-	[DataConfig(70f)] static float STATS_BASE_HP;
-	[DataConfig(50)] static int STATS_OUTDOOR_LIGHT_DAMAGE;
-	[DataConfig(2f)] static float STATS_OUTDOOR_LIGHT_INTERVAL;
+	[DataConfig] public static bool SafeMode;
 
-	[DataConfig(0.8f)] static float STATS_BASE_RADIUS;
+	[DataConfig(70f)] private static float STATS_BASE_HP;
+	[DataConfig(50)] private static int STATS_OUTDOOR_LIGHT_DAMAGE;
+	[DataConfig(2f)] private static float STATS_OUTDOOR_LIGHT_INTERVAL;
 
-	[DataConfig(10)] static int STATS_BASE_DAMAGE;
+	[DataConfig(0.8f)] private static float STATS_BASE_RADIUS;
 
-	[DataConfig(7)] static float STATS_BASE_MOVEMENT_SPEED;
+	[DataConfig(10)] private static int STATS_BASE_DAMAGE;
 
-	const float LIFETIME = 20f;
+	[DataConfig(7)] private static float STATS_BASE_MOVEMENT_SPEED;
+
+	private const float LIFETIME = 20f;
 
 
 	public override Teams Team => Teams.Enemy;

@@ -1,4 +1,5 @@
 using Cerberon.Core;
+using Cerberon.Gameplay.Entities;
 using Cerberon.Helpers;
 
 namespace Cerberon.UI;
@@ -30,6 +31,7 @@ public class OptionsScreen : BaseScreen
 	{
 		references["btn-sfx"].Text = $"Sound Effects: {(AudioHandler.SoundEnabled ? "ON" : "OFF")}";
 		references["btn-music"].Text = $"Music: {(AudioHandler.MusicEnabled ? "ON" : "OFF")}";
+		references["btn-safe"].Text = $"Safe Mode: {(AudioHandler.MusicEnabled ? "ON" : "OFF")}";
 	}
 
 	protected override void OnClick(UIElement e)
@@ -47,6 +49,8 @@ public class OptionsScreen : BaseScreen
 				UpdateState();
 				break;
 			case "btn-safe":
+				EnemyEntity.SafeMode = !EnemyEntity.SafeMode;
+				UpdateState();
 				break;
 		}
 	}
