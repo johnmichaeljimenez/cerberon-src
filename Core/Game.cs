@@ -46,20 +46,19 @@ public class Game
         DataConfigManager.Initialize();
         AssetWatcher.Add(CONFIG_PATH, OnDataConfigChanged);
 
-        _target = Raylib.LoadRenderTexture(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
-        RenderingManager.Init();
-
         currentState = new MenuState();
         AssetManager.Init(() =>
         {
+            InputManager.Init();
+            _target = Raylib.LoadRenderTexture(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
+            RenderingManager.Init();
+            LightingSystem.Init(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
+
             UIManager.Init();
             OnStateChanged?.Publish(currentState);
         });
 
-        InputManager.Init();
-
         Camera = new(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
-        LightingSystem.Init(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
 
         rlImGui.Setup(true);
 
