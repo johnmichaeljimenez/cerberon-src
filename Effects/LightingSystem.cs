@@ -328,7 +328,7 @@ public static class LightingSystem
 	{
 		foreach (var i in l)
 		{
-			if (!i.Enabled || lightGroups[i.GroupID].IsActive)
+			if (!i.Enabled || (!visionOnly && lightGroups[i.GroupID].IsActive))
 				continue;
 
 			if (i.ShadowType == Light.ShadowTypes.None)
@@ -389,7 +389,7 @@ public static class LightingSystem
 		Raylib.BeginBlendMode(BlendMode.Additive);
 		foreach (var i in l)
 		{
-			if (!i.Enabled || lightGroups[i.GroupID].IsActive)
+			if (!i.Enabled || (!visionOnly && lightGroups[i.GroupID].IsActive))
 				continue;
 
 			var flicker = i.Flicker ? QuakeFlicker.GetIntensity(i.FlickerSeed) : 1.0f;
