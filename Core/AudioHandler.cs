@@ -256,8 +256,6 @@ public static class AudioHandler
 				g => GetRelativeFolderKey(rootPath, g.Key),
 				g => g.OrderBy(f => f).ToList());
 
-		int totalLoaded = 0;
-
 		foreach (var kvp in fileGroups)
 		{
 			string groupKey = kvp.Key;
@@ -269,7 +267,7 @@ public static class AudioHandler
 			{
 				var folderPath = files.Count > 0 ? Path.GetDirectoryName(files[0]) ?? "" : "";
 
-				foreach (var filePath in files)
+				AssetManager.AddLoadRequest(files, filePath =>
 				{
 					var fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
 					var musicKey = $"{groupKey}";
@@ -284,9 +282,8 @@ public static class AudioHandler
 						Music = music,
 						transitionPoints = new Dictionary<string, List<float>>(LoadTransitionPoints(folderPath))
 					};
+				}, null);
 
-					totalLoaded++;
-				}
 				continue;
 			}
 
@@ -294,7 +291,7 @@ public static class AudioHandler
 			{
 				var folderPath = files.Count > 0 ? Path.GetDirectoryName(files[0]) ?? "" : "";
 
-				foreach (var filePath in files)
+				AssetManager.AddLoadRequest(files, filePath =>
 				{
 					var fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
 					var musicKey = $"{groupKey}";
@@ -309,15 +306,15 @@ public static class AudioHandler
 						Music = music,
 						transitionPoints = new()
 					};
-
-					totalLoaded++;
 				}
+				, null);
+
 				continue;
 			}
 
 			if (string.IsNullOrEmpty(groupKey))
 			{
-				foreach (var filePath in files)
+				AssetManager.AddLoadRequest(files, filePath =>
 				{
 					string fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
 					string individualKey = fileNameNoExt;
@@ -326,13 +323,14 @@ public static class AudioHandler
 					RegisterSound(individualKey, source);
 
 					soundVariations[individualKey] = new List<string> { individualKey };
-					totalLoaded++;
 				}
+				, null);
+
 				continue;
 			}
 
 			var variationKeys = new List<string>(files.Count);
-			foreach (var filePath in files)
+			AssetManager.AddLoadRequest(files, filePath =>
 			{
 				string fileNameNoExt = Path.GetFileNameWithoutExtension(filePath);
 				string individualKey = $"{groupKey}/{fileNameNoExt}";
@@ -343,9 +341,9 @@ public static class AudioHandler
 
 				soundLengths.Add(individualKey, ((float)source.FrameCount / (float)source.Stream.SampleRate) + 0.5f); //padding
 			}
+			, null);
 
 			soundVariations[groupKey] = variationKeys;
-			totalLoaded += variationKeys.Count;
 		}
 	}
 
