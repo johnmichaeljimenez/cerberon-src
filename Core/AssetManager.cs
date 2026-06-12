@@ -114,6 +114,50 @@ public class Sprite : IDisposable
 	}
 }
 
+public class LoadRequest
+{
+	private const int FILES_PER_FRAME = 12; //TODO: change to time-based interval for improvement
+
+	private List<string> pending;
+	private Action<string> onLoad;
+	private Action onEnd;
+
+	public bool Running { get; private set; }
+	public int Count { get; private set; }
+	public int Current { get; private set; }
+
+	public LoadRequest(List<string> pending, Action<string> onLoad, Action onEnd)
+	{
+		this.pending = pending;
+		this.onLoad = onLoad;
+		this.onEnd = onEnd;
+
+		Running = true;
+		Count = pending.Count;
+		Current = 0;
+	}
+
+	public void Update()
+	{
+		var n = FILES_PER_FRAME;
+		while (n > 0)
+		{
+			n--;
+			
+			onLoad?.Invoke(pending[0]);
+			pending.RemoveAt(0);
+			Current++;
+
+			if (pending.Count == 0)
+			{
+				onEnd?.Invoke();
+				Running = false;
+				break;
+			}
+		}
+	}
+}
+
 public static class AssetManager
 {
 	private static readonly Dictionary<string, Sprite> sprites = new();
@@ -122,15 +166,22 @@ public static class AssetManager
 	public static Sprite MissingSprite { get; private set; }
 	public static Font Font { get; private set; }
 
-	//load everything in Assets for now regardless of where level they will be used. later I'll add an Update() function that stores the pending asset paths in a queue then timeslice them via Game's Update loop (true Raylib frames loop).
-	//no multithreading bs as I need main thread to load textures, so I'll just do "load 10 png this frame then do the remaining 10 on next frame". good for loading screens too
-	//my assets will (and should) not reach ~100mb anyway. and i believe that in the games that I will make, I will not exceed 300 sprites in a single camera view (even if identical/shared sprites).
-	//no sprite atlas support as I don't need that and I am too lazy to make one (there's no real reliable way to make one nowadays that are engine-agnostic without manual work), but I know the REAL benefits of it from my work experience
+	public static bool IsLoading { get; private set; }
+	public static int CurrentLoadRequestCount { get; private set; }
+	public static int MaxLoadRequestCount { get; private set; }
+	public static float NormalizedRequestCount => (float)CurrentLoadRequestCount / MaxLoadRequestCount;
+	private static readonly List<LoadRequest> loadRequests = new();
+	private static Action onLoadEnd = null;
 
-	public static void Init()
+	//no sprite atlas support as I don't need that and I am too lazy to make one (there's no real reliable way to make one nowadays that are engine-agnostic without manual work), but I know the REAL benefits of it from my work experience
+	public static void Init(Action onLoadEndAction = null)
 	{
+		IsLoading = true;
+		onLoadEnd = onLoadEndAction;
+
 		var assetsPath = "Assets";
 		Font = Raylib.LoadFont(Path.Combine(assetsPath, "font.ttf"));
+		ResetLoadRequest();
 
 		AudioHandler.Init(Path.Combine(assetsPath, "Audio"));
 
@@ -153,9 +204,13 @@ public static class AssetManager
 			return;
 		}
 
-		var files = Directory.GetFiles(spritesPath, "*.png", SearchOption.AllDirectories);
+		var chk = Raylib.GenImageChecked(128, 128, 4, 4, Color.Black, Color.Magenta);
+		var chkTex = Raylib.LoadTextureFromImage(chk);
+		MissingSprite = new Sprite("%missing%", chkTex);
+		Raylib.UnloadImage(chk);
 
-		foreach (var file in files)
+		var files = Directory.GetFiles(spritesPath, "*.png", SearchOption.AllDirectories).ToList();
+		AddLoadRequest(files, file =>
 		{
 			var relativePath = Path.GetRelativePath(spritesPath, file);
 			var key = Path.ChangeExtension(relativePath, null).Replace('\\', '/');
@@ -164,23 +219,53 @@ public static class AssetManager
 
 			sprites[key] = new Sprite(key, tex);
 			Console.WriteLine($"Loaded asset: {key}");
-		}
-
-		var chk = Raylib.GenImageChecked(128, 128, 4, 4, Color.Black, Color.Magenta);
-		var chkTex = Raylib.LoadTextureFromImage(chk);
-		MissingSprite = new Sprite("%missing%", chkTex);
-
-		Raylib.UnloadImage(chk);
-
-		foreach (var i in animations)
+		}, () =>
 		{
-			i.Value.Init();
-		}
+			foreach (var i in animations)
+			{
+				i.Value.Init();
+			}
 
-		LevelFiles.Clear();
-		foreach (var i in Directory.GetFiles(Path.Combine(assetsPath, "Levels"), "*.json", SearchOption.AllDirectories))
+			LevelFiles.Clear();
+			foreach (var i in Directory.GetFiles(Path.Combine(assetsPath, "Levels"), "*.json", SearchOption.AllDirectories))
+			{
+				LevelFiles.Add(i, Path.GetFileNameWithoutExtension(i));
+			}
+		});
+	}
+
+	public static void AddLoadRequest(List<string> files, Action<string> onLoad, Action onEnd)
+	{
+		loadRequests.Add(new LoadRequest(files, onLoad, onEnd));
+		MaxLoadRequestCount += files.Count;
+	}
+
+	public static void ResetLoadRequest()
+	{
+		loadRequests.Clear();
+		MaxLoadRequestCount = 0;
+		CurrentLoadRequestCount = 0;
+	}
+
+	//no multithreading allowed here
+	public static void Update()
+	{
+		if (!IsLoading)
+			return;
+
+		var current = loadRequests[0];
+		var prev = current.Current;
+		current.Update();
+		CurrentLoadRequestCount += current.Current - prev;
+
+		if (!current.Running)
+			loadRequests.RemoveAt(0);
+
+		if (loadRequests.Count == 0)
 		{
-			LevelFiles.Add(i, Path.GetFileNameWithoutExtension(i));
+			IsLoading = false;
+			ResetLoadRequest();
+			onLoadEnd.Invoke();
 		}
 	}
 

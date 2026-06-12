@@ -19,8 +19,8 @@ public class Game
 {
     public static Game Instance { get; private set; }
 
-	private const string CONFIG_PATH = "Assets/config.json";
-	public readonly Signal<IGameState> OnStateChanged = new();
+    private const string CONFIG_PATH = "Assets/config.json";
+    public readonly Signal<IGameState> OnStateChanged = new();
     private RenderTexture2D _target;
 
     private IGameState currentState;
@@ -49,19 +49,19 @@ public class Game
         _target = Raylib.LoadRenderTexture(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
         RenderingManager.Init();
 
-        AssetManager.Init();
+        currentState = new MenuState();
+        AssetManager.Init(() =>
+        {
+            UIManager.Init();
+            OnStateChanged?.Publish(currentState);
+        });
+
         InputManager.Init();
 
         Camera = new(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
         LightingSystem.Init(RenderingManager.VIRTUAL_WIDTH, RenderingManager.VIRTUAL_HEIGHT);
 
         rlImGui.Setup(true);
-
-        currentState = new MenuState();
-
-        UIManager.Init();
-        OnStateChanged?.Publish(currentState);
-
 
         Tween<float>.RegisterLerper(Raymath.Lerp);
         Tween<Vector2>.RegisterLerper(Raymath.Vector2Lerp);
@@ -75,7 +75,7 @@ public class Game
         ));
     }
 
-	public void End()
+    public void End()
     {
         TweenManager.Clear();
         currentState?.Exit();
@@ -139,23 +139,37 @@ public class Game
 
     private void Draw()
     {
-        Raylib.BeginTextureMode(_target);
-        {
-            Raylib.ClearBackground(Color.Gray);
+        var isLoading = AssetManager.IsLoading;
 
-            Raylib.BeginMode2D(Camera.Camera);
-            currentState.Draw();
-            Raylib.EndMode2D();
+        if (!isLoading)
+        {
+            Raylib.BeginTextureMode(_target);
+            {
+                Raylib.ClearBackground(Color.Gray);
+
+                Raylib.BeginMode2D(Camera.Camera);
+                currentState.Draw();
+                Raylib.EndMode2D();
+            }
+            Raylib.EndTextureMode();
         }
-        Raylib.EndTextureMode();
 
         Raylib.BeginDrawing();
         {
             Raylib.ClearBackground(Color.Black);
-            RenderingManager.DrawToScreen(_target);
-            UIManager.Draw();
-            InputManager.DrawCursor();
-            FadeHandler.Draw();
+
+            if (isLoading)
+            {
+                Raylib.DrawTextEx(AssetManager.Font, $"Loading... {AssetManager.CurrentLoadRequestCount}/{AssetManager.MaxLoadRequestCount}", new(4, 4), 20, 0, Color.White);
+            }
+            else
+            {
+                RenderingManager.DrawToScreen(_target);
+
+                UIManager.Draw();
+                InputManager.DrawCursor();
+                FadeHandler.Draw();
+            }
 
             if (showIMGUI)
             {
@@ -179,8 +193,6 @@ public class Game
                 }
                 rlImGui.End();
             }
-
-            Raylib.DrawFPS(4, 4);
         }
         Raylib.EndDrawing();
     }
@@ -189,21 +201,29 @@ public class Game
     {
         while (!Raylib.WindowShouldClose())
         {
-            TweenManager.Update(Time.DeltaTime, Time.UnscaledDeltaTime);
-
-            RenderingManager.UpdateLayout();
-            float scale = RenderingManager.Scale;
-            Vector2 offset = RenderingManager.Offset;
-
-            AudioHandler.Update();
-            InputManager.Update(scale, offset, Camera.Camera); //press events are not captured reliably on 60hz loop, that's why it's here
-            Time.Update((fixedDt, unscaledFixedDt) =>
+            if (AssetManager.IsLoading)
             {
-                Update(fixedDt, unscaledFixedDt, scale, offset);
-            });
+                AssetManager.Update();
+            }
+            else
+            {
+                TweenManager.Update(Time.DeltaTime, Time.UnscaledDeltaTime);
 
-            UIManager.Update(Time.DeltaTime, Time.UnscaledDeltaTime);
-            FadeHandler.Update();
+                RenderingManager.UpdateLayout();
+                float scale = RenderingManager.Scale;
+                Vector2 offset = RenderingManager.Offset;
+
+                AudioHandler.Update();
+                InputManager.Update(scale, offset, Camera.Camera); //press events are not captured reliably on 60hz loop, that's why it's here
+
+                Time.Update((fixedDt, unscaledFixedDt) =>
+                {
+                    Update(fixedDt, unscaledFixedDt, scale, offset);
+                });
+
+                UIManager.Update(Time.DeltaTime, Time.UnscaledDeltaTime);
+                FadeHandler.Update();
+            }
 
             if (Raylib.IsKeyPressed(KeyboardKey.F1))
                 showIMGUI = !showIMGUI;
@@ -220,8 +240,8 @@ public class Game
         requestExit = true;
     }
 
-	private void OnDataConfigChanged(string json)
-	{
+    private void OnDataConfigChanged(string json)
+    {
         DataConfigManager.LoadFromJson(json, true);
-	}
+    }
 }
