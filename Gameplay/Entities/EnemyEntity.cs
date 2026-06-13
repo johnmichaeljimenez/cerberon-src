@@ -20,7 +20,17 @@ public class EnemyEntity : CharacterEntity
 	[DataConfig(7)] private static float STATS_BASE_MOVEMENT_SPEED;
 
 	private const float LIFETIME = 20f;
+	[DataConfig] private static string ClipNameIdle = "roach-idle";
+	[DataConfig] private static string ClipNameMove = "roach-move";
+	[DataConfig] private static string ClipNameFly = "roach-fly";
+	[DataConfig] private static string ClipNameAttack = "roach-attack";
+	[DataConfig] private static string ClipNameDeath = "roach-death";
 
+	[DataConfig] private static string SafeClipNameIdle = "roach-idle";
+	[DataConfig] private static string SafeClipNameMove = "roach-move";
+	[DataConfig] private static string SafeClipNameFly = "roach-fly";
+	[DataConfig] private static string SafeClipNameAttack = "roach-attack";
+	[DataConfig] private static string SafeClipNameDeath = "roach-death";
 
 	public override Teams Team => Teams.Enemy;
 
@@ -46,22 +56,37 @@ public class EnemyEntity : CharacterEntity
 
 	private float outdoorTimer;
 
+	private string currentClipNameIdle;
+	private string currentClipNameMove;
+	private string currentClipNameFly;
+	private string currentClipNameAttack;
+	private string currentClipNameDeath;
+
 	public override void Init(GameplayState gameplayState)
 	{
+		currentClipNameIdle = SafeMode? SafeClipNameIdle : ClipNameIdle;
+		currentClipNameDeath = SafeMode? SafeClipNameDeath : ClipNameDeath;
+		currentClipNameAttack = SafeMode? SafeClipNameAttack : ClipNameAttack;
+		currentClipNameMove = SafeMode? SafeClipNameMove : ClipNameMove;
+		
+		currentClipNameFly = ClipNameFly; //safe mode enemies dont fly
+		if (SafeMode)
+			IsFlyer = false;
+
 		normalizedCost = Raymath.Remap(Cost, 0f, 2f, 2f, 0.5f);
 		lifetime = LIFETIME;
 		attackRequestIndex = -1;
 		SetStats();
 
 		base.Init(gameplayState);
-		Animator.BaseSpeed = normalizedCost;
 
-		Animator.Add("roach-idle", 0);
-		Animator.Add("roach-move", 0);
-		Animator.Add("roach-fly", 0);
-		Animator.Add("roach-attack", 50);
-		Animator.Add("roach-death", 100);
-		Animator.Play("roach-idle");
+		Animator.BaseSpeed = normalizedCost;
+		Animator.Add(currentClipNameIdle, 0);
+		Animator.Add(currentClipNameMove, 0);
+		Animator.Add(currentClipNameFly, 0);
+		Animator.Add(currentClipNameAttack, 50);
+		Animator.Add(currentClipNameDeath, 100);
+		Animator.Play(currentClipNameIdle);
 
 		Log.Send($"Spawned enemy #{ID} {Cost}");
 	}
@@ -79,13 +104,13 @@ public class EnemyEntity : CharacterEntity
 
 	protected override void OnAnimationEnd(string animationName)
 	{
-		if (animationName == "roach-attack")
+		if (animationName == currentClipNameAttack)
 		{
 			ReleaseAttack();
 			return;
 		}
 
-		if (animationName == "roach-death")
+		if (animationName == currentClipNameDeath)
 		{
 			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin, Scale);
 			Despawn();
@@ -94,7 +119,7 @@ public class EnemyEntity : CharacterEntity
 
 	protected override void OnAnimationFrameChanged((string, int, float) frameData)
 	{
-		if (frameData.Item1 != "roach-attack" || frameData.Item2 != 6) //guaranteed to be frame-perfect than using normalized time
+		if (frameData.Item1 != currentClipNameAttack || frameData.Item2 != 6) //guaranteed to be frame-perfect than using normalized time
 			return;
 
 		var player = gameplayState.GetManager<GameplayManager>().PlayerCharacter;
@@ -290,11 +315,11 @@ public class EnemyEntity : CharacterEntity
 		{
 			if (flying)
 			{
-				Animator.Play("roach-fly");
+				Animator.Play(currentClipNameFly);
 			}
 			else
 			{
-				Animator.Play("roach-move");
+				Animator.Play(currentClipNameMove);
 				fsTimer += dt;
 
 				if (fsTimer >= 0.4f)
@@ -306,7 +331,7 @@ public class EnemyEntity : CharacterEntity
 		}
 		else
 		{
-			Animator.Play("roach-idle");
+			Animator.Play(currentClipNameIdle);
 		}
 
 		if (!Persistent)
@@ -324,7 +349,7 @@ public class EnemyEntity : CharacterEntity
 	{
 		base.OnDeath();
 
-		Animator.Play("roach-death");
+		Animator.Play(currentClipNameDeath);
 	}
 
 	// public override void Draw()
@@ -351,7 +376,7 @@ public class EnemyEntity : CharacterEntity
 
 		if (attackRequestIndex >= 0)
 		{
-			if (Animator.Play("roach-attack", false, "roach-idle"))
+			if (Animator.Play(currentClipNameAttack, false, currentClipNameIdle))
 			{
 				velocity = Vector2.Zero;
 			}
