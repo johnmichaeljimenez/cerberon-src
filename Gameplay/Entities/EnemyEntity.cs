@@ -26,11 +26,10 @@ public class EnemyEntity : CharacterEntity
 	[DataConfig] private static string ClipNameAttack = "roach-attack";
 	[DataConfig] private static string ClipNameDeath = "roach-death";
 
-	[DataConfig] private static string SafeClipNameIdle = "roach-idle";
-	[DataConfig] private static string SafeClipNameMove = "roach-move";
-	[DataConfig] private static string SafeClipNameFly = "roach-fly";
-	[DataConfig] private static string SafeClipNameAttack = "roach-attack";
-	[DataConfig] private static string SafeClipNameDeath = "roach-death";
+	[DataConfig] private static string SafeClipNameIdle = "zombie-idle";
+	[DataConfig] private static string SafeClipNameMove = "zombie-move";
+	[DataConfig] private static string SafeClipNameAttack = "zombie-attack";
+	[DataConfig] private static string SafeClipNameDeath = "zombie-death";
 
 	public override Teams Team => Teams.Enemy;
 
