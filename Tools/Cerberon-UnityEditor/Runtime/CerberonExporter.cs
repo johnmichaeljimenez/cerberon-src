@@ -101,7 +101,7 @@ namespace CerberonEditor.Main
                     },
                     Rotation = -wall.transform.eulerAngles.z,
                     Flags = 1,
-                    Height = 2
+                    Height = wall.color.a <= 0.6f? 0 : 2
                 });
             }
 
