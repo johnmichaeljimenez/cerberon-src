@@ -1,8 +1,8 @@
 {
   "WorldSettings": {
     "PlayerSpawnPoint": {
-      "X": 25.41,
-      "Y": -1.0
+      "X": 12.01,
+      "Y": 8.23
     },
     "WorldSize": {
       "X": 90.0,
@@ -525,29 +525,6 @@
       }
     },
     {
-      "SpriteID": "env/grass-1",
-      "Position": {
-        "X": -3.37,
-        "Y": 1.85
-      },
-      "Parallax": 0.0,
-      "Rotation": 0.0,
-      "SortingGroup": -1,
-      "SortingIndex": -10,
-      "RenderType": 1,
-      "Scale": 1.0,
-      "TileSize": {
-        "X": 150.0,
-        "Y": 150.0
-      },
-      "Tint": {
-        "R": 255,
-        "G": 255,
-        "B": 255,
-        "A": 255
-      }
-    },
-    {
       "SpriteID": "env/plaster-2",
       "Position": {
         "X": -19.0,
@@ -562,6 +539,29 @@
       "TileSize": {
         "X": 28.329874,
         "Y": 34.2431259
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/grass-1",
+      "Position": {
+        "X": -3.37,
+        "Y": 1.85
+      },
+      "Parallax": 0.0,
+      "Rotation": 0.0,
+      "SortingGroup": -1,
+      "SortingIndex": -10,
+      "RenderType": 1,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 150.0,
+        "Y": 150.0
       },
       "Tint": {
         "R": 255,
@@ -715,11 +715,11 @@
     },
     {
       "Position": {
-        "X": 12.0,
+        "X": 9.0,
         "Y": 25.5
       },
       "Size": {
-        "X": 9.0,
+        "X": 3.0,
         "Y": 2.0
       },
       "Rotation": 0.0,
@@ -768,11 +768,11 @@
     {
       "Position": {
         "X": 8.5,
-        "Y": -1.0
+        "Y": 2.0
       },
       "Size": {
         "X": 2.0,
-        "Y": 14.0
+        "Y": 8.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -781,11 +781,11 @@
     {
       "Position": {
         "X": 8.5,
-        "Y": 17.5
+        "Y": 11.0
       },
       "Size": {
         "X": 2.0,
-        "Y": 17.0
+        "Y": 4.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -794,11 +794,11 @@
     {
       "Position": {
         "X": 42.0,
-        "Y": 10.5
+        "Y": -5.5
       },
       "Size": {
         "X": 2.0,
-        "Y": 39.0
+        "Y": 7.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -936,11 +936,11 @@
     },
     {
       "Position": {
-        "X": 24.5,
+        "X": 22.0,
         "Y": 25.5
       },
       "Size": {
-        "X": 10.0,
+        "X": 5.0,
         "Y": 2.0
       },
       "Rotation": 0.0,
@@ -963,11 +963,11 @@
     {
       "Position": {
         "X": -41.5,
-        "Y": 0.5
+        "Y": -6.5
       },
       "Size": {
         "X": 2.0,
-        "Y": 42.0
+        "Y": 28.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -976,11 +976,11 @@
     {
       "Position": {
         "X": -10.0,
-        "Y": -8.0
+        "Y": -12.5
       },
       "Size": {
         "X": 2.0,
-        "Y": 49.0
+        "Y": 40.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -1197,11 +1197,11 @@
     {
       "Position": {
         "X": 24.5,
-        "Y": -25.5
+        "Y": -30.0
       },
       "Size": {
         "X": 2.0,
-        "Y": 11.0
+        "Y": 2.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -1214,19 +1214,6 @@
       },
       "Size": {
         "X": 6.0,
-        "Y": 2.0
-      },
-      "Rotation": 0.0,
-      "Flags": 1,
-      "Height": 2
-    },
-    {
-      "Position": {
-        "X": 31.0,
-        "Y": -15.0
-      },
-      "Size": {
-        "X": 24.0,
         "Y": 2.0
       },
       "Rotation": 0.0,
@@ -1287,11 +1274,11 @@
     },
     {
       "Position": {
-        "X": -12.5,
-        "Y": -19.5
+        "X": 31.0,
+        "Y": -15.0
       },
       "Size": {
-        "X": 5.0,
+        "X": 24.0,
         "Y": 2.0
       },
       "Rotation": 0.0,
@@ -1300,11 +1287,11 @@
     },
     {
       "Position": {
-        "X": -39.0,
+        "X": -12.5,
         "Y": -19.5
       },
       "Size": {
-        "X": 6.0,
+        "X": 5.0,
         "Y": 2.0
       },
       "Rotation": 0.0,
@@ -1331,6 +1318,19 @@
       },
       "Size": {
         "X": 5.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -39.0,
+        "Y": -19.5
+      },
+      "Size": {
+        "X": 6.0,
         "Y": 2.0
       },
       "Rotation": 0.0,
@@ -1404,12 +1404,12 @@
     },
     {
       "Position": {
-        "X": -37.5,
-        "Y": 12.0
+        "X": 29.5,
+        "Y": -33.0
       },
       "Size": {
-        "X": 8.0,
-        "Y": 2.0
+        "X": 2.0,
+        "Y": 5.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -1417,12 +1417,12 @@
     },
     {
       "Position": {
-        "X": 29.5,
-        "Y": -33.0
+        "X": -37.5,
+        "Y": 12.0
       },
       "Size": {
-        "X": 2.0,
-        "Y": 5.0
+        "X": 8.0,
+        "Y": 2.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -1469,19 +1469,6 @@
     },
     {
       "Position": {
-        "X": -36.5,
-        "Y": -32.0
-      },
-      "Size": {
-        "X": 11.0,
-        "Y": 2.0
-      },
-      "Rotation": 0.0,
-      "Flags": 1,
-      "Height": 2
-    },
-    {
-      "Position": {
         "X": -31.0,
         "Y": -40.0
       },
@@ -1495,12 +1482,12 @@
     },
     {
       "Position": {
-        "X": -24.5,
-        "Y": 21.0
+        "X": -36.5,
+        "Y": -32.0
       },
       "Size": {
-        "X": 2.0,
-        "Y": 7.0
+        "X": 11.0,
+        "Y": 2.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -1521,6 +1508,19 @@
     },
     {
       "Position": {
+        "X": -24.5,
+        "Y": 21.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 7.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
         "X": -6.5,
         "Y": -27.0
       },
@@ -1531,6 +1531,279 @@
       "Rotation": 0.0,
       "Flags": 1,
       "Height": 2
+    },
+    {
+      "Position": {
+        "X": 8.5,
+        "Y": 23.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 4.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 8.5,
+        "Y": 17.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 8.5,
+        "Y": 18.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 12.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 29.0,
+        "Y": 25.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 26.5,
+        "Y": 25.5
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 4.0
+      },
+      "Rotation": -90.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 15.0,
+        "Y": 25.5
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 2.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 12.0,
+        "Y": 25.5
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 4.0
+      },
+      "Rotation": -90.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 8.5,
+        "Y": -7.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 8.5,
+        "Y": -3.5
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 4.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 42.0,
+        "Y": 28.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 5.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 42.0,
+        "Y": 16.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 11.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 42.0,
+        "Y": 5.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 6.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 42.0,
+        "Y": 0.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 4.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 42.0,
+        "Y": 9.5
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 4.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 42.0,
+        "Y": 24.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 4.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 24.5,
+        "Y": -21.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": 24.5,
+        "Y": -26.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 7.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": -10.0,
+        "Y": 13.5
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 6.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -41.5,
+        "Y": 16.0
+      },
+      "Size": {
+        "X": 2.0,
+        "Y": 11.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -10.0,
+        "Y": 9.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 4.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": -41.5,
+        "Y": 9.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 4.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 0
     },
     {
       "Position": {
