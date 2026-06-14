@@ -10,6 +10,8 @@ public class Shadow
 	public float Rotation;
 	public bool Enabled = true;
 
+	public Rectangle Bounds { get; private set; }
+
 	public readonly Vector2[] Points;
 
 	public Shadow(Vector2 centerPosition, Vector2 size, float rotation = 0f)
@@ -19,6 +21,7 @@ public class Shadow
 		Rotation = rotation;
 
 		Points = Utils.GetRectangleCorners(centerPosition, size, rotation).Reverse().ToArray();
+		UpdateBounds();
 	}
 
 	public void Move(Vector2 delta)
@@ -28,6 +31,15 @@ public class Shadow
 		{
 			Points[i] += delta;
 		}
+
+		UpdateBounds();
+		LightingSystem.UpdateShadow(this);
+	}
+
+	private void UpdateBounds()
+	{
+		var sizeDouble = Size * 2;
+		Bounds = new(Position - (sizeDouble * 0.5f), sizeDouble);
 	}
 
 	public void DrawShadow(Light light)
@@ -151,10 +163,17 @@ public class Light : IDisposable
 	public ShadowTypes ShadowType { get; set; }
 	public RenderTexture2D? ShadowRenderTexture { get; private set; }
 	public Camera2D? ShadowCamera { get; private set; }
+	public Rectangle Bounds { get; private set; }
+
 	private const float SHADOW_MAP_RESOLUTION = 256f;
 	private bool updatedShadow;
 
 	public int FlickerSeed;
+
+	public void ReupdateShadow()
+	{
+		updatedShadow = false;
+	}
 
 	public bool ShouldUpdateShadow()
 	{
@@ -211,6 +230,9 @@ public class Light : IDisposable
 				Rotation = 0f
 			};
 		}
+
+		var size = Sprite.UnitSize * Scale * 2;
+		Bounds = new(Position - (size * 0.5f), size);
 	}
 
 	public void Dispose()
@@ -231,6 +253,7 @@ public static class LightingSystem
 	private static readonly List<AmbientLight> ambientLights = new();
 	private static readonly List<Shadow> shadows = new();
 	private static readonly List<Light> visionLights = new();
+	private static readonly Dictionary<Shadow, List<Light>> nearbyStaticLights = new();
 
 	private static readonly Dictionary<string, RefCount> lightGroups = new();
 
@@ -290,7 +313,7 @@ public static class LightingSystem
 		return light;
 	}
 
-	public static void RemoveLight(Light light)
+	public static void RemoveLight(Light light)	//TODO (low prio) check all shadows containing this light and remove it, but no need for now
 	{
 		//no need to remove referenced light group entry here
 
@@ -307,6 +330,17 @@ public static class LightingSystem
 	{
 		var shadow = new Shadow(centerPosition, size, rotation);
 		shadows.Add(shadow);
+		nearbyStaticLights[shadow] = new();
+
+		foreach (var i in lights)
+		{
+			if (i.ShadowType != Light.ShadowTypes.Static || i.VisionEffect == Light.VisionEffects.VisionOnly)
+				continue;
+
+			var bounds = i.Bounds;
+			if (Raylib.CheckCollisionRecs(shadow.Bounds, bounds))
+				nearbyStaticLights[shadow].Add(i);
+		}
 
 		return shadow;
 	}
@@ -314,6 +348,9 @@ public static class LightingSystem
 	public static void RemoveShadow(Shadow shadow)
 	{
 		shadows.Remove(shadow);
+
+		if (nearbyStaticLights.ContainsKey(shadow))
+			nearbyStaticLights.Remove(shadow);
 	}
 
 	public static void SetLightGroupState(string id, bool disabled)
@@ -449,6 +486,8 @@ public static class LightingSystem
 
 	public static void Clear()
 	{
+		nearbyStaticLights.Clear();
+
 		foreach (var i in lights)
 		{
 			i.Dispose();
@@ -481,5 +520,13 @@ public static class LightingSystem
 	public static int GetFlickerSeed()
 	{
 		return RNG.Range(-5, 5);
+	}
+
+	public static void UpdateShadow(Shadow shadow)
+	{
+		foreach (var i in nearbyStaticLights[shadow])
+		{
+			i.ReupdateShadow();
+		}
 	}
 }

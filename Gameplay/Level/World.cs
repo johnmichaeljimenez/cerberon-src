@@ -62,7 +62,7 @@ public class World : IDisposable //aka Level loader
 
 	[JsonIgnore]
 	public NodeData NodeData { get; private set; }
-	
+
 	private readonly List<BaseEntity> emptyList = new();
 
 	public static void InitRegistry()
@@ -92,6 +92,14 @@ public class World : IDisposable //aka Level loader
 		if (AmbientLights == null)
 			AmbientLights = new();
 
+		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
+		foreach (var i in Lights)
+		{
+			LightingSystem.AddLight(i);
+		}
+
+		LightingSystem.SetAmbientLights(AmbientLights); //ambient lights are static anyway
+
 		wallSprite = AssetManager.GetSprite("misc-softrect");
 
 		foreach (var i in EnvironmentColliders)
@@ -118,14 +126,6 @@ public class World : IDisposable //aka Level loader
 
 		gameplayState.GetManager<WaypointManager>().Bake(EnvironmentColliders, WorldSettings.WorldSize, 1f, Entities.Where(p => p is IWaypointModifier).Cast<IWaypointModifier>().ToList());
 		gameplayState.GetManager<CollisionManager>().AddWalls(Vector2.Zero, WorldSettings.WorldSize, worldBounds, Wall.WallFlags.None, CollisionHeight.Low, true);
-
-		LightingSystem.AmbientLightColor = WorldSettings.AmbientColor;
-		foreach (var i in Lights)
-		{
-			LightingSystem.AddLight(i);
-		}
-
-		LightingSystem.SetAmbientLights(AmbientLights); //ambient lights are static anyway
 
 		DecalSystem.Init(Vector2.Zero, WorldSettings.WorldSize);
 
