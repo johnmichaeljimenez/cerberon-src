@@ -47,7 +47,10 @@ public class GameplayManager : BaseManager
 	public readonly Signal<PlayerEntity> OnPlayerDeath = new();
 	public readonly Signal<Unit> OnGameStart = new();
 	public readonly Signal<Unit> OnFightStart = new();
+	public readonly Signal<int> OnTimeTick = new();
 	public readonly Signal<Unit> OnTimeEnd = new();
+
+	private float accumulator;
 
 	public GameplayManager(GameplayState gameplayState) : base(gameplayState)
 	{
@@ -99,6 +102,14 @@ public class GameplayManager : BaseManager
 		{
 			NormalizedTime = _gameTime / MaxGameTime;
 			LightingSystem.AmbientLightColor = AmbientGradient.LerpGradient(1.0f - NormalizedTime);
+
+			accumulator += dt;
+			if (accumulator >= 1.0f)
+			{
+				accumulator = 0;
+				OnTimeTick.Publish((int)MathF.Ceiling(_gameTime));
+			}
+
 			if (Utils.Countdown(ref _gameTime, dt))
 			{
 				OnTimeEnd.Publish(Unit.Default);
