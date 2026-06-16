@@ -50,6 +50,9 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatE
 	private Vector2 slideDirection;
 	public bool IsDead { get; private set; }
 
+	[JsonIgnore]
+	public override float SpriteMaskAmount => 0f;
+
 	public override void Init(GameplayState gameplayState)
 	{
 		base.Init(gameplayState);

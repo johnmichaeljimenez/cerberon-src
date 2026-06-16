@@ -50,6 +50,9 @@ public abstract class BaseEntity : IDisposable
 
 	[JsonIgnore]
 	public bool SpawnedIngame { get; set; }
+	
+	[JsonIgnore]
+	public virtual float SpriteMaskAmount => 1.0f;
 
 	private readonly Dictionary<Type, IEntityModule> entityModules = new();
 

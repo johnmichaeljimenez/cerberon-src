@@ -5,6 +5,7 @@ in vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform sampler2D visionTex;
+uniform float maskAmount;
 
 out vec4 finalColor;
 
@@ -14,5 +15,5 @@ void main() {
     vec4 texColor = texture(texture0, fragTexCoord);
     float mask = texture(visionTex, uv2).r;
 
-    finalColor = vec4(texColor.rgb, texColor.a * mask);
+    finalColor = vec4(texColor.rgb, mix(texColor.a, texColor.a * mask, maskAmount));
 }
