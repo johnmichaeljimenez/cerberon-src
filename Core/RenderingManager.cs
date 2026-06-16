@@ -111,14 +111,11 @@ public static class RenderingManager
     const string POST_FX = "Assets/Shaders/postfx.fs";
 
     public static Shader PostShader { get; private set; }
-    public static Shader SpriteTiled { get; private set; }
 
     private static int lightTexLoc;
     private static int visionTexLoc;
     private static int timeLoc;
     private static int fadeLoc;
-
-    private static int tiledTexLocX, tiledTexLocY;
 
     public static float Scale;
     public static Vector2 Offset;
@@ -127,7 +124,7 @@ public static class RenderingManager
 
     public static readonly Dictionary<string, ShaderSet> ShaderSets = new()
     {
-        { "SpriteEntity", new("sprite-entity", "visionTex") },
+        { "SpriteEntity", new("sprite-entity", "visionTex", "maskAmount") },
         { "SpriteEnvironment", new("sprite-environment", "eraseVision", "visionTex", "tilingX", "tilingY", "tilingMode", "stochasticMode") }
     };
 
@@ -139,15 +136,10 @@ public static class RenderingManager
 
     public static void Init()
     {
-        SpriteTiled = Raylib.LoadShader(null, "Assets/Shaders/sprite-tiled.fs");
-
         foreach (var i in ShaderSets)
         {
             i.Value.Init();
         }
-
-        tiledTexLocX = Raylib.GetShaderLocation(SpriteTiled, "tilingX");
-        tiledTexLocY = Raylib.GetShaderLocation(SpriteTiled, "tilingY");
 
         ReloadShader(AssetWatcher.Add(POST_FX, ReloadShader));
 
@@ -183,17 +175,6 @@ public static class RenderingManager
         return shaderSet;
     }
 
-    public static void BeginTiledShader(Sprite sprite, Vector2 size)
-    {
-        var tiling = new Vector2(
-                size.X * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Width,
-                size.Y * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Height);
-
-        Raylib.BeginShaderMode(SpriteTiled);
-        Raylib.SetShaderValue(SpriteTiled, tiledTexLocX, tiling.X, ShaderUniformDataType.Float);
-        Raylib.SetShaderValue(SpriteTiled, tiledTexLocY, tiling.Y, ShaderUniformDataType.Float);
-    }
-
     private static void ReloadShader(string shader)
     {
         if (PostShader.Id != 0)
@@ -221,12 +202,6 @@ public static class RenderingManager
         foreach (var i in ShaderSets)
         {
             i.Value.Dispose();
-        }
-
-        if (SpriteTiled.Id != 0)
-        {
-            Raylib.UnloadShader(SpriteTiled);
-            SpriteTiled = default;
         }
 
         if (PostShader.Id != 0)
