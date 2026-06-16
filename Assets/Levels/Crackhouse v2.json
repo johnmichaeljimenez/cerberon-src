@@ -176,6 +176,28 @@
       },
       "Rotation": -90.0,
       "IsActive": true
+    },
+    {
+      "Type": "Door",
+      "NameTag": "end-gate",
+      "Position": {
+        "X": -2.5,
+        "Y": 35.84
+      },
+      "Rotation": 0.0,
+      "IsActive": true,
+      "Interactable": false
+    },
+    {
+      "Type": "Door",
+      "NameTag": "end-gate",
+      "Position": {
+        "X": 0.5,
+        "Y": 35.84
+      },
+      "Rotation": -180.0,
+      "IsActive": true,
+      "Interactable": false
     }
   ],
   "EnvironmentSprites": [
@@ -1567,12 +1589,12 @@
     },
     {
       "Position": {
-        "X": -6.5,
-        "Y": -27.0
+        "X": -9.0,
+        "Y": -26.5
       },
       "Size": {
-        "X": 6.0,
-        "Y": 3.0
+        "X": 1.0,
+        "Y": 1.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -1892,11 +1914,11 @@
     },
     {
       "Position": {
-        "X": -26.5,
+        "X": -31.0,
         "Y": 35.0
       },
       "Size": {
-        "X": 39.0,
+        "X": 30.0,
         "Y": 1.0
       },
       "Rotation": 0.0,
@@ -1905,11 +1927,11 @@
     },
     {
       "Position": {
-        "X": 26.0,
+        "X": 24.5,
         "Y": 35.0
       },
       "Size": {
-        "X": 39.0,
+        "X": 42.0,
         "Y": 1.0
       },
       "Rotation": 0.0,
@@ -1970,7 +1992,20 @@
     },
     {
       "Position": {
-        "X": 7.0,
+        "X": 3.5,
+        "Y": 35.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 3.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -5.5,
         "Y": 35.0
       },
       "Size": {
@@ -1984,11 +2019,115 @@
     {
       "Position": {
         "X": -7.5,
+        "Y": -26.5
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -6.0,
+        "Y": -26.5
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -4.5,
+        "Y": -26.5
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -7.0,
         "Y": 35.0
       },
       "Size": {
-        "X": 3.0,
-        "Y": 3.0
+        "X": 2.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -15.0,
+        "Y": 35.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -13.5,
+        "Y": 35.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -12.0,
+        "Y": 35.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -10.5,
+        "Y": 35.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
+    },
+    {
+      "Position": {
+        "X": -9.0,
+        "Y": 35.0
+      },
+      "Size": {
+        "X": 1.0,
+        "Y": 1.0
       },
       "Rotation": 0.0,
       "Flags": 1,
@@ -2553,8 +2692,8 @@
     {
       "SpriteID": "light",
       "Position": {
-        "X": -5.2,
-        "Y": 34.5
+        "X": -6.59,
+        "Y": 38.53
       },
       "Color": {
         "R": 101,
@@ -2575,13 +2714,13 @@
     {
       "SpriteID": "light",
       "Position": {
-        "X": 4.3,
-        "Y": 34.5
+        "X": 2.18,
+        "Y": 33.32
       },
       "Color": {
-        "R": 140,
-        "G": 130,
-        "B": 90,
+        "R": 173,
+        "G": 1,
+        "B": 0,
         "A": 255
       },
       "Rotation": 0.0,
@@ -2592,7 +2731,29 @@
       "Enabled": true,
       "Scale": 32.0,
       "ShadowType": 1,
-      "Flicker": false
+      "Flicker": true
+    },
+    {
+      "SpriteID": "light",
+      "Position": {
+        "X": -6.6,
+        "Y": -35.2
+      },
+      "Color": {
+        "R": 109,
+        "G": 128,
+        "B": 126,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 32.0,
+      "ShadowType": 1,
+      "Flicker": true
     }
   ],
   "AmbientLights": [
