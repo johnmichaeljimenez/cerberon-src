@@ -163,6 +163,7 @@ namespace CerberonEditor.Main
                 var l = new
                 {
                     SpriteID = $"{spr.sprite.name}",
+                    GroupID = i.GroupID,
                     Position = new
                     {
                         X = i.transform.position.x,
