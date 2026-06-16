@@ -407,6 +407,11 @@ public class World : IDisposable //aka Level loader
 		return Entities.FirstOrDefault(p => !p.IsDestroyed && p.NameTag == nameTag) as T;
 	}
 
+	public IEnumerable<T> GetEntitiesByNameTag<T>(string nameTag) where T : BaseEntity
+	{
+		return Entities.Where(p => !p.IsDestroyed && p.NameTag == nameTag).Cast<T>();
+	}
+
 	public List<BaseEntity> GetEntitiesByGroup(string groupName)
 	{
 		if (!EntityGroups.ContainsKey(groupName))
