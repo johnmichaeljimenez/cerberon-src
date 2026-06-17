@@ -29,3 +29,6 @@ All assets are automatically copied to the output directory on build.
 ## Game demo
 Download the game on itch.io: [rateater93.itch.io/vasodilator](https://rateater93.itch.io/vasodilator)
 - The game is continuously updated by this repo via GitHub workflow.
+
+## AI Disclosure
+This project is AI-assisted. I used my custom LLM workflow engine, Flowbench ([https://github.com/johnmichaeljimenez/flowbench](https://github.com/johnmichaeljimenez/flowbench)), to assist with generating mock data, code sanity checks (first-pass), and populating placeholder helper functions.
