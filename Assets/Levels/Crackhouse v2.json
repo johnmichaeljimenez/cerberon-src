@@ -2163,6 +2163,7 @@
   "Lights": [
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 25.14,
         "Y": 0.5
@@ -2185,6 +2186,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 15.14,
         "Y": 7.69
@@ -2207,6 +2209,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 26.0,
         "Y": 7.69
@@ -2229,6 +2232,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 35.62,
         "Y": 12.99
@@ -2251,6 +2255,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 35.62,
         "Y": 24.34
@@ -2273,6 +2278,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 26.22,
         "Y": 19.96
@@ -2295,6 +2301,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 16.28,
         "Y": 20.18
@@ -2317,6 +2324,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 35.84,
         "Y": -1.4
@@ -2339,6 +2347,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 15.43,
         "Y": -1.4
@@ -2361,6 +2370,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 5.7,
         "Y": 5.1
@@ -2383,6 +2393,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 14.8,
         "Y": 27.72
@@ -2405,6 +2416,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -8.6,
         "Y": 16.0
@@ -2427,6 +2439,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 20.0,
         "Y": -12.7
@@ -2449,6 +2462,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 26.8,
         "Y": -39.2
@@ -2471,6 +2485,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 16.59,
         "Y": -36.5
@@ -2493,6 +2508,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -33.7,
         "Y": -21.6
@@ -2515,6 +2531,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -29.1,
         "Y": -38.6
@@ -2537,6 +2554,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -7.5,
         "Y": -1.9
@@ -2559,6 +2577,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -29.2,
         "Y": 25.6
@@ -2581,6 +2600,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -13.2,
         "Y": 26.4
@@ -2603,6 +2623,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 5.0,
         "Y": -12.4
@@ -2625,6 +2646,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -28.46,
         "Y": 8.87
@@ -2647,6 +2669,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -26.25,
         "Y": -6.03
@@ -2669,6 +2692,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": 17.3,
         "Y": -25.1
@@ -2691,6 +2715,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -6.59,
         "Y": 38.53
@@ -2713,6 +2738,7 @@
     },
     {
       "SpriteID": "light",
+      "GroupID": "Main",
       "Position": {
         "X": -6.6,
         "Y": -35.2
@@ -2741,10 +2767,10 @@
         "Y": 11.03
       },
       "Color": {
-        "R": 105,
-        "G": 105,
-        "B": 105,
-        "A": 179
+        "R": 29,
+        "G": 29,
+        "B": 29,
+        "A": 255
       },
       "Rotation": 0.0,
       "Size": {
@@ -2759,10 +2785,10 @@
         "Y": 10.4
       },
       "Color": {
-        "R": 105,
-        "G": 105,
-        "B": 105,
-        "A": 179
+        "R": 29,
+        "G": 29,
+        "B": 29,
+        "A": 255
       },
       "Rotation": 0.0,
       "Size": {
@@ -2777,10 +2803,10 @@
         "Y": 8.64
       },
       "Color": {
-        "R": 105,
-        "G": 105,
-        "B": 105,
-        "A": 179
+        "R": 29,
+        "G": 29,
+        "B": 29,
+        "A": 255
       },
       "Rotation": 0.0,
       "Size": {
@@ -2795,10 +2821,10 @@
         "Y": -22.92
       },
       "Color": {
-        "R": 89,
-        "G": 89,
-        "B": 89,
-        "A": 179
+        "R": 29,
+        "G": 29,
+        "B": 29,
+        "A": 255
       },
       "Rotation": 0.0,
       "Size": {
@@ -2813,10 +2839,10 @@
         "Y": -28.81
       },
       "Color": {
-        "R": 89,
-        "G": 89,
-        "B": 89,
-        "A": 179
+        "R": 29,
+        "G": 29,
+        "B": 29,
+        "A": 255
       },
       "Rotation": 0.0,
       "Size": {
@@ -2831,10 +2857,10 @@
         "Y": 0.86
       },
       "Color": {
-        "R": 89,
-        "G": 89,
-        "B": 89,
-        "A": 179
+        "R": 29,
+        "G": 29,
+        "B": 29,
+        "A": 255
       },
       "Rotation": 0.0,
       "Size": {
@@ -2849,10 +2875,10 @@
         "Y": 21.19
       },
       "Color": {
-        "R": 89,
-        "G": 89,
-        "B": 89,
-        "A": 179
+        "R": 29,
+        "G": 29,
+        "B": 29,
+        "A": 255
       },
       "Rotation": 0.0,
       "Size": {
@@ -2888,6 +2914,20 @@
         "Y": 1.9957962
       },
       "TriggerID": "StartFight",
+      "SortingIndex": 0,
+      "Enabled": true
+    },
+    {
+      "Position": {
+        "X": 15.06,
+        "Y": 12.71
+      },
+      "Rotation": 0.0,
+      "Size": {
+        "X": 8.04263,
+        "Y": 1.9957962
+      },
+      "TriggerID": "Test",
       "SortingIndex": 0,
       "Enabled": true
     }
