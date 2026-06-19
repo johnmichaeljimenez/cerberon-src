@@ -76,7 +76,7 @@ public class GameplayManager : BaseManager
 		Running = Enabled;
 		_gameTime = MaxGameTime;
 
-		events.Setup(gameplayState, gameplayState.GetManager<GameplayEventManager>());
+		events.Setup(gameplayState);
 	}
 
 	public override void OnEnter()
@@ -107,7 +107,9 @@ public class GameplayManager : BaseManager
 			if (accumulator >= 1.0f)
 			{
 				accumulator = 0;
-				OnTimeTick.Publish((int)MathF.Ceiling(_gameTime));
+
+				var t = (int)MathF.Ceiling(MaxGameTime - _gameTime);
+				OnTimeTick.Publish(t);
 			}
 
 			if (Utils.Countdown(ref _gameTime, dt))
