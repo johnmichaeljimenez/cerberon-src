@@ -1,5 +1,8 @@
+using System.Diagnostics;
 using Cerberon.Core;
+using Cerberon.Effects;
 using Cerberon.Gameplay.Entities;
+using Cerberon.Gameplay.Entities.Player;
 using Cerberon.Gameplay.Managers;
 using Cerberon.Helpers;
 
@@ -9,21 +12,23 @@ public class EventSetup : IDisposable
 {
 	private readonly List<IDisposable> disposables = new();
 	private GameplayState gameplayState;
+	private GameplayManager gameplayManager;
 	private GameplayEventManager gameplayEventManager;
 
-	public void Setup(GameplayState state, GameplayEventManager ev)
+	public void Setup(GameplayState state)
 	{
 		gameplayState = state;
-		gameplayEventManager = ev;
+		gameplayManager = state.GetManager<GameplayManager>();
+		gameplayEventManager = state.GetManager<GameplayEventManager>();
 
 		//start of game
-		state.GetManager<GameplayManager>().OnGameStart.Subscribe(_ =>
+		gameplayManager.OnGameStart.Subscribe(_ =>
 		{
 
 		}).AddTo(disposables);
 
 		//end of game
-		state.GetManager<GameplayManager>().OnTimeEnd.Subscribe(_ =>
+		gameplayManager.OnTimeEnd.Subscribe(_ =>
 		{
 			gameplayEventManager.RunEvent("end-1",
 				new ShowDialogue("end-1", true)
@@ -47,6 +52,26 @@ public class EventSetup : IDisposable
 					return;
 			}
 		});
+
+		gameplayManager.OnTimeTick.Subscribe(t =>
+		{
+			var max = (int)MathF.Ceiling(GameplayManager.MaxGameTime * 0.2f);
+
+			if (t != max)
+				return;
+
+			gameplayEventManager.RunEvent("power",
+				new SetLightGroupState("Main", false),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", true),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", false),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", true),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", false)
+			);
+		});
 	}
 
 	public void Dispose()
@@ -56,12 +81,13 @@ public class EventSetup : IDisposable
 
 	private void StartFight()
 	{
+		var player = gameplayManager.PlayerCharacter;
 		var door = gameplayState.CurrentWorld.GetEntityByNameTag<DoorEntity>("intro-door");
 		var mk = gameplayState.CurrentWorld.FindMarkerPosition("intro-sfx");
 		Vector2? sfxPosition = mk == null ? null : mk.Position;
 
 		gameplayEventManager.RunEvent("startfight",
-		
+
 			new Exec(() => Game.Instance.Camera.Shake(0.8f, null)),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.2f),
@@ -78,7 +104,7 @@ public class EventSetup : IDisposable
 			new Wait(0.2f),
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.1f),
-			
+
 			new Exec(() => door.SetActive(false)),
 			new SetLightGroupState("<default>", true),
 			new PlayAudio("break", sfxPosition),
@@ -103,6 +129,24 @@ public class EventSetup : IDisposable
 				gameplayState.GetManager<GameplayManager>().Begin();
 			})
 		);
+
+		var powerSwitch = gameplayState.CurrentWorld.GetEntitiesByNameTag<SwitchEntity>("PowerSwitch");
+		player.GetModule<PlayerInteraction>().OnInteract.Subscribe(e =>
+		{
+			if (e != powerSwitch)
+				return;
+
+			gameplayEventManager.RunEvent("power",
+				new Exec(() => Game.Instance.Camera.Shake(3f, null)),
+				new SetLightGroupState("Main", false),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", true),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", false),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", true)
+			);
+		}).AddTo(disposables);
 	}
 
 	private void Ending()
