@@ -1,8 +1,8 @@
 {
   "WorldSettings": {
     "PlayerSpawnPoint": {
-      "X": 12.01,
-      "Y": 8.23
+      "X": -33.99,
+      "Y": -38.75
     },
     "WorldSize": {
       "X": 90.0,
@@ -198,6 +198,16 @@
       "Rotation": -180.0,
       "IsActive": true,
       "Interactable": false
+    },
+    {
+      "Type": "Switch",
+      "NameTag": "",
+      "Position": {
+        "X": -39.466,
+        "Y": -36.78
+      },
+      "Rotation": 0.0,
+      "IsActive": true
     }
   ],
   "EnvironmentSprites": [
@@ -738,6 +748,29 @@
       },
       "Parallax": 0.0,
       "Rotation": -270.0,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/control-panel",
+      "Position": {
+        "X": -39.47,
+        "Y": -36.61
+      },
+      "Parallax": 0.0,
+      "Rotation": -89.19792,
       "SortingGroup": 0,
       "SortingIndex": 0,
       "RenderType": 0,
@@ -2156,6 +2189,19 @@
         "Y": 1.0
       },
       "Rotation": -270.0,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": -39.47,
+        "Y": -36.61
+      },
+      "Size": {
+        "X": 4.0,
+        "Y": 2.0
+      },
+      "Rotation": -89.19792,
       "Flags": 0,
       "Height": 0
     }
