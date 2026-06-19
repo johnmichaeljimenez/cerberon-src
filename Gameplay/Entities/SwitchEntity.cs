@@ -26,6 +26,8 @@ public class SwitchEntity : BaseEntity, IInteractable
 
 	public override void Init(GameplayState gameplayState)
 	{
+		Groups.Add(nameof(IInteractable));
+		
 		if (!string.IsNullOrWhiteSpace(SpriteNameEnabledState))
 			spriteEnabled = AssetManager.GetSprite(SpriteNameEnabledState);
 
