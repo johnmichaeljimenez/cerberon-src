@@ -201,7 +201,7 @@
     },
     {
       "Type": "Switch",
-      "NameTag": "",
+      "NameTag": "PowerSwitch",
       "Position": {
         "X": -39.466,
         "Y": -36.78
