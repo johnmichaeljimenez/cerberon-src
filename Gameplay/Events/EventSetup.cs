@@ -61,6 +61,7 @@ public class EventSetup : IDisposable
 				return;
 
 			gameplayEventManager.RunEvent("power",
+				new ShowDialogue("intro-2", false),
 				new SetLightGroupState("Main", false),
 				new Wait(0.1f),
 				new SetLightGroupState("Main", true),
