@@ -2804,6 +2804,75 @@
       "Scale": 32.0,
       "ShadowType": 1,
       "Flicker": true
+    },
+    {
+      "SpriteID": "light",
+      "GroupID": "Main",
+      "Position": {
+        "X": -33.81,
+        "Y": 17.22
+      },
+      "Color": {
+        "R": 109,
+        "G": 128,
+        "B": 126,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 32.0,
+      "ShadowType": 1,
+      "Flicker": true
+    },
+    {
+      "SpriteID": "light",
+      "GroupID": "Main",
+      "Position": {
+        "X": -16.75,
+        "Y": 18.4
+      },
+      "Color": {
+        "R": 109,
+        "G": 128,
+        "B": 126,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 32.0,
+      "ShadowType": 1,
+      "Flicker": true
+    },
+    {
+      "SpriteID": "light",
+      "GroupID": "Main",
+      "Position": {
+        "X": -35.26,
+        "Y": -4.29
+      },
+      "Color": {
+        "R": 109,
+        "G": 128,
+        "B": 126,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 32.0,
+      "ShadowType": 1,
+      "Flicker": true
     }
   ],
   "AmbientLights": [
