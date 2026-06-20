@@ -47,18 +47,19 @@ public class EventSetup : IDisposable
 
 	private void TimeEnd()
 	{
-		gameplayEventManager.RunEvent("power-1",
+		gameplayEventManager.RunEvent("power",
 			new PlayAudio("phone", null, true),
 			new Wait(0.1f),
 			new PlayAudio("phone", null, true),
-			new ShowDialogue("power-1", true),
+			new ShowDialogue("power-1", false),
+			new Wait(0.5f),
 			new Exec(() => gameplayState.GetManager<TriggerManager>().Find(nameof(PowerOff))[0].Enabled = true)
 		);
 	}
 
 	private void PowerOff()
 	{
-		gameplayEventManager.RunEvent("power-off",
+		gameplayEventManager.RunEvent("power",	//can be intentionally overriden since player can wait at the gate already before time runs out
 			new SetLightGroupState("Main", false),
 			new Wait(0.1f),
 			new SetLightGroupState("Main", true),
@@ -89,8 +90,8 @@ public class EventSetup : IDisposable
 
 	private void Ending()
 	{
-		gameplayEventManager.RunEvent("end-2",
-			new ShowDialogue("end-2", true),
+		gameplayEventManager.RunEvent("end-1",
+			new ShowDialogue("end-1", true),
 			new Wait(0.5f),
 			new Exec(() =>
 			{
