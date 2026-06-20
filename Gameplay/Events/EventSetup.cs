@@ -21,23 +21,11 @@ public class EventSetup : IDisposable
 		gameplayManager = state.GetManager<GameplayManager>();
 		gameplayEventManager = state.GetManager<GameplayEventManager>();
 
-		//start of game
-		gameplayManager.OnGameStart.Subscribe(_ =>
-		{
-
-		}).AddTo(disposables);
-
-		//end of game
 		gameplayManager.OnTimeEnd.Subscribe(_ =>
 		{
-			gameplayEventManager.RunEvent("end-1",
-				new ShowDialogue("end-1", true)
-			);
-
-			state.GetManager<TriggerManager>().Find(nameof(Ending))[0].Enabled = true;
+			TimeEnd();
 		}).AddTo(disposables);
 
-		//start fight
 		state.GetManager<TriggerManager>().OnTriggerExecute.Subscribe(t =>
 		{
 			switch (t.Item2.TriggerID)
@@ -45,34 +33,70 @@ public class EventSetup : IDisposable
 				case nameof(StartFight):
 					StartFight();
 					break;
+				case nameof(PowerOff):
+					PowerOff();
+					break;
 				case nameof(Ending):
 					Ending();
 					break;
 				default:
 					return;
 			}
-		});
+		}).AddTo(disposables);
+	}
 
-		gameplayManager.OnTimeTick.Subscribe(t =>
-		{
-			var max = (int)MathF.Ceiling(GameplayManager.MaxGameTime * 0.2f);
+	private void TimeEnd()
+	{
+		gameplayEventManager.RunEvent("power-1",
+			new PlayAudio("phone", null, true),
+			new Wait(0.1f),
+			new PlayAudio("phone", null, true),
+			new ShowDialogue("power-1", true),
+			new Exec(() => gameplayState.GetManager<TriggerManager>().Find(nameof(PowerOff))[0].Enabled = true)
+		);
+	}
 
-			if (t != max)
-				return;
+	private void PowerOff()
+	{
+		gameplayEventManager.RunEvent("power-off",
+			new SetLightGroupState("Main", false),
+			new Wait(0.1f),
+			new SetLightGroupState("Main", true),
+			new Wait(0.1f),
+			new SetLightGroupState("Main", false),
+			new Wait(0.1f),
+			new SetLightGroupState("Main", true),
+			new Wait(0.1f),
+			new SetLightGroupState("Main", false),
+			new ShowDialogue("power-2", false)
+		);
+	}
 
-			gameplayEventManager.RunEvent("power",
-				new ShowDialogue("intro-2", false),
-				new SetLightGroupState("Main", false),
-				new Wait(0.1f),
-				new SetLightGroupState("Main", true),
-				new Wait(0.1f),
-				new SetLightGroupState("Main", false),
-				new Wait(0.1f),
-				new SetLightGroupState("Main", true),
-				new Wait(0.1f),
-				new SetLightGroupState("Main", false)
-			);
-		});
+	private void PowerOn()
+	{
+		gameplayEventManager.RunEvent("power-on",
+			new Exec(() => Game.Instance.Camera.Shake(3f, null)),
+			new SetLightGroupState("Main", false),
+			new Wait(0.1f),
+			new SetLightGroupState("Main", true),
+			new Wait(0.1f),
+			new SetLightGroupState("Main", false),
+			new Wait(0.1f),
+			new SetLightGroupState("Main", true),
+			new Exec(() => gameplayState.GetManager<TriggerManager>().Find(nameof(Ending))[0].Enabled = true)
+		);
+	}
+
+	private void Ending()
+	{
+		gameplayEventManager.RunEvent("end-2",
+			new ShowDialogue("end-2", true),
+			new Wait(0.5f),
+			new Exec(() =>
+			{
+				gameplayState.GetManager<GameplayManager>().End(true);
+			})
+		);
 	}
 
 	public void Dispose()
@@ -137,28 +161,7 @@ public class EventSetup : IDisposable
 			if (e != powerSwitch)
 				return;
 
-			gameplayEventManager.RunEvent("power",
-				new Exec(() => Game.Instance.Camera.Shake(3f, null)),
-				new SetLightGroupState("Main", false),
-				new Wait(0.1f),
-				new SetLightGroupState("Main", true),
-				new Wait(0.1f),
-				new SetLightGroupState("Main", false),
-				new Wait(0.1f),
-				new SetLightGroupState("Main", true)
-			);
+			PowerOn();
 		}).AddTo(disposables);
-	}
-
-	private void Ending()
-	{
-		gameplayEventManager.RunEvent("end-2",
-			new ShowDialogue("end-2", true),
-			new Wait(0.5f),
-			new Exec(() =>
-			{
-				gameplayState.GetManager<GameplayManager>().End(true);
-			})
-		);
 	}
 }
