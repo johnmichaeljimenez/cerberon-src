@@ -162,6 +162,7 @@ public class Light : IDisposable
 
 	public ShadowTypes ShadowType { get; set; }
 	public RenderTexture2D? ShadowRenderTexture { get; private set; }
+	public RenderTexture2D? GIRenderTexture { get; private set; }
 	public Camera2D? ShadowCamera { get; private set; }
 	public Rectangle Bounds { get; private set; }
 
@@ -220,6 +221,10 @@ public class Light : IDisposable
 			ShadowRenderTexture = Raylib.LoadRenderTexture(rtSize, rtSize);
 			Raylib.SetTextureFilter(ShadowRenderTexture.Value.Texture, TextureFilter.Bilinear);
 
+			int giSize = rtSize;
+			GIRenderTexture = Raylib.LoadRenderTexture(giSize, giSize);
+			Raylib.SetTextureFilter(GIRenderTexture.Value.Texture, TextureFilter.Bilinear);
+
 			float spriteWorldDiameter = Sprite.UnitSize.X * Scale * 2;
 
 			ShadowCamera = new Camera2D
@@ -239,6 +244,9 @@ public class Light : IDisposable
 	{
 		if (ShadowRenderTexture.HasValue)
 			Raylib.UnloadRenderTexture(ShadowRenderTexture.Value);
+
+		if (GIRenderTexture.HasValue)
+			Raylib.UnloadRenderTexture(GIRenderTexture.Value);
 	}
 }
 
@@ -313,7 +321,7 @@ public static class LightingSystem
 		return light;
 	}
 
-	public static void RemoveLight(Light light)	//TODO (low prio) check all shadows containing this light and remove it, but no need for now
+	public static void RemoveLight(Light light) //TODO (low prio) check all shadows containing this light and remove it, but no need for now
 	{
 		//no need to remove referenced light group entry here
 
@@ -361,6 +369,13 @@ public static class LightingSystem
 		lightGroups[id].SetValue(id, disabled);
 	}
 
+	private static bool ShouldApplyGi(Light light)
+	{
+		return light.Enabled &&
+			   light.ShadowType == Light.ShadowTypes.Static &&
+			   light.VisionEffect == Light.VisionEffects.Light;
+	}
+
 	private static void DrawLights(Camera2D cam, RenderTexture2D tex, List<Light> l, Color bgColor, bool visionOnly)
 	{
 		foreach (var i in l)
@@ -395,6 +410,26 @@ public static class LightingSystem
 
 				Raylib.EndMode2D();
 				Raylib.EndTextureMode();
+
+				if (ShouldApplyGi(i) && i.GIRenderTexture.HasValue)
+				{
+					var giRt = i.GIRenderTexture.Value;
+					Raylib.BeginTextureMode(giRt);
+					Raylib.ClearBackground(Color.Black);
+
+					Rectangle src = new Rectangle(0, 0, rt.Texture.Width, -rt.Texture.Height);
+					Rectangle dest = new Rectangle(0, 0, giRt.Texture.Width, giRt.Texture.Height);
+
+					var blur = RenderingManager.ShaderSets["Blur"];
+					// blur.SetValue("resolution", new Vector2(giRt.Texture.Width, giRt.Texture.Height));
+					// blur.SetValue("blurAmount", 6);
+					Raylib.BeginShaderMode(blur.Shader);
+					Raylib.DrawTexturePro(rt.Texture, src, dest, Vector2.Zero, 0f, Color.White);
+					Raylib.EndShaderMode();
+
+
+					Raylib.EndTextureMode();
+				}
 			}
 		}
 
@@ -455,7 +490,34 @@ public static class LightingSystem
 				);
 
 				Rectangle src = new Rectangle(0, 0, rt.Texture.Width, -rt.Texture.Height);
+
+				// if (i.ShadowType == Light.ShadowTypes.Dynamic || visionOnly)
 				Raylib.DrawTexturePro(rt.Texture, src, dest, Vector2.Zero, 0f, color);
+
+				if (ShouldApplyGi(i) && i.GIRenderTexture.HasValue)
+				{
+					var giRt = i.GIRenderTexture.Value;
+					Rectangle giSrc = new Rectangle(0, 0, giRt.Texture.Width, -giRt.Texture.Height);
+
+					float giSizeMultiplier = 1.2f;
+					float giWorldSize = worldSize * giSizeMultiplier;
+
+					Rectangle giDest = new Rectangle(
+						i.Position.X - giWorldSize / 2f,
+						i.Position.Y - giWorldSize / 2f,
+						giWorldSize,
+						giWorldSize
+					);
+
+					Color giColor = new Color(
+						(byte)(color.R * 0.5f),
+						(byte)(color.G * 0.5f),
+						(byte)(color.B * 0.5f),
+						color.A
+					);
+
+					Raylib.DrawTexturePro(giRt.Texture, giSrc, giDest, Vector2.Zero, 0f, giColor);
+				}
 			}
 		}
 
