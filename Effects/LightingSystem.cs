@@ -166,6 +166,7 @@ public class Light : IDisposable
 	public Camera2D? ShadowCamera { get; private set; }
 	public Rectangle Bounds { get; private set; }
 
+	private const int PIXELS_PER_UNIT = 8;
 	private const float SHADOW_MAP_RESOLUTION = 256f;
 	private bool updatedShadow;
 
@@ -216,22 +217,25 @@ public class Light : IDisposable
 	{
 		if (ShadowType != ShadowTypes.None)
 		{
-			int rtSize = (int)SHADOW_MAP_RESOLUTION; //TODO: use world unity dynamic resolution (bigger light = bigger RT)
+			var spriteWorldDiameter = Sprite.UnitSize.X * Scale * 2f;
+
+			var rtSize = (int)(spriteWorldDiameter * PIXELS_PER_UNIT);
+			rtSize = Math.Clamp(rtSize, PIXELS_PER_UNIT, 2048); 
+
+			rtSize = (int)Math.Pow(2, Math.Round(Math.Log2(rtSize)));
 
 			ShadowRenderTexture = Raylib.LoadRenderTexture(rtSize, rtSize);
 			Raylib.SetTextureFilter(ShadowRenderTexture.Value.Texture, TextureFilter.Bilinear);
 
-			int giSize = rtSize;
+			var giSize = rtSize / 4;
 			GIRenderTexture = Raylib.LoadRenderTexture(giSize, giSize);
 			Raylib.SetTextureFilter(GIRenderTexture.Value.Texture, TextureFilter.Bilinear);
-
-			float spriteWorldDiameter = Sprite.UnitSize.X * Scale * 2;
 
 			ShadowCamera = new Camera2D
 			{
 				Target = Position,
 				Offset = new Vector2(rtSize / 2f, rtSize / 2f),
-				Zoom = SHADOW_MAP_RESOLUTION / spriteWorldDiameter,
+				Zoom = rtSize / spriteWorldDiameter,
 				Rotation = 0f
 			};
 		}
@@ -378,6 +382,8 @@ public static class LightingSystem
 
 	private static void DrawLights(Camera2D cam, RenderTexture2D tex, List<Light> l, Color bgColor, bool visionOnly)
 	{
+		var blur = RenderingManager.ShaderSets["Blur"];
+
 		foreach (var i in l)
 		{
 			if (!i.Enabled || (!visionOnly && lightGroups[i.GroupID].IsActive))
@@ -420,12 +426,7 @@ public static class LightingSystem
 					Rectangle src = new Rectangle(0, 0, rt.Texture.Width, -rt.Texture.Height);
 					Rectangle dest = new Rectangle(0, 0, giRt.Texture.Width, giRt.Texture.Height);
 
-					var blur = RenderingManager.ShaderSets["Blur"];
-					// blur.SetValue("resolution", new Vector2(giRt.Texture.Width, giRt.Texture.Height));
-					// blur.SetValue("blurAmount", 6);
-					Raylib.BeginShaderMode(blur.Shader);
 					Raylib.DrawTexturePro(rt.Texture, src, dest, Vector2.Zero, 0f, Color.White);
-					Raylib.EndShaderMode();
 
 
 					Raylib.EndTextureMode();
@@ -481,42 +482,47 @@ public static class LightingSystem
 				var rt = i.ShadowRenderTexture.Value;
 				var lightCam = i.ShadowCamera.Value;
 
-				float worldSize = (float)rt.Texture.Width / lightCam.Zoom;
-				Rectangle dest = new Rectangle(
+				var worldSize = (float)rt.Texture.Width / lightCam.Zoom;
+				var dest = new Rectangle(
 					i.Position.X - worldSize / 2f,
 					i.Position.Y - worldSize / 2f,
 					worldSize,
 					worldSize
 				);
 
-				Rectangle src = new Rectangle(0, 0, rt.Texture.Width, -rt.Texture.Height);
+				var src = new Rectangle(0, 0, rt.Texture.Width, -rt.Texture.Height);
 
-				// if (i.ShadowType == Light.ShadowTypes.Dynamic || visionOnly)
-				Raylib.DrawTexturePro(rt.Texture, src, dest, Vector2.Zero, 0f, color);
+				if (i.ShadowType == Light.ShadowTypes.Dynamic || visionOnly)
+					Raylib.DrawTexturePro(rt.Texture, src, dest, Vector2.Zero, 0f, color);
 
 				if (ShouldApplyGi(i) && i.GIRenderTexture.HasValue)
 				{
+					Raylib.BeginShaderMode(blur.Shader);
+					blur.SetValue("resolutionX", (float)rt.Texture.Width);
+					blur.SetValue("resolutionY", (float)rt.Texture.Height);
+
 					var giRt = i.GIRenderTexture.Value;
-					Rectangle giSrc = new Rectangle(0, 0, giRt.Texture.Width, -giRt.Texture.Height);
+					var giSrc = new Rectangle(0, 0, giRt.Texture.Width, -giRt.Texture.Height);
 
-					float giSizeMultiplier = 1.2f;
-					float giWorldSize = worldSize * giSizeMultiplier;
+					var giWorldSize = worldSize + 1;
+					var intensity = 1f;
 
-					Rectangle giDest = new Rectangle(
+					var giDest = new Rectangle(
 						i.Position.X - giWorldSize / 2f,
 						i.Position.Y - giWorldSize / 2f,
 						giWorldSize,
 						giWorldSize
 					);
 
-					Color giColor = new Color(
-						(byte)(color.R * 0.5f),
-						(byte)(color.G * 0.5f),
-						(byte)(color.B * 0.5f),
+					var giColor = new Color(
+						(byte)(color.R * intensity),
+						(byte)(color.G * intensity),
+						(byte)(color.B * intensity),
 						color.A
 					);
 
 					Raylib.DrawTexturePro(giRt.Texture, giSrc, giDest, Vector2.Zero, 0f, giColor);
+					Raylib.EndShaderMode();
 				}
 			}
 		}
