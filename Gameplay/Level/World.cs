@@ -275,7 +275,7 @@ public class World : IDisposable //aka Level loader
 					if (!j.Flags.HasFlag(Wall.WallFlags.DrawOverlay))
 						continue;
 
-					wallSprite.Draw9Sliced(j.Position, j.Size + Vector2.One * 0.5f, j.Rotation, tint: Color.Black);
+					wallSprite.Draw9Sliced(j.Position, j.Size + Vector2.One, j.Rotation, tint: Color.Black);
 				}
 			}
 		}
