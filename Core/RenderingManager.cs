@@ -55,6 +55,11 @@ public static class RenderingManager
             Raylib.SetShaderValueTexture(Shader, Keys[key], texture);
         }
 
+        public void SetValue(string key, Vector2 t)
+        {
+            Raylib.SetShaderValue(Shader, Keys[key], t, ShaderUniformDataType.Vec2);
+        }
+
         public void SetValue(string keyX, string keyY, Vector2 t)
         {
             Raylib.SetShaderValue(Shader, Keys[keyX], t.X, ShaderUniformDataType.Float); //TODO: use vector2 (for some reason it doesnt work on that)
@@ -125,7 +130,8 @@ public static class RenderingManager
     public static readonly Dictionary<string, ShaderSet> ShaderSets = new()
     {
         { "SpriteEntity", new("sprite-entity", "visionTex", "maskAmount") },
-        { "SpriteEnvironment", new("sprite-environment", "eraseVision", "visionTex", "tilingX", "tilingY", "tilingMode", "stochasticMode") }
+        { "SpriteEnvironment", new("sprite-environment", "eraseVision", "visionTex", "tilingX", "tilingY", "tilingMode", "stochasticMode") },
+        { "Blur", new("blur") }
     };
 
     private static readonly Dictionary<Filters, RendererFilter> AllFilters = new()
