@@ -5,11 +5,12 @@ in vec4 fragColor;
 out vec4 finalColor;
 
 uniform sampler2D texture0;
+uniform float resolutionX;
+uniform float resolutionY;
 
 void main()
 {
-	//TODO: optimize and set resolution and blur amount as parameter
-	vec2 texelSize = 1.0 / vec2(256,256);
+	vec2 texelSize = 1.0 / vec2(resolutionX,resolutionY);
 	vec4 result = vec4(0.0);
 	
 	//5 tap kernel
@@ -20,14 +21,13 @@ void main()
 	
 	float totalWeight = 0.0;
 
-	vec4 test = texture(texture0, fragTexCoord).rgba;
+	float blurAmt = 12;
 	
-	// Sample a 5x5 grid
 	for (int x = -2; x <= 2; x++)
 	{
 		for (int y = -2; y <= 2; y++)
 		{
-			vec2 offset = vec2(float(x), float(y)) * texelSize * 4;
+			vec2 offset = vec2(float(x), float(y)) * texelSize * blurAmt;
 			
 			int ax = x < 0 ? -x : x;
 			int ay = y < 0 ? -y : y;
@@ -38,9 +38,5 @@ void main()
 		}
 	}
 	
-	vec4 col = fragColor;
-	// col.r = blurAmount/6.0;
-	// col.g = 0;
-	// col.b = 0;
-	finalColor = (result / totalWeight) * col;
+	finalColor = (result / totalWeight) * fragColor;
 }

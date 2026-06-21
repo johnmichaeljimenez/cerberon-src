@@ -131,7 +131,7 @@ public static class RenderingManager
     {
         { "SpriteEntity", new("sprite-entity", "visionTex", "maskAmount") },
         { "SpriteEnvironment", new("sprite-environment", "eraseVision", "visionTex", "tilingX", "tilingY", "tilingMode", "stochasticMode") },
-        { "Blur", new("blur") }
+        { "Blur", new("blur", "resolutionX", "resolutionY") }
     };
 
     private static readonly Dictionary<Filters, RendererFilter> AllFilters = new()
