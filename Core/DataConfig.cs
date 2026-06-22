@@ -9,17 +9,20 @@ public class DataConfigAttribute : Attribute
 {
 	public string? Key { get; }
 	public object? DefaultValue { get; }
+	public bool UserOnly { get; }
 
-	public DataConfigAttribute(object defaultValue)
+	public DataConfigAttribute(object defaultValue, bool userOnly = false)
 	{
 		Key = null;
 		DefaultValue = defaultValue;
+		UserOnly = userOnly;
 	}
 
-	public DataConfigAttribute(string? key = null, object? defaultValue = null)
+	public DataConfigAttribute(string? key = null, object? defaultValue = null, bool userOnly = false)
 	{
 		Key = key;
 		DefaultValue = defaultValue;
+		UserOnly = userOnly;
 	}
 }
 
@@ -29,13 +32,15 @@ public class ConfigEntry
 	public string Key { get; }
 	public Type ValueType { get; }
 	public object? DefaultValue { get; }
+	public bool UserOnly { get; }
 
-	public ConfigEntry(MemberInfo member, string key, object? defaultValue)
+	public ConfigEntry(MemberInfo member, string key, object? defaultValue, bool userOnly = false)
 	{
 		Member = member;
 		Key = key;
 		ValueType = member is FieldInfo fi ? fi.FieldType : ((PropertyInfo)member).PropertyType;
 		DefaultValue = defaultValue;
+		UserOnly = userOnly;
 	}
 
 	public void SetValue(object? value)
@@ -98,7 +103,7 @@ public static class DataConfigManager
 			defaultValue = currentValue.DeepClone();
 		}
 
-		var entry = new ConfigEntry(member, key, defaultValue);
+		var entry = new ConfigEntry(member, key, defaultValue, attr.UserOnly);
 		_cache[key] = entry;
 
 		if (attr.DefaultValue != null)
@@ -132,17 +137,14 @@ public static class DataConfigManager
 	{
 		ResetToDefaults();
 
-		var path = "Assets/config.json";
-		if (!File.Exists(path))
-			return;
-
-		try
+		if (File.Exists("Assets/config.json"))
 		{
-			LoadFromJson(File.ReadAllText(path), false);
+			LoadFromJson(File.ReadAllText("Assets/config.json"), false);
 		}
-		catch (JsonReaderException ex)
+
+		if (File.Exists("Assets/user.json"))
 		{
-			Log.Send($"Invalid JSON: {ex.Message}");
+			LoadFromJson(File.ReadAllText("Assets/user.json"), false);
 		}
 	}
 
@@ -202,13 +204,32 @@ public static class DataConfigManager
 		}
 	}
 
+	public static void SaveConfig(string path = "Assets/config.json")
+	{
+		SaveToFile(path, false);
+	}
+
+	public static void SaveUserConfig(string path = "Assets/user.json")
+	{
+		SaveToFile(path, true);
+	}
+
 	public static void SaveToJson(string path)
-	{	try
+	{
+		SaveToFile(path, null);
+	}
+
+	private static void SaveToFile(string path, bool? userOnlyFilter)
+	{
+		try
 		{
 			var data = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (var entry in _cache.Values)
 			{
+				if (userOnlyFilter.HasValue && entry.UserOnly != userOnlyFilter.Value)
+					continue;
+
 				var value = GetCurrentValue(entry.Member);
 				data[entry.Key] = value;
 			}
