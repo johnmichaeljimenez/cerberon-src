@@ -113,9 +113,9 @@ public class AudioSource
 
 public static class AudioHandler
 {
-	[DataConfig]
+	[DataConfig(userOnly: true)]
 	public static bool SoundEnabled = true;
-	[DataConfig]
+	[DataConfig(userOnly: true)]
 	public static bool MusicEnabled = true;
 
 	private const int ALIAS_COUNT = 10;

@@ -7,7 +7,7 @@ namespace Cerberon.Gameplay.Entities;
 
 public class EnemyEntity : CharacterEntity
 {
-	[DataConfig] public static bool SafeMode;
+	[DataConfig(userOnly: true)] public static bool SafeMode;
 
 	[DataConfig(70f)] private static float STATS_BASE_HP;
 	[DataConfig(50)] private static int STATS_OUTDOOR_LIGHT_DAMAGE;
