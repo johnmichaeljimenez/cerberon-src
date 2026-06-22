@@ -11,14 +11,7 @@ public class DataConfigAttribute : Attribute
 	public object? DefaultValue { get; }
 	public bool UserOnly { get; }
 
-	public DataConfigAttribute(object defaultValue, bool userOnly = false)
-	{
-		Key = null;
-		DefaultValue = defaultValue;
-		UserOnly = userOnly;
-	}
-
-	public DataConfigAttribute(string? key = null, object? defaultValue = null, bool userOnly = false)
+	public DataConfigAttribute(object? defaultValue = null, bool userOnly = false, string? key = null	)
 	{
 		Key = key;
 		DefaultValue = defaultValue;
@@ -54,6 +47,9 @@ public class ConfigEntry
 
 public static class DataConfigManager
 {
+	public const string PATH_CONFIG = "Assets/config.json";
+	public const string PATH_USER = "Assets/user.json";
+	
 	private static readonly Dictionary<string, ConfigEntry> _cache = new(StringComparer.OrdinalIgnoreCase);
 
 	public static void Initialize()
@@ -137,14 +133,14 @@ public static class DataConfigManager
 	{
 		ResetToDefaults();
 
-		if (File.Exists("Assets/config.json"))
+		if (File.Exists(PATH_CONFIG))
 		{
-			LoadFromJson(File.ReadAllText("Assets/config.json"), false);
+			LoadFromJson(File.ReadAllText(PATH_CONFIG), false);
 		}
 
-		if (File.Exists("Assets/user.json"))
+		if (File.Exists(PATH_USER))
 		{
-			LoadFromJson(File.ReadAllText("Assets/user.json"), false);
+			LoadFromJson(File.ReadAllText(PATH_USER), false);
 		}
 	}
 
@@ -204,19 +200,20 @@ public static class DataConfigManager
 		}
 	}
 
-	public static void SaveConfig(string path = "Assets/config.json")
+	public static void SaveConfig(string path = PATH_CONFIG)
 	{
 		SaveToFile(path, false);
 	}
 
-	public static void SaveUserConfig(string path = "Assets/user.json")
+	public static void SaveUserConfig(string path = PATH_USER)
 	{
 		SaveToFile(path, true);
 	}
 
-	public static void SaveToJson(string path)
+	public static void SaveAll()
 	{
-		SaveToFile(path, null);
+		SaveConfig();
+		SaveUserConfig();
 	}
 
 	private static void SaveToFile(string path, bool? userOnlyFilter)

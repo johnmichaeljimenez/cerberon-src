@@ -19,7 +19,6 @@ public class Game
 {
     public static Game Instance { get; private set; }
 
-    private const string CONFIG_PATH = "Assets/config.json";
     public readonly Signal<IGameState> OnStateChanged = new();
     private RenderTexture2D _target;
 
@@ -44,7 +43,8 @@ public class Game
         Raylib.SetExitKey(0);
 
         DataConfigManager.Initialize();
-        AssetWatcher.Add(CONFIG_PATH, OnDataConfigChanged);
+        AssetWatcher.Add(DataConfigManager.PATH_CONFIG, OnDataConfigChanged);
+        AssetWatcher.Add(DataConfigManager.PATH_USER, OnUserConfigChanged);
 
         currentState = new MenuState();
         AssetManager.Init(() =>
@@ -80,7 +80,7 @@ public class Game
         currentState?.Exit();
         UIManager.Dispose();
 
-        DataConfigManager.SaveToJson(CONFIG_PATH);
+        DataConfigManager.SaveAll();
 
         LightingSystem.Dispose();
         RenderingManager.UnloadPostShader();
@@ -240,6 +240,10 @@ public class Game
     }
 
     private void OnDataConfigChanged(string json)
+    {
+        DataConfigManager.LoadFromJson(json, true);
+    }
+    private void OnUserConfigChanged(string json)
     {
         DataConfigManager.LoadFromJson(json, true);
     }
