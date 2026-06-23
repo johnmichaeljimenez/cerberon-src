@@ -269,7 +269,7 @@ public class WaypointManager : BaseManager
 
 		foreach (var a in dynNodes)
 		{
-			for (int i = nodes.Count - 1; i >= 0 ; i--)
+			for (int i = nodes.Count - 1; i >= 0; i--)
 			{
 				var b = nodes[i];
 				if (a == b)
@@ -317,7 +317,7 @@ public class WaypointManager : BaseManager
 				if (dist >= characterRadius * 8)
 					continue;
 
-				if (!IsVisible(from, to))	//take advantage of backface culling so that nodes used by doors can freely connect to others but not the other way around
+				if (!IsVisible(from, to))   //take advantage of backface culling so that nodes used by doors can freely connect to others but not the other way around
 					continue;
 
 				//connect i and j here
@@ -542,6 +542,22 @@ public class WaypointManager : BaseManager
 		var projection = a + ba * t;
 
 		return Vector2.Distance(point, projection);
+	}
+
+	public List<Node> GetNodesInsideRect(Vector2 center, Vector2 size, float? rotation = null)
+	{
+		var result = new List<Node>();
+		float rot = rotation ?? 0f;
+
+		foreach (var node in nodes)
+		{
+			if (Utils.IsPointInRotatedRectangle(node.Position, center, size, rot))
+			{
+				result.Add(node);
+			}
+		}
+
+		return result;
 	}
 
 	private void ComputeClearance()
