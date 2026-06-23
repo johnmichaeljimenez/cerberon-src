@@ -122,6 +122,7 @@ public class World : IDisposable //aka Level loader
 			i.Init(gameplayState);
 			OnAdd(i);
 			i.ModulesInit();
+			i.PostInit();
 		}
 
 		gameplayState.GetManager<WaypointManager>().Bake(EnvironmentColliders, WorldSettings.WorldSize, 1f, Entities.Where(p => p is IWaypointModifier).Cast<IWaypointModifier>().ToList());
@@ -149,6 +150,11 @@ public class World : IDisposable //aka Level loader
 
 		gameplayState.GetManager<TriggerManager>().SetupTriggers(Triggers);
 		NodeData = new(gameplayState);
+
+		foreach (var i in Entities)
+		{
+			i.PostInit();
+		}
 	}
 
 	public void Update(float dt, float udt)
