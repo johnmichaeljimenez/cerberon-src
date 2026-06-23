@@ -21,11 +21,11 @@ public abstract class BaseEntity : IDisposable
 		get => _isActive;
 		set
 		{
-			if (IsActive == _isActive)
+			if (_isActive == value)
 				return;
 
-			IsActive = _isActive;
-			OnActiveStateChanged(IsActive);
+			_isActive = value;
+			OnActiveStateChanged(_isActive);
 		}
 	}
 

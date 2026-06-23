@@ -29,7 +29,7 @@ public class PropEntity : BaseEntity
 		foreach (var i in Colliders)
 		{
 			i.Entity = this;
-			i.Enabled = IsActive;
+			i.Enabled = false;	//do not interfere with waypoint generation
 		}
 	}
 
@@ -38,16 +38,11 @@ public class PropEntity : BaseEntity
 		base.PostInit();
 
 		nodes.AddRange(gameplayState.GetManager<WaypointManager>().GetNodesInsideRect(Position, ColliderSize, Rotation));
-		foreach (var i in nodes)
-		{
-			i.Enabled = !IsActive;
-		}
+		UpdateSpace();
 	}
 
-	protected override void OnActiveStateChanged(bool isActive)
+	private void UpdateSpace()
 	{
-		base.OnActiveStateChanged(isActive);
-		
 		foreach (var i in nodes)
 		{
 			i.Enabled = !IsActive;
@@ -57,6 +52,12 @@ public class PropEntity : BaseEntity
 		{
 			i.Enabled = IsActive;
 		}
+	}
+
+	protected override void OnActiveStateChanged(bool isActive)
+	{
+		base.OnActiveStateChanged(isActive);
+		UpdateSpace();
 	}
 
 	public override void Dispose()
