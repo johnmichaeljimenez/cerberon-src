@@ -59,6 +59,14 @@ namespace CerberonEditor.Main
                     ["IsActive"] = i.gameObject.activeInHierarchy
                 };
 
+                if (i is PropObject p)
+                {
+                    foreach (var j in p.GetProperties())
+                    {
+                        en[j.Key] = j.Value;
+                    }
+                }
+
                 var parsedProps = ParseEntityProperties(i.Properties);
                 foreach (var kvp in parsedProps)
                 {
