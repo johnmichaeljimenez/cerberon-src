@@ -13,9 +13,21 @@ public abstract class BaseEntity : IDisposable
 	[JsonProperty]
 	public Vector2 Position { get; set; }
 
+	private bool _isActive = true;
 	[JsonProperty]
 	[DefaultValue(true)]
-	public bool IsActive { get; private set; } = true;
+	public bool IsActive
+	{
+		get => _isActive;
+		set
+		{
+			if (IsActive == _isActive)
+				return;
+
+			IsActive = _isActive;
+			OnActiveStateChanged(IsActive);
+		}
+	}
 
 	[JsonIgnore]
 	public int SortingIndex { get; set; } = 0;
@@ -50,7 +62,7 @@ public abstract class BaseEntity : IDisposable
 
 	[JsonIgnore]
 	public bool SpawnedIngame { get; set; }
-	
+
 	[JsonIgnore]
 	public virtual float SpriteMaskAmount => 1.0f;
 
@@ -71,6 +83,11 @@ public abstract class BaseEntity : IDisposable
 		}
 	}
 
+	public virtual void PostInit()
+	{
+
+	}
+
 	protected T AddModule<T>() where T : IEntityModule
 	{
 		var module = Activator.CreateInstance(typeof(T), gameplayState, this) as IEntityModule;
@@ -81,7 +98,7 @@ public abstract class BaseEntity : IDisposable
 
 	public virtual void Update(float dt, float udt)
 	{
-		
+
 	}
 
 	public virtual void LateUpdate(float dt, float udt)
@@ -117,7 +134,7 @@ public abstract class BaseEntity : IDisposable
 		{
 			i.Value.Dispose();
 		}
-		
+
 		disposables.ForEach(p => p?.Dispose());
 	}
 
@@ -134,12 +151,6 @@ public abstract class BaseEntity : IDisposable
 	public virtual void DrawDebug()
 	{
 
-	}
-
-	public void SetActive(bool isActive)
-	{
-		IsActive = isActive;
-		OnActiveStateChanged(isActive);
 	}
 
 	protected virtual void OnActiveStateChanged(bool isActive)

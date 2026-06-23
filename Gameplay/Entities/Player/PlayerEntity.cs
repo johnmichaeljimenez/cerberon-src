@@ -225,7 +225,7 @@ public class PlayerEntity : CharacterEntity
 	public override void OnDeath()
 	{
 		base.OnDeath();
-		SetActive(false); //TODO: spawn a player death animation false entity
+		IsActive = false; //TODO: spawn a player death animation false entity
 
 		gameplayState.GetManager<GameplayManager>().PlayerDead(this);
 	}

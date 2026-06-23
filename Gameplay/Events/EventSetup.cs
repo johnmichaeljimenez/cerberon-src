@@ -131,7 +131,7 @@ public class EventSetup : IDisposable
 			new PlayAudio("knock-slam", sfxPosition),
 			new Wait(0.1f),
 
-			new Exec(() => door.SetActive(false)),
+			new Exec(() => door.IsActive = false),
 			new SetLightGroupState("<default>", true),
 			new PlayAudio("break", sfxPosition),
 			new Exec(() => Game.Instance.Camera.Shake(3f, null)),
