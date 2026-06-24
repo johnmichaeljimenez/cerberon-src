@@ -9,6 +9,9 @@ namespace Cerberon.Gameplay.Managers;
 
 public class GameplayManager : BaseManager
 {
+	[DataConfig(userOnly: true)]
+	public static int TopKillCount;
+	public static int CurrentKillCount;
 
 	[DataConfig(defaultValue: true)]
 	public static bool Enabled;
@@ -59,6 +62,9 @@ public class GameplayManager : BaseManager
 
 	public void End(bool win)
 	{
+		if (TopKillCount < CurrentKillCount)
+			TopKillCount = CurrentKillCount;
+
 		Running = false;
 		Log.Send(win ? "You win" : "You lose");
 		UIManager.ShowScreen<EndScreen>((gameplayState, win), false);
@@ -76,6 +82,8 @@ public class GameplayManager : BaseManager
 		Running = Enabled;
 		_gameTime = MaxGameTime;
 
+		CurrentKillCount = 0;
+
 		events.Setup(gameplayState);
 	}
 
@@ -89,6 +97,8 @@ public class GameplayManager : BaseManager
 
 	public override void Dispose()
 	{
+		CurrentKillCount = 0;
+
 		base.Dispose();
 		events.Dispose();
 		Running = false;
@@ -134,6 +144,10 @@ public class GameplayManager : BaseManager
 		{
 			e.Position = position;
 		});
+
+		PlayerCharacter.GetModule<PlayerWeapons>().OnWeaponKill.Subscribe(e => {
+			CurrentKillCount++;
+		}).AddTo(disposables);
 	}
 
 	public void Begin()
