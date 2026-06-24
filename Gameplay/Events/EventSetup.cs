@@ -84,7 +84,8 @@ public class EventSetup : IDisposable
 			new SetLightGroupState("Main", false),
 			new Wait(0.1f),
 			new SetLightGroupState("Main", true),
-			new Exec(() => gameplayState.GetManager<TriggerManager>().Find(nameof(Ending))[0].Enabled = true)
+			new Exec(() => gameplayState.GetManager<TriggerManager>().Find(nameof(Ending))[0].Enabled = true),
+			new Exec(() => gameplayState.CurrentWorld.GetEntityByNameTag<PropEntity>("Truck").IsActive = true)
 		);
 	}
 
