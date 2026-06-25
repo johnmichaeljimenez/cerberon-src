@@ -10,6 +10,7 @@ public static class UIManager
 	private const string LAYOUT = "Assets/UI/layout.tsv";
 
 	private static readonly Dictionary<string, List<UIElement>> elements = new();
+	private static string testUILayoutID = "";
 
 	public static void Init()
 	{
@@ -119,5 +120,14 @@ public static class UIManager
 	{
 		while (_stack.Count > 0) Pop();
 		Push(screen);
+	}
+
+	public static void DrawImGui()
+	{
+		ImGui.InputText("UI Layout ID", ref testUILayoutID, 20);
+		if (ImGui.Button("Test Screen") && !string.IsNullOrWhiteSpace(testUILayoutID))
+		{
+			ShowScreen<TestScreen>(testUILayoutID, false);
+		}
 	}
 }

@@ -189,6 +189,13 @@ public class Game
                         AssetManager.OnDrawImGui();
                     }
                     ImGui.End();
+
+                    ImGui.Begin("Tools");
+                    {
+                        ImGui.SeparatorText("UI");
+                        UIManager.DrawImGui();
+                    }
+                    ImGui.End();
                 }
                 rlImGui.End();
             }
