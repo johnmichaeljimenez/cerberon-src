@@ -1,5 +1,6 @@
 using Cerberon.Core;
 using Cerberon.Gameplay;
+using Cerberon.Gameplay.Managers;
 using Cerberon.Helpers;
 
 namespace Cerberon.UI;
@@ -24,6 +25,8 @@ public class EndScreen : BaseScreen
 
 		InputManager.SetCursorState("end", CursorType.DefaultSystem);
 		references["result-text"].Text = win? "Mission Complete" : "Game Over";
+		references["result-score-top"].Text = $"Top Kills: {GameplayManager.TopKillCount}";
+		references["result-score-current"].Text = $"Your Kills: {GameplayManager.CurrentKillCount}";
 	}
 
 	protected override void OnClick(UIElement e)
