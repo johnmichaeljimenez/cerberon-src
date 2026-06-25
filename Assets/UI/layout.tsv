@@ -30,5 +30,7 @@ btn-options	300,210	200,40	PauseMenu	1	1	Options	0
 btn-quit-to-menu	300,270	200,40	PauseMenu	1	1	Quit to Menu	0			
 										
 result-text	300,150	200,40	End	1	0	Mission Complete	0	20		
-btn-restart	300,210	200,40	End	1	1	Restart	0			
-btn-quit-to-menu	300,270	200,40	End	1	1	Quit to Menu	0			
+result-score-top	300, 180	200, 40	End	1	0	Top Kills: 300
+result-score-current	300, 200	200, 40	End	1	0	Your Kills: 300
+btn-restart	300,300	200,40	End	1	1	Restart	0			
+btn-quit-to-menu	300,350	200,40	End	1	1	Quit to Menu	0			
