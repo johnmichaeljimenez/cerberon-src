@@ -11,6 +11,15 @@ namespace Cerberon.Gameplay.Entities.Player;
 //UPDATE: added EntityModule.cs as I started to add PlayerInteraction.cs too
 public class PlayerEntity : CharacterEntity
 {
+	[DataConfig]
+	public static Dictionary<SpriteMetadata.SpriteMaterial, string> FootstepMaterials = new()
+	{
+		{ SpriteMetadata.SpriteMaterial.None, "fs/stone" },
+		{ SpriteMetadata.SpriteMaterial.Wood, "fs/wood" },
+		{ SpriteMetadata.SpriteMaterial.Stone, "fs/stone" },
+		{ SpriteMetadata.SpriteMaterial.Grass, "fs/grass" },
+	};
+
 	[DataConfig(1.5f)]
 	public static float HealHoldDuration;
 
@@ -177,7 +186,13 @@ public class PlayerEntity : CharacterEntity
 
 			if (fsTimer >= 0.4f)
 			{
-				AudioHandler.PlaySound("fs/rock");
+				var tile = gameplayState.CurrentWorld.GetTileAtPosition(Position);
+
+				if (!FootstepMaterials.ContainsKey(tile.Sprite.Metadata.Material))
+					AudioHandler.PlaySound(FootstepMaterials[SpriteMetadata.SpriteMaterial.None]);
+				else
+					AudioHandler.PlaySound(FootstepMaterials[tile.Sprite.Metadata.Material]);
+
 				fsTimer = 0;
 			}
 		}

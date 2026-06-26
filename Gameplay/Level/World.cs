@@ -447,4 +447,29 @@ public class World : IDisposable //aka Level loader
 
 		return mk;
 	}
+
+	public WorldSpriteRenderer GetTileAtPosition(Vector2 position)
+	{
+		WorldSpriteRenderer result = null;
+
+		//TODO: optimize
+		foreach (var kvp in Sprites)
+		{
+			if (kvp.Key >= 0)
+				break;
+
+			foreach (var sprite in kvp.Value)
+			{
+				if (sprite.RenderType != WorldSpriteRenderer.RenderTypes.Tiled)
+					continue;
+					
+				if (Utils.IsPointInRotatedRectangle(position, sprite.Position, sprite.TileSize, sprite.Rotation))
+				{
+					result = sprite;
+				}
+			}
+		}
+
+		return result;
+	}
 }
