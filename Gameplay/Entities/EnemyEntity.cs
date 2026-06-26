@@ -323,7 +323,7 @@ public class EnemyEntity : CharacterEntity
 
 				if (fsTimer >= 0.4f)
 				{
-					AudioHandler.PlaySound("fs/rock", Position);
+					AudioHandler.PlaySound("fs/stone", Position);
 					fsTimer = 0;
 				}
 			}
