@@ -170,7 +170,7 @@ public static class RenderingManager
         shaderSet.SetValue("visionTex", LightingSystem.VisionRenderTexture.Texture);
         shaderSet.SetValue("eraseVision", eraseVision);
         shaderSet.SetValue("tilingMode", tiling);
-        shaderSet.SetValue("stochasticMode", tiling && sprite.StochasticMode);
+        shaderSet.SetValue("stochasticMode", tiling && sprite.Metadata.StochasticTiling);
 
         var tile = new Vector2(
                 size.X * Sprite.PIXELS_PER_UNIT / (float)sprite.Texture.Width,

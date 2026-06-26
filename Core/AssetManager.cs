@@ -1,4 +1,5 @@
 using Cerberon.Helpers;
+using Newtonsoft.Json.Converters;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -10,11 +11,11 @@ public class Sprite : IDisposable
 
 	public string Name;
 	public Texture2D Texture;
-	public bool StochasticMode;
 	public int Width { get; private set; }
 	public int Height { get; private set; }
 	public Vector2 UnitSize { get; private set; }
 	public Rectangle Rect { get; private set; }
+	public SpriteMetadata Metadata { get; set; }
 
 	public Sprite(string name, Texture2D texture2D)
 	{
@@ -23,9 +24,6 @@ public class Sprite : IDisposable
 		Width = texture2D.Width;
 		Height = texture2D.Height;
 		UnitSize = new((float)Width / PIXELS_PER_UNIT, (float)Height / PIXELS_PER_UNIT);
-
-		//TODO: use external key-value pair file for rendering type (default, tiling mode, stochastic mode)
-		StochasticMode = !name.Contains("tile", StringComparison.InvariantCultureIgnoreCase) && !name.Contains("wood", StringComparison.InvariantCultureIgnoreCase);
 
 		Rect = new(0, 0, Width, Height);
 	}
@@ -115,6 +113,21 @@ public class Sprite : IDisposable
 	}
 }
 
+public class SpriteMetadata
+{
+	public enum SpriteMaterial
+	{
+		None,
+		Stone,
+		Wood,
+		Dirt,
+		Concrete,
+	}
+
+	public SpriteMaterial Material { get; set; } = SpriteMaterial.None;
+	public bool StochasticTiling { get; set; }
+}
+
 public class LoadRequest
 {
 	private const double TIME_BUDGET_MS = 16.0;
@@ -171,6 +184,7 @@ public static class AssetManager
 {
 	private static readonly Dictionary<string, Sprite> sprites = new();
 	private static readonly Dictionary<string, Animation> animations = new();
+	private static readonly Dictionary<string, SpriteMetadata> spriteMetas = new();
 	public static readonly Dictionary<string, string> LevelFiles = new();
 	public static Sprite MissingSprite { get; private set; }
 	public static Font Font { get; private set; }
@@ -218,6 +232,34 @@ public static class AssetManager
 		MissingSprite = new Sprite("%missing%", chkTex);
 		Raylib.UnloadImage(chk);
 
+		spriteMetas.Clear();
+		var metaFile = Path.Combine(spritesPath, "meta.json");
+		if (File.Exists(metaFile))
+		{
+			try
+			{
+				var metaJson = File.ReadAllText(metaFile);
+				var settings = new JsonSerializerSettings
+				{
+					NullValueHandling = NullValueHandling.Ignore,
+					DefaultValueHandling = DefaultValueHandling.Populate,
+					Converters = { new StringEnumConverter() }
+				};
+				var entries = JsonConvert.DeserializeObject<Dictionary<string, SpriteMetadata>>(metaJson, settings);
+				if (entries != null)
+				{
+					foreach (var entry in entries)
+					{
+						spriteMetas[entry.Key] = entry.Value;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Send($"Error loading sprite meta.json at {metaFile}: {ex.Message}");
+			}
+		}
+
 		var files = Directory.GetFiles(spritesPath, "*.png", SearchOption.AllDirectories).ToList();
 		AddLoadRequest(files, file =>
 		{
@@ -226,7 +268,15 @@ public static class AssetManager
 
 			Texture2D tex = Raylib.LoadTexture(file);
 
-			sprites[key] = new Sprite(key, tex);
+			var sprite = new Sprite(key, tex);
+			if (spriteMetas.TryGetValue(key, out var meta))
+			{
+				sprite.Metadata = meta;
+			}else{
+				sprite.Metadata = new();
+			}
+			
+			sprites[key] = sprite;
 			Console.WriteLine($"Loaded asset: {key}");
 		}, () =>
 		{
@@ -306,6 +356,7 @@ public static class AssetManager
 
 		MissingSprite.Dispose();
 		sprites.Clear();
+		spriteMetas.Clear();
 
 		AudioHandler.Unload();
 		Raylib.UnloadFont(Font);
