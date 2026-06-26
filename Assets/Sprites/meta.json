@@ -1,0 +1,90 @@
+{
+  "env/concrete-1": {
+    "Material": "Stone",
+    "StochasticTiling": true
+  },
+  "env/concrete-2": {
+    "Material": "Stone",
+    "StochasticTiling": true
+  },
+  "env/dirt-1": {
+    "Material": "Dirt",
+    "StochasticTiling": true
+  },
+  "env/dirt-2": {
+    "Material": "Dirt",
+    "StochasticTiling": true
+  },
+  "env/grass-1": {
+    "Material": "Grass",
+    "StochasticTiling": true
+  },
+  "env/grass-3": {
+    "Material": "Grass",
+    "StochasticTiling": true
+  },
+  "env/grass-4": {
+    "Material": "Grass",
+    "StochasticTiling": true
+  },
+  "env/grate_albedo": {
+    "Material": "Metal",
+    "StochasticTiling": false
+  },
+  "env/ground-10": {
+    "Material": "Dirt",
+    "StochasticTiling": true
+  },
+  "env/ground-5": {
+    "Material": "Dirt",
+    "StochasticTiling": false
+  },
+  "env/plaster-1": {
+    "Material": "Stone",
+    "StochasticTiling": true
+  },
+  "env/plaster-2": {
+    "Material": "Stone",
+    "StochasticTiling": true
+  },
+  "env/plaster-3": {
+    "Material": "Stone",
+    "StochasticTiling": true
+  },
+  "env/road-1": {
+    "Material": "Stone",
+    "StochasticTiling": false
+  },
+  "env/testgrid": {
+    "Material": "None",
+    "StochasticTiling": false
+  },
+  "env/tile-1": {
+    "Material": "Stone",
+    "StochasticTiling": false
+  },
+  "env/tile-2": {
+    "Material": "Stone",
+    "StochasticTiling": false
+  },
+  "env/wood-1": {
+    "Material": "Wood",
+    "StochasticTiling": false
+  },
+  "env/wood-10": {
+    "Material": "Wood",
+    "StochasticTiling": false
+  },
+  "env/wood-13": {
+    "Material": "Wood",
+    "StochasticTiling": false
+  },
+  "env/wood-8": {
+    "Material": "Wood",
+    "StochasticTiling": false
+  },
+  "env/wood-9": {
+    "Material": "Wood",
+    "StochasticTiling": false
+  }
+}

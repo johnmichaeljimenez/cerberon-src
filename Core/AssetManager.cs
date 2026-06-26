@@ -122,6 +122,8 @@ public class SpriteMetadata
 		Wood,
 		Dirt,
 		Concrete,
+		Metal,
+		Grass
 	}
 
 	public SpriteMaterial Material { get; set; } = SpriteMaterial.None;
