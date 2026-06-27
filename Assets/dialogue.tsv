@@ -18,9 +18,9 @@ power-1	Wade	Hey come on man, easy... look what I brought.
 power-1	Wade	That cyper... cybermeth, cybermethrin shit, whatever.	"cybermeth" is not random. it is Wade's intentional mangling of cypermethrin, a type of insecticide, and it caught his attention because it has "meth" in the name.
 power-1	Wade	Lou gave it to me. Said it's real good for roaches.
 
-power-2 Seth	Fuck.	Power suddenly went out
-power-2 Wade	What's going on there?
-power-2 Seth	Power's out again!
+power-2	Seth	Fuck.	Power suddenly went out
+power-2	Wade	What's going on there?
+power-2	Seth	Power's out again!
 power-2	Wade	Alright I'll wait here. Roaches for sure busted the breaker at the back out there.	Player needs to backtrack and flip the breaker to restore power and open the gate
 
 end-1	Wade	God damn man, you look like shit.	Player reaches the truck near the gate
