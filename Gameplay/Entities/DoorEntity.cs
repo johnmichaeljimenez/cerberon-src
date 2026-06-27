@@ -114,6 +114,7 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatE
 			return;
 
 		IsOpen = isOpen;
+		AudioHandler.PlaySound(isOpen? "door/open" : "door/close", Position);
 		SetState();
 
 		if (IsActive)
