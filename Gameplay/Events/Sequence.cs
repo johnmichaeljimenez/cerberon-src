@@ -23,6 +23,20 @@ public class Sequence
 		this.commands.Peek().OnEnter();
 	}
 
+	public void Stop()
+	{
+		if (!IsRunning || commands.Count == 0)
+		{
+			IsRunning = false;
+			return;
+		}
+
+		var c = commands.Peek();
+		c.OnExit();
+		commands.Dequeue();
+		IsRunning = false;
+	}
+
 	public void Update(float dt)
 	{
 		if (!IsRunning || commands.Count == 0)

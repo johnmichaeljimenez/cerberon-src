@@ -157,7 +157,7 @@ public class EventSetup : IDisposable
 			})
 		);
 
-		var powerSwitch = gameplayState.CurrentWorld.GetEntitiesByNameTag<SwitchEntity>("PowerSwitch");
+		var powerSwitch = gameplayState.CurrentWorld.GetEntityByNameTag<SwitchEntity>("PowerSwitch");
 		player.GetModule<PlayerInteraction>().OnInteract.Subscribe(e =>
 		{
 			if (e != powerSwitch)

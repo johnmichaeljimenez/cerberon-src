@@ -82,6 +82,9 @@ public class DialogueManager : BaseManager
 		if (!dialogues.ContainsKey(id) || dialogues[id].Count == 0)
 			return false;
 
+		if (CurrentDialogue != null)
+			EndDialogue();
+
 		currentDialogueID = id;
 		currentIndex = 0;
 		UpdateDialogue();

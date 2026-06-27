@@ -37,7 +37,10 @@ public class GameplayEventManager : BaseManager
 
 		var existing = sequences.FirstOrDefault(p => p.ID == id);
 		if (existing != null)
+		{
+			existing.Stop();
 			sequences.Remove(existing);
+		}
 
 		var sequence = new Sequence(gameplayState, id, commands);
 		sequences.Add(sequence);
@@ -51,23 +54,28 @@ public class GameplayEventManager : BaseManager
 
 		if (ImGui.Button("Test"))
 		{
-			RunEvent("test", 
-				new Print("Test"),
-				new Fade(true),
-				new Wait(1.0f),
-				new PlayAudio("break", Vector2.Zero),
-				new SpawnEnemy(Vector2.Zero),
-				new Fade(false),
-				new Wait(0.2f),
-				new PlayAudio("break", Vector2.Zero),
-				new SpawnEnemy(Vector2.Zero),
-				new Wait(0.2f),
-				new PlayAudio("break", Vector2.Zero),
-				new SpawnEnemy(Vector2.Zero),
-				new Wait(0.2f),
-				new PlayAudio("break", Vector2.Zero),
-				new SpawnEnemy(Vector2.Zero),
-				new Print("OK!")
+			RunEvent("power",
+				new PlayAudio("phone", null, true),
+				new Wait(0.1f),
+				new PlayAudio("phone", null, true),
+				new ShowDialogue("power-1", false),
+				new Wait(0.5f)
+			);
+		}
+
+		if (ImGui.Button("Test2"))
+		{
+			RunEvent("power",
+				new SetLightGroupState("Main", false),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", true),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", false),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", true),
+				new Wait(0.1f),
+				new SetLightGroupState("Main", false),
+				new ShowDialogue("power-2", false)
 			);
 		}
 	}
