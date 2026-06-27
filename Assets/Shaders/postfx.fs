@@ -11,7 +11,7 @@ uniform float fadeAmt = 0.0; //0 = none, 1 = full
 uniform float nightAmt = 0.0;
 uniform float hurtAmt = 0.0;
 
-const float blurRadius = 1.5;
+const float blurRadius = 2;
 
 out vec4 finalColor;
 
@@ -115,7 +115,7 @@ void main() {
     lightBlur = contrast(vec3(lightBlurLum, lightBlurLum, lightBlurLum), 5); //bloom
 	
     vec3 texelColor = lightColor * (screenColor + (screenColor * lightColor * 2));
-    float lum = pow(luminance(blurColor), 2.5);
+    float lum = luminance(blurColor) * 0.5;
     vec3 screenGrayColor = vec3(lum, lum, lum);
     screenGrayColor *= lightgray * 2; //only show the colored parts of lights in visible area
 	
