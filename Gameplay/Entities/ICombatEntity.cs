@@ -2,8 +2,9 @@ namespace Cerberon.Gameplay.Entities;
 
 public enum CombatEntityMaterialType
 {
+	Generic,
 	Organic,
-	Wood
+	Door,
 }
 
 public interface ICombatEntity

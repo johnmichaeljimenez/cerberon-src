@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Cerberon.Core;
+using Cerberon.Gameplay.Entities.Player;
 using Cerberon.Gameplay.Managers;
 using Cerberon.Helpers;
 
@@ -20,8 +21,8 @@ public class BreakableEntity : BaseEntity, ICombatEntity
 
 	public bool IsDead { get; private set; }
 
-	[JsonProperty]
-	public CombatEntityMaterialType MaterialType { get; set; }
+	[JsonIgnore]
+	public CombatEntityMaterialType MaterialType => CombatEntityMaterialType.Generic;
 
 	private int hits;
 	private CircleBody circleBody;
@@ -65,7 +66,7 @@ public class BreakableEntity : BaseEntity, ICombatEntity
 	public void OnDeath()
 	{
 		Game.Instance.Camera.Shake(3f, null);
-		AudioHandler.PlaySound("break", Position);
+		gameplayState.GetManager<GameJuiceManager>().OnHit(this);
 		circleBody.Enabled = false;
 
 		Despawn();
@@ -74,7 +75,7 @@ public class BreakableEntity : BaseEntity, ICombatEntity
 	public void OnHit(float amt, bool isDead, CharacterEntity from)
 	{
 		Game.Instance.Camera.Shake(0.8f, null);
-		AudioHandler.PlaySound("break", Position);
+		gameplayState.GetManager<GameJuiceManager>().OnHit(this);
 	}
 
 	public override void Draw()

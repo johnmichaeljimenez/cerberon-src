@@ -95,9 +95,7 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 	private const string SFX_READY = "weapon/generic/ready";
 	private const string SFX_RELOADFAST = "weapon/generic/reloadfast";
 	private const string SFX_EQUIP = "weapon/generic/equip";
-	private const string SFX_BULLET_HIT = "weapon/generic/bullethit";
 	private const string SFX_MELEE_START = "weapon/generic/meleestart";
-	private const string SFX_MELEE_HIT = "weapon/generic/meleehit";
 	private const float MAX_KICK = 80f;
 	public readonly List<Weapon> Weapons = new() //total hardcoded for now
 	{
@@ -358,7 +356,7 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 	{
 		if (z.ApplyDamage(CurrentWeapon.Damage, Entity))
 		{
-			AudioHandler.PlaySound(SFX_BULLET_HIT, z.Position);
+			gameplayState.GetManager<GameJuiceManager>().OnHit(z);
 			OnWeaponHit.Publish((CurrentWeapon, z, false));
 
 			if (z is EnemyEntity e)
@@ -386,6 +384,7 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 			return;
 
 		var hit = false;
+		var hitCharacter = false;
 		foreach (var i in gameplayState.CurrentWorld.GetEntitiesByGroup(nameof(ICombatEntity)))
 		{
 			var z = i as ICombatEntity;
@@ -401,7 +400,11 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 				OnWeaponHit.Publish((CurrentWeapon, z, true));
 
 				if (z is CharacterEntity c)
+				{
+					hitCharacter = true;
+					gameplayState.GetManager<GameJuiceManager>().OnHit(c);
 					ApplyKick(c, Raymath.Vector2Normalize(d), CurrentWeapon.MeleeKick);
+				}
 
 				hit = true;
 
@@ -415,7 +418,6 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 			PauseHandler.ApplyHitstop();
 			Game.Instance.Camera.Shake(0.4f, Entity.GetFacingAngleOffset(90));
 			hitCount++;
-			AudioHandler.PlaySound(SFX_MELEE_HIT);
 		}
 	}
 

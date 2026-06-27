@@ -1,4 +1,5 @@
 using Cerberon.Core;
+using Cerberon.Gameplay.Entities;
 using Cerberon.Gameplay.Entities.Player;
 using Cerberon.Helpers;
 using Tween;
@@ -7,6 +8,23 @@ namespace Cerberon.Gameplay.Managers;
 
 public class GameJuiceManager : BaseManager
 {
+	[DataConfig]
+	public static Dictionary<CombatEntityMaterialType, string> HitSFXTypes = new()
+	{
+		{ CombatEntityMaterialType.Generic, "hit/generic" },
+		{ CombatEntityMaterialType.Organic, "hit/organic" },
+		{ CombatEntityMaterialType.Door, "hit/door" }
+	};
+
+	[DataConfig]
+	public static Dictionary<CombatEntityMaterialType, string> BreakSFXTypes = new()
+	{
+		{ CombatEntityMaterialType.Generic, "hit/generic" },	//temporary
+		{ CombatEntityMaterialType.Organic, "break/organic" },
+		{ CombatEntityMaterialType.Door, "break/door" }
+	};
+
+
 	[DataConfig(-2)]
 	public static float ZoomOut;
 	[DataConfig(12)]
@@ -37,6 +55,18 @@ public class GameJuiceManager : BaseManager
 		player.OnHealItemUpdate.Subscribe(p => { OnHeal(p.Item1); }).AddTo(disposables);
 		player.OnHealUse.Subscribe(_ => { OnHealUse(_); }).AddTo(disposables);
 		player.OnPositionChanged.Subscribe(OnPlayerPositionChanged).AddTo(disposables);
+	}
+
+	public void OnHit(ICombatEntity combatEntity)
+	{
+		var dead = combatEntity.IsDead;
+		if (dead)
+		{
+			AudioHandler.PlaySound(BreakSFXTypes[combatEntity.MaterialType], combatEntity.Position);
+			return;
+		}
+
+		AudioHandler.PlaySound(HitSFXTypes[combatEntity.MaterialType], combatEntity.Position);
 	}
 
 	public override void Update(float dt, float udt)

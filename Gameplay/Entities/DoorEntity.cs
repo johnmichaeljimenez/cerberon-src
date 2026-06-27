@@ -32,8 +32,8 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatE
 	[JsonIgnore]
 	public List<Wall> Colliders { get; set; } = new();
 
-	[JsonProperty]
-	public CombatEntityMaterialType MaterialType { get; set; }
+	[JsonIgnore]
+	public CombatEntityMaterialType MaterialType => CombatEntityMaterialType.Door;
 
 	public InteractionType InteractionType => InteractionType.Use;
 
@@ -203,13 +203,13 @@ public class DoorEntity : BaseEntity, IInteractable, IWaypointModifier, ICombatE
 	public void OnHit(float amt, bool isDead, CharacterEntity from)
 	{
 		Game.Instance.Camera.Shake(0.8f, null);
-		AudioHandler.PlaySound("knock-slam", Position);
+		gameplayState.GetManager<GameJuiceManager>().OnHit(this);
 	}
 
 	public void OnDeath()
 	{
 		Game.Instance.Camera.Shake(3f, null);
-		AudioHandler.PlaySound("break", Position);
+		gameplayState.GetManager<GameJuiceManager>().OnHit(this);
 	}
 
 	public override void Draw()
