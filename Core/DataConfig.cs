@@ -11,7 +11,7 @@ public class DataConfigAttribute : Attribute
 	public object? DefaultValue { get; }
 	public bool UserOnly { get; }
 
-	public DataConfigAttribute(object? defaultValue = null, bool userOnly = false, string? key = null	)
+	public DataConfigAttribute(object? defaultValue = null, bool userOnly = false, string? key = null)
 	{
 		Key = key;
 		DefaultValue = defaultValue;
@@ -49,7 +49,7 @@ public static class DataConfigManager
 {
 	public const string PATH_CONFIG = "Assets/config.json";
 	public const string PATH_USER = "Assets/user.json";
-	
+
 	private static readonly Dictionary<string, ConfigEntry> _cache = new(StringComparer.OrdinalIgnoreCase);
 
 	public static void Initialize()
@@ -167,9 +167,7 @@ public static class DataConfigManager
 	public static void LoadData(Dictionary<string, object?>? data, bool resetToDefaults = true)
 	{
 		if (resetToDefaults)
-		{
 			ResetToDefaults();
-		}
 
 		if (data == null || data.Count == 0) return;
 
@@ -182,11 +180,20 @@ public static class DataConfigManager
 			{
 				try
 				{
-					object? value = kvp.Value;
+					object? rawValue = kvp.Value;
+					object? value;
 
-					if (value is JToken token)
+					if (rawValue is JToken token)
 					{
 						value = token.ToObject(entry.ValueType);
+					}
+					else if (rawValue != null)
+					{
+						value = JToken.FromObject(rawValue).ToObject(entry.ValueType);
+					}
+					else
+					{
+						value = null;
 					}
 
 					entry.SetValue(value);
@@ -232,7 +239,7 @@ public static class DataConfigManager
 			}
 
 			var json = JsonConvert.SerializeObject(data, Formatting.Indented);
-			
+
 			File.WriteAllText(path, json);
 			Log.Send($"Config saved to '{path}' ({data.Count} entries)");
 		}
