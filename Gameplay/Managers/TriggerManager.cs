@@ -5,24 +5,12 @@ using Cerberon.Helpers;
 
 namespace Cerberon.Gameplay.Managers;
 
-public enum TriggerSurfaceType
-{
-	Default,
-	Wood,
-	Metal,
-	Grass,
-	Dirt,
-	Gravel
-}
-
 public class Trigger
 {
 	[JsonProperty]
 	public Vector2 Position;
 	[JsonProperty]
 	public Vector2 Size;
-	[JsonProperty]
-	public TriggerSurfaceType? TriggerSurfaceType { get; set; } //null means no footstep override (keep anything current)
 	[JsonProperty]
 	public string TriggerID { get; set; }
 	[JsonProperty]
@@ -42,12 +30,11 @@ public class TriggerManager : BaseManager
 {
 	//triggers have 2 purpose:
 	//1 - execute something as one-shot
-	//2 - define current region stepped on by player (used for ambient, footstep material, etc)
+	//2 - define current region stepped on by player (used for ambient, etc)
 
 	private readonly List<Trigger> triggers = new();
 	private readonly HashSet<Trigger> activeTriggers = new();
 
-	public TriggerSurfaceType CurrentSurfaceType { get; private set; } = TriggerSurfaceType.Default;
 	public string CurrentAmbientAudio { get; private set; } = "";
 
 	public readonly Signal<(CharacterEntity, Trigger)> OnTriggerEnter = new();
@@ -141,7 +128,6 @@ public class TriggerManager : BaseManager
 
 	private void RefreshCurrentEnvironment()
 	{
-		CurrentSurfaceType = TriggerSurfaceType.Default;
 		CurrentAmbientAudio = gameplayState.CurrentWorld.WorldSettings.AmbientSound ?? "";
 		AudioHandler.SetAmbient(CurrentAmbientAudio);
 
@@ -153,9 +139,6 @@ public class TriggerManager : BaseManager
 			var t = triggers[i];
 			if (activeTriggers.Contains(t))
 			{
-				if (t.TriggerSurfaceType.HasValue)
-					CurrentSurfaceType = t.TriggerSurfaceType.Value;
-
 				if (t.AmbientAudio != null)
 				{
 					CurrentAmbientAudio = t.AmbientAudio;
