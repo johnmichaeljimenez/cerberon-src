@@ -396,18 +396,18 @@ public static class AudioHandler
 		nextAliasIndex[key] = 0;
 	}
 
-	public static AudioSource? PlaySound(string key, Vector2? position = null)
+	public static AudioSource? PlaySound(string key, Vector2? position = null, float radius = 40)
 	{
 		if (soundVariations.TryGetValue(key, out var variations) && variations.Count > 0)
 		{
 			string chosen = variations[Random.Shared.Next(variations.Count)];
-			return PlayIndividual(chosen, position);
+			return PlayIndividual(chosen, position, radius);
 		}
 
-		return PlayIndividual(key, position);
+		return PlayIndividual(key, position, radius);
 	}
 
-	private static AudioSource? PlayIndividual(string individualKey, Vector2? position)
+	private static AudioSource? PlayIndividual(string individualKey, Vector2? position, float radius = 40)
 	{
 		if (!soundAliases.TryGetValue(individualKey, out var aliases) || aliases.Count == 0)
 			return null;
@@ -424,7 +424,8 @@ public static class AudioHandler
 			Time = soundLengths[individualKey],
 			IsSpatial = position.HasValue,
 			Position = position ?? Vector2.Zero,
-			IsPlaying = true
+			IsPlaying = true,
+			Radius = radius
 		};
 
 		source.UpdateVolume(1);

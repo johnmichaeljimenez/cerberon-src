@@ -91,17 +91,19 @@ public class PlayAudio : BaseCommand
 	private string soundID;
 	private Vector2? soundPosition;
 	private bool wait;
+	private float radius;
 
-	public PlayAudio(string id, Vector2? pos, bool wait = false)
+	public PlayAudio(string id, Vector2? pos, bool wait = false, float radius = 40)
 	{
 		soundID = id;
 		soundPosition = pos;
 		this.wait = wait;
+		this.radius = radius;
 	}
 
 	public override void OnEnter()
 	{
-		sound = AudioHandler.PlaySound(soundID, soundPosition);
+		sound = AudioHandler.PlaySound(soundID, soundPosition, radius);
 	}
 
 	public override bool Update(float dt)
