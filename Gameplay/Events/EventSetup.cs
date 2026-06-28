@@ -59,7 +59,17 @@ public class EventSetup : IDisposable
 
 	private void PowerOff()
 	{
+		var pos = gameplayState.CurrentWorld.GetEntityByNameTag<PropEntity>("Truck").Position;
+		
 		gameplayEventManager.RunEvent("power",	//can be intentionally overriden since player can wait at the gate already before time runs out
+			new PlayAudio("vehicle/horn", pos, false, 100),
+			new Wait(0.3f),
+			new PlayAudio("vehicle/horn", pos, false, 100),
+			new Wait(1f),
+			new PlayAudio("vehicle/horn", pos, false, 100),
+			new Wait(0.3f),
+			new PlayAudio("vehicle/horn", pos, false, 100),
+			new Wait(2f),
 			new SetLightGroupState("Main", false),
 			new Wait(0.1f),
 			new SetLightGroupState("Main", true),
@@ -114,7 +124,6 @@ public class EventSetup : IDisposable
 		Vector2? sfxPosition = mk == null ? null : mk.Position;
 
 		gameplayEventManager.RunEvent("startfight",
-
 			new Exec(() => Game.Instance.Camera.Shake(0.8f, null)),
 			new PlayAudio("hit/door", sfxPosition),
 			new Wait(0.2f),
