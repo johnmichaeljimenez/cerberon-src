@@ -85,6 +85,7 @@ public class AudioSource
 	public bool IsSpatial;
 	public Vector2 Position;
 	public float Radius = 40;
+	public string OverrideID;
 
 	public void Update(Vector2 listener)
 	{
@@ -186,7 +187,7 @@ public static class AudioHandler
 		for (int i = activeAudioSources.Count - 1; i >= 0; i--)
 		{
 			var a = activeAudioSources[i];
-			if (Utils.Countdown(ref a.Time, Time.UnscaledDeltaTime))
+			if (!a.IsPlaying || Utils.Countdown(ref a.Time, Time.UnscaledDeltaTime))
 			{
 				a.IsPlaying = false;
 				activeAudioSources.RemoveAt(i);
@@ -396,7 +397,7 @@ public static class AudioHandler
 		nextAliasIndex[key] = 0;
 	}
 
-	public static AudioSource? PlaySound(string key, Vector2? position = null, float radius = 40)
+	public static AudioSource? PlaySound(string key, Vector2? position = null, float radius = 40, string overrideID = null)
 	{
 		if (soundVariations.TryGetValue(key, out var variations) && variations.Count > 0)
 		{
@@ -407,10 +408,19 @@ public static class AudioHandler
 		return PlayIndividual(key, position, radius);
 	}
 
-	private static AudioSource? PlayIndividual(string individualKey, Vector2? position, float radius = 40)
+	private static AudioSource? PlayIndividual(string individualKey, Vector2? position, float radius = 40, string overrideID = null)
 	{
 		if (!soundAliases.TryGetValue(individualKey, out var aliases) || aliases.Count == 0)
 			return null;
+
+		if (!string.IsNullOrWhiteSpace(overrideID))
+		{
+			var existing = activeAudioSources.FirstOrDefault(p => p.OverrideID == overrideID);
+			if (existing != null)
+			{
+				existing.IsPlaying = false;
+			}
+		}
 
 		var index = nextAliasIndex.GetValueOrDefault(individualKey, 0);
 		var sound = aliases[index];
@@ -425,7 +435,8 @@ public static class AudioHandler
 			IsSpatial = position.HasValue,
 			Position = position ?? Vector2.Zero,
 			IsPlaying = true,
-			Radius = radius
+			Radius = radius,
+			OverrideID = overrideID
 		};
 
 		source.UpdateVolume(1);
