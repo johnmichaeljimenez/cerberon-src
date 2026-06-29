@@ -43,7 +43,7 @@ public class SwitchEntity : BaseEntity, IInteractable
 			return false;
 
 		InitialState = !InitialState;
-		AudioHandler.PlaySound("generic/button-press", Position);
+		AudioHandler.PlaySound("generic/button-press", Position, overrideID: $"Switch#{ID}");
 		return true;
 	}
 
