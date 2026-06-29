@@ -4,14 +4,21 @@ namespace Cerberon.Core;
 
 public static class AssetWatcher
 {
-	private static readonly Dictionary<string, (FileSystemWatcher watcher, Action<string> callback)> _watchers = new();
-	private static readonly Dictionary<string, bool> flags = new();
+	private static readonly ConcurrentDictionary<string, (FileSystemWatcher watcher, Action<string> callback)> _watchers = new();
+	private static readonly ConcurrentDictionary<string, bool> flags = new();
 
 	public static string Add(string filePath, Action<string> onChanged)
 	{
 		var fullPath = Path.GetFullPath(filePath);
 		var directory = Path.GetDirectoryName(fullPath) ?? ".";
 		var fileName = Path.GetFileName(fullPath);
+
+		if (_watchers.TryRemove(fullPath, out var oldEntry))
+		{
+			oldEntry.watcher.EnableRaisingEvents = false;
+			oldEntry.watcher.Dispose();
+			flags.TryRemove(fullPath, out _);
+		}
 
 		var watcher = new FileSystemWatcher(directory, fileName)
 		{
@@ -35,13 +42,14 @@ public static class AssetWatcher
 	public static void Remove(string filePath)
 	{
 		var fullPath = Path.GetFullPath(filePath);
-		var entry = _watchers[fullPath];
 
-		entry.watcher.EnableRaisingEvents = false;
-		entry.watcher.Dispose();
+		if (_watchers.TryRemove(fullPath, out var entry))
+		{
+			entry.watcher.EnableRaisingEvents = false;
+			entry.watcher.Dispose();
+		}
 
-		_watchers.Remove(fullPath);
-		flags.Remove(fullPath);
+		flags.TryRemove(fullPath, out _);
 	}
 
 	public static void Update()
@@ -54,8 +62,11 @@ public static class AssetWatcher
 			{
 				if (TryReadAllTextSafe(key, out string content)) //just bruteforce it due to threading
 				{
-					flags[key] = false;
-					_watchers[key].callback?.Invoke(content);
+					flags[key] = false;           // mark as processed
+					if (_watchers.TryGetValue(key, out var entry))
+					{
+						entry.callback?.Invoke(content);
+					}
 				}
 			}
 		}
@@ -85,11 +96,13 @@ public static class AssetWatcher
 
 	public static void Dispose()
 	{
-		foreach (var kvp in _watchers)
+		// snapshot to avoid issues if events fire during disposal
+		foreach (var kvp in _watchers.ToArray())
 		{
 			kvp.Value.watcher.EnableRaisingEvents = false;
 			kvp.Value.watcher.Dispose();
 		}
 		_watchers.Clear();
+		flags.Clear();
 	}
 }
