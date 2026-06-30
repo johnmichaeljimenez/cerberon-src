@@ -830,6 +830,52 @@
         "B": 255,
         "A": 255
       }
+    },
+    {
+      "SpriteID": "env/pallet-2",
+      "Position": {
+        "X": 6.6,
+        "Y": 1.75
+      },
+      "Parallax": 0.0,
+      "Rotation": -118.214714,
+      "SortingGroup": 0,
+      "SortingIndex": 0,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
+    },
+    {
+      "SpriteID": "env/pallet-1",
+      "Position": {
+        "X": 6.651,
+        "Y": 2.593
+      },
+      "Parallax": 0.0,
+      "Rotation": -273.880737,
+      "SortingGroup": 0,
+      "SortingIndex": 1,
+      "RenderType": 0,
+      "Scale": 1.0,
+      "TileSize": {
+        "X": 1,
+        "Y": 1
+      },
+      "Tint": {
+        "R": 255,
+        "G": 255,
+        "B": 255,
+        "A": 255
+      }
     }
   ],
   "EnvironmentColliders": [
@@ -2247,6 +2293,32 @@
         "Y": 2.0
       },
       "Rotation": -89.19792,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 6.6,
+        "Y": 1.75
+      },
+      "Size": {
+        "X": 1.859375,
+        "Y": 1.875
+      },
+      "Rotation": -118.214714,
+      "Flags": 0,
+      "Height": 0
+    },
+    {
+      "Position": {
+        "X": 6.651,
+        "Y": 2.593
+      },
+      "Size": {
+        "X": 1.859375,
+        "Y": 1.875
+      },
+      "Rotation": -273.880737,
       "Flags": 0,
       "Height": 0
     }
