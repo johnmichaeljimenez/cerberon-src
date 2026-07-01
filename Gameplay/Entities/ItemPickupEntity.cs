@@ -7,6 +7,15 @@ namespace Cerberon.Gameplay.Entities;
 
 public class ItemPickupEntity : BaseEntity, IInteractable
 {
+	[DataConfig]
+	public static Dictionary<ItemTypes, string> ItemSprites = new()
+	{
+		{ ItemTypes.Health, "item/health"},
+		{ ItemTypes.Ammo, "item/ammo"},
+		{ ItemTypes.WeaponAK, "item/weapon-ak"},
+		{ ItemTypes.WeaponShotgun, "item/weapon-shotgun"},
+	};
+
 	public enum ItemTypes
 	{
 		Health,
@@ -33,6 +42,7 @@ public class ItemPickupEntity : BaseEntity, IInteractable
 		base.Init(gameplayState);
 		Amount = Math.Max(1, Amount);
 
+		CurrentSpriteID = ItemSprites[ItemType];
 		Groups.Add(nameof(IInteractable));
 
 		if (ItemType == ItemTypes.Health)
@@ -67,13 +77,6 @@ public class ItemPickupEntity : BaseEntity, IInteractable
 		{
 			lifeTime = MAX_LIFETIME;
 		}
-	}
-
-	public override void Draw()
-	{
-		base.Draw();
-
-		Raylib.DrawCircleV(Position, 1, Colors.RED);
 	}
 
 	public bool Interact()
