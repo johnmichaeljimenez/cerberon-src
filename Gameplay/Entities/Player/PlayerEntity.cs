@@ -47,7 +47,6 @@ public class PlayerEntity : CharacterEntity
 	{
 		base.Init(gameplayState);
 
-		Origin = new Vector2(0.3f, 0.7f);
 		Weapons = AddModule<PlayerWeapons>();
 		AddModule<PlayerInteraction>();
 		SortingIndex = 10;
@@ -247,7 +246,10 @@ public class PlayerEntity : CharacterEntity
 
 	public override void Draw()
 	{
-		lowerBodyAnimator.GetFrameSprite()?.Draw(Position, 1, lowerBodyAngle, origin: Origin);
+		var lower = lowerBodyAnimator.GetFrameSprite();
+		if (lower != null)
+			lower.Draw(Position, 1, lowerBodyAngle);
+
 		base.Draw();
 	}
 

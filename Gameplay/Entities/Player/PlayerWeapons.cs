@@ -369,8 +369,6 @@ public class PlayerWeapons : EntityModule<PlayerEntity>
 
 	public void OnAnimationBegin(string animationName)
 	{
-		Entity.Origin = CurrentWeapon.ID == "knife" ? new(0.3f, 0.45f) : new(0.3f, 0.7f);
-
 		if (animationName == CurrentWeapon.ANIM_MELEE)
 			Game.Instance.Camera.Shake(CurrentWeapon.MeleeKick / MAX_KICK, Entity.GetFacingAngleOffset(90)); //side-by-side shake relative to player
 	}

@@ -97,8 +97,6 @@ public class EnemyEntity : CharacterEntity
 		Radius = STATS_BASE_RADIUS;
 		MovementSpeed = STATS_BASE_MOVEMENT_SPEED * normalizedCost;
 		attackDamage = Math.Max(1, (int)(STATS_BASE_DAMAGE * Cost));
-
-		Origin = new(0.4f, 0.5f);
 	}
 
 	protected override void OnAnimationEnd(string animationName)
@@ -111,7 +109,7 @@ public class EnemyEntity : CharacterEntity
 
 		if (animationName == currentClipNameDeath)
 		{
-			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, Origin, Scale);
+			DecalSystem.PaintDead(CurrentSprite, Position, FacingAngle, CurrentSprite.Metadata.Origin, Scale);
 			Despawn();
 		}
 	}

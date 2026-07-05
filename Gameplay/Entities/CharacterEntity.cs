@@ -39,9 +39,6 @@ public abstract class CharacterEntity : BaseEntity, ICombatEntity //used by play
 
 	public Animator Animator { get; protected set; }
 
-	[JsonIgnore]
-	public Vector2 Origin { get; set; } = Vector2.One * 0.5f;
-
 	public bool IsAnimatorBusy => Animator.IsPlayingOneShot;
 
 	public Vector2 FacingDirection => GetFacingAngleOffset(0);
@@ -150,7 +147,8 @@ public abstract class CharacterEntity : BaseEntity, ICombatEntity //used by play
 
 	public override void Draw()
 	{
-		CurrentSprite?.Draw(Position, Scale, rotation: FacingAngle, origin: Origin);
+		if (CurrentSprite != null)
+			CurrentSprite.Draw(Position, Scale, rotation: FacingAngle, origin: CurrentSprite.Metadata.Origin);
 	}
 
 	public override void DrawDebug()
