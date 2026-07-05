@@ -67,7 +67,7 @@ public class Sprite : IDisposable
 	public void Draw(Vector2 position, float scale = 1, float rotation = 0, Color? tint = null, Vector2? origin = null, bool flipX = false, bool flipY = false)
 	{
 		var tintColor = tint ?? Color.White;
-		var originNorm = origin ?? (Vector2.One * 0.5f);
+		var originNorm = origin ?? Metadata.Origin;
 
 		//render everything as fixed pixels per unit as I don't want to make art that has mismatched pixel density anyway even if the assets are not pixel art
 		//i may be no artist, but I had exp in making pixel art and non-pixel art game assets and for me mismatched line art density is eyesore and amateur-level
@@ -128,6 +128,7 @@ public class SpriteMetadata
 
 	public SpriteMaterial Material { get; set; } = SpriteMaterial.None;
 	public bool StochasticTiling { get; set; }
+	public Vector2 Origin { get; set; } = new(0.5f, 0.5f);
 }
 
 public class LoadRequest
@@ -274,10 +275,12 @@ public static class AssetManager
 			if (spriteMetas.TryGetValue(key, out var meta))
 			{
 				sprite.Metadata = meta;
-			}else{
+			}
+			else
+			{
 				sprite.Metadata = new();
 			}
-			
+
 			sprites[key] = sprite;
 			Console.WriteLine($"Loaded asset: {key}");
 		}, () =>
