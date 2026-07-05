@@ -5,13 +5,19 @@
       "Y": 0.7
     }
   },
+  "player/handgun/shoot/survivor-shoot_handgun_0": {
+    "Origin": {
+      "X": 0.5,
+      "Y": 0.5
+    }
+  },
+
   "enemy/*": {
     "Origin": {
       "X": 0.4,
       "Y": 0.5
     }
   },
-
   "env/concrete-1": {
     "Material": "Stone",
     "StochasticTiling": true
