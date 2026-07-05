@@ -11,6 +11,12 @@
       "Y": 0.5
     }
   },
+  "player/knife/meleeattack/*": {
+    "Origin": {
+      "X": 0.3,
+      "Y": 0.45
+    }
+  },
 
   "enemy/*": {
     "Origin": {
