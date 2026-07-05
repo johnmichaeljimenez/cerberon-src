@@ -187,7 +187,8 @@ public static class AssetManager
 {
 	private static readonly Dictionary<string, Sprite> sprites = new();
 	private static readonly Dictionary<string, Animation> animations = new();
-	private static readonly Dictionary<string, SpriteMetadata> spriteMetas = new();
+	private static readonly Dictionary<string, SpriteMetadata> exactMetas = new();
+	private static readonly List<(string Pattern, string Prefix, SpriteMetadata Meta)> wildcardPatterns = new();
 	public static readonly Dictionary<string, string> LevelFiles = new();
 	public static Sprite MissingSprite { get; private set; }
 	public static Font Font { get; private set; }
@@ -235,31 +236,32 @@ public static class AssetManager
 		MissingSprite = new Sprite("%missing%", chkTex);
 		Raylib.UnloadImage(chk);
 
-		spriteMetas.Clear();
+		exactMetas.Clear();
+		wildcardPatterns.Clear();
 		var metaFile = Path.Combine(spritesPath, "meta.json");
-		if (File.Exists(metaFile))
+		var metaJson = File.ReadAllText(metaFile);
+		var settings = new JsonSerializerSettings
 		{
-			try
+			NullValueHandling = NullValueHandling.Ignore,
+			DefaultValueHandling = DefaultValueHandling.Populate,
+			Converters = { new StringEnumConverter() }
+		};
+
+		var metaEntries = JsonConvert.DeserializeObject<Dictionary<string, SpriteMetadata>>(metaJson, settings);
+		if (metaEntries != null)
+		{
+			foreach (var entry in metaEntries)
 			{
-				var metaJson = File.ReadAllText(metaFile);
-				var settings = new JsonSerializerSettings
+				string pattern = entry.Key;
+				if (pattern.EndsWith("/*"))
 				{
-					NullValueHandling = NullValueHandling.Ignore,
-					DefaultValueHandling = DefaultValueHandling.Populate,
-					Converters = { new StringEnumConverter() }
-				};
-				var entries = JsonConvert.DeserializeObject<Dictionary<string, SpriteMetadata>>(metaJson, settings);
-				if (entries != null)
-				{
-					foreach (var entry in entries)
-					{
-						spriteMetas[entry.Key] = entry.Value;
-					}
+					string prefix = pattern.Substring(0, pattern.Length - 2);
+					wildcardPatterns.Add((pattern, prefix, entry.Value));
 				}
-			}
-			catch (Exception ex)
-			{
-				Log.Send($"Error loading sprite meta.json at {metaFile}: {ex.Message}");
+				else
+				{
+					exactMetas[pattern] = entry.Value;
+				}
 			}
 		}
 
@@ -272,14 +274,7 @@ public static class AssetManager
 			Texture2D tex = Raylib.LoadTexture(file);
 
 			var sprite = new Sprite(key, tex);
-			if (spriteMetas.TryGetValue(key, out var meta))
-			{
-				sprite.Metadata = meta;
-			}
-			else
-			{
-				sprite.Metadata = new();
-			}
+			sprite.Metadata = ResolveMetadata(key);
 
 			sprites[key] = sprite;
 			Console.WriteLine($"Loaded asset: {key}");
@@ -296,6 +291,32 @@ public static class AssetManager
 				LevelFiles.Add(i, Path.GetFileNameWithoutExtension(i));
 			}
 		});
+	}
+
+	//meta.json can accept wildcard asterisk suffix as a baseline value for all sprites in a directory, and it is cascading.
+	//for example, I can define pivot for player/* sprites but I want to also define custom pivot for player/handgun/shoot/survivor-shoot_handgun_0 asset.
+	private static SpriteMetadata ResolveMetadata(string key)
+	{
+		if (exactMetas.TryGetValue(key, out var exactMeta))
+			return exactMeta;
+
+		SpriteMetadata bestMeta = null;
+		var bestLength = -1;
+
+		foreach (var (_, prefix, meta) in wildcardPatterns)
+		{
+			if (key.StartsWith(prefix))
+			{
+				int length = prefix.Length;
+				if (length > bestLength)
+				{
+					bestLength = length;
+					bestMeta = meta;
+				}
+			}
+		}
+
+		return bestMeta ?? new SpriteMetadata();
 	}
 
 	public static void AddLoadRequest(List<string> files, Action<string> onLoad, Action onEnd)
@@ -361,7 +382,8 @@ public static class AssetManager
 
 		MissingSprite.Dispose();
 		sprites.Clear();
-		spriteMetas.Clear();
+		wildcardPatterns.Clear();
+		exactMetas.Clear();
 
 		AudioHandler.Unload();
 		Raylib.UnloadFont(Font);
