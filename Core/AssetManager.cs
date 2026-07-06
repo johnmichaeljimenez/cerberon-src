@@ -236,34 +236,9 @@ public static class AssetManager
 		MissingSprite = new Sprite("%missing%", chkTex);
 		Raylib.UnloadImage(chk);
 
-		exactMetas.Clear();
-		wildcardPatterns.Clear();
 		var metaFile = Path.Combine(spritesPath, "meta.json");
-		var metaJson = File.ReadAllText(metaFile);
-		var settings = new JsonSerializerSettings
-		{
-			NullValueHandling = NullValueHandling.Ignore,
-			DefaultValueHandling = DefaultValueHandling.Populate,
-			Converters = { new StringEnumConverter() }
-		};
-
-		var metaEntries = JsonConvert.DeserializeObject<Dictionary<string, SpriteMetadata>>(metaJson, settings);
-		if (metaEntries != null)
-		{
-			foreach (var entry in metaEntries)
-			{
-				string pattern = entry.Key;
-				if (pattern.EndsWith("/*"))
-				{
-					string prefix = pattern.Substring(0, pattern.Length - 2);
-					wildcardPatterns.Add((pattern, prefix, entry.Value));
-				}
-				else
-				{
-					exactMetas[pattern] = entry.Value;
-				}
-			}
-		}
+		var metaJson = AssetWatcher.Add(metaFile, OnMetaChanged);
+		LoadMetadata(metaJson);
 
 		var files = Directory.GetFiles(spritesPath, "*.png", SearchOption.AllDirectories).ToList();
 		AddLoadRequest(files, file =>
@@ -291,6 +266,55 @@ public static class AssetManager
 				LevelFiles.Add(i, Path.GetFileNameWithoutExtension(i));
 			}
 		});
+	}
+
+	private static void OnMetaChanged(string str)
+	{
+		try
+		{
+			LoadMetadata(str);
+			foreach (var kvp in sprites)
+			{
+				kvp.Value.Metadata = ResolveMetadata(kvp.Key);
+			}
+
+			Log.Send("Sprite metadata updated.");
+		}
+		catch (Exception ex)
+		{
+			Log.Send($"Error parsing meta.json: {ex.Message}");
+		}
+	}
+
+	private static void LoadMetadata(string metaJson)
+	{
+		exactMetas.Clear();
+		wildcardPatterns.Clear();
+
+		var settings = new JsonSerializerSettings
+		{
+			NullValueHandling = NullValueHandling.Ignore,
+			DefaultValueHandling = DefaultValueHandling.Populate,
+			Converters = { new StringEnumConverter() }
+		};
+
+		var metaEntries = JsonConvert.DeserializeObject<Dictionary<string, SpriteMetadata>>(metaJson, settings);
+		if (metaEntries != null)
+		{
+			foreach (var entry in metaEntries)
+			{
+				string pattern = entry.Key;
+				if (pattern.EndsWith("/*"))
+				{
+					string prefix = pattern.Substring(0, pattern.Length - 2);
+					wildcardPatterns.Add((pattern, prefix, entry.Value));
+				}
+				else
+				{
+					exactMetas[pattern] = entry.Value;
+				}
+			}
+		}
 	}
 
 	//meta.json can accept wildcard asterisk suffix as a baseline value for all sprites in a directory, and it is cascading.
@@ -375,6 +399,7 @@ public static class AssetManager
 
 	public static void Dispose()
 	{
+		AssetWatcher.Remove(Path.Combine("Assets", "Sprites", "meta.json"));
 		foreach (var i in sprites)
 		{
 			i.Value.Dispose();
