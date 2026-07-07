@@ -24,6 +24,7 @@ public class Sprite : IDisposable
 		Width = texture2D.Width;
 		Height = texture2D.Height;
 		UnitSize = new((float)Width / PIXELS_PER_UNIT, (float)Height / PIXELS_PER_UNIT);
+		Metadata = new();
 
 		Rect = new(0, 0, Width, Height);
 	}
@@ -235,10 +236,6 @@ public static class AssetManager
 		var chkTex = Raylib.LoadTextureFromImage(chk);
 		MissingSprite = new Sprite("%missing%", chkTex);
 		Raylib.UnloadImage(chk);
-
-		var metaFile = Path.Combine(spritesPath, "meta.json");
-		var metaJson = AssetWatcher.Add(metaFile, OnMetaChanged);
-		LoadMetadata(metaJson);
 
 		var files = Directory.GetFiles(spritesPath, "*.png", SearchOption.AllDirectories).ToList();
 		AddLoadRequest(files, file =>
