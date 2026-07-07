@@ -262,6 +262,10 @@ public static class AssetManager
 			{
 				LevelFiles.Add(i, Path.GetFileNameWithoutExtension(i));
 			}
+
+			var metaFile = Path.Combine(spritesPath, "meta.json");
+			var metaJson = AssetWatcher.Add(metaFile, OnMetaChanged);
+			LoadMetadata(metaJson);
 		});
 	}
 
