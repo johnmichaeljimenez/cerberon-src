@@ -19,6 +19,30 @@
   },
   "player/rifle/shoot/*": {
     "Origin": {
+      "X": 0.3,
+      "Y": 0.5
+    }
+  },
+  "player/rifle/shoot/survivor-shoot_rifle_0": {
+    "Origin": {
+      "X": 0.4,
+      "Y": 0.5
+    }
+  },
+  "player/shotgun/*": {
+    "Origin": {
+      "X": 0.34,
+      "Y": 0.5
+    }
+  },
+  "player/shotgun/shoot/*": {
+    "Origin": {
+      "X": 0.3,
+      "Y": 0.5
+    }
+  },
+  "player/shotgun/shoot/survivor-shoot_shotgun_0": {
+    "Origin": {
       "X": 0.4,
       "Y": 0.5
     }

@@ -148,7 +148,7 @@ public abstract class CharacterEntity : BaseEntity, ICombatEntity //used by play
 	public override void Draw()
 	{
 		if (CurrentSprite != null)
-			CurrentSprite.Draw(Position, Scale, rotation: FacingAngle, origin: CurrentSprite.Metadata.Origin);
+			CurrentSprite.Draw(Position, Scale, rotation: FacingAngle);
 	}
 
 	public override void DrawDebug()
