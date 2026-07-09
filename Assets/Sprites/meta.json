@@ -1,20 +1,26 @@
 {
   "player/*": {
     "Origin": {
-      "X": 0.3,
-      "Y": 0.7
-    }
-  },
-  "player/handgun/shoot/survivor-shoot_handgun_0": {
-    "Origin": {
-      "X": 0.5,
+      "X": 0.4,
       "Y": 0.5
     }
   },
   "player/knife/meleeattack/*": {
     "Origin": {
-      "X": 0.3,
-      "Y": 0.45
+      "X": 0.33,
+      "Y": 0.4
+    }
+  },
+  "player/rifle/*": {
+    "Origin": {
+      "X": 0.34,
+      "Y": 0.5
+    }
+  },
+  "player/rifle/shoot/*": {
+    "Origin": {
+      "X": 0.4,
+      "Y": 0.5
     }
   },
 
