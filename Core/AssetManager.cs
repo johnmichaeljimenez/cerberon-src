@@ -274,11 +274,6 @@ public static class AssetManager
 		try
 		{
 			LoadMetadata(str);
-			foreach (var kvp in sprites)
-			{
-				kvp.Value.Metadata = ResolveMetadata(kvp.Key);
-			}
-
 			Log.Send("Sprite metadata updated.");
 		}
 		catch (Exception ex)
@@ -314,6 +309,11 @@ public static class AssetManager
 				{
 					exactMetas[pattern] = entry.Value;
 				}
+			}
+
+			foreach (var kvp in sprites)
+			{
+				kvp.Value.Metadata = ResolveMetadata(kvp.Key);
 			}
 		}
 	}
