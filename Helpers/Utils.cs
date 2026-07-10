@@ -4,6 +4,45 @@ namespace Cerberon.Helpers;
 
 public static class Utils
 {
+	//use this for cheap render textures that don't need the full RGBA channel
+	public static unsafe RenderTexture2D LoadRenderTextureR8(int width, int height)
+	{
+		var target = new RenderTexture2D();
+
+		target.Id = Rlgl.LoadFramebuffer();
+		if (target.Id <= 0)
+			throw new Exception("Failed to create framebuffer");
+
+		Rlgl.EnableFramebuffer(target.Id);
+
+		target.Texture.Id = Rlgl.LoadTexture(null, width, height,
+			PixelFormat.UncompressedGrayscale, 1);
+		target.Texture.Width = width;
+		target.Texture.Height = height;
+		target.Texture.Mipmaps = 1;
+		target.Texture.Format = PixelFormat.UncompressedGrayscale;
+
+		Rlgl.FramebufferAttach(target.Id, target.Texture.Id,
+			FramebufferAttachType.ColorChannel0,
+			FramebufferAttachTextureType.Texture2D, 0);
+
+		if (!Rlgl.FramebufferComplete(target.Id))
+			throw new Exception("Framebuffer is not complete");
+
+		Rlgl.DisableFramebuffer();
+		return target;
+	}
+
+
+	public static void UnloadRenderTextureR8(RenderTexture2D target)
+	{
+		if (target.Texture.Id > 0)
+			Rlgl.UnloadTexture(target.Texture.Id);
+
+		if (target.Id > 0)
+			Rlgl.UnloadFramebuffer(target.Id);
+	}
+
 	public static string ToJson(object obj, bool onlySaveData = false)
 	{
 		return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
