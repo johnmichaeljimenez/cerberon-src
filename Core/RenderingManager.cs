@@ -121,11 +121,14 @@ public static class RenderingManager
     private static int visionTexLoc;
     private static int timeLoc;
     private static int fadeLoc;
+    private static int dirtyLensLoc;
 
     public static float Scale;
     public static Vector2 Offset;
 
     private static float fadeAmount;
+
+    private static Texture2D dirtyLensTexture;
 
     public static readonly Dictionary<string, ShaderSet> ShaderSets = new()
     {
@@ -149,6 +152,7 @@ public static class RenderingManager
 
         ReloadShader(AssetWatcher.Add(POST_FX, ReloadShader));
 
+        dirtyLensTexture = AssetManager.GetSprite("dirty-lens").Texture;
         TweenManager.ClearByPrefix(TWEEN_KEY);
     }
 
@@ -194,6 +198,7 @@ public static class RenderingManager
         visionTexLoc = Raylib.GetShaderLocation(PostShader, "visionTex");
         timeLoc = Raylib.GetShaderLocation(PostShader, "time");
         fadeLoc = Raylib.GetShaderLocation(PostShader, "fadeAmt");
+        dirtyLensLoc = Raylib.GetShaderLocation(PostShader, "dirtyLensTex");
 
         foreach (var i in AllFilters)
         {
@@ -246,6 +251,7 @@ public static class RenderingManager
             Raylib.SetShaderValueTexture(PostShader, visionTexLoc, LightingSystem.VisionRenderTexture.Texture);
             Raylib.SetShaderValue(PostShader, timeLoc, Time.UnscaledCurrentTime, ShaderUniformDataType.Float);
             Raylib.SetShaderValue(PostShader, fadeLoc, fadeAmount, ShaderUniformDataType.Float);
+            Raylib.SetShaderValueTexture(PostShader, dirtyLensLoc, dirtyLensTexture);
 
             foreach (var i in AllFilters)
             {

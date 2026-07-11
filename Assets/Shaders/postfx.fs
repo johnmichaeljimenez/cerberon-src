@@ -5,6 +5,7 @@ in vec2 fragTexCoord;
 uniform sampler2D texture0;
 uniform sampler2D lightTex;
 uniform sampler2D visionTex;
+uniform sampler2D dirtyLensTex;
 uniform float time;
 
 uniform float fadeAmt = 0.0; //0 = none, 1 = full
@@ -104,6 +105,7 @@ void main() {
     vig = pow(vig, 1.1);
 
     vec3 screenColor = texture(texture0, fragTexCoord).rgb;
+    vec3 dirtyLensColor = texture(dirtyLensTex, fragTexCoord).rgb;
     vec3 blurColor = blur(texture0, fragTexCoord, blurRadius); //focus blur effect
 	vec3 lightColor = texture(lightTex, fragTexCoord).rgb;
     vec3 lightgray = grayscale(lightColor);
@@ -126,6 +128,7 @@ void main() {
     finColor += lightBlur * 0.1;
 	finColor += dither; //remove color banding
     finColor += visColor * 0.1;
+    finColor = mix(finColor, dirtyLensColor, screenGrayColor * visColor.r);
 
     finColor = fade(finColor, fadeAmt/4.5);
     
