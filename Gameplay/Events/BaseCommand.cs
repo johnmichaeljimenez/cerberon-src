@@ -2,90 +2,43 @@ using Cerberon.Core;
 using Cerberon.Effects;
 using Cerberon.Gameplay.Entities;
 using Cerberon.Gameplay.Managers;
+using OpcodeEngine.Commands;
 
 namespace Cerberon.Gameplay.Events;
 
-public abstract class BaseCommand
+public abstract class GameCommand : Command
 {
-	protected GameplayState gameplayState;
-
-	public virtual void Setup(GameplayState gameplayState) //use this so that constructors are tiny for each command
-	{
-		this.gameplayState = gameplayState;
-	}
-
-	//everything below can be safely fully overriden
-	public virtual void OnEnter()
-	{
-
-	}
-
-	public virtual bool Update(float dt)
-	{
-		return true;
-	}
-
-	public virtual void OnExit()
-	{
-
-	}
+	protected ScriptRunner Context => (ScriptRunner)Engine;
+	protected GameplayState gameplayState => Context.gameplayState;
 }
 
-public class Wait : BaseCommand
+public class FadeIn : GameCommand
 {
-	private float t;
-
-	public Wait(float duration)
-	{
-		t = duration;
-	}
-
-	public override bool Update(float dt)
-	{
-		t -= dt;
-		return t <= 0;
-	}
-}
-
-public class Print : BaseCommand
-{
-	private string msg;
-
-	public Print(string msg)
-	{
-		this.msg = msg;
-	}
-
 	public override void OnEnter()
 	{
-		Log.Send(msg);
-	}
-}
-
-public class Fade : BaseCommand
-{
-	private bool fadeIn;
-
-	public Fade(bool fadeIn)
-	{
-		this.fadeIn = fadeIn;
+		FadeHandler.FadeIn();
 	}
 
-	public override void OnEnter()
-	{
-		if (fadeIn)
-			FadeHandler.FadeIn();
-		else
-			FadeHandler.FadeOut();
-	}
-
-	public override bool Update(float dt)
+	public override bool OnTick(float dt)
 	{
 		return !FadeHandler.Running; //safe to use even if it's paused, custom timescale, etc.
 	}
 }
 
-public class PlayAudio : BaseCommand
+public class FadeOut : GameCommand
+{
+	public override void OnEnter()
+	{
+		FadeHandler.FadeOut();
+	}
+
+	public override bool OnTick(float dt)
+	{
+		return !FadeHandler.Running; //safe to use even if it's paused, custom timescale, etc.
+	}
+}
+
+public class PlayAudio : GameCommand
 {
 	private AudioSource sound;
 	private string soundID;
@@ -106,7 +59,7 @@ public class PlayAudio : BaseCommand
 		sound = AudioHandler.PlaySound(soundID, soundPosition, radius);
 	}
 
-	public override bool Update(float dt)
+	public override bool OnTick(float dt)
 	{
 		if (sound == null || !wait)
 			return true;
@@ -115,7 +68,7 @@ public class PlayAudio : BaseCommand
 	}
 }
 
-public class SpawnEnemy : BaseCommand
+public class SpawnEnemy : GameCommand
 {
 	private Vector2 position;
 	private float cost;
@@ -137,52 +90,35 @@ public class SpawnEnemy : BaseCommand
 	}
 }
 
-public class Exec : BaseCommand
+public class Say : GameCommand
 {
-	private Action onAction;
-
-	public Exec(Action onAction)
-	{
-		this.onAction = onAction;
-	}
-
-	public override void OnEnter()
-	{
-		onAction?.Invoke();
-	}
-
-	public override bool Update(float dt)
-	{
-		return true;
-	}
-}
-
-public class ShowDialogue : BaseCommand
-{
-	private string id;
 	private DialogueManager dm;
-	private bool wait;
+	private bool wait = true;
+	private Dialogue dialogue;
 
-	public ShowDialogue(string id, bool wait)
+	public override void OnInit(params string[] args)
 	{
-		this.id = id;
-		this.wait = wait;
+		dialogue = new()
+		{
+			Character = args[0],
+			Message = args[1]
+		};
 	}
 
 	public override void OnEnter()
 	{
 		base.OnEnter();
 		dm = gameplayState.GetManager<DialogueManager>();
-		dm.ShowDialogue(id);
+		dm.ShowDialogue(dialogue);
 	}
 
-	public override bool Update(float dt)
+	public override bool OnTick(float dt)
 	{
-		return !wait || dm.CurrentDialogue == null || dm.CurrentDialogue.ID != id;
+		return !wait || dm.CurrentDialogue == null || dm.CurrentDialogue != dialogue;
 	}
 }
 
-public class SetLightGroupState : BaseCommand
+public class SetLightGroupState : GameCommand
 {
 	private string id;
 	private bool enabled;
