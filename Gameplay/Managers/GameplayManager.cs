@@ -43,9 +43,6 @@ public class GameplayManager : BaseManager
 	public bool Running { get; private set; }
 	public float NormalizedTime { get; internal set; }
 
-
-	private EventSetup events = new();
-
 	public PlayerEntity PlayerCharacter { get; private set; }
 	public readonly Signal<PlayerEntity> OnPlayerDeath = new();
 	public readonly Signal<Unit> OnGameStart = new();
@@ -83,8 +80,6 @@ public class GameplayManager : BaseManager
 		_gameTime = MaxGameTime;
 
 		CurrentKillCount = 0;
-
-		events.Setup(gameplayState);
 	}
 
 	public override void OnEnter()
@@ -100,7 +95,6 @@ public class GameplayManager : BaseManager
 		CurrentKillCount = 0;
 
 		base.Dispose();
-		events.Dispose();
 		Running = false;
 	}
 

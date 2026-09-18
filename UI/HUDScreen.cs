@@ -50,7 +50,7 @@ public class HUDScreen : BaseScreen
 
 		if (dialogue != null)
 		{
-			dialogueText.Text = $"[{dialogue.CharacterID}] {dialogue.Message}";
+			dialogueText.Text = $"[{dialogue.Character}] {dialogue.Message}";
 		}
 	}
 
