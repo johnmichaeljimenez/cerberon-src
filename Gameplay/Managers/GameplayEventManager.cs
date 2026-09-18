@@ -17,16 +17,34 @@ public class GameplayEventManager : BaseManager
 	private readonly ScriptRunner engine;
 
 	private readonly Dictionary<string, Instruction> scripts = new();
+	private Dictionary<string, Dictionary<string, Instruction>> groupedScripts = new();
 
 	public GameplayEventManager(GameplayState gameplayState) : base(gameplayState)
 	{
 		engine = new(gameplayState);
+		CompileScripts(new() { "Main" });
+	}
 
-		var path = "Assets/Scripts";    //TODO: improve
-		foreach (var i in Directory.GetFiles(path, "*.ops", SearchOption.AllDirectories))
+	public void CompileScripts(List<string> directories)
+	{
+		var path = "Assets/Scripts";
+		foreach (var file in Directory.GetFiles(path, "*.ops", SearchOption.AllDirectories))
 		{
-			var instruction = engine.CompileFile(i);
-			scripts.Add(instruction.ID, instruction);
+			var relativePath = Path.GetRelativePath(path, file);
+			var pathParts = relativePath.Split(Path.DirectorySeparatorChar);
+			if (pathParts.Length == 0) continue;
+
+			var baseDirectory = pathParts[0];
+			var instruction = engine.CompileFile(file);
+
+			instruction.ID = $"{baseDirectory}/{instruction.ID}";
+
+			if (!groupedScripts.ContainsKey(baseDirectory))
+			{
+				groupedScripts[baseDirectory] = new Dictionary<string, Instruction>();
+			}
+
+			groupedScripts[baseDirectory].Add(instruction.ID, instruction);
 		}
 	}
 
