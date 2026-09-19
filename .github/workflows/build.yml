@@ -33,8 +33,6 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore cerberon-src.csproj
-      env:
-        GITHUB_TOKEN: ${{ secrets.NUGET_PAT }}
 
     - name: Build & Publish (Release) - Single File
       run: >
