@@ -14,7 +14,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Raylib-cs" Version="7.0.2" />
     <PackageReference Include="rlImgui-cs" Version="3.2.0" />
-    <ProjectReference Include="..\OpcodeRunner\OpcodeEngine\OpcodeEngine.csproj" />
+    <PackageReference Include="OpcodeRunner.Engine" Version="0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
