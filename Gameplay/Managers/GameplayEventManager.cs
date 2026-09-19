@@ -1,6 +1,7 @@
 using System.Text;
 using Cerberon.Core;
 using Cerberon.Gameplay.Events;
+using Cerberon.Helpers;
 using OpcodeEngine.Core;
 
 namespace Cerberon.Gameplay.Managers;
@@ -15,38 +16,60 @@ public enum EventTypes
 public class GameplayEventManager : BaseManager
 {
 	private readonly ScriptRunner engine;
-
-	private readonly Dictionary<string, Instruction> scripts = new();
-	private Dictionary<string, Dictionary<string, Instruction>> groupedScripts = new();
+	private Dictionary<string, Dictionary<string, Instruction>> scripts = new();
 
 	public GameplayEventManager(GameplayState gameplayState) : base(gameplayState)
 	{
 		engine = new(gameplayState);
+	}
+
+	public override void Init()
+	{
+		base.Init();
+
+		gameplayState.GetManager<TriggerManager>().OnTriggerExecute.Subscribe(t => {
+			FireTrigger(EventTypes.Trigger, t.Item2.TriggerID);
+		}).AddTo(disposables);
+
 		CompileScripts(new() { "Main" });
 	}
 
 	public void CompileScripts(List<string> directories)
 	{
-		var path = "Assets/Scripts";
-		foreach (var file in Directory.GetFiles(path, "*.ops", SearchOption.AllDirectories))
+		var basePath = "Assets/Scripts";
+
+		if (!Directory.Exists(basePath)) return;
+
+		foreach (var selectedDir in directories)
 		{
-			var relativePath = Path.GetRelativePath(path, file);
-			var pathParts = relativePath.Split(Path.DirectorySeparatorChar);
-			if (pathParts.Length == 0) continue;
+			var targetFolderPath = Path.Combine(basePath, selectedDir);
 
-			var baseDirectory = pathParts[0];
-			var instruction = engine.CompileFile(file);
+			if (!Directory.Exists(targetFolderPath))
+				continue;
 
-			instruction.ID = $"{baseDirectory}/{instruction.ID}";
-
-			if (!groupedScripts.ContainsKey(baseDirectory))
+			foreach (var file in Directory.GetFiles(targetFolderPath, "*.ops", SearchOption.AllDirectories))
 			{
-				groupedScripts[baseDirectory] = new Dictionary<string, Instruction>();
-			}
+				var relativePath = Path.GetRelativePath(basePath, file);
 
-			groupedScripts[baseDirectory].Add(instruction.ID, instruction);
+				var pathParts = relativePath.Split(Path.DirectorySeparatorChar);
+				if (pathParts.Length == 0)
+					continue;
+
+				var baseDirectory = pathParts[0];
+
+				var instruction = engine.CompileFile(file);
+				instruction.ID = $"{baseDirectory}/{instruction.ID}";
+
+				if (!scripts.ContainsKey(baseDirectory))
+				{
+					scripts[baseDirectory] = new Dictionary<string, Instruction>();
+				}
+
+				scripts[baseDirectory][instruction.ID] = instruction;
+			}
 		}
 	}
+
 
 	public void FireTrigger(EventTypes eventType, params object[] args)
 	{
