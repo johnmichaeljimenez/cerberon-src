@@ -1,21 +1,49 @@
 @TRIGGER STARTFIGHT
 
-#----knocking on the door
-SAY SETH "Yo what the fuck man" FALSE
-
+SHAKE 0.8
 PLAYAUDIO "hit/door" "intro-sfx"
-SHAKE
-
 WAIT 0.2
 PLAYAUDIO "hit/door" "intro-sfx"
-SHAKE
+WAIT 0.5
+SAY SETH "The fuck you want? I'm tryna get lit in here!"
+WAIT 0.5
 
+SHAKE 0.8
+SWITCHLIGHT "<default>" FALSE
+PLAYAUDIO "hit/door" "intro-sfx"
 WAIT 0.2
 PLAYAUDIO "hit/door" "intro-sfx"
-SHAKE 1
-
 WAIT 0.2
-SAY SETH "What's wrong with you bro"
-SAY SETH "Open the fucking door!"
+PLAYAUDIO "hit/door" "intro-sfx"
+WAIT 0.1
 
+SETACTIVE "intro-door" FALSE
+SWITCHLIGHT "<default>" TRUE
+PLAYAUDIO "break/door" "intro-sfx"
+SHAKE 3
+SPAWN "intro-sfx"
+WAIT 0.2
 
+SAY SETH "God damn it..." FALSE
+WAIT 0.5
+SPAWN "intro-sfx" 0.8
+WAIT 0.2
+SPAWN "intro-sfx" 0.8
+WAIT 1
+
+PLAYAUDIO "phone" "-" TRUE
+WAIT 0.1
+PLAYAUDIO "phone" "-" TRUE
+WAIT 0.1
+BEGINROUND
+
+SAY SETH "Wade! Pick up the fuckin' phone!"
+SAY SETH "Where the fuck are you right now?" 
+SAY WADE "...Huh? What the hell you on about? I was at Lou's."
+SAY WADE "Is 12 raiding the spot or somethin'?"
+SAY SETH "We got the big roaches again! Get your ass over here right now!"
+SAY WADE "Ah shit... can you just hold 'em off till mornin'?"
+SAY WADE "I'm busy right now, man."
+SAY SETH "I told your ass last week to seal that door!"
+SAY SETH "You better come clean this shit up tomorrow."
+SAY WADE "Yeah yeah... I'll swing by later."

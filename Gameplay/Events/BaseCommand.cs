@@ -57,7 +57,7 @@ public class PlayAudio : GameCommand
 
 	public override void OnEnter()
 	{
-		sound = AudioHandler.PlaySound(soundID, string.IsNullOrEmpty(soundMarkerPosition)? null : gameplayState.CurrentWorld.FindMarkerPosition(soundMarkerPosition).Position, radius);
+		sound = AudioHandler.PlaySound(soundID, string.IsNullOrEmpty(soundMarkerPosition) ? null : gameplayState.CurrentWorld.FindMarkerPosition(soundMarkerPosition)?.Position, radius);
 	}
 
 	public override bool OnTick(float dt)
@@ -121,7 +121,7 @@ public class Say : GameCommand
 	}
 }
 
-public class SetLightGroupState : GameCommand
+public class SwitchLight : GameCommand
 {
 	[CommandParameter]
 	private string id;
@@ -145,5 +145,30 @@ public class Shake : GameCommand
 	{
 		base.OnEnter();
 		Game.Instance.Camera.Shake(amount, null);
+	}
+}
+
+public class BeginRound : GameCommand
+{
+	public override void OnEnter()
+	{
+		base.OnEnter();
+		gameplayState.GetManager<GameplayManager>().Begin();
+	}
+}
+
+public class SetActive : GameCommand
+{
+	[CommandParameter]
+	private string nameTag;
+
+	[CommandParameter]
+	private bool isActive = true;
+
+	public override void OnEnter()
+	{
+		base.OnEnter();
+
+		gameplayState.CurrentWorld.GetEntityByNameTag<BaseEntity>(nameTag).IsActive = isActive;
 	}
 }
