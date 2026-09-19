@@ -187,7 +187,7 @@ public class PlayerEntity : CharacterEntity
 			{
 				var tile = gameplayState.CurrentWorld.GetTileAtPosition(Position);
 
-				if (!FootstepMaterials.ContainsKey(tile.Sprite.Metadata.Material))
+				if (tile == null || !FootstepMaterials.ContainsKey(tile.Sprite.Metadata.Material))
 					AudioHandler.PlaySound(FootstepMaterials[SpriteMetadata.SpriteMaterial.None]);
 				else
 					AudioHandler.PlaySound(FootstepMaterials[tile.Sprite.Metadata.Material]);
