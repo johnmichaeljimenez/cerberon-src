@@ -1,0 +1,21 @@
+@TRIGGER STARTFIGHT
+
+#----knocking on the door
+SAY SETH "Yo what the fuck man" FALSE
+
+PLAYAUDIO "hit/door" "intro-sfx"
+SHAKE
+
+WAIT 0.2
+PLAYAUDIO "hit/door" "intro-sfx"
+SHAKE
+
+WAIT 0.2
+PLAYAUDIO "hit/door" "intro-sfx"
+SHAKE 1
+
+WAIT 0.2
+SAY SETH "What's wrong with you bro"
+SAY SETH "Open the fucking door!"
+
+
