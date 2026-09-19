@@ -125,7 +125,7 @@ public class SetLightGroupState : GameCommand
 {
 	[CommandParameter]
 	private string id;
-	
+
 	[CommandParameter]
 	private bool enabled;
 
@@ -133,5 +133,17 @@ public class SetLightGroupState : GameCommand
 	{
 		base.OnEnter();
 		LightingSystem.SetLightGroupState(id, !enabled);
+	}
+}
+
+public class Shake : GameCommand
+{
+	[CommandParameter]
+	private float amount = 0.8f;
+
+	public override void OnEnter()
+	{
+		base.OnEnter();
+		Game.Instance.Camera.Shake(amount, null);
 	}
 }
