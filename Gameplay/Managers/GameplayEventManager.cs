@@ -10,6 +10,7 @@ public enum EventTypes
 {
 	None,
 	StartGame,
+	TimeEnd,
 	Trigger
 }
 
@@ -21,13 +22,24 @@ public class GameplayEventManager : BaseManager
 	public GameplayEventManager(GameplayState gameplayState) : base(gameplayState)
 	{
 		engine = new(gameplayState);
+
+		gameplayState.GetManager<GameplayManager>().OnGameStart.Subscribe(_ =>
+		{
+			FireTrigger(EventTypes.StartGame);
+		}).AddTo(disposables);
+
+		gameplayState.GetManager<GameplayManager>().OnTimeEnd.Subscribe(_ =>
+		{
+			FireTrigger(EventTypes.TimeEnd);
+		}).AddTo(disposables);
 	}
 
 	public override void Init()
 	{
 		base.Init();
 
-		gameplayState.GetManager<TriggerManager>().OnTriggerExecute.Subscribe(t => {
+		gameplayState.GetManager<TriggerManager>().OnTriggerExecute.Subscribe(t =>
+		{
 			FireTrigger(EventTypes.Trigger, t.Item2.TriggerID);
 		}).AddTo(disposables);
 
