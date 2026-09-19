@@ -3,6 +3,7 @@ using Cerberon.Effects;
 using Cerberon.Gameplay.Entities;
 using Cerberon.Gameplay.Managers;
 using OpcodeEngine.Commands;
+using OpcodeEngine.Core;
 
 namespace Cerberon.Gameplay.Events;
 
@@ -40,23 +41,23 @@ public class FadeOut : GameCommand
 
 public class PlayAudio : GameCommand
 {
-	private AudioSource sound;
+	[CommandParameter]
 	private string soundID;
-	private Vector2? soundPosition;
-	private bool wait;
-	private float radius;
 
-	public PlayAudio(string id, Vector2? pos, bool wait = false, float radius = 40)
-	{
-		soundID = id;
-		soundPosition = pos;
-		this.wait = wait;
-		this.radius = radius;
-	}
+	[CommandParameter]
+	private string soundMarkerPosition;
+
+	[CommandParameter]
+	private bool wait;
+
+	[CommandParameter]
+	private float radius = 40;
+
+	private AudioSource sound;
 
 	public override void OnEnter()
 	{
-		sound = AudioHandler.PlaySound(soundID, soundPosition, radius);
+		sound = AudioHandler.PlaySound(soundID, string.IsNullOrEmpty(soundMarkerPosition)? null : gameplayState.CurrentWorld.FindMarkerPosition(soundMarkerPosition).Position, radius);
 	}
 
 	public override bool OnTick(float dt)
@@ -68,23 +69,19 @@ public class PlayAudio : GameCommand
 	}
 }
 
-public class SpawnEnemy : GameCommand
+public class Spawn : GameCommand
 {
-	private Vector2 position;
-	private float cost;
-
-	public SpawnEnemy(Vector2 pos, float cost = 1.0f)
-	{
-		position = pos;
-		this.cost = cost;
-	}
+	[CommandParameter]
+	private string spawnMarkerPosition;
+	[CommandParameter]
+	private float cost = 1.0f;
 
 	public override void OnEnter()
 	{
 		gameplayState.CurrentWorld.SpawnEntity<EnemyEntity>(nameof(EnemyEntity), e =>
 		{
 			e.Persistent = true;
-			e.Position = position;
+			e.Position = gameplayState.CurrentWorld.FindMarkerPosition(spawnMarkerPosition).Position;
 			e.Cost = MathF.Max(0.5f, cost);
 		});
 	}
@@ -92,23 +89,29 @@ public class SpawnEnemy : GameCommand
 
 public class Say : GameCommand
 {
-	private DialogueManager dm;
-	private bool wait = true;
-	private Dialogue dialogue;
+	[CommandParameter]
+	private string character;
 
-	public override void OnInit(params string[] args)
-	{
-		dialogue = new()
-		{
-			Character = args[0],
-			Message = args[1]
-		};
-	}
+	[CommandParameter]
+	private string message;
+
+	[CommandParameter]
+	private bool wait = true;
+
+	private DialogueManager dm;
+	private Dialogue dialogue;
 
 	public override void OnEnter()
 	{
 		base.OnEnter();
 		dm = gameplayState.GetManager<DialogueManager>();
+
+		dialogue = new()
+		{
+			Character = character,
+			Message = message
+		};
+
 		dm.ShowDialogue(dialogue);
 	}
 
@@ -120,14 +123,11 @@ public class Say : GameCommand
 
 public class SetLightGroupState : GameCommand
 {
+	[CommandParameter]
 	private string id;
+	
+	[CommandParameter]
 	private bool enabled;
-
-	public SetLightGroupState(string id, bool enabled)
-	{
-		this.id = id;
-		this.enabled = enabled;
-	}
 
 	public override void OnEnter()
 	{
