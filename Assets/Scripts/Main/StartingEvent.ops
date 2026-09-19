@@ -31,9 +31,9 @@ WAIT 0.2
 SPAWN "intro-sfx" 0.8
 WAIT 1
 
-PLAYAUDIO "phone" "-" TRUE
+PLAYAUDIO "phone" "<null>" TRUE
 WAIT 0.1
-PLAYAUDIO "phone" "-" TRUE
+PLAYAUDIO "phone" "<null>" TRUE
 WAIT 0.1
 BEGINROUND
 
