@@ -36,7 +36,7 @@ public class DialogueManager : BaseManager
 			EndDialogue();
 
 		CurrentDialogue = dialogue;
-		timer = (CurrentDialogue.Message.Replace(" ", "").Length * 0.035f) + 1.0f;
+		timer = CurrentDialogue.Duration;
 		OnDialogueShow.Publish(CurrentDialogue);
 
 		return true;
