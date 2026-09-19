@@ -128,7 +128,7 @@ void main() {
     finColor += lightBlur * 0.1;
 	finColor += dither; //remove color banding
     finColor += visColor * 0.1;
-    finColor = mix(finColor, dirtyLensColor, screenGrayColor * visColor.r);
+    // finColor = mix(finColor, dirtyLensColor, screenGrayColor * visColor.r);
 
     finColor = fade(finColor, fadeAmt/4.5);
     

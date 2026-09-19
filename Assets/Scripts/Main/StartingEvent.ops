@@ -9,7 +9,7 @@ SAY SETH "The fuck you want? I'm tryna get lit in here!"
 WAIT 0.5
 
 SHAKE 0.8
-SWITCHLIGHT "<default>" FALSE
+SWITCHLIGHT "Main" FALSE
 PLAYAUDIO "hit/door" "intro-sfx"
 WAIT 0.2
 PLAYAUDIO "hit/door" "intro-sfx"
@@ -18,7 +18,7 @@ PLAYAUDIO "hit/door" "intro-sfx"
 WAIT 0.1
 
 SETACTIVE "intro-door" FALSE
-SWITCHLIGHT "<default>" TRUE
+SWITCHLIGHT "Main" TRUE
 PLAYAUDIO "break/door" "intro-sfx"
 SHAKE 3
 SPAWN "intro-sfx"
