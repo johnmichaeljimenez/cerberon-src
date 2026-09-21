@@ -1,8 +1,16 @@
 @TRIGGER TIMEEND
 
+SWITCHLIGHT "Main" FALSE
+WAIT 1
+
 PLAYAUDIO "phone" "<null>" TRUE
 WAIT 0.1
 PLAYAUDIO "phone" "<null>" TRUE
-SAY WADE "" TRUE
+
+SAY WADE "Yo Seth! Open the gate, man!"
+SAY WADE "What's going on there?"
+SAY SETH "Power's out again!"
+SAY WADE "Alright I'll wait here. Roaches for sure busted the breaker at the back out there."
+
 WAIT 0.5
-SETTRIGGERACTIVE "PowerOff" TRUE
+SETACTIVE "PowerSwitch" TRUE
