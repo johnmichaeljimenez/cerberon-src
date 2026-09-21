@@ -1,0 +1,11 @@
+@INTERACT PowerSwitch
+JUMP END PowerSwitch
+SAVE PowerSwitch TRUE
+
+SAY SETH "Power's back on"
+SWITCHLIGHT "Main" TRUE
+
+BREAK
+>END
+	SAY SETH "Already activated"
+	BREAK
