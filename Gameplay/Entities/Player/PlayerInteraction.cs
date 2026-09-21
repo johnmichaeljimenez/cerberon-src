@@ -1,4 +1,5 @@
 using Cerberon.Core;
+using Cerberon.Gameplay.Managers;
 
 namespace Cerberon.Gameplay.Entities.Player;
 
@@ -72,7 +73,10 @@ public class PlayerInteraction : EntityModule<PlayerEntity>
 		if (current != null && InputManager.IsPressed(InputAction.Interact))
 		{
 			if (current.Interact())
+			{
 				OnInteract.Publish(current);
+				gameplayState.GetManager<GameplayEventManager>().FireTrigger(EventTypes.Interact, (current as BaseEntity).NameTag);
+			}
 		}
 	}
 

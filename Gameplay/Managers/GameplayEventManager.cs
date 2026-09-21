@@ -1,5 +1,7 @@
 using System.Text;
 using Cerberon.Core;
+using Cerberon.Gameplay.Entities;
+using Cerberon.Gameplay.Entities.Player;
 using Cerberon.Gameplay.Events;
 using Cerberon.Helpers;
 using OpcodeEngine.Core;
@@ -11,7 +13,8 @@ public enum EventTypes
 	None,
 	StartGame,
 	TimeEnd,
-	Trigger
+	Trigger,
+	Interact
 }
 
 public class GameplayEventManager : BaseManager
@@ -78,8 +81,11 @@ public class GameplayEventManager : BaseManager
 				}
 
 				scripts[baseDirectory][instruction.ID] = instruction;
+				instructions.Add(instruction);
 			}
 		}
+
+		instructionNames = instructions.Select(p => string.IsNullOrEmpty(p.TriggerKey)? p.ID : $"{p.ID} (@{p.TriggerKey})").Prepend("<Custom>").ToArray();
 	}
 
 
@@ -99,9 +105,17 @@ public class GameplayEventManager : BaseManager
 		engine.Tick(dt);
 	}
 
+	private int dropdownIndex;
+	private readonly List<Instruction> instructions = new();
+	private string[] instructionNames;
 	public override void DrawImGui()
 	{
 		base.DrawImGui();
+
+		if (ImGui.Combo("Scripts", ref dropdownIndex, instructionNames, instructionNames.Length))
+		{
+			
+		}
 
 		// if (ImGui.Button("Test"))
 		// {
