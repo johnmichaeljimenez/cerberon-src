@@ -16,7 +16,7 @@ SAY WADE "Yo Seth! Open the gate, man!"
 
 SWITCHLIGHT "Main" FALSE
 WAIT 0.5
-SAY WADE "Ah, shit."
+SAY SETH "Ah, shit."
 WAIT 0.5
 
 SAY WADE "What's going on there?"

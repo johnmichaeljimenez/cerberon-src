@@ -157,6 +157,15 @@ public class BeginRound : GameCommand
 	}
 }
 
+public class EndRound : GameCommand
+{
+	public override void OnEnter()
+	{
+		base.OnEnter();
+		gameplayState.GetManager<GameplayManager>().End(true);
+	}
+}
+
 public class SetActive : GameCommand
 {
 	[CommandParameter]

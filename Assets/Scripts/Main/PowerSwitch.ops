@@ -5,12 +5,12 @@ SAVE PowerSwitch TRUE
 
 SWITCHLIGHT "Main" TRUE
 SETACTIVE "Truck" TRUE
+SETTRIGGERACTIVE "Ending" TRUE
 
 WAIT 2
 PLAYAUDIO "vehicle/horn" "car-sfx" FALSE 100
 WAIT 0.3
 PLAYAUDIO "vehicle/horn" "car-sfx" FALSE 100
 
-BREAK
 >END
 	BREAK
