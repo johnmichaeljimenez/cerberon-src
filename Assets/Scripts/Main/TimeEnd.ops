@@ -1,5 +1,15 @@
 @TRIGGER TIMEEND
 
+WAIT 1
+PLAYAUDIO "vehicle/horn" "car-sfx" FALSE 100
+WAIT 0.3
+PLAYAUDIO "vehicle/horn" "car-sfx" FALSE 100
+WAIT 1
+
+PLAYAUDIO "vehicle/horn" "car-sfx" FALSE 100
+WAIT 0.3
+PLAYAUDIO "vehicle/horn" "car-sfx" FALSE 100
+WAIT 1
 
 PLAYAUDIO "phone" "<null>" TRUE
 SAY WADE "Yo Seth! Open the gate, man!"
