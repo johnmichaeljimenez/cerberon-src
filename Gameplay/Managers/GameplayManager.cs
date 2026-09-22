@@ -17,24 +17,6 @@ public class GameplayManager : BaseManager
 	public static bool Enabled;
 
 	[DataConfig]
-	public static List<Color> AmbientGradient = new()
-	{
-		new(20, 20, 34),
-		new(34, 34, 34),
-		new(20, 20, 20),
-		new(34, 34, 34),
-		new(60, 34, 34),
-		new(20, 20, 20),
-		new(12, 12, 12),
-		new(20, 20, 20),
-		new(34, 34, 34),
-		new(34, 34, 34),
-		new(80, 80, 50),
-		new(80, 80, 50),
-		new(140, 140, 120)
-	};
-
-	[DataConfig]
 	public static float MaxGameTime = 300f;
 
 	public float GameTime => _gameTime;
@@ -86,7 +68,6 @@ public class GameplayManager : BaseManager
 	{
 		base.OnEnter();
 		
-		LightingSystem.AmbientLightColor = AmbientGradient[0];
 		OnGameStart.Publish(Unit.Default);
 	}
 
@@ -105,7 +86,6 @@ public class GameplayManager : BaseManager
 		if (Running)
 		{
 			NormalizedTime = _gameTime / MaxGameTime;
-			LightingSystem.AmbientLightColor = AmbientGradient.LerpGradient(1.0f - NormalizedTime);
 
 			accumulator += dt;
 			if (accumulator >= 1.0f)
