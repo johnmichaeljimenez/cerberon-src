@@ -117,6 +117,12 @@ public class GameplayEventManager : BaseManager
 			
 		}
 
+		if (dropdownIndex > 0)
+		{
+			if (ImGui.Button("Trigger"))
+				engine.Run(instructions[dropdownIndex-1]);
+		}
+
 		// if (ImGui.Button("Test"))
 		// {
 		// 	RunEvent("power",
