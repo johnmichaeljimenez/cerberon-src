@@ -1,13 +1,14 @@
 @TRIGGER TIMEEND
 
-SWITCHLIGHT "Main" FALSE
-WAIT 1
 
 PLAYAUDIO "phone" "<null>" TRUE
-WAIT 0.1
-PLAYAUDIO "phone" "<null>" TRUE
-
 SAY WADE "Yo Seth! Open the gate, man!"
+
+SWITCHLIGHT "Main" FALSE
+WAIT 0.5
+SAY WADE "Ah, shit."
+WAIT 0.5
+
 SAY WADE "What's going on there?"
 SAY SETH "Power's out again!"
 SAY WADE "Alright I'll wait here. Roaches for sure busted the breaker at the back out there."
