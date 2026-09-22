@@ -370,13 +370,14 @@ public class World : IDisposable //aka Level loader
 			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Colors.RED);
 		}
 
-		var max = NodeData.Nodes.Max(p => p.Key.ClearanceWeighted);
-		foreach (var i in NodeData.Nodes)
+		var wp  = gameplayState.GetManager<WaypointManager>();
+		var max = wp.Nodes.Max(p => p.ClearanceWeighted);
+		foreach (var i in wp.Nodes)
 		{
-			if (!i.Key.Enabled)
+			if (!i.Enabled)
 				continue;
 
-			Raylib.DrawCircleV(i.Key.Position, 1.5f, Colors.GREEN.Value(i.Key.ClearanceWeighted / max).Fade(0.6f));
+			Raylib.DrawCircleV(i.Position, 1.5f, Colors.GREEN.Value(i.ClearanceWeighted / max).Fade(0.6f));
 
 			// if (i.Key.Clearance >= 1.5f)
 			// Raylib.DrawCircleLinesV(i.Key.Position, i.Key.ClearanceWeighted, Colors.GREEN);
