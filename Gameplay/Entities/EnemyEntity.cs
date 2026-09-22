@@ -10,8 +10,6 @@ public class EnemyEntity : CharacterEntity
 	[DataConfig(userOnly: true)] public static bool SafeMode;
 
 	[DataConfig(70f)] private static float STATS_BASE_HP;
-	[DataConfig(50)] private static int STATS_OUTDOOR_LIGHT_DAMAGE;
-	[DataConfig(2f)] private static float STATS_OUTDOOR_LIGHT_INTERVAL;
 
 	[DataConfig(0.8f)] private static float STATS_BASE_RADIUS;
 
@@ -52,8 +50,6 @@ public class EnemyEntity : CharacterEntity
 
 	private int attackDamage;
 	private float normalizedCost;
-
-	private float outdoorTimer;
 
 	private string currentClipNameIdle;
 	private string currentClipNameMove;
@@ -278,15 +274,6 @@ public class EnemyEntity : CharacterEntity
 		}
 
 		FacingAngle = Raymath.LerpAngle(FacingAngle, d.ToDirection(), dt * 8);
-
-		if (gameplayState.CurrentWorld.NodeData.IsOutdoor(NearestNode, true))
-		{
-			if (Utils.Countdown(ref outdoorTimer, dt))
-			{
-				ApplyDamage(STATS_OUTDOOR_LIGHT_DAMAGE, null);
-				outdoorTimer = RNG.Range(0.8f, 1.2f) * STATS_OUTDOOR_LIGHT_INTERVAL;
-			}
-		}
 	}
 
 	private void GetRandomNearbyPoint()
