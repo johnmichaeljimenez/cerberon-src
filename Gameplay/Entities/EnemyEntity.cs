@@ -59,11 +59,11 @@ public class EnemyEntity : CharacterEntity
 
 	public override void Init(GameplayState gameplayState)
 	{
-		currentClipNameIdle = SafeMode? SafeClipNameIdle : ClipNameIdle;
-		currentClipNameDeath = SafeMode? SafeClipNameDeath : ClipNameDeath;
-		currentClipNameAttack = SafeMode? SafeClipNameAttack : ClipNameAttack;
-		currentClipNameMove = SafeMode? SafeClipNameMove : ClipNameMove;
-		
+		currentClipNameIdle = SafeMode ? SafeClipNameIdle : ClipNameIdle;
+		currentClipNameDeath = SafeMode ? SafeClipNameDeath : ClipNameDeath;
+		currentClipNameAttack = SafeMode ? SafeClipNameAttack : ClipNameAttack;
+		currentClipNameMove = SafeMode ? SafeClipNameMove : ClipNameMove;
+
 		currentClipNameFly = ClipNameFly; //safe mode enemies dont fly
 		if (SafeMode)
 			IsFlyer = false;
@@ -284,7 +284,9 @@ public class EnemyEntity : CharacterEntity
 		var index = RNG.Range(0, NearestNode.Connections.Count);
 		nodes.Clear();
 		nodes.Add(Position);
-		nodes.Add(NearestNode.Connections[index].Position);
+
+		if (NearestNode.Connections.Count > 0)
+			nodes.Add(NearestNode.Connections[index].Position);
 	}
 
 	public override void LateUpdate(float dt, float udt)
