@@ -1,5 +1,8 @@
 {
   "WorldSettings": {
+    "LoadedScripts": [
+      "Main"
+    ],
     "PlayerSpawnPoint": {
       "X": 24.17,
       "Y": 0.91
