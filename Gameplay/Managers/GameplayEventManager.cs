@@ -46,15 +46,13 @@ public class GameplayEventManager : BaseManager
 		{
 			FireTrigger(EventTypes.Trigger, t.Item2.TriggerID);
 		}).AddTo(disposables);
-
-		CompileScripts(gameplayState.CurrentWorld.WorldSettings.LoadedScripts ?? new());
 	}
 
 	public void CompileScripts(List<string> directories)
 	{
 		if (directories.Count == 0)
 			return;
-			
+
 		var basePath = "Assets/Scripts";
 
 		if (!Directory.Exists(basePath)) return;

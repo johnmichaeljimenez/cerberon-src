@@ -155,6 +155,8 @@ public class World : IDisposable //aka Level loader
 		{
 			i.PostInit();
 		}
+
+		gameplayState.GetManager<GameplayEventManager>().CompileScripts(WorldSettings.LoadedScripts ?? new());
 	}
 
 	public void Update(float dt, float udt)
@@ -370,7 +372,7 @@ public class World : IDisposable //aka Level loader
 			Utils.DrawLineEx(i.From, i.To, i.Midpoint, i.Normal, Colors.RED);
 		}
 
-		var wp  = gameplayState.GetManager<WaypointManager>();
+		var wp = gameplayState.GetManager<WaypointManager>();
 		var max = wp.Nodes.Max(p => p.ClearanceWeighted);
 		foreach (var i in wp.Nodes)
 		{
@@ -463,7 +465,7 @@ public class World : IDisposable //aka Level loader
 			{
 				if (sprite.RenderType != WorldSpriteRenderer.RenderTypes.Tiled)
 					continue;
-					
+
 				if (Utils.IsPointInRotatedRectangle(position, sprite.Position, sprite.TileSize, sprite.Rotation))
 				{
 					result = sprite;
