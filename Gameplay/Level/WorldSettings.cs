@@ -9,4 +9,7 @@ public struct WorldSettings //struct so that it cannot be null
 
 	[JsonProperty]
     public Dictionary<string, object?> Config { get; set; }
+
+	[JsonProperty]
+	public List<string> LoadedScripts { get; private set; }
 }

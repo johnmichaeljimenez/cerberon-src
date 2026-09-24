@@ -3,6 +3,7 @@ using Cerberon.Core;
 using Cerberon.Gameplay.Entities;
 using Cerberon.Gameplay.Entities.Player;
 using Cerberon.Gameplay.Events;
+using Cerberon.Gameplay.Level;
 using Cerberon.Helpers;
 using OpcodeEngine.Core;
 
@@ -46,11 +47,14 @@ public class GameplayEventManager : BaseManager
 			FireTrigger(EventTypes.Trigger, t.Item2.TriggerID);
 		}).AddTo(disposables);
 
-		CompileScripts(new() { "Main" });
+		CompileScripts(gameplayState.CurrentWorld.WorldSettings.LoadedScripts ?? new());
 	}
 
 	public void CompileScripts(List<string> directories)
 	{
+		if (directories.Count == 0)
+			return;
+			
 		var basePath = "Assets/Scripts";
 
 		if (!Directory.Exists(basePath)) return;
