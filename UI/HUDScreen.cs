@@ -19,12 +19,16 @@ public class HUDScreen : BaseScreen
 
 	private IInteractable currentInteractable;
 
+	private GameplayManager gameplayManager;
+
 	public HUDScreen(object context) : base(context)
 	{
 		gameplayState = context as GameplayState;
 
 		SetVisibility("HUD", EnabledOnStart);
-		gameplayState.GetManager<GameplayManager>().OnFightStart.Subscribe(_ =>
+
+		gameplayManager = gameplayState.GetManager<GameplayManager>();
+		gameplayManager.OnFightStart.Subscribe(_ =>
 		{
 			SetVisibility("HUD", true);
 		}).AddTo(disposables);
@@ -88,7 +92,7 @@ public class HUDScreen : BaseScreen
 
 	public override void Draw()
 	{
-		if (GameplayManager.Enabled)
+		if (gameplayManager.Running)
 		{
 			var gt = gameplayState.GetManager<GameplayManager>();
 			TimeSpan ts = TimeSpan.FromSeconds(gt.GameTime);

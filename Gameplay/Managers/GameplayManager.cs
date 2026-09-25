@@ -13,9 +13,6 @@ public class GameplayManager : BaseManager
 	public static int TopKillCount;
 	public static int CurrentKillCount;
 
-	[DataConfig(defaultValue: true)]
-	public static bool Enabled;
-
 	[DataConfig]
 	public static float MaxGameTime = 180f;
 
@@ -58,7 +55,7 @@ public class GameplayManager : BaseManager
 	public override void Init()
 	{
 		base.Init();
-		Running = Enabled;
+		Running = false;
 		_gameTime = MaxGameTime;
 
 		CurrentKillCount = 0;
@@ -126,7 +123,6 @@ public class GameplayManager : BaseManager
 
 	public void Begin()
 	{
-		Enabled = true;
 		Running = true;
 		OnFightStart?.Publish(Unit.Default);
 	}
