@@ -1,4 +1,4 @@
-@TRIGGER TIMEEND
+@TIMEEND
 
 WAIT 1
 PLAYAUDIO "vehicle/horn" "car-sfx" FALSE 100
