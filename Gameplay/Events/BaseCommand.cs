@@ -169,7 +169,7 @@ public class EndRound : GameCommand
 public class SetActive : GameCommand
 {
 	[CommandParameter]
-	private string nameTag;
+	private string id;
 
 	[CommandParameter]
 	private bool isActive = true;
@@ -178,7 +178,13 @@ public class SetActive : GameCommand
 	{
 		base.OnEnter();
 
-		gameplayState.CurrentWorld.GetEntityByNameTag<BaseEntity>(nameTag).IsActive = isActive;
+		if (StartsWith(ref id, "t:"))
+		{
+			gameplayState.GetManager<TriggerManager>().Find(id).ForEach(p => p.Enabled = isActive);
+			return;
+		}
+
+		gameplayState.CurrentWorld.GetEntityByNameTag<BaseEntity>(id).IsActive = isActive;
 	}
 
 	private bool StartsWith(ref string str, string prefix)
