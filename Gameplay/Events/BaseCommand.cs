@@ -196,18 +196,3 @@ public class SetActive : GameCommand
 		return true;
 	}
 }
-
-public class SetTriggerActive : GameCommand
-{
-	[CommandParameter]
-	private string id;
-
-	[CommandParameter]
-	private bool isActive = true;
-
-	public override void OnEnter()
-	{
-		base.OnEnter();
-		gameplayState.GetManager<TriggerManager>().Find(id).ForEach(p => p.Enabled = isActive);
-	}
-}
