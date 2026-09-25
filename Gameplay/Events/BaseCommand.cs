@@ -192,7 +192,7 @@ public class SetActive : GameCommand
 		if (!str.StartsWith(prefix))
 			return false;
 
-		str = str.Substring(str.Length);
+		str = str.Substring(prefix.Length);
 		return true;
 	}
 }
