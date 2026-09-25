@@ -180,6 +180,15 @@ public class SetActive : GameCommand
 
 		gameplayState.CurrentWorld.GetEntityByNameTag<BaseEntity>(nameTag).IsActive = isActive;
 	}
+
+	private bool StartsWith(ref string str, string prefix)
+	{
+		if (!str.StartsWith(prefix))
+			return false;
+
+		str = str.Substring(str.Length);
+		return true;
+	}
 }
 
 public class SetTriggerActive : GameCommand
