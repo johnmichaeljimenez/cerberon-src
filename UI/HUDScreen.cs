@@ -91,14 +91,9 @@ public class HUDScreen : BaseScreen
 		if (GameplayManager.Enabled)
 		{
 			var gt = gameplayState.GetManager<GameplayManager>();
-			float norm = 1.0f - gt.NormalizedTime;
+			TimeSpan ts = TimeSpan.FromSeconds(gt.GameTime);
 
-			const int totalSeconds = 6 * 60 * 60;
-			int elapsedSec = (int)(norm * totalSeconds);
-			TimeSpan ts = TimeSpan.FromSeconds(elapsedSec);
-
-			string timeString = ts.ToString(@"hh\:mm");
-
+			string timeString = ts.ToString(@"mm\:ss");
 			references["time-text"].Text = timeString;
 		}
 		else
