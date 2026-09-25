@@ -1,0 +1,7 @@
+SAY "-" "TEST START" FALSE
+PLAYAUDIO "hit/door" "<null>" TRUE
+RNG 0.4 Test
+BREAK
+
+>Test
+SAY "-" "HELLO"
