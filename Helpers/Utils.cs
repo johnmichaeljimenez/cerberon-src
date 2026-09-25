@@ -4,6 +4,15 @@ namespace Cerberon.Helpers;
 
 public static class Utils
 {
+	public static bool StartsWith(ref string str, string prefix)
+	{
+		if (!str.StartsWith(prefix))
+			return false;
+
+		str = str.Substring(prefix.Length);
+		return true;
+	}
+
 	//use this for cheap render textures that don't need the full RGBA channel
 	public static unsafe RenderTexture2D LoadRenderTextureR8(int width, int height)
 	{
