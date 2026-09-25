@@ -1,5 +1,8 @@
 {
   "WorldSettings": {
+    "LoadedScripts": [
+      "Dev"
+    ],
     "PlayerSpawnPoint": {
       "X": 0.0,
       "Y": 0.0
@@ -30,10 +33,66 @@
       "Rotation": 0.0,
       "Flags": 1,
       "Height": 2
+    },
+    {
+      "Position": {
+        "X": 5.0,
+        "Y": -1.0
+      },
+      "Size": {
+        "X": 3.0,
+        "Y": 11.0
+      },
+      "Rotation": 0.0,
+      "Flags": 1,
+      "Height": 2
     }
   ],
-  "Lights": [],
-  "AmbientLights": [],
+  "Lights": [
+    {
+      "SpriteID": "light",
+      "GroupID": "",
+      "Position": {
+        "X": 0.48,
+        "Y": 0.79
+      },
+      "Color": {
+        "R": 219,
+        "G": 208,
+        "B": 0,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Origin": {
+        "X": 0.5,
+        "Y": 0.5
+      },
+      "Enabled": true,
+      "Scale": 24.0,
+      "ShadowType": 1,
+      "Flicker": false
+    }
+  ],
+  "AmbientLights": [
+    {
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0
+      },
+      "Color": {
+        "R": 27,
+        "G": 27,
+        "B": 23,
+        "A": 255
+      },
+      "Rotation": 0.0,
+      "Size": {
+        "X": 58.86422,
+        "Y": 59.9542351
+      },
+      "Flicker": false
+    }
+  ],
   "Triggers": [],
   "Markers": []
 }
