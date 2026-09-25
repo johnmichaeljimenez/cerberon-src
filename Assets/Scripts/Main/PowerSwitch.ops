@@ -1,5 +1,7 @@
 @INTERACT PowerSwitch
 
+JUMP END !TimeEnd
+
 JUMP END PowerSwitch
 SAVE PowerSwitch TRUE
 
