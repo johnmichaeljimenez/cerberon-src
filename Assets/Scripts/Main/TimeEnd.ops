@@ -24,5 +24,4 @@ SAY SETH "Power's out again!"
 SAY WADE "Alright I'll wait here. Roaches for sure busted the breaker at the back out there."
 
 WAIT 0.5
-SETACTIVE "PowerSwitch" TRUE
-SAVE TimeEnd FALSE
+SETVAR TimeEnd TRUE

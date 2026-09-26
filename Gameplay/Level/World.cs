@@ -157,6 +157,7 @@ public class World : IDisposable //aka Level loader
 		}
 
 		gameplayState.GetManager<GameplayEventManager>().CompileScripts(WorldSettings.LoadedScripts ?? new());
+		gameplayState.GetManager<GameplayEventManager>().FireTrigger(EventTypes.Init);
 	}
 
 	public void Update(float dt, float udt)

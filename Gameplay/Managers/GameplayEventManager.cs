@@ -12,6 +12,7 @@ namespace Cerberon.Gameplay.Managers;
 public enum EventTypes
 {
 	None,
+	Init,
 	StartGame,
 	TimeEnd,
 	Trigger,

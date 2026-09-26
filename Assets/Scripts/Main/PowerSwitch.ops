@@ -1,9 +1,9 @@
 @INTERACT PowerSwitch
 
-JUMP END !TimeEnd
+JUMPIF !TimeEnd END
+JUMPIF PowerSwitch END
 
-JUMP END PowerSwitch
-SAVE PowerSwitch TRUE
+SETVAR PowerSwitch TRUE
 
 SWITCHLIGHT "Main" TRUE
 SETACTIVE "Truck" TRUE

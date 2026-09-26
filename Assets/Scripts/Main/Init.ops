@@ -1,0 +1,4 @@
+@INIT
+
+DECVAR PowerSwitch false bool
+DECVAR TimeEnd false bool
