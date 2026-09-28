@@ -1,4 +1,4 @@
 @_INIT
 
-DECVAR PowerSwitch false bool
-DECVAR TimeEnd false bool
+DEFVAR PowerSwitch false bool
+DEFVAR TimeEnd false bool
