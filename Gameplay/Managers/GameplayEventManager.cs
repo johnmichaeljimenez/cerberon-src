@@ -12,7 +12,6 @@ namespace Cerberon.Gameplay.Managers;
 public enum EventTypes
 {
 	None,
-	Init,
 	StartGame,
 	TimeEnd,
 	Trigger,
@@ -26,7 +25,7 @@ public class GameplayEventManager : BaseManager
 
 	public GameplayEventManager(GameplayState gameplayState) : base(gameplayState)
 	{
-		engine = new(gameplayState);
+		engine = new(gameplayState, true, RNG.Seed);
 
 		gameplayState.GetManager<GameplayManager>().OnGameStart.Subscribe(_ =>
 		{
@@ -47,6 +46,14 @@ public class GameplayEventManager : BaseManager
 		{
 			FireTrigger(EventTypes.Trigger, t.Item2.TriggerID);
 		}).AddTo(disposables);
+	}
+
+	public override void OnEnter()
+	{
+		base.OnEnter();
+
+		CompileScripts(gameplayState.CurrentWorld.WorldSettings.LoadedScripts ?? new());
+		engine.Initialize();
 	}
 
 	public void CompileScripts(List<string> directories)
@@ -75,8 +82,7 @@ public class GameplayEventManager : BaseManager
 
 				var baseDirectory = pathParts[0];
 
-				var instruction = engine.CompileFile(file);
-				instruction.ID = $"{baseDirectory}/{instruction.ID}";
+				var instruction = engine.CompileFile(file, $"{baseDirectory}/{Path.GetFileNameWithoutExtension(file)}");
 
 				if (!scripts.ContainsKey(baseDirectory))
 				{
@@ -88,13 +94,13 @@ public class GameplayEventManager : BaseManager
 			}
 		}
 
-		instructionNames = instructions.Select(p => string.IsNullOrEmpty(p.TriggerKey)? p.ID : $"{p.ID} (@{p.TriggerKey})").Prepend("<Custom>").ToArray();
+		instructionNames = instructions.Select(p => string.IsNullOrEmpty(p.TriggerKey) ? p.ID : $"{p.ID} (@{p.TriggerKey})").Prepend("<Custom>").ToArray();
 	}
 
 
-	public void FireTrigger(EventTypes eventType, params object[] args)
+	public void FireTrigger(EventTypes eventType, string target = "", params object[] args)
 	{
-		var trigger = $"{eventType} {string.Join(' ', args)}".Trim().ToUpper();
+		var trigger = $"{eventType}{(target == null? "" : $":{target}")} {string.Join(' ', args)}".Trim().ToUpper();
 		engine.FireTrigger(trigger);
 	}
 
@@ -117,13 +123,13 @@ public class GameplayEventManager : BaseManager
 
 		if (ImGui.Combo("Scripts", ref dropdownIndex, instructionNames, instructionNames.Length))
 		{
-			
+
 		}
 
 		if (dropdownIndex > 0)
 		{
 			if (ImGui.Button("Trigger"))
-				engine.Run(instructions[dropdownIndex-1]);
+				engine.Run(instructions[dropdownIndex - 1]);
 		}
 
 		// if (ImGui.Button("Test"))
@@ -143,7 +149,7 @@ public class ScriptRunner : Engine
 {
 	public GameplayState gameplayState;
 
-	public ScriptRunner(GameplayState gameplayState)
+	public ScriptRunner(GameplayState gameplayState, bool immediateMode = false, int randomSeed = 0) : base(immediateMode, randomSeed)
 	{
 		this.gameplayState = gameplayState;
 	}

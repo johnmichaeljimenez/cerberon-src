@@ -7,7 +7,7 @@ public static class RNG
 	private static int _seed = 42;
 
 	[DataConfig]
-	private static int Seed
+	public static int Seed
 	{
 		get => _seed;
 		set

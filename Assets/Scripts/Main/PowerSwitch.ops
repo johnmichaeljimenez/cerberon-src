@@ -1,4 +1,4 @@
-@INTERACT PowerSwitch
+@INTERACT:PowerSwitch
 
 JUMPIF !TimeEnd END
 JUMPIF PowerSwitch END
